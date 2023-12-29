@@ -1,0 +1,65 @@
+<!-- BEGIN BLOCK_CALENDARIO -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+  
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        //themeSystem: 'bootstrap5',
+        height: "auto",
+        expandRows: true,
+        slotMinTime: '08:30',
+        slotMaxTime: '19:00',
+        locale: 'pt-br',
+        headerToolbar: {
+          left: 'prevYear,prev,next,nextYear today',
+          center: 'title',
+          right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        initialView: 'dayGridMonth',
+        selectable: true,
+        dayMaxEvents: true,
+        select: function(arg) {
+          window.location.href = "{action}" + btoa(arg.start) + "/" + btoa(arg.end);
+        },
+        eventClick: function(arg) {
+            window.location.href = "{action}" + arg.event.id;
+        }, 
+        // allow "more" link when too many events
+        // multiMonthMaxColumns: 1, // guarantee single column
+        // showNonCurrentDates: true,
+        // fixedWeekCount: false,
+        // businessHours: true,
+        // weekends: false,
+        events: {events}
+      });
+  
+      calendar.render();
+    });
+
+    window.onload = function () {
+      if (window.screen.width < 1000){
+        $('.fc-toolbar.fc-header-toolbar').addClass('row col-lg-12');
+        $('.fc-toolbar-chunk').addClass('mt-2 mb-2');
+      }
+    };
+
+    $(document).on('click', '.fc-button', function(e) {
+      if (window.screen.width < 1000){
+        $('.fc-toolbar.fc-header-toolbar').addClass('row col-lg-12');
+        $('.fc-toolbar-chunk').addClass('mt-2 mb-2');
+      }
+    });
+
+  </script>
+    <div class="container">
+
+        <h2 class="mb-4 mt-4">{titulo}</h2>
+
+        <div id='calendar'></div>
+
+        <div class="fixed-bottom mt-0">
+            {mensagem}
+        </div>
+
+    </div>
+<!-- END BLOCK_CALENDARIO -->

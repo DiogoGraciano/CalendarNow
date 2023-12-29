@@ -1,0 +1,42 @@
+
+    <!-- BEGIN BLOCK_INPUT -->
+        <label for="{nm_input}">{nm_label}</label>
+        <input type="{type_input}" name="{nm_input}" id="{nm_input}" placeholder="{placeholder}" class="{class_input}" value="{vl_input}" {extra_input}/>
+    <!-- END BLOCK_INPUT -->
+
+    <!-- BEGIN BLOCK_BUTTON -->
+        <button type="{type_input}" class="{class_input}" onclick="{button_action}" {extra_input}>{button_nome}</button> 
+    <!-- END BLOCK_BUTTON -->
+
+    <!-- BEGIN BLOCK_TEXTAREA -->   
+        <label for="{nm_input}">{nm_label}</label>
+        <textarea name="{nm_input}" id="{nm_input}" placeholder="{placeholder}" class="{class_input}" rows="{rows_input}" cols="{cols_input}" {extra_input}>
+            {vl_input}
+        </textarea>   
+    <!-- END BLOCK_TEXTAREA -->
+
+    <!-- BEGIN BLOCK_CHECKBOX -->  
+        <input type="{type_input}" name="{nm_input}" id="{nm_input}" class="{class_input}" {extra_input}/>
+        <label for="{nm_input}">{nm_label}</label> 
+    <!-- END BLOCK_CHECKBOX -->
+
+    <!-- BEGIN BLOCK_SELECT -->
+        <label for="{nm_input}">{nm_label}</label>
+        <select class="{class_input}" name="{nm_input}"  id="{nm_input}" {extra_input}>
+            <!-- BEGIN BLOCK_OPTION_SELECT -->
+                <option value="{vl_option}" {extra_option}>{nm_option}</option>
+            <!-- END BLOCK_OPTION_SELECT -->
+        </select>
+    <!-- END BLOCK_SELECT -->
+
+    <!-- BEGIN BLOCK_DATALIST -->
+        <label for="{nm_input}">{nm_label}</label>
+        <input class="{class_input}" list="{nm_input}s" name="{nm_input}"  id="{nm_input}" value="{vl_input}" {extra_input}>
+        <datalist class="{class_input}" id="{nm_input}s" style="display: none;">
+            <!-- BEGIN BLOCK_OPTION_DATALIST -->
+                <option value="{vl_option}" {extra_option}>{nm_option}</option>
+            <!-- END BLOCK_OPTION_DATALIST -->
+        </datalist>  
+    <!-- END BLOCK_DATALIST -->
+
+ 

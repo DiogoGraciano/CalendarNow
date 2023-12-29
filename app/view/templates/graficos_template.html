@@ -1,0 +1,24 @@
+<!-- BEGIN BLOCK_GRAFICO -->
+<canvas id="{chartName}" class="chartjs-render-monitor {class}"></canvas>
+    <script>
+        new Chart("{chartName}", {
+            type: "{type}",
+            data: {
+                labels: {datax},
+                datasets: [{
+                    backgroundColor: {backColor},
+                    borderColor: {borderColor},
+                    data: {datay},
+                    fill: {fill}
+                }]
+            },
+            options: {
+                legend: {display: {legends}},
+                title: {
+                    display: {displayTitle},
+                    text: "{title}"
+                }
+            }
+        });
+    </script>
+<!-- END BLOCK_GRAFICO -->
