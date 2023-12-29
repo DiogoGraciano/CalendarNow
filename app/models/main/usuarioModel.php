@@ -9,8 +9,8 @@ class usuarioModel{
 
     public static function get($cd = ""){
         $usuario = modelAbstract::get("usuario",$cd);
-        if ($usuario->id_endereco)
-            $usuario->endereco = modelAbstract::get("endereco",$usuario->id_endereco);
+        if ($usuario->id)
+            $usuario->endereco = enderecoModel::getByIdUsuario($usuario->id);
         else 
             $usuario->endereco =  enderecoModel::get();
 
@@ -29,7 +29,7 @@ class usuarioModel{
         return $usuario;
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$senha,$cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$id_endereco,$cd="",$tipo_usuario = 3){
+    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$cd="",$tipo_usuario = 3){
 
         $db = new db("usuario");
     
@@ -41,11 +41,12 @@ class usuarioModel{
             $values->nome = $nome;
             $values->email= $email;
             $values->senha = $senha;
+            $values->telefone = $telefone;
             $values->tipo_usuario = $tipo_usuario;
             $retorno = $db->store($values);
         }
         if ($retorno == true){
-            $retorno = enderecoModel::set($cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$id_endereco);
+            $retorno = enderecoModel::set($cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$db->getlastId());
             if ($retorno == true){
                 mensagem::setSucesso(array("Usuario salvo com Sucesso"));
                 return True;

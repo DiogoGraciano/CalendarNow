@@ -89,15 +89,15 @@ class loginController extends controllerAbstract{
         $elements = new elements;
 
         $form->setHidden("cd",$cd);
-        $form->setHidden("cd_endereco",$dado->id_endereco);
 
         $form->setDoisInputs(
             $elements->input("nome","Nome",$dado->nome,true),
-            $elements->input("cpf_cnpj","CPF/CNPJ:",$dado->cpf_cnpj,true)
+            $elements->input("cpf_cnpj","CPF/CNPJ:",$dado->cpf_cnpj,true,false,"","number")
         );
-        $form->setDoisInputs(
+        $form->setTresInputs(
             $elements->input("email","Email",$dado->email,true,false,"","email"),
-            $elements->input("senha","Senha","",true,false,"","password")
+            $elements->input("senha","Senha","",true,false,"","password"),
+            $elements->input("telefone","Telefone","",true,false,"","number"),
         );
         $form->setDoisInputs(
             $elements->input("cep","Cep",$dado->endereco->cep,true,false,"","number","form-control",'min="80000000" max="89999999"'),
@@ -130,15 +130,15 @@ class loginController extends controllerAbstract{
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
         $email = $this->getValue('email');
+        $telefone = $this->getValue('telefone');
         $cep = $this->getValue('cep');
         $id_estado = $this->getValue('id_estado');
         $id_cidade = $this->getValue('id_cidade');
         $rua = $this->getValue('rua');
         $numero = $this->getValue('numero');
         $complemento = $this->getValue('complemento');
-        $id_endereco = $this->getValue('id_endereco');
 
-        $retorno = usuarioModel::set($nome,$cpf_cnpj,$email,$senha,$cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$id_endereco,$cd);
+        $retorno = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$cd);
 
         if ($retorno)
             $this->go("login/index/".base64_encode($cpf_cnpj)."/".base64_encode($senha));

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 24-Dez-2023 às 14:26
+-- Tempo de geração: 29-Dez-2023 às 16:34
 -- Versão do servidor: 8.0.31
 -- versão do PHP: 8.2.0
 
@@ -83,7 +83,8 @@ CREATE TABLE IF NOT EXISTS `cidade` (
   `nome` varchar(120) DEFAULT NULL,
   `uf` int DEFAULT NULL,
   `ibge` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_cidade_estado` (`uf`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='Municipios das Unidades Federativas';
 
 --
@@ -5703,7 +5704,6 @@ CREATE TABLE IF NOT EXISTS `empresa` (
   `cnpj` int NOT NULL,
   `razao` varchar(250) NOT NULL,
   `fantasia` varchar(250) NOT NULL,
-  `id_endereço` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cnpj` (`cnpj`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -5717,14 +5717,20 @@ CREATE TABLE IF NOT EXISTS `empresa` (
 DROP TABLE IF EXISTS `endereco`;
 CREATE TABLE IF NOT EXISTS `endereco` (
   `id` int NOT NULL,
+  `id_usuario` int DEFAULT NULL,
+  `id_empresa` int DEFAULT NULL,
   `cep` int NOT NULL COMMENT 'cep',
   `id_cidade` int NOT NULL COMMENT 'id tabela cidade',
   `id_estado` int NOT NULL COMMENT 'id tabela estado',
   `bairro` varchar(150) NOT NULL COMMENT 'bairro',
-  `endereco` varchar(250) NOT NULL COMMENT 'endereco',
+  `rua` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'endereco',
+  `numero` int NOT NULL,
+  `complemento` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_endereco_estado` (`id_estado`),
-  KEY `fk_endereco_cidade` (`id_cidade`)
+  KEY `fk_endereco_cidade` (`id_cidade`),
+  KEY `fk_endereco_usuario` (`id_usuario`),
+  KEY `fk_endereco_empresa` (`id_empresa`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -5787,15 +5793,16 @@ INSERT INTO `estado` (`id`, `nome`, `uf`, `ibge`, `pais`, `ddd`) VALUES
 DROP TABLE IF EXISTS `funcionario`;
 CREATE TABLE IF NOT EXISTS `funcionario` (
   `id` int NOT NULL,
+  `id_usuario` int NOT NULL,
   `id_grupo_funcionario` int DEFAULT NULL,
   `id_grupo_servico` int DEFAULT NULL,
-  `nome` varchar(250) NOT NULL,
   `hora_ini` time NOT NULL COMMENT 'horario incial de atendimento',
   `hora_fim` int NOT NULL COMMENT 'horario final de atendimento',
   `dias` varchar(27) NOT NULL COMMENT 'dom,seg,ter,qua,qui,sex,sab\r\n\r\nrepresentaria que o funcionario trabalharia todos os dias da semana',
   PRIMARY KEY (`id`),
   KEY `fk_funcionario_grupo_servico` (`id_grupo_servico`),
-  KEY `fk_funcionario_grupo_funcionario` (`id_grupo_funcionario`)
+  KEY `fk_funcionario_grupo_funcionario` (`id_grupo_funcionario`),
+  KEY `fk_funcionario_usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -5850,18 +5857,15 @@ CREATE TABLE IF NOT EXISTS `servico` (
 DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE IF NOT EXISTS `usuario` (
   `id` int NOT NULL COMMENT 'id do usuario',
-  `id_endereco` int NOT NULL COMMENT 'id da tabela endereco',
-  `id_empresa` int DEFAULT NULL,
   `nome` varchar(500) NOT NULL COMMENT 'nome do usuario',
   `cpf_cnpj` int NOT NULL COMMENT 'cpf/cnpj do usuario',
   `senha` varchar(150) NOT NULL COMMENT 'senha do usuario',
   `email` varchar(200) NOT NULL COMMENT 'email do usuario',
+  `telefone` int NOT NULL,
   `tipo_usuario` int NOT NULL COMMENT '0 -> ADM |\r\n1 -> empresa |\r\n2 -> funcionario |\r\n3 -> usuario |',
   PRIMARY KEY (`id`),
   UNIQUE KEY `cpf_cnpj` (`cpf_cnpj`),
-  UNIQUE KEY `unique_email` (`email`),
-  KEY `fk_usuario_empresa` (`id_empresa`),
-  KEY `fk_usuario_endereco` (`id_endereco`)
+  UNIQUE KEY `unique_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='tabela de usuario';
 
 --
@@ -5889,31 +5893,33 @@ ALTER TABLE `agenda_servico`
   ADD CONSTRAINT `fk_agenda_servico_servico` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
+-- Limitadores para a tabela `cidade`
+--
+ALTER TABLE `cidade`
+  ADD CONSTRAINT `fk_cidade_estado` FOREIGN KEY (`uf`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
 -- Limitadores para a tabela `endereco`
 --
 ALTER TABLE `endereco`
   ADD CONSTRAINT `fk_endereco_cidade` FOREIGN KEY (`id_cidade`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_endereco_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `fk_endereco_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_endereco_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_endereco_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Limitadores para a tabela `funcionario`
 --
 ALTER TABLE `funcionario`
   ADD CONSTRAINT `fk_funcionario_grupo_funcionario` FOREIGN KEY (`id_grupo_funcionario`) REFERENCES `grupo_funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_funcionario_grupo_servico` FOREIGN KEY (`id_grupo_servico`) REFERENCES `grupo_servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `fk_funcionario_grupo_servico` FOREIGN KEY (`id_grupo_servico`) REFERENCES `grupo_servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_funcionario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Limitadores para a tabela `servico`
 --
 ALTER TABLE `servico`
   ADD CONSTRAINT `fk_servico_grupo_servico` FOREIGN KEY (`id_grupo`) REFERENCES `grupo_servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Limitadores para a tabela `usuario`
---
-ALTER TABLE `usuario`
-  ADD CONSTRAINT `fk_usuario_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_usuario_endereco` FOREIGN KEY (`id_endereco`) REFERENCES `endereco` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
