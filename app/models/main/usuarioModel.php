@@ -2,6 +2,7 @@
 namespace app\models\main;
 use app\db\db;
 use app\classes\mensagem;
+use app\classes\functions;
 use app\classes\modelAbstract;
 use app\models\main\enderecoModel;
 
@@ -29,7 +30,31 @@ class usuarioModel{
         return $usuario;
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$cd="",$tipo_usuario = 3){
+    public static function existsCpfCnpj($cpf_cnpj){
+
+        $db = new db("usuario");
+
+        $columns = ["cpf_cnpj"];
+        $values = [$cpf_cnpj];
+
+        $usuario = $db->selectByValues($columns,$values);
+
+        return $usuario;
+    }
+
+    public static function existsEmail($email){
+
+        $db = new db("usuario");
+
+        $columns = ["email"];
+        $values = [$email];
+
+        $usuario = $db->selectByValues($columns,$values);
+
+        return $usuario;
+    }
+
+    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd="",$tipo_usuario = 3){
 
         $db = new db("usuario");
     
@@ -37,25 +62,17 @@ class usuarioModel{
 
         if ($values){
             $values->id = $cd;
-            $values->cpf_cnpj = $cpf_cnpj;
+            $values->cpf_cnpj = (int)functions::onlynumber($cpf_cnpj);
             $values->nome = $nome;
             $values->email= $email;
-            $values->senha = $senha;
-            $values->telefone = $telefone;
+            $values->senha = password_hash($senha,PASSWORD_DEFAULT);
+            $values->telefone = (int)functions::onlynumber($telefone);
             $values->tipo_usuario = $tipo_usuario;
             $retorno = $db->store($values);
         }
         if ($retorno == true){
-            $retorno = enderecoModel::set($cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$db->getlastId());
-            if ($retorno == true){
-                mensagem::setSucesso(array("Usuario salvo com Sucesso"));
-                return True;
-            }
-            else {
-                usuarioModel::delete($db->getlastId());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                return False;
-            }
+            mensagem::setSucesso(array("Usuario salvo com Sucesso"));
+            return $db->lastid;
         }
         else {
             $Mensagems = ($db->getError());

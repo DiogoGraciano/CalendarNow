@@ -11,6 +11,7 @@ class Db
     private $object;
     private $columns;
     private $error = [];
+    public $lastid;
 
     function __construct($table)
     {
@@ -271,46 +272,86 @@ class Db
                 if (!$values[$this->columns[0]]) {
                     $values[$this->columns[0]] = $this->getlastId() + 1;
                     $sql_instruction = "INSERT INTO " . $this->table . "(";
+                    $keysBD = "";
+                    $valuesBD = "";
                     foreach ($values as $key => $data) {
-                        $sql_instruction .= $key . ",";
-                    }
-                    $sql_instruction = substr($sql_instruction, 0, -1);
-                    $sql_instruction .= ") VALUES (";
-                    foreach ($values as $data) {
-                        $data = trim($data); 
-                        if ($this->validInjection($data)){
-                            if (is_string($data) && $data != "null")
-                                $sql_instruction .= "'" . $data . "',";
-                            elseif (is_int($data) || is_float($data) || $data == "null")
-                                $sql_instruction .= $data . ",";
+                        if ($data){
+                            $keysBD .= $key . ",";
+                            if ($this->validInjection($data)){
+                                if (is_string($data) && $data != "null"){
+                                    $data = trim($data);
+                                    $valuesBD .= "'" . $data . "',";
+                                }elseif (is_int($data) || is_float($data) || $data == "null")
+                                    $valuesBD .= $data . ",";
+                            }
+                            else 
+                                return false;
                         }
-                        else 
-                            return false;
                     }
-                    $sql_instruction = substr($sql_instruction, 0, -1);
+                    $keysBD = substr($keysBD, 0, -1);
+                    $sql_instruction .= $keysBD;
+                    $sql_instruction .= ") VALUES (";
+                    $valuesBD = substr($valuesBD, 0, -1);
+                    $sql_instruction .= $valuesBD;
                     $sql_instruction .= ");";
                 } elseif ($values[$this->columns[0]]) {
 
                     $sql_instruction = "UPDATE " . $this->table . " SET ";
                     foreach ($values as $key => $data) {
-                        $data = trim($data);
-                        if ($this->validInjection($data)){
-                            if (is_string($data))
-                                $sql_instruction .= $key . '="' . $data . '",';
-                            elseif (is_int($data) || is_float($data))
-                                $sql_instruction .= $key . "=" . $data . ",";
+                        if ($data){
+                            if ($this->validInjection($data)){
+                                if (is_string($data)){
+                                    $data = trim($data);
+                                    $sql_instruction .= $key . '="' . $data . '",';
+                                }elseif (is_int($data) || is_float($data))
+                                    $sql_instruction .= $key . "=" . $data . ",";
+                            }
+                            else 
+                                return false;
                         }
-                        else 
-                            return false;
                     }
                     $sql_instruction = substr($sql_instruction, 0, -1);
                     $sql_instruction .= "WHERE " . $this->columns[0] . "=" . $values[$this->columns[0]];
                 }
                 $sql = $this->pdo->prepare($sql_instruction);
                 $sql->execute();
+                $this->lastid = $values[$this->columns[0]];
                 return true;
             }
             $this->error[] = "Erro: Valores não informados";
+        } catch (\Exception $e) {
+            $this->error[] = 'Erro: ' .  $e->getMessage();
+        }
+    }
+
+    public function storeMutiPrimary(\stdClass $values){
+        try {
+            if ($values) {
+                $values = (array)$values;
+                $sql_instruction = "INSERT INTO " . $this->table . "(";
+                $keysBD = "";
+                $valuesBD = "";
+                foreach ($values as $key => $data) {
+                    if ($data){
+                        $keysBD .= $key . ",";
+                        if ($this->validInjection($data)){
+                            if (is_string($data) && $data != "null"){
+                                $data = trim($data);
+                                $valuesBD .= "'" . $data . "',";
+                            }elseif (is_int($data) || is_float($data) || $data == "null")
+                                $valuesBD .= $data . ",";
+                        }
+                        else 
+                            return false;
+                    }
+                }
+                $keysBD = substr($keysBD, 0, -1);
+                $sql_instruction .= $keysBD;
+                $sql_instruction .= ") VALUES (";
+                $valuesBD = substr($valuesBD, 0, -1);
+                $sql_instruction .= $valuesBD;
+                $sql_instruction .= ");";
+            }
         } catch (\Exception $e) {
             $this->error[] = 'Erro: ' .  $e->getMessage();
         }
@@ -322,6 +363,24 @@ class Db
         try {
             if ($this->validInjection($id)){
                 $sql = $this->pdo->prepare("DELETE FROM " . $this->table . " WHERE " . $this->columns[0] . "=" . $id);
+                $sql->execute();
+                return true;
+            }
+            else 
+                return false;
+        } catch (\Exception $e) {
+            $this->error[] = 'Erro: ' .  $e->getMessage();
+        }
+    }
+
+    public function deleteByFilter(Array $filters = array())
+    {
+        try {
+            if ($filters){
+                $sql = $this->pdo->prepare("DELETE FROM " . $this->table . " WHERE ");
+                foreach ($filters as $filter){
+                    $sql .= $filter;
+                }
                 $sql->execute();
                 return true;
             }
@@ -366,7 +425,7 @@ class Db
 
         if ($value){
             $badword = array(" select","select "," insert"," update","update "," delete","delete "," drop","drop "," destroy","destroy ");
-            $charvalidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÁÀÃÂÇÉÈÊÍÌÓÒÔÕÚÙÜÑáàãâçéèêíìóòôõúùüñ!?@#$%&(){}[]:;,.-_ ";
+            $charvalidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÁÀÃÂÇÉÈÊÍÌÓÒÔÕÚÙÜÑáàãâçéèêíìóòôõúùüñ!?@#$%&(){}[]:;,.-_/| ";
 
             for ($i=0;$i<sizeof($badword);$i++){
                 if (substr_count($value,$badword[$i])!=0){

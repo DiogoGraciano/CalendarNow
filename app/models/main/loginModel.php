@@ -2,19 +2,17 @@
 namespace app\models\main;
 use app\db\db;
 use app\classes\mensagem;
+use app\classes\functions;
 
 class loginModel{
 
     public static function login($cpf_cnpj,$senha){
         $db = new db("usuario");
-        $colunas = array("cpf_cnpj");
-        $valores = array($cpf_cnpj);
-        $login = $db->selectByValues($colunas,$valores,true);
-
+        $login = $db->selectByValues(array("cpf_cnpj"),array(functions::onlynumber($cpf_cnpj)),true);
         if ($login){
             if (password_verify($senha,$login[0]->senha)){
-                $_SESSION["user"] = $login[0]->cd_login;
-                $_SESSION["nome"] = $login[0]->nm_usuario;
+                $_SESSION["user"] = $login[0];
+                $_SESSION["nome"] = $login[0]->nome;
                 return True;
             }
         }

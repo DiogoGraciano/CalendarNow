@@ -5,6 +5,7 @@ use app\classes\controllerAbstract;
 use app\classes\integracaoWs;
 use app\models\main\cidadeModel;
 use app\models\main\estadoModel;
+use app\models\main\usuarioModel;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -71,6 +72,34 @@ class ajaxController extends controllerAbstract{
         }
 
         echo json_encode($retorno);
+    }
+
+    public function existsCpfCnpj($cpf_cnpj){
+        $usuario = usuarioModel::existsCpfCnpj($cpf_cnpj);
+
+        if(array_key_exists(0,$usuario))
+            $retorno = True;
+        else 
+            $retorno = False;
+
+        $retorno = ["sucesso" => True,
+                    "retorno" => $retorno];
+                    
+        echo json_encode($retorno); 
+    }
+
+    public function existsEmail($email){
+        $usuario = usuarioModel::existsEmail($email);
+
+        if(array_key_exists(0,$usuario))
+            $retorno = True;
+        else 
+            $retorno = False;
+
+        $retorno = ["sucesso" => True,
+                    "retorno" => $retorno];
+                    
+        echo json_encode($retorno); 
     }
 }
 

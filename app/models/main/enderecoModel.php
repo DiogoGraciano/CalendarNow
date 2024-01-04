@@ -3,6 +3,7 @@ namespace app\models\main;
 use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
+use app\classes\functions;
 
 class enderecoModel{
 
@@ -16,7 +17,7 @@ class enderecoModel{
         return $db->selectByValues(["id_usuario"],[$id_usuario],true);
     }
 
-    public static function set($cep,$id_estado,$id_cidade,$rua,$numero,$complemento,$id_usuario="",$cd = ""){
+    public static function set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$cd = "",$id_usuario="",$id_empresa=""){
 
         $db = new db("endereco");
 
@@ -24,9 +25,11 @@ class enderecoModel{
 
         $values->id = $cd;
         $values->id_usuario = $id_usuario;
-        $values->cep = $cep;
+        $values->id_empresa = $id_empresa;
+        $values->cep = (int)functions::onlynumber($cep);
         $values->id_estado = $id_estado;
         $values->id_cidade = $id_cidade;
+        $values->bairro = $bairro;
         $values->rua = $rua;
         $values->numero = $numero;
         $values->complemento = $complemento;
@@ -34,7 +37,7 @@ class enderecoModel{
 
         if ($retorno == true){
             mensagem::setSucesso(array("Endereço salvo com Sucesso"));
-            return True;
+            return $db->lastid;
         }
         else {
             $Mensagems = ($db->getError());

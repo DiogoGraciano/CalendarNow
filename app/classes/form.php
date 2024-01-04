@@ -4,6 +4,7 @@ namespace app\classes;
 use app\classes\pagina;
 use app\classes\mensagem;
 use app\classes\functions;
+use stdClass;
 
 class form extends pagina{
 
@@ -25,9 +26,10 @@ class form extends pagina{
         $this->tplform->block("BLOCK_START");
     }
 
-    public function setinputs($input){
+    public function setinputs($input,$nome=""){
         $tpl= $this->getTemplate("inputs_template.html");
         $tpl->block_um_input = $input;
+        $tpl->nome = $nome;
         $tpl->block("BLOCK_INPUT");
         $this->tplform->input = $tpl->parse();
         $this->tplform->block("BLOCK_INPUT");
@@ -36,28 +38,32 @@ class form extends pagina{
     public function setCustomInputs(array $inputs_custom){
         $tpl= $this->getTemplate("inputs_template.html");
         foreach ($inputs_custom as $custom){ 
-            foreach ($custom as $cus){
-                $tpl->tamanho = $cus->tamanho;
-                $tpl->block_um_input = base64_decode($cus->input);
-                $tpl->block("BLOCK_DIV");
-            }
-            $tpl->block("BLOCK_CUSTOM");
+            $tpl->tamanho = $custom->tamanho;
+            $tpl->nome = $custom->nome;
+            $tpl->block_um_input = base64_decode($custom->input);
+            $tpl->block("BLOCK_DIV"); 
         }
+        $tpl->block("BLOCK_CUSTOM");
         $this->tplform->input = $tpl->parse();
         $this->tplform->block("BLOCK_INPUT");
     }
 
-    public function getCustomInput($tamanho,$input){
-        return json_decode('{
-            "tamanho":"'.$tamanho.'",
-            "input":"'.base64_encode($input).'"
-         }');
+    public function getCustomInput($tamanho,$input,$nome=""){
+
+        $custom = new stdClass;
+        $custom->tamanho = $tamanho;
+        $custom->nome = $nome;
+        $custom->input = base64_encode($input);
+
+        return $custom;
     }
 
-    public function setDoisInputs($input,$input2){
+    public function setDoisInputs($input,$input2,array $nomes = array("","")){
         $tpl=$this->getTemplate("inputs_template.html");
         $tpl->block_dois_input = $input;
+        $tpl->nome_um = $nomes[0];
         $tpl->block_dois_input_dois = $input2;
+        $tpl->nome_dois = $nomes[1];
         $tpl->block("BLOCK_INPUT_DOIS");
         $this->tplform->input = $tpl->parse();
         $this->tplform->block("BLOCK_INPUT");
@@ -69,11 +75,14 @@ class form extends pagina{
         $this->tplform->block("BLOCK_INPUT_HIDDEN");
     }
 
-    public function setTresInputs($input,$input2,$input3){
+    public function setTresInputs($input,$input2,$input3,array $nomes = array("","","")){
         $tpl= $this->getTemplate("inputs_template.html");
         $tpl->block_tres_input = $input;
+        $tpl->nome_um = $nomes[0];
         $tpl->block_tres_input_dois = $input2;
+        $tpl->nome_dois = $nomes[1];
         $tpl->block_tres_input_tres = $input3;
+        $tpl->nome_dois = $nomes[2];
         $tpl->block("BLOCK_INPUT_TRES");
         $this->tplform->input = $tpl->parse();
         $this->tplform->block("BLOCK_INPUT");

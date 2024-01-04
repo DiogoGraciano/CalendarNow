@@ -13,12 +13,23 @@ class elements extends pagina{
         $tpl->class_input = $class_input;
         $tpl->button_action = $button_action;
         $tpl->extra_input = $extra_input;
+        $tpl->nm_input = $nm_input;
         $tpl->button_nome = $button_nome;
 
         $tpl->block("BLOCK_BUTTON");   
 
         return $tpl->parse();
 
+    }
+
+    public function label($titulo){
+        $tpl= $this->getTemplate("elements_template.html");
+
+        $tpl->titulo = $titulo;
+    
+        $tpl->block("BLOCK_LABEL");  
+        
+        return $tpl->parse();
     }
 
     public function checkbox($nm_input,$nm_label,$required=false,$checked=false,$readonly=false,$value="on",$type_input="checkbox",$class_input="form-check-input",$extra_input=""){
@@ -53,8 +64,14 @@ class elements extends pagina{
         $tpl->placeholder = $placeholder;
         $tpl->nm_label = $nm_label;
         $tpl->nm_input = $nm_input;
+
+        if ($vl_input)
+            $tpl->vl_input = $vl_input;
+        elseif($required)
+            $class_input .= " is-invalid";
+        
         $tpl->class_input = $class_input;
-        $tpl->vl_input = $vl_input;
+        
         if ($required == true)
             $extra_input = $extra_input." required";
         if ($readonly == true)
@@ -75,7 +92,10 @@ class elements extends pagina{
         $tpl->placeholder = $placeholder;
         $tpl->nm_input = $nm_input;
         $tpl->class_input = $class_input;
-        $tpl->vl_input = $vl_input;
+        if ($vl_input)
+            $tpl->vl_input = $vl_input;
+        elseif($required)
+            $class_input .= " is-invalid";
         if ($required == true)
             $extra_input = $extra_input." required";
         if ($readonly == true)
@@ -95,6 +115,8 @@ class elements extends pagina{
 
         $tpl->nm_label = $nm_label;
         $tpl->nm_input = $nm_input;
+        if($required && !$vl_option)
+            $class_input .= " is-invalid";
         $tpl->class_input = $class_input;
         if ($required == true)
             $tpl->extra_input = $extra_input." required";
@@ -119,8 +141,9 @@ class elements extends pagina{
 
         $tpl->nm_label = $nm_label;
         $tpl->nm_input = $nm_input;
+        if($required && !$vl_option)
+            $class_input .= " is-invalid";
         $tpl->class_input = $class_input;
-        $tpl->vl_input = $vl_option;
         if ($required == true)
             $tpl->extra_input = $extra_input." required";
 

@@ -12,11 +12,12 @@
         
         if (!isset($_SESSION))
             session_start();
-
-        if (!isset($_SESSION["user"]) && uri::getUri() != "/ajax")
-            $controller = $controller->load("login");
-        else 
+        
+        if (isset($_SESSION["user"]) || uri::getUri() == "/ajax")
             $controller = $controller->load();
+        else 
+            $controller = $controller->load("login");
+            
 
         $method = new Method();
         $method = $method->load($controller);

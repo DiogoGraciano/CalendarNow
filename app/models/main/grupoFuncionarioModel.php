@@ -4,27 +4,26 @@ use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 
-class agendaModel{
+class grupoFuncionarioModel{
 
     public static function get($cd = ""){
-        return modelAbstract::get("agenda",$cd);
+        return modelAbstract::get("grupo_funcionario",$cd);
     }
 
-    public static function set($nome,$id_empresa,$id){
+    public static function set($nome,$id){
 
-        $db = new db("agenda");
+        $db = new db("grupo_funcionario");
         
         $values = $db->getObject();
 
         $values->id = $id;
-        $values->id_empresa = $id_empresa;
         $values->nome = $nome;
 
         if ($values)
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+            mensagem::setSucesso(array("Grupo Funcionario salvo com Sucesso"));
             return True;
         }
         else {
@@ -38,7 +37,7 @@ class agendaModel{
     }
 
     public static function delete($cd){
-        modelAbstract::delete("agenda",$cd);
+        modelAbstract::delete("grupo_funcionario",$cd);
     }
 
 }
