@@ -10,16 +10,9 @@ class form extends pagina{
 
     private $tplform;
     
-    public function __construct($titulo,$action)
+    public function __construct($action)
     {
         $this->tplform = $this->getTemplate("form_template.html");
-        $this->tplform->caminho = functions::getUrlBase();
-        if ($titulo = "LOGO"){
-            $this->tplform->block("BLOCK_LOGO");
-        }else{
-            $this->tplform->titulo = $titulo;
-            $this->tplform->block("BLOCK_TITULO");
-        }
         $mensagem = new mensagem;
         $this->tplform->mensagem = $mensagem->show(false);
         $this->tplform->action = $action;

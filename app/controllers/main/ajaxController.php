@@ -75,9 +75,9 @@ class ajaxController extends controllerAbstract{
     }
 
     public function existsCpfCnpj($cpf_cnpj){
-        $usuario = usuarioModel::existsCpfCnpj($cpf_cnpj);
+        $usuario = usuarioModel::getByCpfCnpj($cpf_cnpj);
 
-        if(array_key_exists(0,$usuario))
+        if(array_key_exists(0,$usuario) && !array_key_exists(1,$usuario))
             $retorno = True;
         else 
             $retorno = False;
@@ -89,9 +89,9 @@ class ajaxController extends controllerAbstract{
     }
 
     public function existsEmail($email){
-        $usuario = usuarioModel::existsEmail($email);
+        $usuario = usuarioModel::getByEmail($email);
 
-        if(array_key_exists(0,$usuario))
+        if(array_key_exists(0,$usuario) && !array_key_exists(1,$usuario))
             $retorno = True;
         else 
             $retorno = False;

@@ -1,12 +1,13 @@
 <?php 
 namespace app\controllers\main;
 use app\classes\head;
-use app\classes\form;
 use app\classes\lista;
 use app\classes\elements;
 use app\classes\footer;
 use app\classes\controllerAbstract;
 use app\models\main\loginModel;
+use app\models\main\agendaModel;
+use app\models\main\usuarioModel;
 
 class homeController extends controllerAbstract{
 
@@ -17,18 +18,24 @@ class homeController extends controllerAbstract{
 
         $elements = new elements;
 
+        $user = usuarioModel::getLogged();
+
+        $agendas = agendaModel::getByUser($user->id);
+
         $lista = new lista();
-        $objetos = array($lista->getObjeto($this->url."agenda","Agendamento"),
-                       $lista->getObjeto($this->url."cliente","Cliente"),
-                       $lista->getObjeto($this->url."conexao","Conexão"),
-                       $lista->getObjeto($this->url."ramal","Ramal"),
-                       $lista->getObjeto($this->url."usuario","Usuario"),
-                       $lista->getObjeto($this->url."tabela","Exportar/Importar"),
-                       $lista->getObjeto($this->url."home/deslogar","Deslogar"));
+
+        $objetos = [];
+
+        if ($agendas){
+            foreach ($agendas as $agenda){
+                $objetos[] = $lista->getObjeto($this->url."agenda_horario/".$agenda->id,$agenda->nome." - ".$agenda->fantasia);
+            }
+        }
 
         $buttons = [
-            $elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."login'"),
-            $elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."login'")
+            $elements->button("Encontrar","encontrar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."encontrar'"),
+            $elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
+            $elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'")
         ]; 
         
         $lista->setLista("Agendas",$objetos);

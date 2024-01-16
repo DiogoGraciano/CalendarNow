@@ -14,12 +14,15 @@ class lista extends pagina{
         $this->tpl->titulo = $titulo;
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
-        $this->tpl->block("BLOCK_LOGO");
-        foreach ($lista as $objeto){
-            $this->tpl->url_objeto = $objeto->url_objeto;
-            $this->tpl->titulo_objeto = $objeto->titulo_objeto; 
-            $this->tpl->block("BLOCK_LISTA");
-        }  
+        if($lista){
+            foreach ($lista as $objeto){
+                $this->tpl->url_objeto = $objeto->url_objeto;
+                $this->tpl->titulo_objeto = $objeto->titulo_objeto; 
+                $this->tpl->block("BLOCK_LISTA");
+            } 
+        }
+        else
+            $this->tpl->block("BLOCK_NO_LISTA");  
     }
     public function setButtons(array $buttons){
         foreach ($buttons as $button){

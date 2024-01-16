@@ -6,11 +6,24 @@ use app\classes\functions;
 
 class head extends pagina{
 
-    public function show($titulo="",$type="",){
+    public function show($titulo="",$type="",$logo="pequena"){
 
         $this->getTemplate("head_template.html");
         $this->tpl->caminho = Functions::getUrlBase();
         $this->tpl->title = $titulo;
+
+        if ($logo=="pequena"){
+            $this->tpl->image = "logo_pequena.png";
+            $this->tpl->block("BLOCK_LOGO"); 
+        }
+        elseif ($logo=="grande"){
+            $this->tpl->image = "logo_pequena.png";
+            $this->tpl->block("BLOCK_LOGO"); 
+        }
+        elseif ($logo){
+            $this->tpl->image = $logo;
+            $this->tpl->block("BLOCK_LOGO"); 
+        }
 
         if ($type=="grafico"){
             $this->tpl->block("BLOCK_GRAFICO");   

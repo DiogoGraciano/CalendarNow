@@ -6,8 +6,10 @@ $(document).ready(function(){
 
     var url_base = window.location.href.split("/");
     url_base = url_base[0]+"//"+url_base[2]+"/";
-    url_login = url_base+"login";
-    url_atual = window.location.href;
+    let url_login = url_base+"login";
+    let url_atual = window.location.href;
+
+    qtd_bara = window.location.href.split("/").length
 
     function showLoader(){
         if (!$("#loader").length){

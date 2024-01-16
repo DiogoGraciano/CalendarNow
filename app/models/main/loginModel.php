@@ -11,8 +11,8 @@ class loginModel{
         $login = $db->selectByValues(array("cpf_cnpj"),array(functions::onlynumber($cpf_cnpj)),true);
         if ($login){
             if (password_verify($senha,$login[0]->senha)){
+                $login[0]->senha = $senha;
                 $_SESSION["user"] = $login[0];
-                $_SESSION["nome"] = $login[0]->nome;
                 return True;
             }
         }

@@ -46,6 +46,9 @@
 	overflow: auto;
 	max-height: 400px;
   }
+  .btn.btn-primary{
+	background-color: #4267b2!important;
+  }
 
   .card {
 	position: relative;

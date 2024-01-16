@@ -2,7 +2,7 @@
 namespace app\controllers\main;
 use app\classes\head;
 use app\classes\form;
-use app\classes\consulta;
+use app\classes\agenda;
 use app\classes\controllerAbstract;
 use app\classes\footer;
 use app\models\main\agendaModel;
@@ -11,10 +11,10 @@ class agendamentoController extends controllerAbstract{
 
     public function index(){
         $head = new head();
-        $head -> show("agendas","consulta");
+        $head -> show("Conexão","agenda");
 
-        $agenda = new consulta();
-        $agenda->show("Agenda",$this->url."agenda/manutencao/",$this->url."agenda/action/");
+        $agenda = new agenda();
+        $agenda->show("Agenda",$this->url."agenda/manutencao/",agendaModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year"))));
       
         $footer = new footer;
         $footer->show();

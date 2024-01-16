@@ -5,6 +5,7 @@ use app\classes\form;
 use app\classes\elements;
 use app\classes\controllerAbstract;
 use app\classes\footer;
+use app\classes\functions;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
@@ -12,8 +13,8 @@ use app\models\main\empresaModel;
 
 class cadastroController extends controllerAbstract{
 
-    public function index(){
-
+    public function index($parameters){
+        
     }
     public function manutencao($parameters = array(),$login=False){
 
@@ -22,31 +23,29 @@ class cadastroController extends controllerAbstract{
 
         $cd = "";
         $tipo_usuario = "";
+        if ($login)
+            $form = new form($this->url."login/save");
+        else
+            $form = new form($this->url."cadastro/action");
 
-
-        if (array_key_exists(0,$parameters))
-            $tipo_usuario = $parameters[0];
-        else{
+        if (array_key_exists(0,$parameters)){
+            $form->setHidden("tipo_usuario",$parameters[0]);
+            $tipo_usuario = functions::decrypt($parameters[0]);
+        }else{
             if ($login)
                 $this->go("login/index");
             else 
                 $this->go("cadastro/index");
         }
 
-        if (array_key_exists(1,$parameters))
-            $cd = $parameters[1];
+        if (array_key_exists(1,$parameters)){
+            $form->setHidden("cd",$parameters[1]);
+            $cd = functions::decrypt($parameters[1]);
+        }
 
         $dado = usuarioModel::get($cd,$tipo_usuario);
 
-        if ($login)
-            $form = new form("LOGO",$this->url."login/save");
-        else
-            $form = new form("LOGO",$this->url."cadastro/action");
-
         $elements = new elements;
-
-        $form->setHidden("cd",$cd);
-        $form->setHidden("tipo_usuario",$tipo_usuario);
 
         $form->setDoisInputs(
             $elements->input("nome","Nome",$dado->nome,true),
@@ -54,13 +53,23 @@ class cadastroController extends controllerAbstract{
             array("nome","cpf_cnpj")
         );
 
-        $form->setTresInputs(
-            $elements->input("email","Email",$dado->email,true,false,"","email"),
-            $elements->input("senha","Senha","",true,false,"","password"),
-            $elements->input("telefone","Telefone","",true),
-            array("email","senha","telefone")
-        );
-        if ($tipo_usuario == "agenda"){
+        if ($cd){
+            $form->setDoisInputs(
+                $elements->input("email","Email",$dado->email,true,false,"","email"),
+                $elements->input("telefone","Telefone",$dado->telefone,true),
+                array("email","senha","telefone")
+            );
+        }
+        else {
+            $form->setTresInputs(
+                $elements->input("email","Email",$dado->email,true,false,"","email"),
+                $elements->input("senha","Senha","",true,false,"","password"),
+                $elements->input("telefone","Telefone",$dado->telefone,true),
+                array("email","senha","telefone")
+            );
+        }
+        
+        if ($tipo_usuario == 1){
             $form->setTresInputs(
                 $elements->input("nome_empresa","Nome da Empresa",$dado->nome,true),
                 $elements->input("fantasia","Nome Fantasia",$dado->nome,true),
@@ -69,10 +78,10 @@ class cadastroController extends controllerAbstract{
             );
         }
 
-        if ($tipo_usuario == "funcionario"){
+        if ($tipo_usuario == 2){
             $form->setDoisInputs(
-                $elements->select("Grupo de Funcionarios","id_grupo_funcionario",$elements->getOptions("grupo_funcionario","id","nome"),$dado->endereco->id_estado?:24,true),
-                $elements->select("Grupo de Servicos","id_grupo_servico",$elements->getOptions("grupo_funcionario","id","nome"),$dado->endereco->id_estado?:24,true),
+                $elements->select("Grupo de Funcionarios","id_grupo_funcionario",$elements->getOptions("grupo_funcionario","id","nome"),$dado->id_estado?:24,true),
+                $elements->select("Grupo de Servicos","id_grupo_servico",$elements->getOptions("grupo_funcionario","id","nome"),$dado->id_estado?:24,true),
                 array("id_grupo_funcionario","id_grupo_servico")
             );
 
@@ -100,24 +109,24 @@ class cadastroController extends controllerAbstract{
 
         }
 
-        if ($tipo_usuario != "funcionario"){
+        if ($tipo_usuario != 2){
             $form->setDoisInputs(
-                $elements->input("cep","CEP",$dado->endereco->cep,true),
-                $elements->select("Estado","id_estado",$elements->getOptions("estado","id","nome"),$dado->endereco->id_estado?:24,true),
+                $elements->input("cep","CEP",$dado->cep,true),
+                $elements->select("Estado","id_estado",$elements->getOptions("estado","id","nome"),$dado->id_estado?:24,true),
                 array("cep","id_estado")
             );
             $form->setDoisInputs(
-                $elements->select("Cidade","id_cidade",cidadeModel::getOptionsbyEstado($dado->endereco->id_estado?:24),$dado->endereco->id_cidade?:4487,true),
-                $elements->input("bairro","Bairro",$dado->endereco->bairro,true),
+                $elements->select("Cidade","id_cidade",cidadeModel::getOptionsbyEstado($dado->id_estado?:24),$dado->id_cidade?:4487,true),
+                $elements->input("bairro","Bairro",$dado->bairro,true),
                 array("bairro","id_cidade")
             );
             $form->setDoisInputs(
-                $elements->input("rua","Rua",$dado->endereco->rua,true),
-                $elements->input("numero","Numero",$dado->endereco->cep,true,false,"","number","form-control",'min="0" max="999999"'),
+                $elements->input("rua","Rua",$dado->rua,true),
+                $elements->input("numero","Numero",$dado->numero,true,false,"","number","form-control",'min="0" max="999999"'),
                 array("rua","numero")
             );
             $form->setInputs(
-                $elements->textarea("complemento","Complemento",$dado->endereco->complemento,true),"complemento"
+                $elements->textarea("complemento","Complemento",$dado->complemento,true),"complemento"
             );
         }
       
@@ -130,10 +139,10 @@ class cadastroController extends controllerAbstract{
     }
     public function action($parameters = array(),$login=""){
 
-        $tipo_usuario = $this->getValue('tipo_usuario');
+        $tipo_usuario = functions::decrypt($this->getValue('tipo_usuario'));
        
         if ($tipo_usuario == "agenda" || $tipo_usuario == "usuario"){
-            $cd = $this->getValue('cd');
+            $cd = functions::decrypt($this->getValue('cd'));
             $nome = $this->getValue('nome');
             $cpf_cnpj = $this->getValue('cpf_cnpj');
             $senha = $this->getValue('senha');
@@ -170,28 +179,30 @@ class cadastroController extends controllerAbstract{
                 $this->go("cadastro/index");
         }
 
-        $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario);
-        if ($id_usuario && $tipo_usuario == 3){
+        
+        if ($tipo_usuario == 3){
+            $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario);
             $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario);
-            if ($id_endereco){
+            if ($id_endereco && $id_usuario){
                 if ($login)
-                    $this->go("login/index/".base64_encode($cpf_cnpj)."/".base64_encode($senha));
+                    $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                 else 
                     $this->go("cadastro/index");
             }
             else
                 usuarioModel::delete($id_usuario);
         }
-        elseif ($id_usuario && $tipo_usuario == 2){
+        elseif ($tipo_usuario == 2){
            
         }
-        elseif ($id_usuario && $tipo_usuario == 1){
+        elseif ($tipo_usuario == 1){      
             $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$razao,$fantasia);
-            if ($id_empresa){
+            $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
+            if ($id_empresa && $id_usuario){
                 $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"","",$id_empresa);
                 if ($id_endereco){
                     if ($login)
-                        $this->go("login/index/".base64_encode($cpf_cnpj)."/".base64_encode($senha));
+                        $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                     else 
                         $this->go("cadastro/index");
                 }else{

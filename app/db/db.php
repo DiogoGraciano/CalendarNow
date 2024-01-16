@@ -164,9 +164,12 @@ class Db
     }
 
     //Retorna um array com todos os registro da tabela
-    public function selectAll(Array $filters = array(),$propertys = array())
+    public function selectAll(Array $filters = array(),$propertys = array(),$joins = array())
     {
         $sql = "SELECT * FROM " . $this->table;
+        foreach ($joins as $join){
+            $sql .= $join;
+        }
         if ($filters){
             $sql .= " WHERE ";
             $i = 1;
@@ -189,7 +192,7 @@ class Db
     }
 
     //retorna um array com registros referentes a essas colunas
-    public function selectColumns(Array $columns, Array $filters = array(),$propertys = array())
+    public function selectColumns(Array $columns, Array $filters = array(),$propertys = array(),$joins = array())
     {
         $sql = "SELECT ";
         foreach ($columns as $column){
@@ -197,6 +200,9 @@ class Db
         }
         $sql = substr($sql, 0, -1);
         $sql .= " FROM ".$this->table;
+        foreach ($joins as $join){
+            $sql .= $join;
+        }
         if ($filters){
             $sql .= "WHERE ";
             $i = 1;
@@ -218,7 +224,7 @@ class Db
     }
 
     //faz um select com as colunas e os valores passados
-    public function selectByValues(Array $columns,array $values,$all=false,Array $filters = array(),$propertys = array()){
+    public function selectByValues(Array $columns,array $values,$all=false,Array $filters = array(),$propertys = array(),$joins = array()){
         if (count($columns) == count($values)){
             $conditions = [];
             $sql = "SELECT ";
@@ -231,9 +237,9 @@ class Db
 
                 if ($this->validInjection($value)){  
                     if (is_string($value) && $value != "null")
-                        $conditions[] = $column." = '".$value."' and ";
+                        $conditions[] = $this->table.".".$column." = '".$value."' and ";
                     elseif (is_int($value) || is_float($value) || $value == "null")
-                        $conditions[] = $column." = ".$value." and ";  
+                        $conditions[] = $this->table.".".$column." = ".$value." and ";  
                     $i++;
                 }
                 else 
@@ -244,6 +250,9 @@ class Db
                 $sql .= " *";
             }
             $sql .= " FROM ".$this->table;
+            foreach ($joins as $join){
+                $sql .= $join;
+            }
             $sql .= " WHERE ";
             foreach ($conditions as $condition){
                 $sql .= $condition;
@@ -414,6 +423,10 @@ class Db
 
     public function getGroup($columns){
         return " GROUP by ".$columns;
+    }
+
+    public function getJoin($type,$table,$condition_from,$condition_to){
+        return " ".$type." JOIN ".$table." on ".$condition_from." = ".$condition_to;
     }
 
     //valida se foi feito tentatiava de sql injection

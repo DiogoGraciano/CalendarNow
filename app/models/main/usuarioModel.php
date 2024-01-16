@@ -5,63 +5,80 @@ use app\classes\mensagem;
 use app\classes\functions;
 use app\classes\modelAbstract;
 use app\models\main\enderecoModel;
+use app\models\main\loginModel;
+use stdClass;
 
 class usuarioModel{
 
-    public static function get($cd = ""){
-        $usuario = modelAbstract::get("usuario",$cd);
-        if ($usuario->id)
-            $usuario->endereco = enderecoModel::getByIdUsuario($usuario->id);
-        else 
-            $usuario->endereco =  enderecoModel::get();
+    public static function get($cd,$tipo_usuario){
+        $db = new db("usuario");
 
-        return $usuario;
+        $usuario = "";
+
+        if ($tipo_usuario == 3 || $tipo_usuario == 2){
+            $usuario = $db->selectByValues(["id"],[$cd],true,[],[],[
+                $db->getJoin("INNER","endereco","endereco.id_usuario","usuario.id")
+            ]);
+        }
+        if ($tipo_usuario == 1 || $tipo_usuario == 0){
+            $usuario = $db->selectByValues(["id"],[$cd],true,[],[],[
+                $db->getJoin("INNER","empresa","usuario.id_empresa","empresa.id"),
+                $db->getJoin("INNER","endereco","endereco.id_empresa","usuario.id")
+            ]);
+        }
+
+        if (!$usuario){
+            $usuario = $db->getObject();
+            $usuario = (object)array_merge((array)$usuario,(array)enderecoModel::get());
+            return $usuario;
+        }
+
+        return $usuario[0];
+    }
+
+    public static function getLogged(){
+        if (isset($_SESSION["user"]) && $_SESSION["user"])
+            return $_SESSION["user"];
+
+        loginModel::deslogar();
     }
 
     public static function getByCpfEmail($cpf_cnpj,$email){
 
         $db = new db("usuario");
 
-        $columns = ["cpf_cnpj","email"];
-        $values = [$cpf_cnpj,$email];
-
-        $usuario = $db->selectByValues($columns,$values,True);
+        $usuario = $db->selectByValues(["cpf_cnpj","email"],[$cpf_cnpj,$email],True);
 
         return $usuario;
     }
 
-    public static function existsCpfCnpj($cpf_cnpj){
+    public static function getByCpfCnpj($cpf_cnpj){
 
         $db = new db("usuario");
 
-        $columns = ["cpf_cnpj"];
-        $values = [$cpf_cnpj];
-
-        $usuario = $db->selectByValues($columns,$values);
+        $usuario = $db->selectByValues(["cpf_cnpj"],[$cpf_cnpj]);
 
         return $usuario;
     }
 
-    public static function existsEmail($email){
+    public static function getByEmail($email){
 
         $db = new db("usuario");
 
-        $columns = ["email"];
-        $values = [$email];
-
-        $usuario = $db->selectByValues($columns,$values);
+        $usuario = $db->selectByValues(["email"],[$email]);
 
         return $usuario;
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd="",$tipo_usuario = 3){
+    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd="",$tipo_usuario = 3,$id_empresa="null"){
 
         $db = new db("usuario");
     
-        $values = $db->getObject();
+        $values = new stdClass;
 
         if ($values){
             $values->id = $cd;
+            $values->id_empresa = $id_empresa;
             $values->cpf_cnpj = (int)functions::onlynumber($cpf_cnpj);
             $values->nome = $nome;
             $values->email= $email;
