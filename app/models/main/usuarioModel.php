@@ -87,7 +87,7 @@ class usuarioModel{
         }
         if ($retorno == true){
             mensagem::setSucesso(array("Usuario salvo com Sucesso"));
-            return $db->lastid;
+            return $db->getLastID();
         }
         else {
             $Mensagems = ($db->getError());

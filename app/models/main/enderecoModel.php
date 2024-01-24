@@ -37,7 +37,7 @@ class enderecoModel{
 
         if ($retorno == true){
             mensagem::setSucesso(array("Endereço salvo com Sucesso"));
-            return $db->lastid;
+            return $db->getLastID();
         }
         else {
             $Mensagems = ($db->getError());

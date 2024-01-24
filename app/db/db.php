@@ -14,7 +14,7 @@ class Db
     private $joins =[];
     private $propertys =[];
     private $filters =[];
-    public $lastid;
+    private $lastid;
 
     function __construct($table)
     {
@@ -60,7 +60,7 @@ class Db
     }
 
     //Retorna o ultimo ID da tabela
-    public function getlastId()
+    private function getlastIdBd()
     {
         $rows = $this->selectInstruction('SELECT ' . $this->columns[0] . ' FROM ' . $this->table . ' ORDER BY ' . $this->columns[0] . ' DESC LIMIT 1');
         if ($rows) {
@@ -69,6 +69,10 @@ class Db
         } else {
             $this->error[] = "Erro: Tabela não encontrada";
         }
+    }
+
+    public function getLastID(){
+        return $this->lastid;
     }
 
     //Retorna o retorna os erros
@@ -282,7 +286,7 @@ class Db
             if ($values) {
                 $values = (array)$values;
                 if (!$values[$this->columns[0]]) {
-                    $values[$this->columns[0]] = $this->getlastId() + 1;
+                    $values[$this->columns[0]] = $this->getlastIdBd() + 1;
                     $sql_instruction = "INSERT INTO " . $this->table . "(";
                     $keysBD = "";
                     $valuesBD = "";
