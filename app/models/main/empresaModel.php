@@ -10,21 +10,22 @@ class empresaModel{
         return modelAbstract::get("empresa",$cd);
     }
 
-    public static function set($nome,$cpf_cnpj,$razao,$fantasia){
+    public static function set($nome,$cpf_cnpj,$razao,$fantasia,$id=""){
 
         $db = new db("empresa");
 
         $values = $db->getObject();
 
+        $values->id = $id;
         $values->nome = $nome;
-        $values->cpf_cnpj = $cpf_cnpj;
+        $values->cnpj = $cpf_cnpj;
         $values->razao = $razao;
         $values->fantasia = $fantasia;
         $retorno = $db->store($values);
         
         if ($retorno == true){
             mensagem::setSucesso(array("Empresa salvo com Sucesso"));
-            return True;
+            return $db->getLastID();
         }
         else {
             $Mensagems = ($db->getError());

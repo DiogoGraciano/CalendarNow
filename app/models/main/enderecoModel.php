@@ -17,7 +17,7 @@ class enderecoModel{
         return $db->selectByValues(["id_usuario"],[$id_usuario],true);
     }
 
-    public static function set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$cd = "",$id_usuario="null",$id_empresa="null"){
+    public static function set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento="null",$cd = "",$id_usuario="null",$id_empresa="null"){
 
         $db = new db("endereco");
 

@@ -13,7 +13,7 @@ class cidadeModel{
     public static function getByNome($nome){
         $db = new db("cidade");
 
-        $cidade = $db->selectAll()->addFilter("nome","LIKE","%".$nome."%")->addFilter(1);
+        $cidade = $db->addFilter("nome","LIKE","%".$nome."%")->addLimit(1)->selectAll();
 
         return $cidade;
     }
@@ -21,7 +21,7 @@ class cidadeModel{
     public static function getByNomeIdUf($nome,$id_uf){
         $db = new db("cidade");
 
-        $cidade = $db->selectByValues(array("uf"),array($id_uf),true)->addFilter("nome","LIKE","%".$nome."%")->addFilter(1);
+        $cidade = $db->addFilter("nome","LIKE","%".$nome."%")->addLimit(1)->selectByValues(array("uf"),array($id_uf),true);
 
         return $cidade;
     }
@@ -50,7 +50,7 @@ class cidadeModel{
     public static function getByEstado($id_estado){
         $db = new db("cidade");
 
-        $cidade = $db->selectAll()->addFilter("uf","=",$id_estado);
+        $cidade = $db->addFilter("uf","=",$id_estado)->selectAll();
 
         return $cidade;
     }

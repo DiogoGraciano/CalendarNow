@@ -7,7 +7,9 @@ abstract class controllerAbstract{
 
     public function __construct()
     {
-        $this->url = "http://".$_SERVER['HTTP_HOST']."/";
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+	    $domainName = $_SERVER['HTTP_HOST'];
+	    $this->url = $protocol.$domainName."/";
     }
 
     public function setList($nome,$valor){
@@ -33,7 +35,8 @@ abstract class controllerAbstract{
     }
 
     public function go($caminho){
-        header("Location: ".$this->url.$caminho);
+        echo '<meta http-equiv="refresh" content="0;url='.$this->url.$caminho.'">';
+        exit;
     }
 }
 

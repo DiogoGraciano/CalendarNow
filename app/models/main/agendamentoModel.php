@@ -4,7 +4,7 @@ use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 
-class agendaModel{
+class agendamentoModel{
 
     public static function get($cd = ""){
         return modelAbstract::get("agendamento",$cd);
@@ -12,7 +12,7 @@ class agendaModel{
 
     public static function getEvents($dt_inicio,$dt_fim){
         $db = new db("agendamento");
-        $results = $db->selectAll()->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim);
+        $results = $db->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim)->selectAll();
 
         $retorn = [];
 

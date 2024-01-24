@@ -16,13 +16,10 @@ class usuarioModel{
         $usuario = "";
 
         if ($tipo_usuario == 3 || $tipo_usuario == 2){
-            $usuario = $db->selectByValues(["id"],[$cd],true)
-            ->addJoin("INNER","endereco","endereco.id_usuario","usuario.id");
+            $usuario = $db->addJoin("INNER","endereco","endereco.id_usuario","usuario.id")->selectByValues(["id"],[$cd],true);
         }
         if ($tipo_usuario == 1 || $tipo_usuario == 0){
-            $usuario = $db->selectByValues(["id"],[$cd],true)
-            ->addJoin("INNER","empresa","usuario.id_empresa","empresa.id")
-            ->addJoin("INNER","endereco","endereco.id_empresa","usuario.id");
+            $usuario = $db ->addJoin("INNER","empresa","usuario.id_empresa","empresa.id")->addJoin("INNER","endereco","endereco.id_empresa","usuario.id")->selectByValues(["id"],[$cd],true);
         }
 
         if (!$usuario){
@@ -72,7 +69,7 @@ class usuarioModel{
 
         $db = new db("usuario");
     
-        $values = new stdClass;
+        $values = $db->getObject();
 
         if ($values){
             $values->id = $cd;

@@ -10,20 +10,19 @@ class agendaModel{
         return modelAbstract::get("agenda",$cd);
     }
 
-    public static function getByUser($cd = ""){
+    public static function getByEmpresa($cd = ""){
         $db = new db("agenda");
         
-        $values = $db->selectByValues(["id_usuario"],[$cd],true)
-        ->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
-        ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
-
+        $values = $db->addFilter("agenda.id_empresa","=",$cd)
+                     ->selectColumns(["id","agenda.nome"]);
+        
         if($values)
             return $values;
         
         return false;
     }
 
-    public static function set($nome,$id_empresa,$id){
+    public static function set($nome,$id_empresa,$id=""){
 
         $db = new db("agenda");
         

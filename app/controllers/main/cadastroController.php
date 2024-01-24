@@ -40,7 +40,6 @@ class cadastroController extends controllerAbstract{
 
         if (array_key_exists(1,$parameters)){
             $form->setHidden("cd",$parameters[1]);
-            $form->setHidden("tipo_usuario",$parameters[0]);
             $cd = functions::decrypt($parameters[1]);
         }
 
@@ -175,6 +174,7 @@ class cadastroController extends controllerAbstract{
                         $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                     else 
                         $this->go("cadastro/index");
+
                 }else{
                     empresaModel::delete($id_empresa);
                     usuarioModel::delete($id_usuario);
@@ -192,22 +192,21 @@ class cadastroController extends controllerAbstract{
         }
         elseif ($tipo_usuario == 3){ 
             $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario);
-            $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario);
-            if ($id_endereco && $id_usuario){
-                if ($login)
-                    $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
-                else 
-                    $this->go("cadastro/index");
-            }
-            else
+            if ($id_usuario){
+                $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario);
+                if($id_endereco){
+                    if ($login)
+                        $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
+                    else 
+                        $this->go("cadastro/index");
+                }
                 usuarioModel::delete($id_usuario);
+            }
         }
-        else{
-            if ($login)
-                $this->go("login/cadastro/".$tipo_usuario);
-            else 
-                $this->go("cadastro/manutencao/".$tipo_usuario);
-        }
+        if ($login)
+            $this->go("login/cadastro/".functions::encrypt($tipo_usuario));
+        else 
+            $this->go("cadastro/manutencao/".functions::encrypt($tipo_usuario)); 
     }
 
 }

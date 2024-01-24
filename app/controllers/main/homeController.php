@@ -32,11 +32,19 @@ class homeController extends controllerAbstract{
             }
         }
 
-        $buttons = [
-            $elements->button("Encontrar","encontrar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."encontrar'"),
-            $elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
-            $elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'")
-        ]; 
+        if ($user->tipo_usuario == 0 || $user->tipo_usuario == 1 || $user->tipo_usuario == 2){
+            $buttons = [
+                $elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
+                $elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'")
+            ]; 
+        }
+        else{
+            $buttons = [
+                $elements->button("Encontrar","encontrar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."encontrar'"),
+                $elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
+                $elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'")
+            ]; 
+        }
         
         $lista->setLista("Agendas",$objetos);
 

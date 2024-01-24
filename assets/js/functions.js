@@ -47,10 +47,16 @@ $(document).ready(function(){
     setInterval(verificarEDesabilitarBotao, 1000);
 
     setTimeout(function() {
-      $(".alert").fadeOut("fast", function(){
+      $(".alert-success").fadeOut("fast", function(){
         $(this).alert('close');
       });				
-    }, 4000);			
+    }, 6000);			
+
+    setTimeout(function() {
+      $(".alert-danger").fadeOut("fast", function(){
+        $(this).alert('close');
+      });				
+    }, 6000);	
 
     $("#pesquisa").on("keyup", function() {
       var value = $(this).val().toLowerCase();
