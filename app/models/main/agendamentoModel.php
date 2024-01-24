@@ -12,10 +12,7 @@ class agendaModel{
 
     public static function getEvents($dt_inicio,$dt_fim){
         $db = new db("agendamento");
-        $results = $db->selectAll(array(
-            $db->getFilter("dt_inicio",">=",$dt_inicio),
-            $db->getFilter("dt_fim","<=",$dt_fim))
-        );
+        $results = $db->selectAll()->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim);
 
         $retorn = [];
 

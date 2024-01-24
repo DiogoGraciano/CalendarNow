@@ -16,15 +16,13 @@ class usuarioModel{
         $usuario = "";
 
         if ($tipo_usuario == 3 || $tipo_usuario == 2){
-            $usuario = $db->selectByValues(["id"],[$cd],true,[],[],[
-                $db->getJoin("INNER","endereco","endereco.id_usuario","usuario.id")
-            ]);
+            $usuario = $db->selectByValues(["id"],[$cd],true)
+            ->addJoin("INNER","endereco","endereco.id_usuario","usuario.id");
         }
         if ($tipo_usuario == 1 || $tipo_usuario == 0){
-            $usuario = $db->selectByValues(["id"],[$cd],true,[],[],[
-                $db->getJoin("INNER","empresa","usuario.id_empresa","empresa.id"),
-                $db->getJoin("INNER","endereco","endereco.id_empresa","usuario.id")
-            ]);
+            $usuario = $db->selectByValues(["id"],[$cd],true)
+            ->addJoin("INNER","empresa","usuario.id_empresa","empresa.id")
+            ->addJoin("INNER","endereco","endereco.id_empresa","usuario.id");
         }
 
         if (!$usuario){

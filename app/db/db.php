@@ -11,6 +11,9 @@ class Db
     private $object;
     private $columns;
     private $error = [];
+    private $joins =[];
+    private $propertys =[];
+    private $filters =[];
     public $lastid;
 
     function __construct($table)
@@ -164,16 +167,16 @@ class Db
     }
 
     //Retorna um array com todos os registro da tabela
-    public function selectAll(Array $filters = array(),$propertys = array(),$joins = array())
+    public function selectAll()
     {
         $sql = "SELECT * FROM " . $this->table;
-        foreach ($joins as $join){
+        foreach ($this->joins as $join){
             $sql .= $join;
         }
-        if ($filters){
+        if ($this->filters){
             $sql .= " WHERE ";
             $i = 1;
-            foreach ($filters as $filter){
+            foreach ($this->filters as $filter){
                 if ($i == 1){
                     $sql .= substr($filter,4);
                     $i++;
@@ -182,17 +185,17 @@ class Db
                 }
             }    
         }
-        foreach ($propertys as $property){
+        foreach ($this->propertys as $property){
             $sql .= $property;
         }
         
         $object = $this->selectInstruction($sql,true);
-
+        $this->clean();
         return $object;
     }
 
     //retorna um array com registros referentes a essas colunas
-    public function selectColumns(Array $columns, Array $filters = array(),$propertys = array(),$joins = array())
+    public function selectColumns(Array $columns)
     {
         $sql = "SELECT ";
         foreach ($columns as $column){
@@ -200,13 +203,13 @@ class Db
         }
         $sql = substr($sql, 0, -1);
         $sql .= " FROM ".$this->table;
-        foreach ($joins as $join){
+        foreach ($this->joins as $join){
             $sql .= $join;
         }
-        if ($filters){
+        if ($this->filters){
             $sql .= "WHERE ";
             $i = 1;
-            foreach ($filters as $filter){
+            foreach ($this->filters as $filter){
                 if ($i == 1){
                     $sql .= substr($filter,4);
                     $i++;
@@ -215,16 +218,16 @@ class Db
                 }
             }    
         }
-        foreach ($propertys as $property){
+        foreach ($this->propertys as $property){
             $sql .= $property;
         }
         $object = $this->selectInstruction($sql,true);
-
+        $this->clean();
         return $object;
     }
 
     //faz um select com as colunas e os valores passados
-    public function selectByValues(Array $columns,array $values,$all=false,Array $filters = array(),$propertys = array(),$joins = array()){
+    public function selectByValues(Array $columns,array $values,$all=false){
         if (count($columns) == count($values)){
             $conditions = [];
             $sql = "SELECT ";
@@ -250,7 +253,7 @@ class Db
                 $sql .= " *";
             }
             $sql .= " FROM ".$this->table;
-            foreach ($joins as $join){
+            foreach ($this->joins as $join){
                 $sql .= $join;
             }
             $sql .= " WHERE ";
@@ -258,15 +261,15 @@ class Db
                 $sql .= $condition;
             }
             $sql = substr($sql, 0, -4);
-            foreach ($filters as $filter){
+            foreach ($this->filters as $filter){
                 $sql .= $filter;
             }
-            foreach ($propertys as $property){
+            foreach ($this->propertys as $property){
                 $sql .= $property;
             }
 
             $object = $this->selectInstruction($sql,true);
-
+            $this->clean();
             return $object;
         }else 
            $this->error[] = "Erro: Quantidade de colunas diferente do total de Valores";
@@ -382,15 +385,16 @@ class Db
         }
     }
 
-    public function deleteByFilter(Array $filters = array())
+    public function deleteByFilter()
     {
         try {
-            if ($filters){
+            if ($this->filters){
                 $sql = $this->pdo->prepare("DELETE FROM " . $this->table . " WHERE ");
-                foreach ($filters as $filter){
+                foreach ($this->filters as $filter){
                     $sql .= $filter;
                 }
                 $sql->execute();
+                $this->clean();
                 return true;
             }
             else 
@@ -400,33 +404,38 @@ class Db
         }
     }
 
-    public function getFilter($column,$condition,$value,$operator="AND"){
+    public function addFilter($column,$condition,$value,$operator="AND"){
         if ($this->validInjection($value)){  
             if (is_string($value) && $value != "null")
-                return " ".$operator." ".$column." ".$condition." '".$value."' ";
+                $this->filters[] = " ".$operator." ".$column." ".$condition." '".$value."' ";
             elseif (is_int($value) || is_float($value) || $value == "null")
-                return " ".$operator." ".$column." ".$condition." ".$value." ";  
+                $this->filters[] = " ".$operator." ".$column." ".$condition." ".$value." ";  
         }
-        return "";
     }
 
-    public function getOrder($column,$order="DESC"){
-        return " ORDER by ".$column." ".$order;
+    public function addOrder($column,$order="DESC"){
+        $this->propertys[] = " ORDER by ".$column." ".$order;
     }
 
-    public function getLimit($limitIni,$limitFim=""){
+    public function addLimit($limitIni,$limitFim=""){
         if ($limitFim)
-            return " LIMIT ".$limitIni.",".$limitFim;
+            $this->propertys[] = " LIMIT ".$limitIni.",".$limitFim;
         else 
-            return " LIMIT ".$limitIni;
+            $this->propertys[] = " LIMIT ".$limitIni;
     }
 
-    public function getGroup($columns){
-        return " GROUP by ".$columns;
+    public function addGroup($columns){
+        $this->propertys[] = " GROUP by ".$columns;
     }
 
-    public function getJoin($type,$table,$condition_from,$condition_to){
-        return " ".$type." JOIN ".$table." on ".$condition_from." = ".$condition_to;
+    public function addJoin($type,$table,$condition_from,$condition_to){
+        $this->joins[] = " ".$type." JOIN ".$table." on ".$condition_from." = ".$condition_to;
+    }
+
+    private function clean(){
+        $this->joins = [];
+        $this->propertys = [];
+        $this->filters = [];
     }
 
     //valida se foi feito tentatiava de sql injection

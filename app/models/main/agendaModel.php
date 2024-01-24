@@ -13,9 +13,9 @@ class agendaModel{
     public static function getByUser($cd = ""){
         $db = new db("agenda");
         
-        $values = $db->selectByValues(["id_usuario"],[$cd],true,[],[],
-        [$db->getJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id"),
-         $db->getJoin("INNER","empresa","agenda.id_empresa","empresa.id")]);
+        $values = $db->selectByValues(["id_usuario"],[$cd],true)
+        ->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
+        ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
 
         if($values)
             return $values;
