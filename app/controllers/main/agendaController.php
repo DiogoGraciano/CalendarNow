@@ -23,7 +23,7 @@ class agendaController extends controllerAbstract{
         $buttons = [$elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")]; 
 
         $agenda = new consulta();
-        $agenda->addColumns("10","Id","id")->addColumns("90","Nome","nome")
+        $agenda->addColumns("10","Id","id")->addColumns("80","Nome","nome")->addColumns("20","Ações","acoes")
         ->show($this->url."agenda/manutencao/".functions::encrypt($user->id_empresa),$this->url."agenda/action/",$buttons,agendaModel::getByEmpresa($user->id_empresa));
       
         $footer = new footer;
@@ -62,15 +62,22 @@ class agendaController extends controllerAbstract{
     }
     public function action($parameters){
 
+        $user = usuarioModel::getLogged();
+
         if ($parameters){
-            agendaModel::delete($parameters[0]);
+            $cd = functions::decrypt($parameters[0]);
+            agendaModel::deleteAgendaUsuario($user->id,$cd);
+            agendaModel::delete($cd);
             $this->go("agenda");
         }
 
+        $id = functions::decrypt($this->getValue('cd'));
         $nome  = $this->getValue('nome');
         $id_empresa  = functions::decrypt($this->getValue('id_empresa'));
 
-        agendaModel::set($nome,$id_empresa);
+        if ($id_agenda = agendaModel::set($nome,$id_empresa,$id) && !$id){ 
+            agendaModel::setAgendaUsuario($user->id,$id_agenda);
+        }
 
         $this->go("agenda");
     }

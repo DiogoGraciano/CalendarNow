@@ -8,7 +8,7 @@ class consulta extends pagina{
 
     private $columns = [];
 
-    public function show($pagina_manutencao,$pagina_action,array $array_button,$dados){
+    public function show($pagina_manutencao,$pagina_action,array $array_button,$dados,$coluna_action="id"){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
 
@@ -36,12 +36,12 @@ class consulta extends pagina{
                     if (in_array($key,$colunas_html)){
                         $this->tpl->data = $value;
                         $this->tpl->block("BLOCK_DADOS");
-                    }  
-                    if ($key == $columns[0]){
-                        $this->tpl->cd_editar = $value;
-                        $this->tpl->cd_excluir = $value;
-                        $this->tpl->block("BLOCK_BUTTONS_TB");  
-                    }
+                    } 
+                    if ($key == $coluna_action){
+                        $this->tpl->cd_editar = functions::encrypt($value);
+                        $this->tpl->cd_excluir = functions::encrypt($value);
+                        $this->tpl->block("BLOCK_BUTTONS_TB"); 
+                    } 
                 } 
                 $this->tpl->block('BLOCK_TABELA');
             }

@@ -28,7 +28,7 @@ class homeController extends controllerAbstract{
 
         if ($agendas){
             foreach ($agendas as $agenda){
-                $objetos[] = $lista->getObjeto($this->url."agenda_horario/".$agenda->id,$agenda->nome." - ".$agenda->fantasia);
+                $objetos[] = $lista->getObjeto($this->url."agenda_horario/".$agenda->id,$agenda->nome." - ".$agenda->emp_nome);
             }
         }
 

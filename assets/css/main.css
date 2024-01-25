@@ -88,3 +88,8 @@
 	letter-spacing: 0;
 	line-height: normal;
   }
+
+  button a {
+    color: white;
+    text-decoration: none;
+  }
