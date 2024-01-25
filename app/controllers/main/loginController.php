@@ -71,7 +71,7 @@ class loginController extends controllerAbstract{
 
         $usuario = usuarioModel::getByCpfEmail($cpf_cnpj,$email);
 
-        $this->go("cadastro/manutencao/usuario/".$usuario->id);
+        $this->go("cadastro/manutencao/".functions::encrypt($usuario->tipo_usuario)."/".functions::encrypt($usuario->id));
     }
 
     public function cadastro($parameters = array()){

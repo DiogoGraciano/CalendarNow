@@ -4,17 +4,58 @@ use app\classes\head;
 use app\classes\form;
 use app\classes\elements;
 use app\classes\controllerAbstract;
+use app\classes\consulta;
 use app\classes\footer;
 use app\classes\functions;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
 use app\models\main\empresaModel;
+use app\models\main\funcionarioModel;
 
 class cadastroController extends controllerAbstract{
 
     public function index($parameters){
+
+        $head = new head();
+        $head -> show("agendas","consulta");
+
+        $tipo_usuario = "";
+
+        if (array_key_exists(0,$parameters)){
+            $tipo_usuario = functions::decrypt($parameters[0]);
+        }
+
+        $elements = new elements;
+
+        $user = usuarioModel::getLogged();
+
+        $buttons = [$elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")]; 
+
+        $cadastro = new consulta();
+
+        $cadastro->addColumns("1","Id","id")->addColumns("15","CPF/CNPJ","cpf_cnpj")->addColumns("15","Email","email")->addColumns("10","Telefone","telefone");
+
         
+        if ($tipo_usuario == 1 || $tipo_usuario == 0){
+            $cadastro->addColumns("20","CPF/CNPJ Empresa","cnpj")->addColumns("20","Empresa","nome_empresa");
+            $dados = empresaModel::getEmpresa();
+        }
+        if ($tipo_usuario == 2){
+            $cadastro->addColumns("10","Grupo de Funcionarios","grupo_funcionario")
+            ->addColumns("10","Grupo de Servicos","grupo_servico")
+            ->addColumns("10","Hora de Inicio","hora_ini")
+            ->addColumns("10","Hora de Fim","hora_fim")
+            ->addColumns("15","Dias","dia");
+            $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
+        }
+
+        $cadastro->addColumns("14","Ações","acoes");
+
+        $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$buttons,$dados);
+      
+        $footer = new footer;
+        $footer->show();
     }
     public function manutencao($parameters = array(),$login=False){
 
@@ -53,22 +94,13 @@ class cadastroController extends controllerAbstract{
             array("nome","cpf_cnpj")
         );
 
-        if ($cd){
-            $form->setDoisInputs(
-                $elements->input("email","Email",$dado->email,true,false,"","email"),
-                $elements->input("telefone","Telefone",$dado->telefone,true),
-                array("email","senha","telefone")
-            );
-        }
-        else {
-            $form->setTresInputs(
-                $elements->input("email","Email",$dado->email,true,false,"","email"),
-                $elements->input("senha","Senha","",true,false,"","password"),
-                $elements->input("telefone","Telefone",$dado->telefone,true),
-                array("email","senha","telefone")
-            );
-        }
-        
+        $form->setTresInputs(
+            $elements->input("email","Email",$dado->email,true,false,"","email"),
+            $elements->input("senha","Senha","",true,false,"","password"),
+            $elements->input("telefone","Telefone",$dado->telefone,true),
+            array("email","senha","telefone")
+        );
+      
         if ($tipo_usuario == 1){
             $form->setTresInputs(
                 $elements->input("nome_empresa","Nome da Empresa",$dado->nome,true),
@@ -86,13 +118,13 @@ class cadastroController extends controllerAbstract{
             );
 
             $dias = [
-                $form->getCustomInput(2,$elements->checkbox("dom","Domingo"),"dom"),
-                $form->getCustomInput(2,$elements->checkbox("seg","Segunda"),"seg"),
-                $form->getCustomInput(2,$elements->checkbox("ter","Terça"),"ter"),
-                $form->getCustomInput(2,$elements->checkbox("qua","Quarta"),"qua"),
-                $form->getCustomInput(2,$elements->checkbox("qui","Quinta"),"qui"),
-                $form->getCustomInput(2,$elements->checkbox("sex","Sexta"),"sex"),
-                $form->getCustomInput(2,$elements->checkbox("sab","Sabado"),"sab"),
+                $form->getCustomInput(2,$elements->checkbox("dom","Domingo",false,false,false,"dom"),"dom"),
+                $form->getCustomInput(2,$elements->checkbox("seg","Segunda",false,false,false,"seg"),"seg"),
+                $form->getCustomInput(2,$elements->checkbox("ter","Terça",false,false,false,"ter"),"ter"),
+                $form->getCustomInput(2,$elements->checkbox("qua","Quarta",false,false,false,"qua"),"qua"),
+                $form->getCustomInput(2,$elements->checkbox("qui","Quinta",false,false,false,"qui"),"qui"),
+                $form->getCustomInput(2,$elements->checkbox("sex","Sexta",false,false,false,"sex"),"sex"),
+                $form->getCustomInput(2,$elements->checkbox("sab","Sabado",false,false,false,"sab"),"sab"),
             ];
     
             $form->setDoisInputs(
