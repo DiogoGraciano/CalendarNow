@@ -122,7 +122,7 @@ class Db
             if ($sql->rowCount() > 0) {
 
                 $rows = $sql->fetchAll(\PDO::FETCH_ASSOC);
-
+                
                 if ($rows) {
                     foreach ($rows as $row) {
                         $object = new \stdClass();
@@ -203,10 +203,7 @@ class Db
     public function selectColumns(Array $columns)
     {
         $sql = "SELECT ";
-        foreach ($columns as $column){
-            $sql .= $column.",";  
-        }
-        $sql = substr($sql, 0, -1);
+        $sql .= implode(",",$columns);  
         $sql .= " FROM ".$this->table;
         foreach ($this->joins as $join){
             $sql .= $join;
@@ -245,9 +242,9 @@ class Db
 
                 if ($this->validInjection($value)){  
                     if (is_string($value) && $value != "null")
-                        $conditions[] = $this->table.".".$column." = '".$value."' and ";
+                        $conditions[] = $column." = '".$value."' and ";
                     elseif (is_int($value) || is_float($value) || $value == "null")
-                        $conditions[] = $this->table.".".$column." = ".$value." and ";  
+                        $conditions[] = $column." = ".$value." and ";  
                     $i++;
                 }
                 else 

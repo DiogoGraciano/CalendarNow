@@ -10,25 +10,8 @@ use stdClass;
 
 class usuarioModel{
 
-    public static function get($cd,$tipo_usuario){
-        $db = new db("usuario");
-
-        $usuario = "";
-
-        if ($tipo_usuario == 3 || $tipo_usuario == 2){
-            $usuario = $db->addJoin("INNER","endereco","endereco.id_usuario","usuario.id")->selectByValues(["id"],[$cd],true);
-        }
-        if ($tipo_usuario == 1 || $tipo_usuario == 0){
-            $usuario = $db ->addJoin("INNER","empresa","usuario.id_empresa","empresa.id")->addJoin("INNER","endereco","endereco.id_empresa","usuario.id")->selectByValues(["id"],[$cd],true);
-        }
-
-        if (!$usuario){
-            $usuario = $db->getObject();
-            $usuario = (object)array_merge((array)$usuario,(array)enderecoModel::get());
-            return $usuario;
-        }
-
-        return $usuario[0];
+    public static function get($cd){
+        return modelAbstract::get("usuario",$cd);
     }
 
     public static function getLogged(){

@@ -16,6 +16,64 @@ class functions{
         return $value;
     }
 
+    public static function formatCnpjCpf($value)
+    {
+        $CPF_LENGTH = 11;
+        $cnpj_cpf = preg_replace("/\D/", '', $value);
+
+        if (strlen($cnpj_cpf) === $CPF_LENGTH) {
+            return functions::mask($cnpj_cpf, '###.###.###-##');
+        } 
+        
+        return functions::mask($cnpj_cpf, '##.###.###/####-##');
+    }
+
+    public static function mask($val, $mask) {
+        $maskared = '';
+        $k = 0;
+        for($i = 0; $i<=strlen($mask)-1; $i++) {
+            if($mask[$i] == '#') {
+                if(isset($val[$k])) $maskared .= $val[$k++];
+            } else {
+                if(isset($mask[$i])) $maskared .= $mask[$i];
+            }
+        }
+        return $maskared;
+    }
+
+    public static function formatTime($time){
+        if ($tamanho = substr_count($time,":")){
+            if ($tamanho == 2){
+                return $time;
+            }
+            if ($tamanho == 1){
+                return $time.":00";
+            }
+        }
+        else{
+            return $time.":00:00";
+        }
+    }
+
+    public static function formatDias($dias){
+        $dias = str_replace(","," ",$dias);
+        $dias = trim($dias);
+
+        return $dias;
+    }
+
+    public static function formatPhone($phone)
+    {
+        $formatedPhone = preg_replace('/[^0-9]/', '', $phone);
+        $matches = [];
+        preg_match('/^([0-9]{2})([0-9]{4,5})([0-9]{4})$/', $formatedPhone, $matches);
+        if ($matches) {
+            return '('.$matches[1].') '.$matches[2].'-'.$matches[3];
+        }
+
+        return $phone; 
+    }
+
     public static function encrypt($data)
     {
         $first_key = base64_decode(FIRSTKEY);

@@ -22,21 +22,17 @@ class consulta extends pagina{
             $this->tpl->block("BLOCK_BUTTONS");   
         }
 
-        $colunas_html = [];
         foreach ($this->columns as $columns){
             $this->tpl->columns_width = $columns->width;
             $this->tpl->columns_name = $columns->nome;
-            $colunas_html[] = $columns->coluna;
             $this->tpl->block("BLOCK_COLUMNS");   
         }
 
         if ($dados){
             foreach ($dados as $data){
                 foreach ($data as $key => $value){
-                    if (in_array($key,$colunas_html)){
-                        $this->tpl->data = $value;
-                        $this->tpl->block("BLOCK_DADOS");
-                    } 
+                    $this->tpl->data = $value;
+                    $this->tpl->block("BLOCK_DADOS");
                     if ($key == $coluna_action){
                         $this->tpl->cd_editar = functions::encrypt($value);
                         $this->tpl->cd_excluir = functions::encrypt($value);

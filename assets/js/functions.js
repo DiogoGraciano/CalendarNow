@@ -263,7 +263,7 @@ $(document).ready(function(){
     $("#cep").removeClass('is-valid').addClass('is-invalid');
   }
 
-  $("#id_estado").change(getCidades())
+  $("#id_estado").change(getCidades)
     function getCidades(){
       showLoader();
       $("#id_cidade").empty();
@@ -432,6 +432,31 @@ $(document).ready(function(){
 
     $("#numero").removeClass('is-invalid')//.addClass('is-valid');
   }
+
+  $("#hora_ini").blur(validaRua)
+  function validaRua(){
+    var rua = $('#rua').val();
+
+    if( rua == '' ) { 
+      $("#hora_ini").removeClass('is-valid').addClass('is-invalid');
+      return false; 
+    }
+
+    $("#hora_ini").removeClass('is-invalid')//.addClass('is-valid');
+  }
+
+  $("#hora_fim").blur(validaNumero)
+  function validaNumero(){
+    var numero = $('#hora_fim').val();
+
+    if( numero == '' ) { 
+      $("#hora_fim").removeClass('is-valid').addClass('is-invalid');
+      return false; 
+    }
+
+    $("#hora_fim").removeClass('is-invalid')//.addClass('is-valid');
+  }
+
 
   $("#telefone").blur(validaTelefone)
   function validaTelefone(){

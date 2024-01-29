@@ -1,5 +1,7 @@
 <?php 
 namespace app\models\main;
+
+use app\classes\functions;
 use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
@@ -14,13 +16,35 @@ class funcionarioModel{
 
         $db = new db("funcionario");
 
-        $usuario = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
-                    ->addJoin("INNER","grupo_funcionario","grupo_funcionario.id","funcionario.id_grupo_funcionario")
-                    ->addJoin("INNER","grupo_servico","grupo_servico.id","funcionario.id_grupo_servico")
+        $funcionarios = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
+                    ->addJoin("LEFT","grupo_funcionario","grupo_funcionario.id","funcionario.id_grupo_funcionario")
+                    ->addJoin("LEFT","grupo_servico","grupo_servico.id","funcionario.id_grupo_servico")
                     ->addFilter("usuario.id_empresa","=",$id_empresa)
-                    ->selectColumns(["funcionario.id,cpf_cnpj,email,telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,dias"]);
+                    ->selectColumns(["funcionario.id,cpf_cnpj,usuario.nome,email,telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,dias"]);
 
-        return $usuario;
+        $funcionarioFinal = [];
+        if ($funcionarios){
+            foreach ($funcionarios as $funcionario){
+                if ($funcionario->cpf_cnpj){
+                    $funcionario->cpf_cnpj = functions::formatCnpjCpf($funcionario->cpf_cnpj);
+                }
+                if ($funcionario->telefone){
+                    $funcionario->telefone = functions::formatPhone($funcionario->telefone);
+                }
+                if ($funcionario->hora_ini){
+                    $funcionario->hora_ini = functions::formatTime($funcionario->hora_ini);
+                }
+                if ($funcionario->hora_fim){
+                    $funcionario->hora_fim = functions::formatTime($funcionario->hora_fim);
+                }
+                if ($funcionario->dias){
+                    $funcionario->dias = functions::formatDias($funcionario->dias);
+                }
+                $funcionarioFinal[] = $funcionario;
+            }
+        }
+        
+        return $funcionarioFinal;
     }
 
     public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,$dias,$id=""){
