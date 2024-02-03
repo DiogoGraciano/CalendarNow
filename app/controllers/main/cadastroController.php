@@ -91,6 +91,12 @@ class cadastroController extends controllerAbstract{
             $form->setHidden("cd",$parameters[1]);
             $cd = functions::decrypt($parameters[1]);
         }
+        
+        if ($tipo_usuario == 1){
+            $dado = usuarioModel::get($cd);
+            $dadoEndereco = enderecoModel::get($dado->id_usuario);
+            $dadoEmpresa = empresaModel::get($dado->id_empresa);
+        }
 
         if ($tipo_usuario == 2){
             $dadoFuncionario = funcionarioModel::get($cd);
@@ -116,9 +122,9 @@ class cadastroController extends controllerAbstract{
       
         if ($tipo_usuario == 1){
             $form->setTresInputs(
-                $elements->input("nome_empresa","Nome da Empresa",$dado->nome,true),
-                $elements->input("fantasia","Nome Fantasia",$dado->nome,true),
-                $elements->input("razao","Razao Social:",functions::formatCnpjCpf($dado->cnpj),true),
+                $elements->input("nome_empresa","Nome da Empresa",$dadoEmpresa->nome,true),
+                $elements->input("fantasia","Nome Fantasia",$dadoEmpresa->fantasia,true),
+                $elements->input("razao","Razao Social:",$dadoEmpresa->razao,true),
                 array("nome_empresa","fantasia","razao")
             );
         }

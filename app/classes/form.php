@@ -3,7 +3,6 @@
 namespace app\classes;
 use app\classes\pagina;
 use app\classes\mensagem;
-use app\classes\functions;
 use stdClass;
 
 class form extends pagina{
