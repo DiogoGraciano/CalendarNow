@@ -16,6 +16,13 @@ abstract class modelAbstract{
         return $retorno;
     }
 
+    public static function getAll($table){
+
+        $db = new db($table);
+
+        return $db->selectAll();
+    }
+
     public static function delete($table,$cd){
 
         $db = new db($table);

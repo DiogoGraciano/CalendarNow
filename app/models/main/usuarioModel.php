@@ -57,11 +57,11 @@ class usuarioModel{
         if ($values){
             $values->id = $cd;
             $values->id_empresa = $id_empresa;
-            $values->cpf_cnpj = (int)functions::onlynumber($cpf_cnpj);
+            $values->cpf_cnpj = functions::onlynumber($cpf_cnpj);
             $values->nome = $nome;
             $values->email= $email;
             $values->senha = password_hash($senha,PASSWORD_DEFAULT);
-            $values->telefone = (int)functions::onlynumber($telefone);
+            $values->telefone = functions::onlynumber($telefone);
             $values->tipo_usuario = $tipo_usuario;
             $retorno = $db->store($values);
         }

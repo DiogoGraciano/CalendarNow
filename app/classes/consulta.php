@@ -8,11 +8,14 @@ class consulta extends pagina{
 
     private $columns = [];
 
-    public function show($pagina_manutencao,$pagina_action,array $array_button,$dados,$coluna_action="id"){
+    public function show($pagina_manutencao,$pagina_action,array $array_button,$dados,$coluna_action="id",$prefixo_manutencao){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
 
         $this->tpl->pagina_manutencao = $pagina_manutencao;
+        if ($prefixo_manutencao){
+            $this->tpl->prefixo_manutencao = $prefixo_manutencao."/";
+        }
         $this->tpl->pagina_action = $pagina_action;
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);

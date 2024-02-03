@@ -20,7 +20,7 @@ class funcionarioModel{
                     ->addJoin("LEFT","grupo_funcionario","grupo_funcionario.id","funcionario.id_grupo_funcionario")
                     ->addJoin("LEFT","grupo_servico","grupo_servico.id","funcionario.id_grupo_servico")
                     ->addFilter("usuario.id_empresa","=",$id_empresa)
-                    ->selectColumns(["funcionario.id,cpf_cnpj,usuario.nome,email,telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,dias"]);
+                    ->selectColumns(["funcionario.id,cpf_cnpj,usuario.nome,email,telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
 
         $funcionarioFinal = [];
         if ($funcionarios){
@@ -30,12 +30,6 @@ class funcionarioModel{
                 }
                 if ($funcionario->telefone){
                     $funcionario->telefone = functions::formatPhone($funcionario->telefone);
-                }
-                if ($funcionario->hora_ini){
-                    $funcionario->hora_ini = functions::formatTime($funcionario->hora_ini);
-                }
-                if ($funcionario->hora_fim){
-                    $funcionario->hora_fim = functions::formatTime($funcionario->hora_fim);
                 }
                 if ($funcionario->dias){
                     $funcionario->dias = functions::formatDias($funcionario->dias);
@@ -47,7 +41,7 @@ class funcionarioModel{
         return $funcionarioFinal;
     }
 
-    public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,$dias,$id=""){
+    public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
 
         $db = new db("funcionario");
 
@@ -59,6 +53,8 @@ class funcionarioModel{
         $values->id_grupo_servico = $id_grupo_servico;
         $values->hora_ini = $hora_ini;
         $values->hora_fim = $hora_fim;
+        $values->hora_almoco_ini = $hora_almoco_ini;
+        $values->hora_almoco_fim = $hora_almoco_fim;
         $values->dias = $dias;
         $retorno = $db->store($values);
         

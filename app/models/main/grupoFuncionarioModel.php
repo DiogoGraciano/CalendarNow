@@ -10,6 +10,10 @@ class grupoFuncionarioModel{
         return modelAbstract::get("grupo_funcionario",$cd);
     }
 
+    public static function getAll(){
+        return modelAbstract::getAll("grupo_funcionario");
+    }
+
     public static function set($nome,$id){
 
         $db = new db("grupo_funcionario");
@@ -32,8 +36,6 @@ class grupoFuncionarioModel{
             mensagem::addErro($erros);
             return False;
         }
-
-       
     }
 
     public static function delete($cd){

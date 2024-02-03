@@ -48,8 +48,10 @@ class cadastroController extends controllerAbstract{
         if ($tipo_usuario == 2){
             $cadastro->addColumns("10","Grupo de Funcionarios","grupo_funcionario")
                     ->addColumns("10","Grupo de Servicos","grupo_servico")
-                    ->addColumns("5","Hora de Inicio","hora_ini")
-                    ->addColumns("5","Hora de Fim","hora_fim")
+                    ->addColumns("5","Inicio Expediente","hora_ini")
+                    ->addColumns("5","Fim Expediente","hora_fim")
+                    ->addColumns("5","Inicio Almoço","hora_almoco_ini")
+                    ->addColumns("5","Fim Almoço","hora_almoco_fim")
                     ->addColumns("15","Dias","dia");
             $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
         }
@@ -63,15 +65,17 @@ class cadastroController extends controllerAbstract{
     }
     public function manutencao($parameters = array(),$login=False){
 
+        if ($login)
+            $form = new form($this->url."login/save");
+        else
+            $form = new form($this->url."cadastro/action");
+
         $head = new head();
         $head->show("Cadastro","");
 
         $cd = "";
         $tipo_usuario = "";
-        if ($login)
-            $form = new form($this->url."login/save");
-        else
-            $form = new form($this->url."cadastro/action");
+        $user = usuarioModel::getLogged();
 
         if (array_key_exists(0,$parameters)){
             $form->setHidden("tipo_usuario",$parameters[0]);
@@ -91,7 +95,8 @@ class cadastroController extends controllerAbstract{
         if ($tipo_usuario == 2){
             $dadoFuncionario = funcionarioModel::get($cd);
             $dado = usuarioModel::get($dadoFuncionario->id_usuario);
-            $form->setHidden("id_usuario",functions::encrypt($dadoFuncionario->id_usuario));
+            $form->setHidden("id_funcionario",functions::encrypt($dadoFuncionario->id));
+            $form->setHidden("id_empresa",functions::encrypt($user->id_empresa));
         }
 
         $elements = new elements;
@@ -131,6 +136,12 @@ class cadastroController extends controllerAbstract{
                 array("hora_ini","hora_fim")
             );
 
+            $form->setDoisInputs(
+                $elements->input("hora_almoco_ini","Hora Inicial de Almoço",functions::formatTime($dadoFuncionario->hora_almoco_ini),true,false,"","time"),
+                $elements->input("hora_almoco_fim","Hora Final de Almoço",functions::formatTime($dadoFuncionario->hora_almoco_fim),true,false,"","time"),
+                array("hora_almoco_ini","hora_almoco_fim")
+            );
+
             $form->setInputs(
                 $elements->label("Dias de trabalho na Semana")
             );
@@ -141,13 +152,13 @@ class cadastroController extends controllerAbstract{
                 $checkDias = [];
 
             $dias = [
-                $form->getCustomInput(2,$elements->checkbox("dom","Domingo",false,isset($checkDias[0])?true:false,false,"dom"),"dom"),
-                $form->getCustomInput(2,$elements->checkbox("seg","Segunda",false,isset($checkDias[1])?true:false,false,"seg"),"seg"),
-                $form->getCustomInput(2,$elements->checkbox("ter","Terça",false,isset($checkDias[2])?true:false,false,"ter"),"ter"),
-                $form->getCustomInput(2,$elements->checkbox("qua","Quarta",false,isset($checkDias[3])?true:false,false,"qua"),"qua"),
-                $form->getCustomInput(2,$elements->checkbox("qui","Quinta",false,isset($checkDias[4])?true:false,false,"qui"),"qui"),
-                $form->getCustomInput(2,$elements->checkbox("sex","Sexta",false,isset($checkDias[5])?true:false,false,"sex"),"sex"),
-                $form->getCustomInput(2,$elements->checkbox("sab","Sabado",false,isset($checkDias[6])?true:false,false,"sab"),"sab"),
+                $form->getCustomInput(2,$elements->checkbox("dom","Domingo",false,isset($checkDias[0]) && $checkDias[0]?true:false,false,"dom"),"dom"),
+                $form->getCustomInput(2,$elements->checkbox("seg","Segunda",false,isset($checkDias[1]) && $checkDias[1]?true:false,false,"seg"),"seg"),
+                $form->getCustomInput(2,$elements->checkbox("ter","Terça",false,isset($checkDias[2]) && $checkDias[2]?true:false,false,"ter"),"ter"),
+                $form->getCustomInput(2,$elements->checkbox("qua","Quarta",false,isset($checkDias[3]) && $checkDias[3]?true:false,false,"qua"),"qua"),
+                $form->getCustomInput(2,$elements->checkbox("qui","Quinta",false,isset($checkDias[4]) && $checkDias[4]?true:false,false,"qui"),"qui"),
+                $form->getCustomInput(2,$elements->checkbox("sex","Sexta",false,isset($checkDias[5]) && $checkDias[5]?true:false,false,"sex"),"sex"),
+                $form->getCustomInput(2,$elements->checkbox("sab","Sabado",false,isset($checkDias[6]) && $checkDias[6]?true:false,false,"sab"),"sab"),
             ];
     
 
@@ -239,18 +250,24 @@ class cadastroController extends controllerAbstract{
             $id_grupo_servico = $this->getValue('id_grupo_servico');
             $hora_ini = $this->getValue('hora_ini');
             $hora_fim = $this->getValue('hora_fim');
-            $dias = [$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")];
+            $hora_almoco_ini = $this->getValue('hora_almoco_ini');
+            $hora_almoco_fim = $this->getValue('hora_almoco_fim');
+               
+            $dias = implode(",",[$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")]);
 
-            $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario);
-            if ($id_usuario){
-                $id_endereco = funcionarioModel::set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,implode(",",$dias),$cd);
-                if($id_endereco){
-                    if ($login)
-                        $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
-                    else 
-                        $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
+            if ($id_empresa = functions::decrypt($this->getValue("id_empresa"))){
+                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
+                if ($id_usuario){
+                    $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
+                    $id_endereco = funcionarioModel::set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
+                    if($id_endereco){
+                        if ($login)
+                            $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
+                        else 
+                            $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
+                    }
+                    usuarioModel::delete($id_usuario);
                 }
-                usuarioModel::delete($id_usuario);
             }
         }
         elseif ($tipo_usuario == 3){ 

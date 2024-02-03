@@ -457,6 +457,29 @@ $(document).ready(function(){
     $("#hora_fim").removeClass('is-invalid')//.addClass('is-valid');
   }
 
+  $("#hora_almoco_ini").blur(validaRua)
+  function validaRua(){
+    var rua = $('#rua').val();
+
+    if( rua == '' ) { 
+      $("#hora_ini").removeClass('is-valid').addClass('is-invalid');
+      return false; 
+    }
+
+    $("#hora_ini").removeClass('is-invalid')//.addClass('is-valid');
+  }
+
+  $("#hora_almoco_fim").blur(validaNumero)
+  function validaNumero(){
+    var numero = $('#hora_fim').val();
+
+    if( numero == '' ) { 
+      $("#hora_fim").removeClass('is-valid').addClass('is-invalid');
+      return false; 
+    }
+
+    $("#hora_fim").removeClass('is-invalid')//.addClass('is-valid');
+  }
 
   $("#telefone").blur(validaTelefone)
   function validaTelefone(){

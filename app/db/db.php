@@ -314,7 +314,6 @@ class Db
                     $sql_instruction .= $valuesBD;
                     $sql_instruction .= ");";
                 } elseif ($values[$this->columns[0]]) {
-
                     $sql_instruction = "UPDATE " . $this->table . " SET ";
                     foreach ($values as $key => $data) {
                         if ($data){
