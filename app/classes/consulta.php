@@ -7,8 +7,9 @@ use app\classes\mensagem;
 class consulta extends pagina{
 
     private $columns = [];
+    private $buttons = [];
 
-    public function show($pagina_manutencao,$pagina_action,array $array_button,$dados,$coluna_action="id"){
+    public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id"){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
         $this->tpl->pagina_manutencao = $pagina_manutencao;
@@ -16,7 +17,7 @@ class consulta extends pagina{
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
 
-        foreach ($array_button as $button){
+        foreach ($this->buttons as $button){
             $this->tpl->button = $button;
             $this->tpl->block("BLOCK_BUTTONS");   
         }
@@ -50,6 +51,13 @@ class consulta extends pagina{
     public function addColumns($width,$nome,$coluna){
 
         $this->columns[] = json_decode('{"nome":"'.$nome.'","width":"'.$width.'%","coluna":"'.$coluna.'"}');
+
+        return $this;
+    }
+
+    public function addButtons($button){
+
+        $this->buttons[] = $button;
 
         return $this;
     }

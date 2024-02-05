@@ -4,7 +4,6 @@ use app\db\db;
 use app\classes\mensagem;
 use app\classes\functions;
 use app\classes\modelAbstract;
-use app\models\main\enderecoModel;
 use app\models\main\loginModel;
 use stdClass;
 
@@ -46,6 +45,11 @@ class usuarioModel{
         $usuario = $db->selectByValues(["email"],[$email]);
 
         return $usuario;
+    }
+
+    public static function getByTipoUsuario(){
+
+        
     }
 
     public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd="",$tipo_usuario = 3,$id_empresa="null"){

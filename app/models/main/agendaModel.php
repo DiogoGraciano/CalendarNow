@@ -36,6 +36,23 @@ class agendaModel{
         return false;
     }
 
+    public static function getByUserServico($id_servico,$id_usuario){
+        $db = new db("agenda_usuario");
+        
+        $values = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
+                     ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
+                     ->addJoin("INNER","agenda_servico","agenda_servico.id_agenda","agenda.id")
+                     ->addJoin("INNER","agenda_usuario","agenda_usuario.id_agenda","agenda_servico.id_agenda")
+                     ->addFilter("agenda_servico.id_servico","=",$id_servico)
+                     ->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
+                     ->selectColumns(["id","agenda.nome","empresa.nome as emp_nome"]);
+
+        if($values)
+            return $values;
+        
+        return false;
+    }
+
     public static function setAgendaUsuario($id_usuario,$id_agenda){
         $db = new db("agenda_usuario");
 

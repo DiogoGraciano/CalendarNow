@@ -50,22 +50,22 @@ class conexaoController extends controllerAbstract{
 
         $form->setHidden("cd",$cd);
 
-        $Terminais = array($form->getObjectOption("Balcão","Balcão"),
-                        $form->getObjectOption("Deposito","Deposito"),
-                        $form->getObjectOption("Escritorio","Escritorio"),
-                        $form->getObjectOption("Frente De Caixa","Frente De Caixa"),
-                        $form->getObjectOption("Servidor APP","Servidor APP"),
-                        $form->getObjectOption("Servidor Super","Servidor Super")
-        );
+        $form->addObjectOption("Balcão","Balcão");
+        $form->addObjectOption("Deposito","Deposito");
+        $form->addObjectOption("Escritorio","Escritorio");
+        $form->addObjectOption("Frente De Caixa","Frente De Caixa");
+        $form->addObjectOption("Servidor APP","Servidor APP");
+        $form->addObjectOption("Servidor Super","Servidor Super");
+        
 
-        $Programas = array($form->getObjectOption("Anydesk","Anydesk"),
-                        $form->getObjectOption("Teamviwer","Teamviwer"),
-                        $form->getObjectOption("NetSuporte","NetSuporte"),
-                        $form->getObjectOption("Ruskdesk","Ruskdesk"),
-                        $form->getObjectOption("WTS","WTS"),
-                        $form->getObjectOption("Radmin","Radmin"),
-                        $form->getObjectOption("VNC","VNC")
-        );
+        $form->addObjectOption("Anydesk","Anydesk");
+        $form->addObjectOption("Teamviwer","Teamviwer");
+        $form->addObjectOption("NetSuporte","NetSuporte");
+        $form->addObjectOption("Ruskdesk","Ruskdesk");
+        $form->addObjectOption("WTS","WTS");
+        $form->addObjectOption("Radmin","Radmin");
+        $form->addObjectOption("VNC","VNC");
+        
 
         $form->setDoisInputs($form->input("id_conexao","Conexão:",$dado->id_conexao,true),      
                             $form->input("nr_caixa","Caixa:",$dado->nr_caixa,false,"","number","form-control",'min="1"')

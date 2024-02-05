@@ -8,6 +8,8 @@ use stdClass;
 class form extends pagina{
 
     private $tplform;
+
+    private $inputs_custom = [];
     
     public function __construct($action)
     {
@@ -27,9 +29,9 @@ class form extends pagina{
         $this->tplform->block("BLOCK_INPUT");
     }
 
-    public function setCustomInputs(array $inputs_custom){
+    public function setCustomInputs(){
         $tpl= $this->getTemplate("inputs_template.html");
-        foreach ($inputs_custom as $custom){ 
+        foreach ($this->inputs_custom as $custom){ 
             $tpl->tamanho = $custom->tamanho;
             $tpl->nome = $custom->nome;
             $tpl->block_um_input = base64_decode($custom->input);
@@ -38,16 +40,18 @@ class form extends pagina{
         $tpl->block("BLOCK_CUSTOM");
         $this->tplform->input = $tpl->parse();
         $this->tplform->block("BLOCK_INPUT");
+
+        $this->inputs_custom = [];
     }
 
-    public function getCustomInput($tamanho,$input,$nome=""){
+    public function addCustomInput($tamanho,$input,$nome=""){
 
         $custom = new stdClass;
         $custom->tamanho = $tamanho;
         $custom->nome = $nome;
         $custom->input = base64_encode($input);
 
-        return $custom;
+        $this->inputs_custom[] = $custom;
     }
 
     public function setDoisInputs($input,$input2,array $nomes = array("","")){

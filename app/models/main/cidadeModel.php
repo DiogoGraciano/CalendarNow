@@ -32,11 +32,8 @@ class cidadeModel{
 
         $options = [];
         foreach ($resultados as $resultado){
-            $options[] = $elements->getObjectOption($resultado->id,$resultado->nome);
-        }
-
-        return $options;
-        
+            $elements->addObjectOption($resultado->id,$resultado->nome);
+        }   
     }
 
     public static function getByIbge($ibge){

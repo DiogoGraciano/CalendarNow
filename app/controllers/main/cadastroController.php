@@ -18,7 +18,7 @@ class cadastroController extends controllerAbstract{
     public function index($parameters){
 
         $head = new head();
-        $head -> show("agendas","consulta");
+        $head -> show("cadastro","consulta");
 
         $tipo_usuario = "";
 
@@ -30,9 +30,9 @@ class cadastroController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $buttons = [$elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")]; 
-
         $cadastro = new consulta();
+
+        $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $cadastro->addColumns("1","Id","id")
                 ->addColumns("10","CPF/CNPJ","cpf_cnpj")
@@ -43,7 +43,7 @@ class cadastroController extends controllerAbstract{
         
         if ($tipo_usuario == 1 || $tipo_usuario == 0){
             $cadastro->addColumns("10","CPF/CNPJ Empresa","cnpj")->addColumns("15","Empresa","nome_empresa");
-            $dados = empresaModel::getEmpresa();
+            $dados = empresaModel::get();
         }
         if ($tipo_usuario == 2){
             $cadastro->addColumns("10","Grupo de Funcionarios","grupo_funcionario")
@@ -58,7 +58,7 @@ class cadastroController extends controllerAbstract{
 
         $cadastro->addColumns("14","Ações","acoes");
 
-        $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$buttons,$dados);
+        $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados);
       
         $footer = new footer;
         $footer->show();
@@ -130,9 +130,15 @@ class cadastroController extends controllerAbstract{
         }
 
         if ($tipo_usuario == 2){
+            $elements->setOptions("grupo_funcionario","id","nome");
+            $id_grupo_funcionario = $elements->select("Grupo de Funcionarios","id_grupo_funcionario",$dadoFuncionario->id_grupo_funcionario);
+
+            $elements->setOptions("grupo_servico","id","nome");
+            $id_grupo_servico = $elements->select("Grupo de Servicos","id_grupo_servico",$dadoFuncionario->id_grupo_servico);
+
             $form->setDoisInputs(
-                $elements->select("Grupo de Funcionarios","id_grupo_funcionario",$elements->getOptions("grupo_funcionario","id","nome"),$dadoFuncionario->id_grupo_funcionario),
-                $elements->select("Grupo de Servicos","id_grupo_servico",$elements->getOptions("grupo_funcionario","id","nome"),$dadoFuncionario->id_grupo_servico),
+                $id_grupo_funcionario,
+                $id_grupo_servico,
                 array("id_grupo_funcionario","id_grupo_servico")
             );
 
@@ -157,29 +163,31 @@ class cadastroController extends controllerAbstract{
             else 
                 $checkDias = [];
 
-            $dias = [
-                $form->getCustomInput(2,$elements->checkbox("dom","Domingo",false,isset($checkDias[0]) && $checkDias[0]?true:false,false,"dom"),"dom"),
-                $form->getCustomInput(2,$elements->checkbox("seg","Segunda",false,isset($checkDias[1]) && $checkDias[1]?true:false,false,"seg"),"seg"),
-                $form->getCustomInput(2,$elements->checkbox("ter","Terça",false,isset($checkDias[2]) && $checkDias[2]?true:false,false,"ter"),"ter"),
-                $form->getCustomInput(2,$elements->checkbox("qua","Quarta",false,isset($checkDias[3]) && $checkDias[3]?true:false,false,"qua"),"qua"),
-                $form->getCustomInput(2,$elements->checkbox("qui","Quinta",false,isset($checkDias[4]) && $checkDias[4]?true:false,false,"qui"),"qui"),
-                $form->getCustomInput(2,$elements->checkbox("sex","Sexta",false,isset($checkDias[5]) && $checkDias[5]?true:false,false,"sex"),"sex"),
-                $form->getCustomInput(2,$elements->checkbox("sab","Sabado",false,isset($checkDias[6]) && $checkDias[6]?true:false,false,"sab"),"sab"),
-            ];
-    
-
-            $form->setCustomInputs($dias);
-
+            $form->addCustomInput(2,$elements->checkbox("dom","Domingo",false,isset($checkDias[0]) && $checkDias[0]?true:false,false,"dom"),"dom");
+            $form->addCustomInput(2,$elements->checkbox("seg","Segunda",false,isset($checkDias[1]) && $checkDias[1]?true:false,false,"seg"),"seg");
+            $form->addCustomInput(2,$elements->checkbox("ter","Terça",false,isset($checkDias[2]) && $checkDias[2]?true:false,false,"ter"),"ter");
+            $form->addCustomInput(2,$elements->checkbox("qua","Quarta",false,isset($checkDias[3]) && $checkDias[3]?true:false,false,"qua"),"qua");
+            $form->addCustomInput(2,$elements->checkbox("qui","Quinta",false,isset($checkDias[4]) && $checkDias[4]?true:false,false,"qui"),"qui");
+            $form->addCustomInput(2,$elements->checkbox("sex","Sexta",false,isset($checkDias[5]) && $checkDias[5]?true:false,false,"sex"),"sex");
+            $form->addCustomInput(2,$elements->checkbox("sab","Sabado",false,isset($checkDias[6]) && $checkDias[6]?true:false,false,"sab"),"sab");
+        
+            $form->setCustomInputs();
         }
 
         if ($tipo_usuario != 2){
+            $elements->setOptions("estado","id","nome");
+            $estado = $elements->select("Estado","id_estado",$dado->id_estado?:24,true);
+
             $form->setDoisInputs(
                 $elements->input("cep","CEP",$dado->cep,true),
-                $elements->select("Estado","id_estado",$elements->getOptions("estado","id","nome"),$dado->id_estado?:24,true),
+                $estado,
                 array("cep","id_estado")
             );
+
+            cidadeModel::getOptionsbyEstado($dado->id_estado?:24);
+    
             $form->setDoisInputs(
-                $elements->select("Cidade","id_cidade",cidadeModel::getOptionsbyEstado($dado->id_estado?:24),$dado->id_cidade?:4487,true),
+                $elements->select("Cidade","id_cidade",$dado->id_cidade?:4487,true),
                 $elements->input("bairro","Bairro",$dado->bairro,true),
                 array("bairro","id_cidade")
             );

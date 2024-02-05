@@ -30,15 +30,15 @@ class gruposController extends controllerAbstract{
 
         $elements = new elements;
 
-        $buttons = [$elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")]; 
-
         $cadastro = new consulta();
+
+        $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
 
         $cadastro->addColumns("5","Id","id")
                 ->addColumns("79","Nome","nome")
                 ->addColumns("14","Ações","acoes");
 
-        $cadastro->show($this->url."grupos/manutencao/",$this->url."grupos/action/",$buttons,$dados,"id");
+        $cadastro->show($this->url."grupos/manutencao/".functions::encrypt($tipo_grupo),$this->url."grupos/action/".functions::encrypt($tipo_grupo),$dados,"id");
       
         $footer = new footer;
         $footer->show();
@@ -51,15 +51,15 @@ class gruposController extends controllerAbstract{
         $cd = "";
         $tipo_grupo = "";
         
-        $form = new form($this->url."grupos/action/");
+        if (array_key_exists(0,$parameters)){
+            $tipo_grupo = functions::decrypt($parameters[0]);
+        }
+
+        $form = new form($this->url."grupos/action/".$parameters[0]);
 
         if (array_key_exists(1,$parameters)){
             $form->setHidden("cd",$parameters[1]);
             $cd = functions::decrypt($parameters[1]);
-        }
-
-        if (array_key_exists(0,$parameters)){
-            $tipo_grupo = functions::decrypt($parameters[0]);
         }
 
         if ($tipo_grupo == "grupo_funcionario")
@@ -90,7 +90,7 @@ class gruposController extends controllerAbstract{
         }
 
         if (array_key_exists(1,$parameters)){
-            $cd = functions::decrypt($parameters[0]);
+            $cd = functions::decrypt($parameters[1]);
         }
 
         if ($tipo_grupo == "grupo_funcionario"){
@@ -113,9 +113,9 @@ class gruposController extends controllerAbstract{
             }
 
         }else    
-            $this->go($this->url."/grupos");
+            $this->go($this->url."/grupos/".functions::encrypt($tipo_grupo));
 
-        $this->go("agenda");
+        $this->go($this->url);
     }
 
 }

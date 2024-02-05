@@ -20,11 +20,12 @@ class agendaController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $buttons = [$elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")]; 
-
         $agenda = new consulta();
+
+        $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
+
         $agenda->addColumns("10","Id","id")->addColumns("80","Nome","nome")->addColumns("20","Ações","acoes")
-        ->show($this->url."agenda/manutencao/".functions::encrypt($user->id_empresa),$this->url."agenda/action/",$buttons,agendaModel::getByEmpresa($user->id_empresa));
+        ->show($this->url."agenda/manutencao/".functions::encrypt($user->id_empresa),$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa));
       
         $footer = new footer;
         $footer->show();

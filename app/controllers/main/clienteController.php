@@ -2,23 +2,46 @@
 namespace app\controllers\main;
 use app\classes\head;
 use app\classes\form;
+use app\classes\elements;
+use app\classes\controllerAbstract;
 use app\classes\consulta;
 use app\classes\footer;
-use app\classes\controllerAbstract;
-use app\models\main\clienteModel;
+use app\classes\functions;
+use app\models\main\usuarioModel;
+use app\models\main\enderecoModel;
+use app\models\main\cidadeModel;
+use app\models\main\empresaModel;
 
 class clienteController extends controllerAbstract{
 
     public function index(){
 
         $head = new head();
-        $head -> show("Cliente","consulta");
+        $head -> show("Clientes","consulta");
 
-        $consulta = new consulta();
-        $buttons = array($consulta->getButton($this->url."home","Voltar"),$consulta->getButton($this->url."cliente/export","Exportar"));
-        $columns = array($consulta->getColumns("10","ID","cd_cliente"),$consulta->getColumns("67","Nome","nm_cliente"),$consulta->getColumns("10","Loja","nr_loja"),$consulta->getColumns("13","Ações",""));
-        $consulta->show("CONSULTA CLIENTES",$this->url."cliente/manutencao",$this->url."cliente/action",$buttons,$columns,"tb_cliente");
-    
+        $tipo_usuario = "";
+
+        $elements = new elements;
+
+        $cadastro = new consulta();
+
+        $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
+
+        $cadastro->addColumns("1","Id","id")
+                ->addColumns("10","CPF/CNPJ","cpf_cnpj")
+                ->addColumns("15","Nome","nome")
+                ->addColumns("15","Email","email")
+                ->addColumns("11","Telefone","telefone")
+                ->addColumns("17","Agendas","agendas")
+                ->addColumns("17","Agendamentos","agendamentos")
+                ->addColumns("14","Ações","acoes");
+
+        $user = usuarioModel::getLogged();
+
+        $dados = agendamentoModel::getAgendamentosByTipoUsuario($user->tipo_usuario);
+
+        $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados);
+      
         $footer = new footer;
         $footer->show();
     }
@@ -64,12 +87,5 @@ class clienteController extends controllerAbstract{
         $this->go("cliente/manutencao/".$cd);
         
     }
-    public function export(){
-        
-        if (clienteModel::export())
-            $this->go('arquivos/Clientes.csv');
-        else 
-            $this->go("cliente");
-    
-    }
+   
 }

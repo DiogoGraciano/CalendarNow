@@ -22,42 +22,33 @@ class opcoesController extends controllerAbstract{
 
         $menu = new menu();
 
-        $buttons = [];
-
         if ($user->tipo_usuario == 0 || $user->tipo_usuario == 1){
-            $buttons = [
-                $elements->button("Agendas","agenda","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."agenda'"),
-                $elements->button("Funcionarios","funcionario","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"),
-                $elements->button("Grupos","grupo","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos'"),
-                $elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"),
-                $elements->button("Clientes","clientes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."clientes'"),
-                $elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"),
-                $elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"),
-                //$elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
-                $elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'")
-            ]; 
+            $menu->addButton($elements->button("Agendas","agenda","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."agenda'"))
+            ->addButton($elements->button("Funcionarios","funcionario","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"))
+            ->addButton($elements->button("Grupos","grupo","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos'"))
+            ->addButton($elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"))
+            ->addButton($elements->button("Clientes","clientes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."clientes'"))
+            ->addButton($elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"))
+            ->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
+            //->addButton($elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"))
+            ->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'"));
         }
         elseif ($user->tipo_usuario == 2){
-            $buttons = [
-                $elements->button("Agendas","agenda","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."agenda'"),
-                $elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"),
-                $elements->button("Clientes","clientes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."clientes'"),
-                $elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"),
-                $elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"),
-                //$elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
-                $elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'")
-            ]; 
+            $menu->addButton($elements->button("Agendas","agenda","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."agenda'"))
+            ->addButton($elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"))
+            ->addButton($elements->button("Clientes","clientes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."clientes'"))
+            ->addButton($elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"))
+            ->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
+            //->addButton($elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"))
+            ->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'"));
         }
         elseif ($user->tipo_usuario == 3){
-            $buttons = [
-                $elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"),
-                //$elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
-                $elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'")
-            ]; 
+            $menu->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
+            //->addButton($elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"))
+            ->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'"));
         }
         
-        $menu->setLista($buttons);
-                       
+        $menu->setLista();              
         $menu->show();
 
         $footer = new footer;

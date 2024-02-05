@@ -4,6 +4,8 @@ use app\db\Db;
 
 class elements extends pagina{
 
+    private $options = []; 
+
     public function button($button_nome,$nm_input,$type_input="submit",$class_input="btn btn-primary w-100 pt-2 btn-block",$button_action="",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
@@ -109,7 +111,7 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function select($nm_label,$nm_input,array $options,$vl_option="",$required=false,$class_input="form-select",$extra_input=""){
+    public function select($nm_label,$nm_input,$vl_option="",$required=false,$class_input="form-select",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -121,7 +123,7 @@ class elements extends pagina{
         if ($required == true)
             $tpl->extra_input = $extra_input." required";
 
-        foreach ($options as $option){
+        foreach ($this->options as $option){
             $tpl->vl_option = $option->vl_option;
             if ($vl_option == $option->vl_option)
                 $tpl->extra_option = "selected";
@@ -131,11 +133,13 @@ class elements extends pagina{
         }
         
         $tpl->block("BLOCK_SELECT"); 
+
+        $this->options = [];
         
         return $tpl->parse();
     }
 
-    public function datalist($nm_label,$nm_input,array $options,$vl_option="",$required=false,$class_input="form-control",$extra_input=""){
+    public function datalist($nm_label,$nm_input,$vl_option="",$required=false,$class_input="form-control",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -147,7 +151,7 @@ class elements extends pagina{
         if ($required == true)
             $tpl->extra_input = $extra_input." required";
 
-        foreach ($options as $option){
+        foreach ($this->options as $option){
             $tpl->vl_option = $option->vl_option;
             $tpl->nm_option = $option->nm_option;
             $tpl->extra_option = $option->extra_option;
@@ -156,22 +160,24 @@ class elements extends pagina{
         
         $tpl->block("BLOCK_DATALIST");  
 
+        $this->options = [];
+
         return $tpl->parse();
     }
-    public function getOptions($tb,$coluna_vl,$coluna_nm){
+
+    public function setOptions($tb,$coluna_vl,$coluna_nm){
         $db = new db($tb);
         $dados = $db->selectColumns(array($coluna_vl,$coluna_nm));
 
-        $options = [];
         foreach ($dados as $dado){
-            $options[] = $this->getObjectOption($dado->$coluna_vl,$dado->$coluna_nm);
+            $this->addObjectOption($dado->$coluna_vl,$dado->$coluna_nm);
         }
-
-        return $options;
     }
 
-    public function getObjectOption($vl_option,$nm_option,$extra_option=""){
-        return json_decode('{"vl_option":"'.$vl_option.'","nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
+    public function addObjectOption($vl_option,$nm_option,$extra_option=""){
+        $this->options[] = json_decode('{"vl_option":"'.$vl_option.'","nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
+
+        return $this;
     }
 
 
