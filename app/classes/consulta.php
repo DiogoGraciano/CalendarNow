@@ -3,17 +3,21 @@
 namespace app\classes;
 use app\classes\pagina;
 use app\classes\mensagem;
+use app\classes\elements;
 
 class consulta extends pagina{
 
     private $columns = [];
     private $buttons = [];
 
-    public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id"){
+public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id",$checkbox=false,$action_form=""){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
         $this->tpl->pagina_manutencao = $pagina_manutencao;
         $this->tpl->pagina_action = $pagina_action;
+        if ($action_form){
+            $this->tpl->form_action = $action_form;
+        }
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
 
@@ -29,6 +33,7 @@ class consulta extends pagina{
         }
 
         if ($dados){
+            $i = 0;
             foreach ($dados as $data){
                 foreach ($data as $key => $value){
                     $this->tpl->data = $value;
@@ -37,8 +42,13 @@ class consulta extends pagina{
                         $this->tpl->cd_editar = functions::encrypt($value);
                         $this->tpl->cd_excluir = functions::encrypt($value);
                         $this->tpl->block("BLOCK_BUTTONS_TB"); 
-                    } 
+                        if ($checkbox){
+                            $this->tpl->check = (new elements)->checkbox("id_check_".$i,false,false,false,false,functions::encrypt($value));
+                            $this->tpl->block('BLOCK_CHECK');
+                        }
+                    }
                 } 
+                $i++;
                 $this->tpl->block('BLOCK_TABELA');
             }
         }

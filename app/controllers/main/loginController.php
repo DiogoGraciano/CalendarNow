@@ -57,8 +57,8 @@ class loginController extends controllerAbstract{
             $elements->input("email","Email","",true)
         );
 
-        $form->setButton($elements->button("Resetar","btn_submit"));
-        $form->setButton($elements->button("Voltar","btn_submit","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."login'"));
+        $form->setButton($elements->button("Resetar","submit"));
+        $form->setButton($elements->button("Voltar","submit","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."login'"));
         $form->show();
 
         $footer = new footer;

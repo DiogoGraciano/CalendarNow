@@ -3,40 +3,45 @@
         <label for="pesquisa">PESQUISA:</label>
         <input class="form-control" type="text" name="pesquisa" id="pesquisa" />
     </div>
-    <div class="mt-2 mb-2">
-        <button class="btn btn-primary" onclick="location.href='{pagina_manutencao}'" type="button">Adicionar</button>
-        <!-- BEGIN BLOCK_BUTTONS -->
-            {button}
-        <!-- END BLOCK_BUTTONS -->
-    </div>
-    <table id="ctabela" width="100%" class="sortable table table-hover table-bordered table-sm caption-top">
-        <thead>
-            <tr>
-                <!-- BEGIN BLOCK_COLUMNS -->
-                    <th width="{columns_width}">{columns_name}</th>
-                <!-- END BLOCK_COLUMNS -->
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <!-- BEGIN BLOCK_TABELA -->
-                <tr> 
-                    <!-- BEGIN BLOCK_DADOS -->
-                    <td>{data}</td>
-                    <!-- END BLOCK_DADOS -->
-                    <!-- BEGIN BLOCK_BUTTONS_TB -->
-                    <td>
-                        <button type="button" class="btn btn btn-primary">
-                            <a href='{pagina_manutencao}/{cd_editar}'>Editar</a>
-                        </button>
-                        <button class="btn btn btn-primary" onclick="return confirm('Deseja Excluir?')" type="button">
-                            <a href='{pagina_action}/{cd_excluir}'>Excluir</a>
-                        </button>
-                    </td>
-                    <!-- END BLOCK_BUTTONS_TB -->
+    <form id="manutencao" method="POST" enctype="multipart/form-data" action="{form_action}">
+        <div class="mt-2 mb-2">
+            <button class="btn btn-primary" onclick="location.href='{pagina_manutencao}'" type="button">Adicionar</button>
+            <!-- BEGIN BLOCK_BUTTONS -->
+                {button}
+            <!-- END BLOCK_BUTTONS -->
+        </div>
+        <table id="ctabela" width="100%" class="sortable table table-hover table-bordered table-sm caption-top">
+            <thead>
                 <tr>
-                <!-- END BLOCK_TABELA -->
-        </tbody>
-    </table>
+                    <!-- BEGIN BLOCK_CHECK -->
+                        <th width="1">{check}</th>
+                    <!-- END BLOCK_CHECK -->
+                    <!-- BEGIN BLOCK_COLUMNS -->
+                        <th width="{columns_width}">{columns_name}</th>
+                    <!-- END BLOCK_COLUMNS -->
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- BEGIN BLOCK_TABELA -->
+                    <tr> 
+                        <!-- BEGIN BLOCK_DADOS -->
+                        <td>{data}</td>
+                        <!-- END BLOCK_DADOS -->
+                        <!-- BEGIN BLOCK_BUTTONS_TB -->
+                        <td>
+                            <button type="button" class="btn btn btn-primary">
+                                <a href='{pagina_manutencao}/{cd_editar}'>Editar</a>
+                            </button>
+                            <button class="btn btn btn-primary" onclick="return confirm('Deseja Excluir?')" type="button">
+                                <a href='{pagina_action}/{cd_excluir}'>Excluir</a>
+                            </button>
+                        </td>
+                        <!-- END BLOCK_BUTTONS_TB -->
+                    <tr>
+                    <!-- END BLOCK_TABELA -->
+            </tbody>
+        </table>
+    </form>
     <!-- BEGIN BLOCK_SEMDADOS -->
         <div class="col-md-12">
             <div class="alert alert-primary" role="alert">

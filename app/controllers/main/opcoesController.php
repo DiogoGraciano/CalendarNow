@@ -25,9 +25,10 @@ class opcoesController extends controllerAbstract{
         if ($user->tipo_usuario == 0 || $user->tipo_usuario == 1){
             $menu->addButton($elements->button("Agendas","agenda","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."agenda'"))
             ->addButton($elements->button("Funcionarios","funcionario","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"))
-            ->addButton($elements->button("Grupos","grupo","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos'"))
-            ->addButton($elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"))
-            ->addButton($elements->button("Clientes","clientes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."clientes'"))
+            ->addButton($elements->button("Grupos de Serviços","grupo","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/".functions::encrypt("grupo_funcionario")."'"))
+            ->addButton($elements->button("Grupos de Funcionarios","grupo","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/".functions::encrypt("grupo_servico")."'"))
+            ->addButton($elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."servico'"))
+            ->addButton($elements->button("Agendamentos","agendamentos","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."massAgendamento'"))
             ->addButton($elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"))
             ->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
             //->addButton($elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"))
@@ -36,7 +37,7 @@ class opcoesController extends controllerAbstract{
         elseif ($user->tipo_usuario == 2){
             $menu->addButton($elements->button("Agendas","agenda","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."agenda'"))
             ->addButton($elements->button("Serviços","servico","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario'"))
-            ->addButton($elements->button("Clientes","clientes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."clientes'"))
+            ->addButton($elements->button("Agendamentos","a\gendamentos","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."massAgendamento'"))
             ->addButton($elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"))
             ->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
             //->addButton($elements->button("Opções","opcoes","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"))

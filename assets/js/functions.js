@@ -2,6 +2,40 @@ function go($url){
   window.location.href = $url
 }
 
+function validaVazio(seletor){
+  var valor = $(seletor).val();
+
+  if(valor == '') { 
+    $(seletor).removeClass('is-valid').addClass('is-invalid');
+    return false; 
+  }
+
+  $(seletor).removeClass('is-invalid')//.addClass('is-valid');
+}
+
+function validaTime(seletor){
+  var valor = $(seletor).val();
+
+  if( valor == ':00:00' ) { 
+    $(seletor).removeClass('is-valid').addClass('is-invalid');
+    return false; 
+  }
+
+  $(seletor).removeClass('is-invalid')//.addClass('is-valid');
+}
+
+function validaValor(seletor){
+  var valor = parseFloat($(seletor).val());
+
+  if(valor < 0) { 
+    $("#valor").removeClass('is-valid').addClass('is-invalid');
+    return false; 
+  }
+
+  $(seletor).removeClass('is-invalid')//.addClass('is-valid');
+}
+
+
 $(document).ready(function(){		
 
     var url_base = window.location.href.split("/");
@@ -86,7 +120,7 @@ $(document).ready(function(){
     $("#cpf_cnpj").focus(removeMascara);
     function removeMascara() {
         $("#cpf_cnpj").unmask();
-        $(this).attr("maxlength","14");
+        $(this).attr("maxlength","18");
     };
 
     // Permite somente uso de caracteres numéricos
@@ -325,162 +359,23 @@ $(document).ready(function(){
     $("#email").removeClass('is-invalid')//.addClass('is-valid');
   }
 
-  $("#nome").blur(validaNome)
-  function validaNome(){
-    var nome = $('#nome').val();
+  $("#nome").on("blur",function(){validaVazio("#nome")});
+  $("#nome_empresa").on("blur",function(){validaVazio("#nome_empresa")});
+  $("#nome_agenda").on("blur",function(){validaVazio("#nome_agenda")});
+  $("#fantasia").on("blur",function(){validaVazio("#fantasia")});
+  $("#razao").on("blur",function(){validaVazio("#razao")});
+  $("#senha").on("blur",function(){validaVazio("#senha")});
+  $("#bairro").on("blur",function(){validaVazio("#bairro")});
+  $("#rua").on("blur",function(){validaVazio("#rua")});
+  $("#numero").on("blur",function(){validaVazio("#numero")});
 
-    if( nome == '' ) { 
-      $("#nome").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
+  $("#hora_ini").on("blur",function(){validaTime("#hora_ini")});
+  $("#hora_fim").on("blur",function(){validaTime("#hora_fim")});
+  $("#hora_almoco_ini").on("blur",function(){validaTime("#hora_almoco_ini")});
+  $("#hora_almoco_fim").on("blur",function(){validaTime("#hora_almoco_fim")});
 
-    $("#nome").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#nome_empresa").blur(validaNomeEmpresa)
-  function validaNomeEmpresa(){
-    var nome = $('#nome_empresa').val();
-
-    if( nome == '' ) { 
-      $("#nome_empresa").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#nome_empresa").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#nome_agenda").blur(validaNomeAgenda)
-  function validaNomeAgenda(){
-    var nome = $('#nome_agenda').val();
-
-    if( nome == '' ) { 
-      $("#nome_agenda").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#nome_agenda").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#fantasia").blur(validaNomeFantasia)
-  function validaNomeFantasia(){
-    var nome = $('#fantasia').val();
-
-    if( nome == '' ) { 
-      $("#fantasia").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#fantasia").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#razao").blur(validaNomeRazao)
-  function validaNomeRazao(){
-    var nome = $('#razao').val();
-
-    if( nome == '' ) { 
-      $("#razao").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#razao").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#senha").blur(validaSenha)
-  function validaSenha(){
-    var senha = $('#senha').val();
-
-    if( senha == '' ) { 
-      $("#senha").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#senha").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#bairro").blur(validaBairro)
-  function validaBairro(){
-    var bairro = $('#bairro').val();
-
-    if( bairro == '' ) { 
-      $("#bairro").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#bairro").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#rua").blur(validaRua)
-  function validaRua(){
-    var rua = $('#rua').val();
-
-    if( rua == '' ) { 
-      $("#rua").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#rua").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#numero").blur(validaNumero)
-  function validaNumero(){
-    var numero = $('#numero').val();
-
-    if( numero == '' ) { 
-      $("#numero").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#numero").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#hora_ini").blur(validaRua)
-  function validaRua(){
-    var rua = $('#rua').val();
-
-    if( rua == '' ) { 
-      $("#hora_ini").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#hora_ini").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#hora_fim").blur(validaNumero)
-  function validaNumero(){
-    var numero = $('#hora_fim').val();
-
-    if( numero == '' ) { 
-      $("#hora_fim").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#hora_fim").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#hora_almoco_ini").blur(validaRua)
-  function validaRua(){
-    var rua = $('#rua').val();
-
-    if( rua == '' ) { 
-      $("#hora_ini").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#hora_ini").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
-  $("#hora_almoco_fim").blur(validaNumero)
-  function validaNumero(){
-    var numero = $('#hora_fim').val();
-
-    if( numero == '' ) { 
-      $("#hora_fim").removeClass('is-valid').addClass('is-invalid');
-      return false; 
-    }
-
-    $("#hora_fim").removeClass('is-invalid')//.addClass('is-valid');
-  }
-
+  $("#valor").on("blur",function(){validaValor("#valor")});
+  
   $("#telefone").blur(validaTelefone)
   function validaTelefone(){
     //retira todos os caracteres menos os numeros

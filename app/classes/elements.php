@@ -34,13 +34,17 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function checkbox($nm_input,$nm_label,$required=false,$checked=false,$readonly=false,$value="on",$type_input="checkbox",$class_input="form-check-input",$extra_input=""){
+    public function checkbox($nm_input,$nm_label="",$required=false,$checked=false,$readonly=false,$value="on",$type_input="checkbox",$class_input="form-check-input",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
         $tpl->type_input = $type_input;
         $tpl->nm_input = $nm_input;
-        $tpl->nm_label = $nm_label;
+        if ($nm_label){
+            $tpl->nm_label = $nm_label;
+            $tpl->block("BLOCK_LABEL_CHECKBOX");  
+        }
+        
         $tpl->class_input = $class_input;
         if ($required)
             $extra_input = $extra_input.' required';

@@ -24,7 +24,7 @@ class agendaController extends controllerAbstract{
 
         $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
-        $agenda->addColumns("10","Id","id")->addColumns("80","Nome","nome")->addColumns("20","Ações","acoes")
+        $agenda->addColumns("1","Id","id")->addColumns("78","Nome","nome")->addColumns("11","Ações","acoes")
         ->show($this->url."agenda/manutencao/".functions::encrypt($user->id_empresa),$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa));
       
         $footer = new footer;
@@ -54,7 +54,7 @@ class agendaController extends controllerAbstract{
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
 
-        $form->setButton($elements->button("Salvar","btn_submit"));
+        $form->setButton($elements->button("Salvar","submit"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agenda'"));
         $form->show();
 

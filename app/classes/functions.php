@@ -117,6 +117,15 @@ class functions{
         return false;
     }
 
+    public static function formatCurrency($input)
+    {
+        $input = preg_replace('/[^\d\.]/', '', $input);
+
+        $fmt = new \NumberFormatter('pt-BR', \NumberFormatter::CURRENCY );
+        return $fmt->format($input);
+    }
+
+    
 }
 
 ?>

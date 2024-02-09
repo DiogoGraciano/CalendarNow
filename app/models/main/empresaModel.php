@@ -10,7 +10,7 @@ class empresaModel{
         return modelAbstract::get("empresa",$cd);
     }
 
-    public static function set($nome,$cpf_cnpj,$razao,$fantasia,$id=""){
+    public static function set($nome,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$id=""){
 
         $db = new db("empresa");
 
@@ -19,6 +19,8 @@ class empresaModel{
         $values->id = $id;
         $values->nome = $nome;
         $values->cnpj = $cpf_cnpj;
+        $values->email = $email;
+        $values->telefone = $telefone;
         $values->razao = $razao;
         $values->fantasia = $fantasia;
         $retorno = $db->store($values);

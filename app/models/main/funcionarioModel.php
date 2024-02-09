@@ -16,7 +16,7 @@ class funcionarioModel{
 
         $db = new db("funcionario");
 
-        $funcionarios = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
+        $funcionarios = $db
                     ->addJoin("LEFT","grupo_funcionario","grupo_funcionario.id","funcionario.id_grupo_funcionario")
                     ->addJoin("LEFT","grupo_servico","grupo_servico.id","funcionario.id_grupo_servico")
                     ->addFilter("usuario.id_empresa","=",$id_empresa)
@@ -41,7 +41,7 @@ class funcionarioModel{
         return $funcionarioFinal;
     }
 
-    public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
+    public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
 
         $db = new db("funcionario");
 
@@ -51,6 +51,10 @@ class funcionarioModel{
         $values->id_usuario = $id_usuario;
         $values->id_grupo_funcionario = $id_grupo_funcionario;
         $values->id_grupo_servico = $id_grupo_servico;
+        $values->nome = $nome;
+        $values->cpf_cnpj = $cpf_cnpj;
+        $values->email = $email;
+        $values->telefone = $telefone;
         $values->hora_ini = $hora_ini;
         $values->hora_fim = $hora_fim;
         $values->hora_almoco_ini = $hora_almoco_ini;

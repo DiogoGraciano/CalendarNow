@@ -94,7 +94,7 @@ class cadastroController extends controllerAbstract{
         
         if ($tipo_usuario == 1){
             $dado = usuarioModel::get($cd);
-            $dadoEndereco = enderecoModel::get($dado->id_usuario);
+            $dadoEndereco = enderecoModel::get($dado->id);
             $dadoEmpresa = empresaModel::get($dado->id_empresa);
         }
 
@@ -103,6 +103,11 @@ class cadastroController extends controllerAbstract{
             $dado = usuarioModel::get($dadoFuncionario->id_usuario);
             $form->setHidden("id_funcionario",functions::encrypt($dadoFuncionario->id));
             $form->setHidden("id_empresa",functions::encrypt($user->id_empresa));
+        }
+
+        if ($tipo_usuario == 3){
+            $dado = usuarioModel::get($cd);
+            $dadoEndereco = enderecoModel::get($dado->id);
         }
 
         $elements = new elements;
@@ -176,28 +181,28 @@ class cadastroController extends controllerAbstract{
 
         if ($tipo_usuario != 2){
             $elements->setOptions("estado","id","nome");
-            $estado = $elements->select("Estado","id_estado",$dado->id_estado?:24,true);
+            $estado = $elements->select("Estado","id_estado",$dadoEndereco->id_estado?:24,true);
 
             $form->setDoisInputs(
-                $elements->input("cep","CEP",$dado->cep,true),
+                $elements->input("cep","CEP",$dadoEndereco->cep,true),
                 $estado,
                 array("cep","id_estado")
             );
 
-            cidadeModel::getOptionsbyEstado($dado->id_estado?:24);
+            cidadeModel::getOptionsbyEstado($dadoEndereco->id_estado?:24);
     
             $form->setDoisInputs(
-                $elements->select("Cidade","id_cidade",$dado->id_cidade?:4487,true),
-                $elements->input("bairro","Bairro",$dado->bairro,true),
+                $elements->select("Cidade","id_cidade",$dadoEndereco->id_cidade?:4487,true),
+                $elements->input("bairro","Bairro",$dadoEndereco->bairro,true),
                 array("bairro","id_cidade")
             );
             $form->setDoisInputs(
-                $elements->input("rua","Rua",$dado->rua,true),
-                $elements->input("numero","Numero",$dado->numero,true,false,"","number","form-control",'min="0" max="999999"'),
+                $elements->input("rua","Rua",$dadoEndereco->rua,true),
+                $elements->input("numero","Numero",$dadoEndereco->numero,true,false,"","number","form-control",'min="0" max="999999"'),
                 array("rua","numero")
             );
             $form->setInputs(
-                $elements->textarea("complemento","Complemento",$dado->complemento,true),"complemento"
+                $elements->textarea("complemento","Complemento",$dadoEndereco->complemento,true),"complemento"
             );
         }
       
@@ -240,7 +245,7 @@ class cadastroController extends controllerAbstract{
             $nome_empresa = $this->getValue('nome_empresa');
             $razao = $this->getValue('razao');
             $fantasia = $this->getValue('fantasia');
-            $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$razao,$fantasia);
+            $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia);
             $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
             if ($id_empresa && $id_usuario){
                 $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"","",$id_empresa);
@@ -273,7 +278,7 @@ class cadastroController extends controllerAbstract{
                 $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
                 if ($id_usuario){
                     $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
-                    $id_endereco = funcionarioModel::set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
+                    $id_endereco = funcionarioModel::set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
                     if($id_endereco){
                         if ($login)
                             $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));

@@ -318,10 +318,10 @@ class Db
                             if (is_string($data) && $data != "null"){
                                 $data = trim($data);
                                 $valuesBind[$i] = [$data,\PDO::PARAM_STR]; 
-                                $sql_instruction .= $key . '="' . $data . '",';
+                                $sql_instruction .= $key . '=?,';
                             }elseif (is_int($data) || is_float($data) && $data != "null"){
                                 $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
-                                $sql_instruction .= $key . "=" . $data . ",";
+                                $sql_instruction .= $key . "=?,";
                             }else 
                                 $sql_instruction .= $key . "=null,";
                             $i++;

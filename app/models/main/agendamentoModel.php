@@ -30,6 +30,17 @@ class agendamentoModel{
         return json_encode($retorn);
     }
 
+    public static function getAgendamentos(){
+        $db = new db("agendamento");
+
+        $result = $db->addJoin("INNER","usuario","usuario.id","agendamento.id_usuario")
+                    ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
+                    ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
+                    ->selectColumns(["agendamento.id","cpf_cnpj","nome as usu_nome","email","telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim","status"]);
+
+        return $result;
+    }
+
     public static function set($id_agenda,$id_usuario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$cd_agenda){
 
         $db = new db("agendamento");

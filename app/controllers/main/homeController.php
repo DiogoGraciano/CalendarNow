@@ -20,36 +20,31 @@ class homeController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $agendas = agendaModel::getByUser($user->id);
+        if ($user->tipo_usuario == 3)
+            $agendas = agendaModel::getByUser($user->id);
+        if ($user->tipo_usuario == 1 || $user->tipo_usuario == 2)
+            $agendas = agendaModel::getByUser($user->id);
 
         $lista = new lista();
 
-        $objetos = [];
-
         if ($agendas){
             foreach ($agendas as $agenda){
-                $objetos[] = $lista->getObjeto($this->url."agenda_horario/".$agenda->id,$agenda->nome." - ".$agenda->emp_nome);
+               $lista->addObjeto($this->url."agenda_horario/".$agenda->id,$agenda->nome." - ".$agenda->emp_nome);
             }
         }
 
         if ($user->tipo_usuario == 0 || $user->tipo_usuario == 1 || $user->tipo_usuario == 2){
-            $buttons = [
-                $elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
-                $elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'")
-            ]; 
+            $lista->addButton($elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"));
+            $lista->addButton($elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'"));
         }
         else{
-            $buttons = [
-                $elements->button("Encontrar","encontrar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."encontrar'"),
-                $elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"),
-                $elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'")
-            ]; 
+            $lista->addButton($elements->button("Encontrar","encontrar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."encontrar'"));
+            $lista->addButton($elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"));
+            $lista->addButton($elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'"));
         }
         
-        $lista->setLista("Agendas",$objetos);
-
-        $lista->setButtons($buttons);
-                       
+        $lista->setLista("Agendas");
+          
         $lista->show();
 
         $footer = new footer;

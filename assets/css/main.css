@@ -93,3 +93,7 @@
     color: white;
     text-decoration: none;
   }
+
+  .btn.btn-primary:hover {
+    background-color: #376edf!important;
+  }

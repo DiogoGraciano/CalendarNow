@@ -5,7 +5,6 @@ use app\classes\mensagem;
 use app\classes\functions;
 use app\classes\modelAbstract;
 use app\models\main\loginModel;
-use stdClass;
 
 class usuarioModel{
 

@@ -79,8 +79,8 @@ class conexaoController extends controllerAbstract{
         );
         $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 
-        $form->setButton($form->button("Salvar","btn_submit"));
-        $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."conexao'"));
+        $form->setButton($form->button("Salvar","submit"));
+        $form->setButton($form->button("Voltar","submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."conexao'"));
         $form->show();
 
         $footer = new footer;

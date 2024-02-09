@@ -54,8 +54,8 @@ class agendamentoController extends controllerAbstract{
                             $form->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,false,"","datetime-local","form-control form-control-date"));
         $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 
-        $form->setButton($form->button("Salvar","btn_submit"));
-        $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."agenda'"));
+        $form->setButton($form->button("Salvar","submit"));
+        $form->setButton($form->button("Voltar","submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."agenda'"));
         $form->show();
 
         $footer = new footer;

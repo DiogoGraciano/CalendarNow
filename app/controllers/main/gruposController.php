@@ -12,7 +12,7 @@ use app\models\main\grupoServicoModel;
 
 class gruposController extends controllerAbstract{
 
-    public function index($parameters){
+    public function index($parameters = array()){
 
         if (array_key_exists(0,$parameters)){
             $tipo_grupo = functions::decrypt($parameters[0]);
