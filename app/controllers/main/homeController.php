@@ -5,6 +5,7 @@ use app\classes\lista;
 use app\classes\elements;
 use app\classes\footer;
 use app\classes\controllerAbstract;
+use app\classes\functions;
 use app\models\main\loginModel;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
@@ -20,16 +21,13 @@ class homeController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        if ($user->tipo_usuario == 3)
-            $agendas = agendaModel::getByUser($user->id);
-        if ($user->tipo_usuario == 1 || $user->tipo_usuario == 2)
-            $agendas = agendaModel::getByUser($user->id);
+        $agendas = agendaModel::getByUser($user->id);
 
         $lista = new lista();
 
         if ($agendas){
             foreach ($agendas as $agenda){
-               $lista->addObjeto($this->url."agenda_horario/".$agenda->id,$agenda->nome." - ".$agenda->emp_nome);
+               $lista->addObjeto($this->url."agendamento/index/".functions::encrypt($agenda->id),$agenda->nome." - ".$agenda->emp_nome);
             }
         }
 

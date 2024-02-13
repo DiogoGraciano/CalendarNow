@@ -10,6 +10,12 @@ class empresaModel{
         return modelAbstract::get("empresa",$cd);
     }
 
+    public static function getByAgenda($id_agenda){
+        $db = new db("empresa");
+        $db->addJoin("INNER","agenda","agenda.id_empresa","empresa.id");
+
+    }
+
     public static function set($nome,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$id=""){
 
         $db = new db("empresa");

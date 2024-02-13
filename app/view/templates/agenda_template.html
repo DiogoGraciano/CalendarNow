@@ -7,15 +7,15 @@
         //themeSystem: 'bootstrap5',
         height: "auto",
         expandRows: true,
-        slotMinTime: '08:30',
-        slotMaxTime: '19:00',
+        slotMinTime: '{initial_time}',
+        slotMaxTime: '{final_time}',
         locale: 'pt-br',
         headerToolbar: {
           left: 'prevYear,prev,next,nextYear today',
-          center: 'title',
-          right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
+          center: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay',
+          right: 'title'
         },
-        initialView: 'dayGridMonth',
+        initialView: 'timeGridDay',
         selectable: true,
         dayMaxEvents: true,
         select: function(arg) {
@@ -52,8 +52,6 @@
 
   </script>
     <div class="container">
-
-        <h2 class="mb-4 mt-4">{titulo}</h2>
 
         <div id='calendar'></div>
 

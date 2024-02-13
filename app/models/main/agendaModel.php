@@ -25,12 +25,13 @@ class agendaModel{
     public static function getByUser($cd = ""){
         $db = new db("agenda_usuario");
         
-        $values = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
-                     ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
-                     ->addFilter("agenda_usuario.id_usuario","=",$cd)
-                     ->selectColumns(["id","agenda.nome","empresa.nome as emp_nome"]);
-
-        if($values)
+        $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
+                    
+        if($cd){
+            $db->addFilter("agenda_usuario.id_usuario","=",$cd);  
+        }
+        
+        if($values = $db->selectColumns(["agenda.id","agenda.nome","empresa.nome as emp_nome"]))
             return $values;
         
         return false;

@@ -35,6 +35,6 @@ class lista extends pagina{
         $this->tpl->show();
     }
     public function addObjeto($url_objeto,$titulo_objeto){
-        $this->lista =  json_decode('{"url_objeto":"'.$url_objeto.'","titulo_objeto":"'.$titulo_objeto.'"}');
+        $this->lista[] =  json_decode('{"url_objeto":"'.$url_objeto.'","titulo_objeto":"'.$titulo_objeto.'"}');
     }
 }

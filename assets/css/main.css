@@ -97,3 +97,15 @@
   .btn.btn-primary:hover {
     background-color: #376edf!important;
   }
+
+  .card.mb-2:hover {
+    background-color: #fbfafa;
+  }
+
+	button.btn.btn-dark.pt-2.btn-block {
+		width: 100%;
+	}
+
+	.fc .fc-toolbar-title::first-letter {
+		text-transform: capitalize;
+	}

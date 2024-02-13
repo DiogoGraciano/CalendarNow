@@ -10,9 +10,12 @@ class agendamentoModel{
         return modelAbstract::get("agendamento",$cd);
     }
 
-    public static function getEvents($dt_inicio,$dt_fim){
+    public static function getEvents($dt_inicio,$dt_fim,$id_agenda){
         $db = new db("agendamento");
-        $results = $db->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim)->selectAll();
+        $results = $db->addFilter("dt_inicio",">=",$dt_inicio)
+                      ->addFilter("dt_fim","<=",$dt_fim)
+                      ->addFilter("id_agenda","=",$id_agenda)
+                      ->selectAll();
 
         $retorn = [];
 

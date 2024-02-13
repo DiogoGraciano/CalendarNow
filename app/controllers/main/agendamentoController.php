@@ -5,16 +5,28 @@ use app\classes\form;
 use app\classes\agenda;
 use app\classes\controllerAbstract;
 use app\classes\footer;
-use app\models\main\agendaModel;
+use app\classes\functions;
+use app\models\main\agendamentoModel;
+use app\models\main\empresaModel;
 
 class agendamentoController extends controllerAbstract{
 
-    public function index(){
+    public function index($parameters){
         $head = new head();
-        $head -> show("Conexão","agenda");
+        $head->show("Agenda","agenda");
+
+        $id_agenda = "";
+
+        if (array_key_exists(0,$parameters)){
+            $id_agenda = functions::decrypt($parameters[0]);
+        }
+
+        $funcionario = $this->getValue("funcionario");
+
+        $empresa = empresaModel::getByAgenda($id_agenda);
 
         $agenda = new agenda();
-        $agenda->show("Agenda",$this->url."agenda/manutencao/",agendaModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year"))));
+        $agenda->show($this->url."agendamento/manutencao/",agendamentoModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda));
       
         $footer = new footer;
         $footer->show();
@@ -64,7 +76,7 @@ class agendamentoController extends controllerAbstract{
     public function action($parameters){
 
         if ($parameters){
-            agendaModel::delete($parameters[0]);
+            agendamentoModel::delete($parameters[0]);
             $this->go("agenda");
             return;
         }
@@ -78,7 +90,7 @@ class agendamentoController extends controllerAbstract{
         $cor = $this->getValue('cor');
         $obs = $this->getValue('obs');
 
-        agendaModel::set($cd_cliente,$cd_funcionario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$cd_agenda);
+        agendamentoModel::set($cd_cliente,$cd_funcionario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$cd_agenda);
 
         $this->go("agenda/manutencao/".$cd_agenda);
     }
