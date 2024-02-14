@@ -173,8 +173,10 @@ class elements extends pagina{
         $db = new db($tb);
         $dados = $db->selectColumns(array($coluna_vl,$coluna_nm));
 
-        foreach ($dados as $dado){
-            $this->addObjectOption($dado->$coluna_vl,$dado->$coluna_nm);
+        if ($dados){
+            foreach ($dados as $dado){
+                $this->addObjectOption($dado->$coluna_vl,$dado->$coluna_nm);
+            }
         }
     }
 

@@ -1,18 +1,22 @@
-<form action="{action}">
-    <!-- BEGIN BLOCK_LINHA_FILTER -->
-        <div class="col-md-12">
-        <!-- BEGIN BLOCK_FILTER -->
-            <div class="col-md-{tamanho_filter}">
-                <!-- BEGIN BLOCK_INPUT -->
-                    {filter}
-                <!-- END BLOCK_INPUT -->
+<div class="container px-2 mt-5">
+    <form id="filter" method="POST" enctype="multipart/form-data" action="{action}" >
+        <!-- BEGIN BLOCK_LINHA_FILTER -->
+            <div class="row">
+            <!-- BEGIN BLOCK_FILTER -->
+                <div class="col-md-{tamanho}">
+                    <!-- BEGIN BLOCK_INPUT -->
+                        {filter}
+                    <!-- END BLOCK_INPUT -->
+                </div>
+            <!-- END BLOCK_FILTER -->
             </div>
-        <!-- END BLOCK_FILTER -->
-        </div>
-    <!-- END BLOCK_LINHA_FILTER -->
-    <!-- BEGIN BLOCK_BUTTON -->
-        <div class="col-md-12">
-            {button}
-        </div>
-    <!-- END BLOCK_BUTTON -->
-</form>
+        <!-- END BLOCK_LINHA_FILTER -->
+        <!-- BEGIN BLOCK_BUTTON -->
+            <div class="row">
+                <div class="col-md-12 mt-2">
+                    {button}
+                </div>
+            </div>
+        <!-- END BLOCK_BUTTON -->
+    </form>
+</div>
