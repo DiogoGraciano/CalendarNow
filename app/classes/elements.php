@@ -1,6 +1,6 @@
 <?php
 namespace app\classes;
-use app\db\Db;
+use app\db\db;
 
 class elements extends pagina{
 
@@ -175,12 +175,12 @@ class elements extends pagina{
 
         if ($dados){
             foreach ($dados as $dado){
-                $this->addObjectOption($dado->$coluna_vl,$dado->$coluna_nm);
+                $this->addOption($dado->$coluna_vl,$dado->$coluna_nm);
             }
         }
     }
 
-    public function addObjectOption($vl_option,$nm_option,$extra_option=""){
+    public function addOption($vl_option,$nm_option,$extra_option=""){
         $this->options[] = json_decode('{"vl_option":"'.$vl_option.'","nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
 
         return $this;

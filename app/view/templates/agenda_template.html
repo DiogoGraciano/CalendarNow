@@ -19,10 +19,10 @@
         selectable: true,
         dayMaxEvents: true,
         select: function(arg) {
-          window.location.href = "{action}" + btoa(arg.start) + "/" + btoa(arg.end);
+          window.location.href = "{action}" + btoa(arg.start).toString().replace("/","@") + "/" + btoa(arg.end).toString().replace("/","@");
         },
         eventClick: function(arg) {
-            window.location.href = "{action}" + arg.event.id;
+          window.location.href = "{action}" + arg.event.id;
         }, 
         // allow "more" link when too many events
         // multiMonthMaxColumns: 1, // guarantee single column
@@ -51,13 +51,19 @@
     });
 
   </script>
-    <div class="container">
+    <div class="px-2">
 
         <div id='calendar'></div>
 
         <div class="fixed-bottom mt-0">
-            {mensagem}
+          {mensagem}
         </div>
+
+        <!-- BEGIN BLOCK_BUTTON -->
+          <div class="col-md-12 d-flex justify-content-center mt-2">                          
+            {button}
+          </div>
+        <!-- END BLOCK_BUTTON -->
 
     </div>
 <!-- END BLOCK_CALENDARIO -->

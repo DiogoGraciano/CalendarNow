@@ -1,5 +1,7 @@
 <?php 
 namespace app\models\main;
+
+use app\classes\functions;
 use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
@@ -22,10 +24,10 @@ class agendamentoModel{
         if ($results){
             foreach ($results as $result){
                 $retorn[] = [
-                    'id' => $result->cd_agenda,
+                    'id' => functions::encrypt($result->id),
                     'title' => $result->titulo,
                     'color' => $result->cor,
-                    'start' => $result->dt_inicio,
+                    'start' => $result->dt_ini,
                     'end' => $result->dt_fim,
                 ];
             }
@@ -41,6 +43,11 @@ class agendamentoModel{
                     ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
                     ->selectColumns(["agendamento.id","cpf_cnpj","nome as usu_nome","email","telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim","status"]);
 
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+        
         return $result;
     }
 

@@ -50,21 +50,21 @@ class conexaoController extends controllerAbstract{
 
         $form->setHidden("cd",$cd);
 
-        $form->addObjectOption("Balcão","Balcão");
-        $form->addObjectOption("Deposito","Deposito");
-        $form->addObjectOption("Escritorio","Escritorio");
-        $form->addObjectOption("Frente De Caixa","Frente De Caixa");
-        $form->addObjectOption("Servidor APP","Servidor APP");
-        $form->addObjectOption("Servidor Super","Servidor Super");
+        $form->addOption("Balcão","Balcão");
+        $form->addOption("Deposito","Deposito");
+        $form->addOption("Escritorio","Escritorio");
+        $form->addOption("Frente De Caixa","Frente De Caixa");
+        $form->addOption("Servidor APP","Servidor APP");
+        $form->addOption("Servidor Super","Servidor Super");
         
 
-        $form->addObjectOption("Anydesk","Anydesk");
-        $form->addObjectOption("Teamviwer","Teamviwer");
-        $form->addObjectOption("NetSuporte","NetSuporte");
-        $form->addObjectOption("Ruskdesk","Ruskdesk");
-        $form->addObjectOption("WTS","WTS");
-        $form->addObjectOption("Radmin","Radmin");
-        $form->addObjectOption("VNC","VNC");
+        $form->addOption("Anydesk","Anydesk");
+        $form->addOption("Teamviwer","Teamviwer");
+        $form->addOption("NetSuporte","NetSuporte");
+        $form->addOption("Ruskdesk","Ruskdesk");
+        $form->addOption("WTS","WTS");
+        $form->addOption("Radmin","Radmin");
+        $form->addOption("VNC","VNC");
         
 
         $form->setDoisInputs($form->input("id_conexao","Conexão:",$dado->id_conexao,true),      

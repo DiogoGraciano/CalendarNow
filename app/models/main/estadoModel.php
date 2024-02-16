@@ -2,6 +2,7 @@
 namespace app\models\main;
 use app\db\db;
 use app\classes\modelAbstract;
+use app\classes\mensagem;
 
 class estadoModel{
 
@@ -13,6 +14,11 @@ class estadoModel{
         $db = new db("estado");
 
         $estado = $db->selectByValues(["uf"],[$uf],true);
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
 
         return $estado;
     }

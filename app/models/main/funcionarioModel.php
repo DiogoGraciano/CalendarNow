@@ -12,6 +12,10 @@ class funcionarioModel{
         return modelAbstract::get("funcionario",$cd);
     }
 
+    public static function getAll(){
+        return modelAbstract::getAll("funcionario");
+    }
+
     public static function getListFuncionariosByEmpresa($id_empresa){
 
         $db = new db("funcionario");
@@ -37,8 +41,44 @@ class funcionarioModel{
                 $funcionarioFinal[] = $funcionario;
             }
         }
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
         
         return $funcionarioFinal;
+    }
+
+    public static function getByAgenda($id_agenda){
+        $db = new db("agenda_funcionario");
+
+        $values = $db->addJoin("INNER","agenda","agenda.id","agenda_funcionario.id_agenda")
+                ->addJoin("INNER","funcionario","funcionario.id","agenda_funcionario.id_funcionario")
+                ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
+                ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","cpf_cnpj","email","telefone","hora_ini","hora_fim","dias"]);
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        return $values;
+    }
+
+    public static function getByEmpresa($id_empresa){
+        $db = new db("funcionario");
+
+        $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.usuario")
+                ->addFilter("usuario.id_empresa","=",$id_empresa)
+                ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","cpf_cnpj","email","telefone","hora_ini","hora_fim","dias"]);
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        return $values;
     }
 
     public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){

@@ -14,7 +14,14 @@ class enderecoModel{
     public static function getbyIdUsuario($id_usuario = ""){
         $db = new db("endereco");
 
-        return $db->selectByValues(["id_usuario"],[$id_usuario],true);
+        $values = $db->selectByValues(["id_usuario"],[$id_usuario],true);
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        return $values;
     }
 
     public static function set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento="null",$cd = "",$id_usuario="null",$id_empresa="null"){

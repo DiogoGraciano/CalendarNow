@@ -1,8 +1,4 @@
-<div class="col-md-12 px-2 h-100 mt-5">
-    <div class="col-md-3">
-        <label for="pesquisa">PESQUISA:</label>
-        <input class="form-control" type="text" name="pesquisa" id="pesquisa" />
-    </div>
+<div class="col-md-12 px-2 h-100">
     <form id="manutencao" method="POST" enctype="multipart/form-data" action="{form_action}">
         <div class="mt-2 mb-2">
             <button class="btn btn-primary" onclick="location.href='{pagina_manutencao}'" type="button">Adicionar</button>
@@ -14,7 +10,7 @@
             <thead>
                 <tr>
                     <!-- BEGIN BLOCK_CHECK -->
-                        <th width="1">{check}</th>
+                        <th width="1%"></th>
                     <!-- END BLOCK_CHECK -->
                     <!-- BEGIN BLOCK_COLUMNS -->
                         <th width="{columns_width}">{columns_name}</th>
@@ -24,6 +20,9 @@
             <tbody id="tableBody">
                 <!-- BEGIN BLOCK_TABELA -->
                     <tr> 
+                        <!-- BEGIN BLOCK_DADO_CHECK -->
+                        <td>{check}</td>
+                        <!-- END BLOCK_DADO_CHECK -->
                         <!-- BEGIN BLOCK_DADOS -->
                         <td>{data}</td>
                         <!-- END BLOCK_DADOS -->

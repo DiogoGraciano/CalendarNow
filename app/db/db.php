@@ -289,20 +289,15 @@ class Db
                     $valuesBD = "";
                     $i = 1;
                     foreach ($values as $key => $data) {
-                        if ($data){
-                            $keysBD .= $key . ",";
-                            if (is_string($data) && $data != "null"){
-                                $data = trim($data);
-                                $valuesBind[$i] = [$data,\PDO::PARAM_STR]; 
-                                $valuesBD .= "?,";
-                            }elseif (is_int($data) || is_float($data) && $data != "null"){
-                                $valuesBD .= "?,";
-                                $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
-                            }
-                            else    
-                                $valuesBD .= "null,";
-                            $i++;
-                        }
+                        $keysBD .= $key . ",";
+                        $valuesBD .= "?,";
+                        if (is_string($data))
+                            $valuesBind[$i] = [$data,\PDO::PARAM_STR];  
+                        elseif (is_int($data) || is_float($data))
+                            $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
+                        else
+                            $valuesBind[$i] = [null,\PDO::PARAM_NULL]; 
+                        $i++;
                     }
                     $keysBD = substr($keysBD, 0, -1);
                     $sql_instruction .= $keysBD;
@@ -314,18 +309,14 @@ class Db
                     $sql_instruction = "UPDATE " . $this->table . " SET ";
                     $i = 1;
                     foreach ($values as $key => $data) {
-                        if ($data){
-                            if (is_string($data) && $data != "null"){
-                                $data = trim($data);
-                                $valuesBind[$i] = [$data,\PDO::PARAM_STR]; 
-                                $sql_instruction .= $key . '=?,';
-                            }elseif (is_int($data) || is_float($data) && $data != "null"){
-                                $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
-                                $sql_instruction .= $key . "=?,";
-                            }else 
-                                $sql_instruction .= $key . "=null,";
-                            $i++;
-                        }
+                        $sql_instruction .= $key . '=?,';
+                        if (is_string($data) && $data != "null")
+                            $valuesBind[$i] = [$data,\PDO::PARAM_STR]; 
+                        elseif (is_int($data) || is_float($data) && $data != "null")
+                            $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
+                        else 
+                            $valuesBind[$i] = [null,\PDO::PARAM_INT];
+                        $i++;  
                     }
                     $sql_instruction = substr($sql_instruction, 0, -1);
                     $sql_instruction .= "WHERE ";
@@ -367,18 +358,15 @@ class Db
                 $valuesBind = [];
                 $i = 1;
                 foreach ($values as $key => $data) {
-                    if ($data){
+                    foreach ($values as $key => $data) {
                         $keysBD .= $key . ",";
-                        if (is_string($data) && $data != "null"){
-                            $data = trim($data);
+                        $valuesBD .= "?,";
+                        if (is_string($data))
                             $valuesBind[$i] = [$data,\PDO::PARAM_STR];  
-                            $valuesBD .= "?,";
-                        }elseif (is_int($data) || is_float($data) && $data != "null"){
-                            $valuesBD .= "?,";
+                        elseif (is_int($data) || is_float($data))
                             $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
-                        }
-                        else    
-                            $valuesBD .= "null,";
+                        else
+                            $valuesBind[$i] = [null,\PDO::PARAM_NULL]; 
                         $i++;
                     }
                 }
@@ -393,10 +381,11 @@ class Db
                     $sql->bindParam($key,$data[0],$data[1]);
                 }
                 $sql->execute();
+                $this->clean();
                 return true;
             }
         } catch (\Exception $e) {
-            $this->error[] = 'Erro: ' .  $e->getMessage();
+            $this->error[] = 'Erro: '.$e->getMessage();
         }
     }
 
@@ -449,10 +438,12 @@ class Db
     //adiciona um filtro ao select
     public function addFilter($column,$condition,$value,$operator="AND"){
         
-        if (is_string($value) && $value != "null")
+        if (is_string($value))
             $this->valuesBind[$this->counterBind] = [$value,\PDO::PARAM_STR];
-        elseif (is_int($value) || is_float($value) || $value == "null")
+        elseif (is_int($value) || is_float($value))
             $this->valuesBind[$this->counterBind] = [$value,\PDO::PARAM_INT];
+        else 
+            $this->valuesBind[$this->counterBind] = [Null,\PDO::PARAM_NULL];
 
         $this->counterBind++;
 
@@ -505,6 +496,17 @@ class Db
         $this->joins = [];
         $this->propertys = [];
         $this->filters = [];
+        $this->valuesBind = [];
+        $this->counterBind = 1;
+        $this->pdo = "";
+        $this->config = "";
+        $this->table = [];
+        $this->object = [];
+        $this->columns = [];
+        $this->error = [];
+        $this->joins =[];
+        $this->propertys =[];
+        $this->filters =[];
         $this->valuesBind = [];
         $this->counterBind = 1;
     }

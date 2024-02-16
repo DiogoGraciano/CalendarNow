@@ -32,7 +32,7 @@ class cidadeModel{
 
         $options = [];
         foreach ($resultados as $resultado){
-            $elements->addObjectOption($resultado->id,$resultado->nome);
+            $elements->addOption($resultado->id,$resultado->nome);
         }   
     }
 

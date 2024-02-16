@@ -26,6 +26,10 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
             $this->tpl->block("BLOCK_BUTTONS");   
         }
 
+        if ($checkbox){
+            $this->tpl->block('BLOCK_CHECK');
+        }
+
         foreach ($this->columns as $columns){
             $this->tpl->columns_width = $columns->width;
             $this->tpl->columns_name = $columns->nome;
@@ -44,9 +48,10 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
                         $this->tpl->block("BLOCK_BUTTONS_TB"); 
                         if ($checkbox){
                             $this->tpl->check = (new elements)->checkbox("id_check_".$i,false,false,false,false,functions::encrypt($value));
-                            $this->tpl->block('BLOCK_CHECK');
+                            $this->tpl->block('BLOCK_DADO_CHECK');
                         }
                     }
+                   
                 } 
                 $i++;
                 $this->tpl->block('BLOCK_TABELA');

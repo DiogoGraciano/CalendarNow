@@ -25,6 +25,11 @@ class usuarioModel{
 
         $usuario = $db->selectByValues(["cpf_cnpj","email"],[$cpf_cnpj,$email],True);
 
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
         return $usuario;
     }
 
@@ -34,6 +39,11 @@ class usuarioModel{
 
         $usuario = $db->selectByValues(["cpf_cnpj"],[$cpf_cnpj]);
 
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
         return $usuario;
     }
 
@@ -42,6 +52,11 @@ class usuarioModel{
         $db = new db("usuario");
 
         $usuario = $db->selectByValues(["email"],[$email]);
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
 
         return $usuario;
     }

@@ -77,6 +77,30 @@ class agendaModel{
         }
     }
 
+    public static function setAgendaFuncionario($id_funcionario,$id_agenda){
+        $db = new db("agenda_funcionario");
+
+        $values = $db->getObject();
+
+        $values->id_funcionario = $id_funcionario;
+        $values->id_agenda = $id_agenda;
+
+        if ($values)
+            $retorno = $db->storeMutiPrimary($values);
+
+        if ($retorno == true){
+            mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+            return $db->getLastID();
+        }
+        else {
+            $erros = ($db->getError());
+            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
+            mensagem::addErro($erros);
+            return False;
+        }
+    }
+
+
     public static function set($nome,$id_empresa,$id=""){
 
         $db = new db("agenda");
@@ -106,10 +130,27 @@ class agendaModel{
         modelAbstract::delete("agenda",$cd);
     }
 
-    public static function deleteAgendaUsuario($id_usuario,$id_agenda){
+    public static function deleteAgendaUsuario($id_agenda){
         $db = new db("agenda_usuario");
 
-        $retorno =  $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();
+        $retorno =  $db->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();
+
+        if ($retorno == true){
+            mensagem::setSucesso(array("Excluido com Sucesso"));
+            return True;
+        }
+        else {
+            $erros = ($db->getError());
+            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
+            mensagem::addErro($erros);
+            return False;
+        }
+    }
+
+    public static function deleteAgendaFuncionario($id_agenda){
+        $db = new db("agenda_funcionario");
+
+        $retorno =  $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)->deleteByFilter();
 
         if ($retorno == true){
             mensagem::setSucesso(array("Excluido com Sucesso"));

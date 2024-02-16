@@ -7,11 +7,15 @@ use app\classes\controllerAbstract;
 use app\classes\elements;
 use app\classes\footer;
 use app\classes\functions;
+use app\classes\filter;
 use app\models\main\agendaModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
+use app\models\main\funcionarioModel;
 
 class servicoController extends controllerAbstract{
+
+    private $funcionario = "";
 
     public function index(){
         $head = new head();
@@ -20,6 +24,28 @@ class servicoController extends controllerAbstract{
         $elements = new elements;
 
         $user = usuarioModel::getLogged();
+
+        $filter = new filter($this->url."servico/filter/");
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+
+        $filter->addFilter(6,[$elements->input("pesquisa","Pesquisa:")]);
+
+        $user = usuarioModel::getLogged();
+
+        $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
+
+        $i = 1;
+        $firstFuncionario = "";
+        foreach ($funcionarios as $funcionario){
+            if ($i == 1){
+                $firstFuncionario = $funcionario->id;
+            }
+            $elements->addOption($funcionario->id,$funcionario->nome);
+        }
+
+        $filter->addFilter(6,[$elements->select("Funcionario","funcionario",$this->$funcionario=""?$firstFuncionario:$this->$funcionario)]);
+
+        $filter->show();
 
         $servico = new consulta();
 
@@ -31,7 +57,7 @@ class servicoController extends controllerAbstract{
                 ->addColumns("10","Valor","valor")
                 ->addColumns("11","Ações","acoes")
 
-        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa));
+        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa),"id",true);
       
         $footer = new footer;
         $footer->show();

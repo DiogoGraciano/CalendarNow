@@ -54,6 +54,9 @@ class agendaController extends controllerAbstract{
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
 
+        $elements->setOptions("funcionario","id","nome");
+        $form->setInputs($elements->select("Funcionario:","funcionario",""));
+
         $form->setButton($elements->button("Salvar","submit"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agenda'"));
         $form->show();
@@ -67,17 +70,20 @@ class agendaController extends controllerAbstract{
 
         if ($parameters){
             $cd = functions::decrypt($parameters[0]);
-            agendaModel::deleteAgendaUsuario($user->id,$cd);
+            agendaModel::deleteAgendaUsuario($cd);
+            agendaModel::deleteAgendaFuncionario($cd);
             agendaModel::delete($cd);
             $this->go("agenda");
         }
 
         $id = functions::decrypt($this->getValue('cd'));
         $nome  = $this->getValue('nome');
+        $id_funcionario  = $this->getValue('funcionario');
         $id_empresa  = functions::decrypt($this->getValue('id_empresa'));
 
         if ($id_agenda = agendaModel::set($nome,$id_empresa,$id) && !$id){ 
             agendaModel::setAgendaUsuario($user->id,$id_agenda);
+            agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
         }
 
         $this->go("agenda");

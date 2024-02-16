@@ -20,6 +20,11 @@ class servicoModel{
 
         $valuesFinal = [];
 
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
         if ($values){
             foreach ($values as $value){
                 if ($value->valor){
@@ -30,7 +35,6 @@ class servicoModel{
 
             return $values;
         }
-        return false;
     }
 
     public static function getByEmpresaAndId($cd,$id_empresa){
@@ -40,10 +44,12 @@ class servicoModel{
                      ->addFilter("servico.id","=",$cd)
                      ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
         
-        if($values)
-            return $values;
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
         
-        return false;
+        return $values;
     }
 
 
@@ -55,10 +61,27 @@ class servicoModel{
                     ->addFilter("funcionario.id_usuario","=",$cd)
                     ->selectColumns(["servico.id","funcionario.nome as funcionario_nome","servico.nome as ser_nome","servico.tempo","servico.valor"]);
 
-        if($values)
-            return $values;
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+                    
+        return $values;
+    }
+
+    public static function getByServicoGrupoServico($id_grupo_servico = ""){
+        $db = new db("servico_grupo_servico");
         
-        return false;
+        $values = $db->addJoin("INNER","servico","funcionario_servico.id_servico","servico.id")
+                    ->addFilter("servico_grupo_servico.id_grupo_servico","=",$id_grupo_servico)
+                    ->selectColumns(["servico.id","servico.nome","servico.id_empresa","servico.tempo","servico.valor"]);
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+                    
+        return $values;
     }
 
     public static function setServicoGrupoServico($id_servico,$id_grupo_servico){
