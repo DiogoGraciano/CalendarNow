@@ -26,16 +26,6 @@ class cidadeModel{
         return $cidade;
     }
 
-    public static function getOptionsbyEstado($id_estado){
-        $resultados = cidadeModel::getByEstado($id_estado);
-        $elements = new elements;
-
-        $options = [];
-        foreach ($resultados as $resultado){
-            $elements->addOption($resultado->id,$resultado->nome);
-        }   
-    }
-
     public static function getByIbge($ibge){
         $db = new db("cidade");
 

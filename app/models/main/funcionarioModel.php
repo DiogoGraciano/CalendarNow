@@ -81,7 +81,7 @@ class funcionarioModel{
         return $values;
     }
 
-    public static function set($id_usuario,$id_grupo_funcionario,$id_grupo_servico,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
+    public static function set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
 
         $db = new db("funcionario");
 
@@ -89,12 +89,10 @@ class funcionarioModel{
 
         $values->id = $id;
         $values->id_usuario = $id_usuario;
-        $values->id_grupo_funcionario = $id_grupo_funcionario;
-        $values->id_grupo_servico = $id_grupo_servico;
         $values->nome = $nome;
-        $values->cpf_cnpj = $cpf_cnpj;
+        $values->cpf_cnpj = functions::onlynumber($cpf_cnpj);
         $values->email = $email;
-        $values->telefone = $telefone;
+        $values->telefone = functions::onlynumber($telefone);
         $values->hora_ini = $hora_ini;
         $values->hora_fim = $hora_fim;
         $values->hora_almoco_ini = $hora_almoco_ini;
@@ -112,6 +110,37 @@ class funcionarioModel{
             mensagem::addErro($Mensagems);
             return False;
         }
+    }
+
+    public static function setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario){
+        $db = new db("funcionario_grupo_funcionario");
+
+        $result = $db->addFilter("id_grupo_funcionario","=",$id_grupo_funcionario)
+                    ->addFilter("id_funcionario","=",$id_funcionario)
+                    ->selectAll();
+
+        if (!$result){
+            $values = $db->getObject();
+
+            $values->id_grupo_funcionario = $id_grupo_funcionario;
+            $values->id_funcionario = $id_funcionario;
+
+            if ($values)
+                $retorno = $db->storeMutiPrimary($values);
+
+            if ($retorno == true){
+                mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+                return $db->getLastID();
+            }
+            else {
+                $erros = ($db->getError());
+                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
+                mensagem::addErro($erros);
+                return False;
+            }
+        }
+        mensagem::setErro(array("Já existe vinculo entre esse grupo e serviço"));
+        return True;
     }
     
     public static function delete($cd){

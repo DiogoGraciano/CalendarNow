@@ -1,5 +1,7 @@
 <?php 
 namespace app\models\main;
+
+use app\classes\functions;
 use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
@@ -24,9 +26,9 @@ class empresaModel{
 
         $values->id = $id;
         $values->nome = $nome;
-        $values->cnpj = $cpf_cnpj;
+        $values->cnpj = functions::onlynumber($cpf_cnpj);
         $values->email = $email;
-        $values->telefone = $telefone;
+        $values->telefone = functions::onlynumber($telefone);
         $values->razao = $razao;
         $values->fantasia = $fantasia;
         $retorno = $db->store($values);

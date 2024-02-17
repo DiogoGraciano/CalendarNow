@@ -2,6 +2,7 @@
 namespace app\controllers\main;
 use app\classes\head;
 use app\classes\form;
+use app\classes\modal;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
 use app\classes\elements;
@@ -34,16 +35,31 @@ class servicoController extends controllerAbstract{
 
         $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
 
-        $i = 1;
-        $firstFuncionario = "";
-        foreach ($funcionarios as $funcionario){
-            if ($i == 1){
-                $firstFuncionario = $funcionario->id;
+        if ($funcionarios){
+            $i = 1;
+            $firstFuncionario = "";
+            foreach ($funcionarios as $funcionario){
+                if ($i == 1){
+                    $firstFuncionario = $funcionario->id;
+                }
+                $elements->addOption($funcionario->id,$funcionario->nome);
             }
-            $elements->addOption($funcionario->id,$funcionario->nome);
-        }
 
-        $filter->addFilter(6,[$elements->select("Funcionario","funcionario",$this->$funcionario=""?$firstFuncionario:$this->$funcionario)]);
+            $modal = new modal($this->url."servico/massActionFuncionario/");
+
+            $modal->setinputs($elements->select("Funcionario","funcionario",$this->$funcionario=""?$firstFuncionario:$this->$funcionario));
+
+            $modal->show();
+
+            foreach ($funcionarios as $funcionario){
+                if ($i == 1){
+                    $firstFuncionario = $funcionario->id;
+                }
+                $elements->addOption($funcionario->id,$funcionario->nome);
+            }
+
+            $filter->addFilter(6,[$elements->select("Funcionario","funcionario",$this->$funcionario=""?$firstFuncionario:$this->$funcionario)]);
+        }
 
         $filter->show();
 
@@ -98,7 +114,7 @@ class servicoController extends controllerAbstract{
         );
 
         $form->setButton($elements->button("Salvar","submit"));
-        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agenda'"));
+        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."servico'"));
         $form->show();
 
         $footer = new footer;
