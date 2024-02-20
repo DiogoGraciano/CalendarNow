@@ -359,17 +359,15 @@ class Db
                 $valuesBind = [];
                 $i = 1;
                 foreach ($values as $key => $data) {
-                    foreach ($values as $key => $data) {
-                        $keysBD .= $key . ",";
-                        $valuesBD .= "?,";
-                        if (is_string($data))
-                            $valuesBind[$i] = [$data,\PDO::PARAM_STR];  
-                        elseif (is_int($data) || is_float($data))
-                            $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
-                        else
-                            $valuesBind[$i] = [null,\PDO::PARAM_NULL]; 
-                        $i++;
-                    }
+                    $keysBD .= $key . ",";
+                    $valuesBD .= "?,";
+                    if (is_string($data))
+                        $valuesBind[$i] = [$data,\PDO::PARAM_STR];  
+                    elseif (is_int($data) || is_float($data))
+                        $valuesBind[$i] = [$data,\PDO::PARAM_INT]; 
+                    else
+                        $valuesBind[$i] = [null,\PDO::PARAM_NULL]; 
+                    $i++;
                 }
                 $keysBD = substr($keysBD, 0, -1);
                 $sql_instruction .= $keysBD;
@@ -497,17 +495,6 @@ class Db
         $this->joins = [];
         $this->propertys = [];
         $this->filters = [];
-        $this->valuesBind = [];
-        $this->counterBind = 1;
-        $this->pdo = "";
-        $this->config = "";
-        $this->table = [];
-        $this->object = [];
-        $this->columns = [];
-        $this->error = [];
-        $this->joins =[];
-        $this->propertys =[];
-        $this->filters =[];
         $this->valuesBind = [];
         $this->counterBind = 1;
     }

@@ -48,11 +48,11 @@ class servicoController extends controllerAbstract{
 
             $funcionarios = $elements->select("Funcionario","funcionario",$this->funcionario=""?$firstFuncionario:$this->funcionario);
 
-            $modal = new modal($this->url."servico/massActionFuncionario/",false);
+            $modal = new modal($this->url."servico/massActionFuncionario/","massActionFuncionario");
 
             $modal->setinputs($funcionarios);
 
-            $modal->setButton($elements->button("Salvar","submit"));
+            $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
 
             $modal->show();
 
@@ -64,7 +64,7 @@ class servicoController extends controllerAbstract{
         $servico = new consulta();
 
         $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
-        $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModel","button","btn btn-primary")); 
+        $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModel","button","btn btn-primary","openModal('massActionFuncionario')")); 
 
         $servico->addColumns("1","Id","id")
                 ->addColumns("60","Nome","nome")
@@ -72,7 +72,7 @@ class servicoController extends controllerAbstract{
                 ->addColumns("10","Valor","valor")
                 ->addColumns("11","Ações","acoes")
 
-        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa),"id",true,$this->url."servico/massActionFuncionario/");
+        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa),"id",true);
       
         $footer = new footer;
         $footer->show();
@@ -148,7 +148,18 @@ class servicoController extends controllerAbstract{
     }
     public function massActionFuncionario(){
 
-    
+        $qtd_list = $this->getValue("qtd_list");
+        $id_funcionario = $this->getValue("funcionario");
+
+        if ($qtd_list && $id_funcionario){
+            for ($i = 1; $i <= $qtd_list; $i++) {
+                if($id_servico = $this->getValue("id_check_".$i)){
+                    servicoModel::setServicoFuncionario($id_servico,$id_funcionario);
+                }
+            }
+        }
+
+        $this->go("servico");
 
     }
 }

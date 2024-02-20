@@ -115,6 +115,37 @@ class servicoModel{
         return True;
     }
 
+    public static function setServicoFuncionario($id_servico,$id_funcionario){
+        $db = new db("servico_funcionario");
+
+        $result = $db->addFilter("id_funcionario","=",$id_funcionario)
+                    ->addFilter("id_servico","=",$id_servico)
+                    ->selectAll();
+
+        if (!$result){
+            $values = $db->getObject();
+
+            $values->id_funcionario = $id_funcionario;
+            $values->id_servico = $id_servico;
+
+            if ($values)
+                $retorno = $db->storeMutiPrimary($values);
+
+            if ($retorno == true){
+                mensagem::setSucesso(array("Vinculados com Sucesso"));
+                return $db->getLastID();
+            }
+            else {
+                $erros = ($db->getError());
+                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
+                mensagem::addErro($erros);
+                return False;
+            }
+        }
+        mensagem::setErro(array("Já existe vinculo entre esse funcionario e serviço"));
+        return True;
+    }
+
     public static function set($nome,$valor,$tempo,$id_empresa="",$id=""){
 
         $db = new db("servico");
@@ -131,7 +162,7 @@ class servicoModel{
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+            mensagem::setSucesso(array("Serviço salvo com Sucesso"));
             return $db->getLastID();
         }
         else {

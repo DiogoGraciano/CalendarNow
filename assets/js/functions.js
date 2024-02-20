@@ -1,3 +1,5 @@
+var nomeModal = "";
+
 function go($url){
   window.location.href = $url
 }
@@ -33,6 +35,11 @@ function validaValor(seletor){
   }
 
   $(seletor).removeClass('is-invalid')//.addClass('is-valid');
+}
+
+function openModal(nome){
+  nomeModal = nome;
+  $(".modal_container."+nome).show()
 }
 
 $(document).ready(function(){		
@@ -99,7 +106,17 @@ $(document).ready(function(){
     });
 
     $("#closeModel").on("click",function(){$(".modal_container").hide()})
-    $("#openModel").on("click",function(){$(".modal_container").show()})
+
+    $("#submitModalConsulta").on("click",function(){
+
+      $('#formConsulta').attr('action', $("#actionConsulta"+nomeModal).val());
+
+      $("#formConsulta").append($(".form-group"))
+  
+      $("#formConsulta").submit();
+
+    });
+    
 
     function getOptionCidade(option){
       $('#id_cidade').append('<option value="'+option.vl_option+'" '+option.extra_option+'>'+option.nm_option+'</option>')

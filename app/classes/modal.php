@@ -13,15 +13,19 @@ class modal extends pagina{
 
     private $submit_this_form;
     
-    public function __construct($action,$submit_this_form = true)
+    public function __construct($action,$nome = "modal",$submit_this_form = false)
     {
         $this->submit_this_form = $submit_this_form;
         $this->tplform = $this->getTemplate("modal_template.html");
         $mensagem = new mensagem;
         $this->tplform->mensagem = $mensagem->show(false);
+        $this->tplform->nome_modal = $nome;
         if ($this->submit_this_form){
             $this->tplform->action = $action;
             $this->tplform->block("BLOCK_FORM");
+        }
+        else{
+            $this->setHidden("actionConsulta".$nome,$action);
         }
         $this->tplform->block("BLOCK_START");
     }

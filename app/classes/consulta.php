@@ -10,14 +10,11 @@ class consulta extends pagina{
     private $columns = [];
     private $buttons = [];
 
-public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id",$checkbox=false,$action_form=""){
+public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id",$checkbox=false){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
         $this->tpl->pagina_manutencao = $pagina_manutencao;
         $this->tpl->pagina_action = $pagina_action;
-        if ($action_form){
-            $this->tpl->form_action = $action_form;
-        }
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
 
@@ -47,7 +44,7 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
                         $this->tpl->cd_excluir = functions::encrypt($value);
                         $this->tpl->block("BLOCK_BUTTONS_TB"); 
                         if ($checkbox){
-                            $this->tpl->check = (new elements)->checkbox("id_check_".$i,false,false,false,false,functions::encrypt($value));
+                            $this->tpl->check = (new elements)->checkbox("id_check_".$i+1,false,false,false,false,$value);
                             $this->tpl->block('BLOCK_DADO_CHECK');
                         }
                     }
@@ -56,6 +53,7 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
                 $i++;
                 $this->tpl->block('BLOCK_TABELA');
             }
+            $this->tpl->qtd_list = $i;
         }
        else 
             $this->tpl->block('BLOCK_SEMDADOS');

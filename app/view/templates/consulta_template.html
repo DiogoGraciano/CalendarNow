@@ -1,11 +1,12 @@
 <div class="col-md-12 px-2 h-100">
-    <form id="manutencao" method="POST" enctype="multipart/form-data" action="{form_action}">
+    <form method="POST" enctype="multipart/form-data" id="formConsulta">
         <div class="mt-2 mb-2">
             <button class="btn btn-primary" onclick="location.href='{pagina_manutencao}'" type="button">Adicionar</button>
             <!-- BEGIN BLOCK_BUTTONS -->
                 {button}
             <!-- END BLOCK_BUTTONS -->
         </div>
+        <input type="hidden" name="qtd_list" id="qtd_list" value="{qtd_list}">
         <table id="ctabela" width="100%" class="sortable table table-hover table-bordered table-sm caption-top">
             <thead>
                 <tr>
