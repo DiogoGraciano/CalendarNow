@@ -41,24 +41,22 @@ class servicoController extends controllerAbstract{
             foreach ($funcionarios as $funcionario){
                 if ($i == 1){
                     $firstFuncionario = $funcionario->id;
+                    $i++;
                 }
                 $elements->addOption($funcionario->id,$funcionario->nome);
             }
 
-            $modal = new modal($this->url."servico/massActionFuncionario/");
+            $funcionarios = $elements->select("Funcionario","funcionario",$this->funcionario=""?$firstFuncionario:$this->funcionario);
 
-            $modal->setinputs($elements->select("Funcionario","funcionario",$this->$funcionario=""?$firstFuncionario:$this->$funcionario));
+            $modal = new modal($this->url."servico/massActionFuncionario/",false);
+
+            $modal->setinputs($funcionarios);
+
+            $modal->setButton($elements->button("Salvar","submit"));
 
             $modal->show();
 
-            foreach ($funcionarios as $funcionario){
-                if ($i == 1){
-                    $firstFuncionario = $funcionario->id;
-                }
-                $elements->addOption($funcionario->id,$funcionario->nome);
-            }
-
-            $filter->addFilter(6,[$elements->select("Funcionario","funcionario",$this->$funcionario=""?$firstFuncionario:$this->$funcionario)]);
+            $filter->addFilter(6,[$funcionarios]);
         }
 
         $filter->show();
@@ -66,6 +64,7 @@ class servicoController extends controllerAbstract{
         $servico = new consulta();
 
         $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
+        $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModel","button","btn btn-primary")); 
 
         $servico->addColumns("1","Id","id")
                 ->addColumns("60","Nome","nome")
@@ -73,7 +72,7 @@ class servicoController extends controllerAbstract{
                 ->addColumns("10","Valor","valor")
                 ->addColumns("11","Ações","acoes")
 
-        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa),"id",true);
+        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa),"id",true,$this->url."servico/massActionFuncionario/");
       
         $footer = new footer;
         $footer->show();
@@ -146,5 +145,10 @@ class servicoController extends controllerAbstract{
         }
 
         $this->go("servico");
+    }
+    public function massActionFuncionario(){
+
+    
+
     }
 }

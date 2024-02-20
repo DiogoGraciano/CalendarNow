@@ -11,72 +11,97 @@
 	border-top: 16px solid #3498db;
 	-webkit-animation: spin 2s linear infinite;
 	animation: spin 2s linear infinite;
-  }
-  
-  @-webkit-keyframes spin {
-	0% { -webkit-transform: rotate(0deg); }
-	100% { -webkit-transform: rotate(360deg); }
-  }
-  
-  @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-  }
-  
-  /* Add animation to "page content" */
-  .animate-bottom {
+}
+
+@-webkit-keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
 	position: relative;
 	-webkit-animation-name: animatebottom;
 	-webkit-animation-duration: 1s;
 	animation-name: animatebottom;
 	animation-duration: 1s
-  }
-  
-  @-webkit-keyframes animatebottom {
-	from { bottom:-100px; opacity:0 } 
-	to { bottom:0px; opacity:1 }
-  }
-  
-  @keyframes animatebottom { 
-	from{ bottom:-100px; opacity:0 } 
-	to{ bottom:0; opacity:1 }
-  }
+}
 
-  .box{
+@-webkit-keyframes animatebottom {
+	from {
+		bottom: -100px;
+		opacity: 0
+	}
+
+	to {
+		bottom: 0px;
+		opacity: 1
+	}
+}
+
+@keyframes animatebottom {
+	from {
+		bottom: -100px;
+		opacity: 0
+	}
+
+	to {
+		bottom: 0;
+		opacity: 1
+	}
+}
+
+.box {
 	overflow: auto;
 	max-height: 400px;
-  }
-  .btn.btn-primary{
-	background-color: #4267b2!important;
-  }
+}
 
-  .card {
+.btn.btn-primary {
+	background-color: #4267b2 !important;
+}
+
+.card {
 	position: relative;
 	width: 100%;
 	height: 63px;
 	background-color: #ffffff;
 	border-radius: 8px;
 	overflow: hidden;
-  }
-  
-  .card .rectangle {
+}
+
+.card .rectangle {
 	position: absolute;
 	width: 7px;
 	height: 77px;
 	top: -7px;
 	left: 0;
 	background-color: #4267b2;
-  }
-  
-  .card .group {
+}
+
+.card .group {
 	position: absolute;
 	width: 100%;
 	height: 17px;
 	top: 23px;
 	left: 19px;
-  }
-  
-  .card .text-wrapper {
+}
+
+.card .text-wrapper {
 	position: absolute;
 	width: 100%;
 	top: 0;
@@ -87,25 +112,41 @@
 	font-size: 14px;
 	letter-spacing: 0;
 	line-height: normal;
-  }
+}
 
-  button a {
-    color: white;
-    text-decoration: none;
-  }
+button a {
+	color: white;
+	text-decoration: none;
+}
 
-  .btn.btn-primary:hover {
-    background-color: #376edf!important;
-  }
+.btn.btn-primary:hover {
+	background-color: #376edf !important;
+}
 
-  .card.mb-2:hover {
-    background-color: #fbfafa;
-  }
+.card.mb-2:hover {
+	background-color: #fbfafa;
+}
 
-	button.btn.btn-dark.pt-2.btn-block {
-		width: 100%;
-	}
+button.btn.btn-dark.pt-2.btn-block {
+	width: 100%;
+}
 
-	.fc .fc-toolbar-title::first-letter {
-		text-transform: capitalize;
-	}
+.fc .fc-toolbar-title::first-letter {
+	text-transform: capitalize;
+}
+
+.modal_container {
+	position: fixed;
+	background-color: white;
+	width: 100%;
+	height: 100%;
+	top:0;
+}
+
+button.btn-close {
+    background-color: #4267b2;
+    right: 27px;
+    position: absolute;
+    opacity: 100;
+    margin-top: 10px;
+}

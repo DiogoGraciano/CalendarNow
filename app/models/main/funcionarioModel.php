@@ -24,7 +24,7 @@ class funcionarioModel{
                     ->addJoin("LEFT","grupo_funcionario","grupo_funcionario.id","funcionario.id_grupo_funcionario")
                     ->addJoin("LEFT","grupo_servico","grupo_servico.id","funcionario.id_grupo_servico")
                     ->addFilter("usuario.id_empresa","=",$id_empresa)
-                    ->selectColumns(["funcionario.id,cpf_cnpj,usuario.nome,email,telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
+                    ->selectColumns(["funcionario.id,cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
 
         $funcionarioFinal = [];
         if ($funcionarios){
@@ -56,7 +56,7 @@ class funcionarioModel{
         $values = $db->addJoin("INNER","agenda","agenda.id","agenda_funcionario.id_agenda")
                 ->addJoin("INNER","funcionario","funcionario.id","agenda_funcionario.id_funcionario")
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
-                ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","cpf_cnpj","email","telefone","hora_ini","hora_fim","dias"]);
+                ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias"]);
 
         if ($Mensagems = ($db->getError())){
             mensagem::setErro($Mensagems);
@@ -69,9 +69,9 @@ class funcionarioModel{
     public static function getByEmpresa($id_empresa){
         $db = new db("funcionario");
 
-        $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.usuario")
+        $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                 ->addFilter("usuario.id_empresa","=",$id_empresa)
-                ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","cpf_cnpj","email","telefone","hora_ini","hora_fim","dias"]);
+                ->selectColumns(["funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias"]);
 
         if ($Mensagems = ($db->getError())){
             mensagem::setErro($Mensagems);

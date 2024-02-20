@@ -35,7 +35,6 @@ function validaValor(seletor){
   $(seletor).removeClass('is-invalid')//.addClass('is-valid');
 }
 
-
 $(document).ready(function(){		
 
     var url_base = window.location.href.split("/");
@@ -98,6 +97,9 @@ $(document).ready(function(){
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
       });
     });
+
+    $("#closeModel").on("click",function(){$(".modal_container").hide()})
+    $("#openModel").on("click",function(){$(".modal_container").show()})
 
     function getOptionCidade(option){
       $('#id_cidade').append('<option value="'+option.vl_option+'" '+option.extra_option+'>'+option.nm_option+'</option>')
@@ -375,7 +377,7 @@ $(document).ready(function(){
   $("#hora_almoco_fim").on("blur",function(){validaTime("#hora_almoco_fim")});
 
   $("#valor").on("blur",function(){validaValor("#valor")});
-  
+
   $("#telefone").blur(validaTelefone)
   function validaTelefone(){
     //retira todos os caracteres menos os numeros

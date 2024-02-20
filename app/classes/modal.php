@@ -10,13 +10,19 @@ class modal extends pagina{
     private $tplform;
 
     private $inputs_custom = [];
+
+    private $submit_this_form;
     
-    public function __construct($action)
+    public function __construct($action,$submit_this_form = true)
     {
+        $this->submit_this_form = $submit_this_form;
         $this->tplform = $this->getTemplate("modal_template.html");
         $mensagem = new mensagem;
         $this->tplform->mensagem = $mensagem->show(false);
-        $this->tplform->action = $action;
+        if ($this->submit_this_form){
+            $this->tplform->action = $action;
+            $this->tplform->block("BLOCK_FORM");
+        }
         $this->tplform->block("BLOCK_START");
     }
 
@@ -95,6 +101,8 @@ class modal extends pagina{
     }
 
     public function show(){
+        if ($this->submit_this_form)
+            $this->tplform->block("BLOCK_END_FORM");
         $this->tplform->block("BLOCK_END");
         $this->tplform->show();
     }
