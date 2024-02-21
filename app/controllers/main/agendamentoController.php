@@ -10,25 +10,28 @@ use app\classes\footer;
 use app\classes\functions;
 use app\classes\lista;
 use app\models\main\agendamentoModel;
+use app\models\main\agendaModel;
 use app\models\main\empresaModel;
 use app\models\main\funcionarioModel;
 use app\models\main\servicoModel;
+use app\models\main\usuarioModel;
 
 class agendamentoController extends controllerAbstract{
-
-    private $funcionario = "";
-    // private $grupo;
-
+  
     public function index($parameters){
         $head = new head();
         $head->show("Agenda","agenda");
 
         $id_agenda = "";
+        $id_funcionario = "";
 
         if (array_key_exists(0,$parameters))
             $id_agenda = functions::decrypt($parameters[0]);
         else
             $this->go("home");
+
+        if (array_key_exists(1,$parameters))
+            $id_funcionario = functions::decrypt($parameters[0]);
 
         $elements = new elements;
 
@@ -49,7 +52,7 @@ class agendamentoController extends controllerAbstract{
             $elements->addOption($funcionario->id,$funcionario->nome);
         }
 
-        $Dadofuncionario = funcionarioModel::get($this->funcionario==""?:$firstFuncionario);
+        $Dadofuncionario = funcionarioModel::get($id_funcionario==""?:$firstFuncionario);
 
         $filter->addFilter(6,[$elements->select("Funcionario","funcionario",$Dadofuncionario->id)]);
 
@@ -57,17 +60,15 @@ class agendamentoController extends controllerAbstract{
 
         $agenda = new agenda();
         $agenda->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."home'"));
-        $agenda->show($this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($this->funcionario==""?:$firstFuncionario)."/",agendamentoModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda));
+        $agenda->show($this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?:$firstFuncionario)."/",agendamentoModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda));
       
         $footer = new footer;
         $footer->show();
     }
     
     public function filter($parameters){
-        $this->funcionario = functions::decrypt($this->getValue("funcionario"));
         // $this->grupo = $this->getValue("grupo");
-
-        $this->go("agendamento/index/".$parameters[0]);
+        $this->go("agendamento/index/".$parameters[0]."/".functions::decrypt($this->getValue("funcionario")));
     }
     public function manutencao($parameters){
 
@@ -102,25 +103,45 @@ class agendamentoController extends controllerAbstract{
 
         $dado = agendamentoModel::get($cd);
 
-        $elements->addOption("0","Agendado");
-        $elements->addOption("1","Completo");
-        $elements->addOption("99","Cancelado");
-        $status = $elements->select("Status","status ",$dado->status,true);
+        $user = usuarioModel::getLogged();
 
-        $elements->setOptions("usuario","id","nome");
-        $cliente = $elements->select("Cliente","usuario",$dado->id_usuario,true);
+        if ($user->tipo_usuario != 3){
 
-        // $elements->setOptions("agenda","id","nome");
-        // $agenda = $elements->select("Agenda","agenda",$dado->id_agenda,true);
+            $elements->addOption("0","Agendado");
+            $elements->addOption("1","Completo");
+            $elements->addOption("99","Cancelado");
+            $status = $elements->select("Status","status ",$dado->status,true);
 
-        $form->setHidden("cd",$cd);
+            $usuarios = usuarioModel::getByTipoUsuario(4);
 
-        // $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor,false,false,"","color","form-control form-control-color"),
-        //                     $elements->input("titulo","Titulo:",$dado->titulo,true));
+            foreach ($usuarios as $usuario){
+                $elements->addOption($usuario->id,$usuario->nome);
+            }
 
-        $form->setDoisInputs($cliente,
-                            $status
-        );
+            $cliente = $elements->select("Cliente","usuario",$dado->id_usuario);
+
+            $agendas = [];
+
+            if ($user->tipo_usuario < 2)
+                $agendas = agendaModel::getByEmpresa($user->id_empresa);
+            else 
+                $agendas = agendaModel::getByUser($user->id);
+
+            foreach ($agendas as $agenda){
+                $elements->addOption($agenda->id,$agenda->nome);
+            }
+
+            $agenda = $elements->select("Agenda","agenda",$dado->id_agenda,true);
+
+            $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor,false,false,"","color","form-control form-control-color"),
+                                $agenda);
+
+            $form->addCustomInput(5,$cliente)
+                ->addCustomInput("1 col-6 d-flex align-items-end",$elements->button("Novo","novoCliente"))
+                ->addCustomInput(6,$status)
+                ->setCustomInputs();
+           
+        }
 
         $form->addCustomInput("3 col-6 mb-2",$elements->input("dt_ini","Data Inicial:",$dado->dt_ini?:$dt_ini,true,false,"","datetime-local","form-control form-control-date"),"dt_ini");
         $form->addCustomInput("3 col-6 mb-2",$elements->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,false,"","datetime-local","form-control form-control-date"),"dt_fim");
@@ -133,8 +154,6 @@ class agendamentoController extends controllerAbstract{
         
         $form->setInputs($elements->label("Serviços"));
 
-        $servico = servicoModel::getByServicoGrupoServico($Dadofuncionario->id_grupo_servico);
-
         $form->addCustomInput("4 col-4",$elements->label("Titulo"));
         $form->addCustomInput("2 col-2",$elements->label("Quantidade"));
         $form->addCustomInput("2 col-2",$elements->label("Tempo"));
@@ -143,14 +162,14 @@ class agendamentoController extends controllerAbstract{
 
         $form->setCustomInputs();
 
-        $servicos = servicoModel::getByServicoGrupoServico($Dadofuncionario->id_grupo_servico);
+        $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
 
         foreach ($servicos as $servico){
             $form->addCustomInput("4 col-4 d-flex align-items-end mb-2",$elements->label($servico->nome),"titulo");
-            $form->addCustomInput("2 col-2",$elements->input("qtd_item","",$dado->qtd_item==""?1:$dado->qtd_item),"qtd_item");
-            $form->addCustomInput("2 col-2",$elements->input("tempo_item","",$dado->tempo_item==""?$servico->tempo:$dado->tempo_item,false,true),"tempo_item");
-            $form->addCustomInput("2 col-2",$elements->input("total_item","",$dado->total_item==""?$servico->total:$dado->total_item,false,true),"total_item");
-            $form->addCustomInput("2 col-2 d-flex align-items-center",$elements->checkbox($servico->id,"",false,$dado->id_servico==""?true:false,false));
+            $form->addCustomInput("2 col-2",$elements->input("qtd_item","",isset($dado->qtd_item)?$dado->qtd_item:1),"qtd_item");
+            $form->addCustomInput("2 col-2",$elements->input("tempo_item","",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true),"tempo_item");
+            $form->addCustomInput("2 col-2",$elements->input("total_item","",isset($dado->total_item)?$dado->total_item:$servico->valor,false,true),"total_item");
+            $form->addCustomInput("2 col-2 d-flex align-items-center",$elements->checkbox($servico->id,"",false,isset($dado->id_servico)?true:false,false));
             $form->setCustomInputs();
         }
 

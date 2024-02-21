@@ -135,6 +135,18 @@ button.btn.btn-dark.pt-2.btn-block {
 	text-transform: capitalize;
 }
 
+.fc .fc-col-header-cell-cushion::first-letter {
+	text-transform: uppercase;
+}
+
+.fc .fc-timegrid-axis-cushion::first-letter {
+	text-transform: uppercase;
+}
+
+.fc .fc-multimonth-title::first-letter {
+	text-transform: uppercase;
+}
+
 .modal_container {
 	position: fixed;
 	background-color: white;
@@ -150,4 +162,13 @@ button.btn-close {
     position: absolute;
     opacity: 100;
     margin-top: 10px;
+}
+
+.fc-button-primary {
+	background-color: #4267b2!important;
+	border: none!important;;
+}
+
+.fc-button-primary:hover {
+	background-color: #376edf!important;
 }

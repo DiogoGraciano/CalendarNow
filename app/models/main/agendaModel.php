@@ -10,10 +10,10 @@ class agendaModel{
         return modelAbstract::get("agenda",$cd);
     }
 
-    public static function getByEmpresa($cd = ""){
+    public static function getByEmpresa($id_empresa = ""){
         $db = new db("agenda");
         
-        $values = $db->addFilter("agenda.id_empresa","=",$cd)
+        $values = $db->addFilter("agenda.id_empresa","=",$id_empresa)
                      ->selectColumns(["id","agenda.nome"]);
         
         if($values)
@@ -22,13 +22,13 @@ class agendaModel{
         return false;
     }
 
-    public static function getByUser($cd = ""){
+    public static function getByUser($id_usuario = ""){
         $db = new db("agenda_usuario");
         
         $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
                     
-        if($cd){
-            $db->addFilter("agenda_usuario.id_usuario","=",$cd);  
+        if($id_usuario){
+            $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario);  
         }
         
         if($values = $db->selectColumns(["agenda.id","agenda.nome","empresa.nome as emp_nome"]))

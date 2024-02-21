@@ -7,6 +7,8 @@ use app\classes\controllerAbstract;
 use app\classes\consulta;
 use app\classes\footer;
 use app\classes\functions;
+use app\classes\filter;
+use app\classes\modal;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
@@ -32,6 +34,12 @@ class cadastroController extends controllerAbstract{
 
         $cadastro = new consulta();
 
+        $filter = new filter($this->url."funcionario/filter/");
+
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+
+        $filter->addFilter(6,[$elements->input("pesquisa","Pesquisa:")]);
+
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $cadastro->addColumns("1","Id","id")
@@ -46,19 +54,50 @@ class cadastroController extends controllerAbstract{
             $dados = empresaModel::get();
         }
         if ($tipo_usuario == 2){
-            $cadastro->addColumns("10","Grupo de Funcionarios","grupo_funcionario")
-                    ->addColumns("10","Grupo de Servicos","grupo_servico")
-                    ->addColumns("5","Inicio Expediente","hora_ini")
-                    ->addColumns("5","Fim Expediente","hora_fim")
-                    ->addColumns("5","Inicio Almoço","hora_almoco_ini")
-                    ->addColumns("5","Fim Almoço","hora_almoco_fim")
-                    ->addColumns("15","Dias","dia");
-            $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
+
+            $id_grupo_funcionario = "";
+
+            if (array_key_exists(1,$parameters)){
+                $id_grupo_funcionario = functions::decrypt($parameters[1]);
+            }
+            
+            $elements->addOption("","Todos");
+            $elements->setOptions("grupo_funcionario","id","nome");
+            $grupo_funcionario = $elements->select("Grupo de Funcionarios","grupo_funcionario");
+
+            $modal = new modal($this->url."cadastro/massActionAgenda/","massActionAgenda");
+
+            $elements->addOption("","Todos");
+            $elements->setOptions("agenda","id","nome");
+            $agenda = $elements->select("Agenda:","agenda");
+
+            $modal->setinputs($agenda);
+
+            $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
+
+            $modal->show();
+
+            $filter->addFilter(6,[$grupo_funcionario]);
+
+            $cadastro->addColumns("5","Inicio Expediente","hora_ini")
+            ->addColumns("5","Fim Expediente","hora_fim")
+            ->addColumns("5","Inicio Almoço","hora_almoco_ini")
+            ->addColumns("5","Fim Almoço","hora_almoco_fim")
+            ->addColumns("14","Dias","dia");
+
+            if ($id_grupo_funcionario)
+                $dados = funcionarioModel::getListFuncionariosByGrupoFuncionario($id_grupo_funcionario);
+            else  
+                $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
+
+            $cadastro->addButtons($elements->button("Adicionar Agenda ao Funcionario","openModel","button","btn btn-primary","openModal('massActionAgenda')"));
         }
+
+        $filter->show();
 
         $cadastro->addColumns("14","Ações","acoes");
 
-        $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados);
+        $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados,"id",true);
       
         $footer = new footer;
         $footer->show();
@@ -303,6 +342,27 @@ class cadastroController extends controllerAbstract{
             $this->go("login/cadastro/".functions::encrypt($tipo_usuario));
         else 
             $this->go("cadastro/manutencao/".functions::encrypt($tipo_usuario)."/".functions::encrypt($cd)); 
+    }
+
+    public function filter(){
+        $this->go("cadastro/index/".functions::encrypt("2")."/".functions::encrypt($this->getValue("grupo_funcionario")));
+    }
+
+    public function massActionAgenda(){
+
+        $qtd_list = $this->getValue("qtd_list");
+        $id_agenda = $this->getValue("agenda");
+
+        if ($qtd_list && $id_agenda){
+            for ($i = 1; $i <= $qtd_list; $i++) {
+                if($id_servico = $this->getValue("id_check_".$i)){
+                    funcionarioModel::setAgendaFuncionario($id_servico,$id_agenda);
+                }
+            }
+        }
+
+        $this->go("funcionario");
+
     }
 
 }

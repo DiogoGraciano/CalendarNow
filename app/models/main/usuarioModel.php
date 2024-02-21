@@ -61,9 +61,16 @@ class usuarioModel{
         return $usuario;
     }
 
-    public static function getByTipoUsuario(){
+    public static function getByTipoUsuario($tipo_usuario){
+        $db = new db("usuario");
+        $usuarios = $db->addFilter("tipo_usuario","=",$tipo_usuario)->selectAll();
 
-        
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        return $usuarios;
     }
 
     public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd="",$tipo_usuario = 3,$id_empresa="null"){

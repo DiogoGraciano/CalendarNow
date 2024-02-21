@@ -21,10 +21,43 @@ class funcionarioModel{
         $db = new db("funcionario");
 
         $funcionarios = $db
-                    ->addJoin("LEFT","grupo_funcionario","grupo_funcionario.id","funcionario.id_grupo_funcionario")
-                    ->addJoin("LEFT","grupo_servico","grupo_servico.id","funcionario.id_grupo_servico")
+                    ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                     ->addFilter("usuario.id_empresa","=",$id_empresa)
-                    ->selectColumns(["funcionario.id,cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,grupo_servico.nome as grupo_servico_nome,grupo_funcionario.nome as grupo_funcionario_nome,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
+                    ->selectColumns(["funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
+
+        $funcionarioFinal = [];
+        if ($funcionarios){
+            foreach ($funcionarios as $funcionario){
+                if ($funcionario->cpf_cnpj){
+                    $funcionario->cpf_cnpj = functions::formatCnpjCpf($funcionario->cpf_cnpj);
+                }
+                if ($funcionario->telefone){
+                    $funcionario->telefone = functions::formatPhone($funcionario->telefone);
+                }
+                if ($funcionario->dias){
+                    $funcionario->dias = functions::formatDias($funcionario->dias);
+                }
+                $funcionarioFinal[] = $funcionario;
+            }
+        }
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+        
+        return $funcionarioFinal;
+    }
+
+    public static function getListFuncionariosByGrupoFuncionario($id_grupo_funcionario){
+
+        $db = new db("funcionario_grupo_funcionario");
+
+        $funcionarios = $db
+                    ->addJoin("INNER","funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario")
+                    ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
+                    ->addFilter("funcionario_grupo_funcionario.id_grupo_funcionario","=",$id_grupo_funcionario)
+                    ->selectColumns(["funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
 
         $funcionarioFinal = [];
         if ($funcionarios){
@@ -110,6 +143,37 @@ class funcionarioModel{
             mensagem::addErro($Mensagems);
             return False;
         }
+    }
+
+    public static function setAgendaFuncionario($id_funcionario,$id_agenda){
+        $db = new db("agenda_funcionario");
+
+        $result = $db->addFilter("id_agenda","=",$id_agenda)
+                    ->addFilter("id_funcionario","=",$id_funcionario)
+                    ->selectAll();
+
+        if (!$result){
+            $values = $db->getObject();
+
+            $values->id_agenda = $id_agenda;
+            $values->id_funcionario = $id_funcionario;
+
+            if ($values)
+                $retorno = $db->storeMutiPrimary($values);
+
+            if ($retorno == true){
+                mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+                return $db->getLastID();
+            }
+            else {
+                $erros = ($db->getError());
+                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
+                mensagem::addErro($erros);
+                return False;
+            }
+        }
+        mensagem::setErro(array("Já existe vinculo entre esse grupo e serviço"));
+        return True;
     }
 
     public static function setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario){

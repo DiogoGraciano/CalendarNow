@@ -135,6 +135,19 @@ $(document).ready(function(){
       }, 4000);
     }
 
+    $("select").select2({
+      theme: "bootstrap-5",
+
+      language: {
+        noResults: function(){
+            return "Sem Resultados";
+        }
+      },
+      escapeMarkup: function (markup) {
+          return markup;
+      }
+    });
+
     // Remove máscara e limita quantidade de caracteres ao dar focus
     $("#cpf_cnpj").focus(removeMascara);
     function removeMascara() {

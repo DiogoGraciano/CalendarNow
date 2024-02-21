@@ -52,6 +52,8 @@ class form extends pagina{
         $custom->input = base64_encode($input);
 
         $this->inputs_custom[] = $custom;
+
+        return $this;
     }
 
     public function setDoisInputs($input,$input2,array $nomes = array("","")){
