@@ -16,9 +16,14 @@ use app\models\main\funcionarioModel;
 
 class servicoController extends controllerAbstract{
 
-    private $funcionario = "";
+    public function index($parameters = []){
 
-    public function index(){
+        $id_funcionario = "";
+
+        if($parameters && array_key_exists(0,$parameters)){
+            $id_funcionario = functions::decrypt($parameters[0]);
+        }
+
         $head = new head();
         $head -> show("serviços","consulta");
 
@@ -38,6 +43,7 @@ class servicoController extends controllerAbstract{
         if ($funcionarios){
             $i = 1;
             $firstFuncionario = "";
+            $elements->addOption("","Todos");
             foreach ($funcionarios as $funcionario){
                 if ($i == 1){
                     $firstFuncionario = $funcionario->id;
@@ -46,7 +52,7 @@ class servicoController extends controllerAbstract{
                 $elements->addOption($funcionario->id,$funcionario->nome);
             }
 
-            $funcionarios = $elements->select("Funcionario","funcionario",$this->funcionario=""?$firstFuncionario:$this->funcionario);
+            $funcionarios = $elements->select("Funcionario","funcionario",$id_funcionario=""?$firstFuncionario:$id_funcionario);
 
             $modal = new modal($this->url."servico/massActionFuncionario/","massActionFuncionario");
 
@@ -66,13 +72,19 @@ class servicoController extends controllerAbstract{
         $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
         $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModel","button","btn btn-primary","openModal('massActionFuncionario')")); 
 
+        $data = [];
+
+        if ($id_funcionario)
+            $data = servicoModel::getByFuncionario($id_funcionario);
+        else 
+            $data = servicoModel::getByEmpresa($user->id_empresa);
+
         $servico->addColumns("1","Id","id")
                 ->addColumns("60","Nome","nome")
                 ->addColumns("5","Tempo","tempo")
                 ->addColumns("10","Valor","valor")
                 ->addColumns("11","Ações","acoes")
-
-        ->show($this->url."servico/manutencao/",$this->url."servico/action/",servicoModel::getByEmpresa($user->id_empresa),"id",true);
+                ->show($this->url."servico/manutencao/",$this->url."servico/action/",$data,"id",true);
       
         $footer = new footer;
         $footer->show();
@@ -146,6 +158,11 @@ class servicoController extends controllerAbstract{
 
         $this->go("servico");
     }
+
+    public function filter(){
+        $this->go("servico/index/".functions::encrypt($this->getValue("funcionario")));
+    }
+
     public function massActionFuncionario(){
 
         $qtd_list = $this->getValue("qtd_list");

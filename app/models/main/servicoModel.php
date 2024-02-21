@@ -12,10 +12,10 @@ class servicoModel{
         return modelAbstract::get("servico",$cd);
     }
 
-    public static function getByEmpresa($cd = ""){
+    public static function getByEmpresa($id_empresa){
         $db = new db("servico");
         
-        $values = $db->addFilter("servico.id_empresa","=",$cd)
+        $values = $db->addFilter("servico.id_empresa","=",$id_empresa)
                      ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
 
         $valuesFinal = [];
@@ -37,11 +37,37 @@ class servicoModel{
         }
     }
 
-    public static function getByEmpresaAndId($cd,$id_empresa){
+    public static function getByFuncionario($id_Funcionario){
+        $db = new db("servico_funcionario");
+        
+        $values = $db->addjoin("INNER","servico","servico.id","servico_funcionario.id_servico")
+                     ->addFilter("servico_funcionario.id_funcionario","=",$id_Funcionario)
+                     ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
+
+        $valuesFinal = [];
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        if ($values){
+            foreach ($values as $value){
+                if ($value->valor){
+                    $value->valor = functions::formatCurrency($value->valor);
+                }
+                $valuesFinal[] = $value;
+            }
+
+            return $values;
+        }
+    }
+
+    public static function getByEmpresaAndId($id_servico,$id_empresa){
         $db = new db("servico");
         
         $values = $db->addFilter("servico.id_empresa","=",$id_empresa)
-                     ->addFilter("servico.id","=",$cd)
+                     ->addFilter("servico.id","=",$id_servico)
                      ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
         
         if ($Mensagems = ($db->getError())){
@@ -56,8 +82,8 @@ class servicoModel{
     public static function getByUser($cd = ""){
         $db = new db("servico");
         
-        $values = $db->addJoin("INNER","funcionario_servico","funcionario_servico.id_servico","servico.id")
-                    ->addJoin("INNER","funcionario","funcionario_servico.id_funcionario","funcionario.id")
+        $values = $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id")
+                    ->addJoin("INNER","funcionario","servico_funcionario.id_funcionario","funcionario.id")
                     ->addFilter("funcionario.id_usuario","=",$cd)
                     ->selectColumns(["servico.id","funcionario.nome as funcionario_nome","servico.nome as ser_nome","servico.tempo","servico.valor"]);
 
@@ -72,7 +98,7 @@ class servicoModel{
     public static function getByServicoGrupoServico($id_grupo_servico = ""){
         $db = new db("servico_grupo_servico");
         
-        $values = $db->addJoin("INNER","servico","funcionario_servico.id_servico","servico.id")
+        $values = $db->addJoin("INNER","servico","servico_funcionario.id_servico","servico.id")
                     ->addFilter("servico_grupo_servico.id_grupo_servico","=",$id_grupo_servico)
                     ->selectColumns(["servico.id","servico.nome","servico.id_empresa","servico.tempo","servico.valor"]);
 
