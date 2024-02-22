@@ -13,6 +13,7 @@ use app\models\main\agendaModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
+use app\models\main\grupoServicoModel;
 
 class servicoController extends controllerAbstract{
 
@@ -34,7 +35,7 @@ class servicoController extends controllerAbstract{
         $filter = new filter($this->url."servico/filter/");
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
-        $filter->addFilter(6,[$elements->input("pesquisa","Pesquisa:")]);
+        $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
 
         $user = usuarioModel::getLogged();
 
@@ -43,7 +44,7 @@ class servicoController extends controllerAbstract{
         if ($funcionarios){
             $i = 1;
             $firstFuncionario = "";
-            $elements->addOption("","Todos");
+            $elements->addOption("","Selecione/Todos");
             foreach ($funcionarios as $funcionario){
                 if ($i == 1){
                     $firstFuncionario = $funcionario->id;
@@ -62,7 +63,29 @@ class servicoController extends controllerAbstract{
 
             $modal->show();
 
-            $filter->addFilter(6,[$funcionarios]);
+            $filter->addFilter(4,[$funcionarios]);
+        }
+
+        $grupo_servicos = grupoServicoModel::getByEmpresa($user->id_empresa);
+
+        if ($grupo_servicos){
+
+            $elements->addOption("","Selecione/Todos");
+            foreach ($grupo_servicos as $grupo_servico){
+                $elements->addOption($grupo_servico->id,$grupo_servico->nome);
+            }
+
+            $grupo_servico = $elements->select("Grupo Serviço","grupo_servico");
+
+            $modal = new modal($this->url."servico/massActionGrupoServico/","massActionGrupoServico");
+
+            $modal->setinputs($grupo_servico);
+
+            $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
+
+            $modal->show();
+
+            $filter->addFilter(4,[$grupo_servico]);
         }
 
         $filter->show();
@@ -70,7 +93,9 @@ class servicoController extends controllerAbstract{
         $servico = new consulta();
 
         $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
-        $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModel","button","btn btn-primary","openModal('massActionFuncionario')")); 
+        $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModelFuncionario","button","btn btn-primary","openModal('massActionFuncionario')")); 
+        $servico->addButtons($elements->button("Adicionar Serviço ao Grupo","openModelGrupoServico","button","btn btn-primary","openModal('massActionGrupoServico')")); 
+        
 
         $data = [];
 
@@ -177,6 +202,21 @@ class servicoController extends controllerAbstract{
         }
 
         $this->go("servico");
+    }
 
+    public function massActionGrupoServico(){
+
+        $qtd_list = $this->getValue("qtd_list");
+        $id_grupo_servico = $this->getValue("grupo_servico");
+
+        if ($qtd_list && $id_grupo_servico){
+            for ($i = 1; $i <= $qtd_list; $i++) {
+                if($id_servico = $this->getValue("id_check_".$i)){
+                    ServicoModel::setServicoGrupoServico($id_servico,$id_grupo_servico);
+                }
+            }
+        }
+
+        $this->go("servico");
     }
 }

@@ -9,11 +9,14 @@ use app\classes\footer;
 use app\classes\functions;
 use app\classes\filter;
 use app\classes\modal;
+use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
 use app\models\main\empresaModel;
 use app\models\main\funcionarioModel;
+use app\models\main\grupoFuncionarioModel;
+
 
 class cadastroController extends controllerAbstract{
 
@@ -38,7 +41,7 @@ class cadastroController extends controllerAbstract{
 
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
-        $filter->addFilter(6,[$elements->input("pesquisa","Pesquisa:")]);
+        $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
 
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
@@ -61,23 +64,26 @@ class cadastroController extends controllerAbstract{
                 $id_grupo_funcionario = functions::decrypt($parameters[1]);
             }
             
-            $elements->addOption("","Todos");
-            $elements->setOptions("grupo_funcionario","id","nome");
-            $grupo_funcionario = $elements->select("Grupo de Funcionarios","grupo_funcionario");
+            $agendas = agendaModel::getByEmpresa($user->id_empresa);
 
-            $modal = new modal($this->url."cadastro/massActionAgenda/","massActionAgenda");
+            if($agendas){
+                $modal = new modal($this->url."cadastro/massActionAgenda/","massActionAgenda");
 
-            $elements->addOption("","Todos");
-            $elements->setOptions("agenda","id","nome");
-            $agenda = $elements->select("Agenda:","agenda");
+                $elements->addOption("","Selecione/Todos");
+                
+                foreach ($agendas as $agenda){
+                    $elements->addOption($agenda->id,$agenda->nome);
+                }
+                $agenda = $elements->select("Agenda:","agenda");
 
-            $modal->setinputs($agenda);
+                $modal->setinputs($agenda);
 
-            $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
+                $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
 
-            $modal->show();
+                $modal->show();
 
-            $filter->addFilter(6,[$grupo_funcionario]);
+                $filter->addFilter(4,[$agenda]);
+            }
 
             $cadastro->addColumns("5","Inicio Expediente","hora_ini")
             ->addColumns("5","Fim Expediente","hora_fim")
@@ -91,6 +97,29 @@ class cadastroController extends controllerAbstract{
                 $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
 
             $cadastro->addButtons($elements->button("Adicionar Agenda ao Funcionario","openModel","button","btn btn-primary","openModal('massActionAgenda')"));
+        }
+        $grupo_funcionarios = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
+
+        if ($grupo_funcionarios){
+
+            $elements->addOption("","Selecione/Todos");
+            foreach ($grupo_funcionarios as $grupo_funcionario){
+                $elements->addOption($grupo_funcionario->id,$grupo_funcionario->nome);
+            }
+
+            $grupo_funcionario = $elements->select("Grupo Funcionario","grupo_funcionario");
+
+            $modal = new modal($this->url."servico/massActionGrupoFuncionario/","massActionGrupoFuncionario");
+
+            $modal->setinputs($grupo_funcionario);
+
+            $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
+
+            $modal->show();
+
+            $filter->addFilter(4,[$grupo_funcionario]);
+
+            $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo","openModelGrupoFuncionario","button","btn btn-primary","openModal('massActionGrupoFuncionario')"));
         }
 
         $filter->show();
@@ -362,7 +391,22 @@ class cadastroController extends controllerAbstract{
         }
 
         $this->go("funcionario");
+    }
 
+    public function massActionGrupoFuncionario(){
+
+        $qtd_list = $this->getValue("qtd_list");
+        $id_grupo_funcionario = $this->getValue("grupo_funcionario");
+
+        if ($qtd_list && $id_grupo_funcionario){
+            for ($i = 1; $i <= $qtd_list; $i++) {
+                if($id_funcionario = $this->getValue("id_check_".$i)){
+                    funcionarioModel::setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario);
+                }
+            }
+        }
+
+        $this->go("servico");
     }
 
 }

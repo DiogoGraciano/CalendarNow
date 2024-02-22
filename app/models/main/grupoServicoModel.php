@@ -38,6 +38,19 @@ class grupoServicoModel{
         }
     }
 
+    public static function getByEmpresa($id_empresa){
+        $db = new db("grupo_servico");
+
+        $values = $db->addFilter("id_empresa","=",$id_empresa)->selectAll();
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        return $values;
+    }
+
     public static function delete($cd){
         modelAbstract::delete("grupo_servico",$cd);
     }

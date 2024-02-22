@@ -23,7 +23,7 @@ class gruposController extends controllerAbstract{
         elseif ($tipo_grupo == "grupo_servico")
             $dados = grupoServicoModel::getAll();
         else    
-            $this->go($this->url);
+            $this->go("home");
 
         $head = new head();
         $head -> show("grupos","consulta");
@@ -34,9 +34,9 @@ class gruposController extends controllerAbstract{
 
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
 
-        $cadastro->addColumns("5","Id","id")
-                ->addColumns("79","Nome","nome")
-                ->addColumns("14","Ações","acoes");
+        $cadastro->addColumns("1","Id","id")
+                ->addColumns("90","Nome","nome")
+                ->addColumns("10","Ações","acoes");
 
         $cadastro->show($this->url."grupos/manutencao/".functions::encrypt($tipo_grupo),$this->url."grupos/action/".functions::encrypt($tipo_grupo),$dados,"id");
       
@@ -51,9 +51,10 @@ class gruposController extends controllerAbstract{
         $cd = "";
         $tipo_grupo = "";
         
-        if (array_key_exists(0,$parameters)){
+        if (array_key_exists(0,$parameters))
             $tipo_grupo = functions::decrypt($parameters[0]);
-        }
+        else 
+            $this->go("home");
 
         $form = new form($this->url."grupos/action/".$parameters[0]);
 
@@ -67,7 +68,7 @@ class gruposController extends controllerAbstract{
         elseif ($tipo_grupo == "grupo_servico")
             $dado = grupoServicoModel::get($cd);
         else    
-            $this->go($this->url."grupos");
+            $this->go("home");
 
         $elements = new elements;
 
@@ -76,7 +77,7 @@ class gruposController extends controllerAbstract{
         );
       
         $form->setButton($elements->button("Salvar","submit"));
-        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos'"));
+        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/index/".$parameters[0]."'"));
 
         $form->show();
 
@@ -84,6 +85,8 @@ class gruposController extends controllerAbstract{
         $footer->show();
     }
     public function action($parameters){
+
+        $cd = "";
 
         if (array_key_exists(0,$parameters)){
             $tipo_grupo = functions::decrypt($parameters[0]);
@@ -112,10 +115,9 @@ class gruposController extends controllerAbstract{
                 grupoServicoModel::set($nome,$id);
             }
 
-        }else    
-            $this->go($this->url."/grupos/".functions::encrypt($tipo_grupo));
-
-        $this->go($this->url);
+        }   
+        
+        $this->go("grupos/index/".functions::encrypt($tipo_grupo));
     }
 
 }

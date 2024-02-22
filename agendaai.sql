@@ -5794,8 +5794,6 @@ DROP TABLE IF EXISTS `funcionario`;
 CREATE TABLE IF NOT EXISTS `funcionario` (
   `id` int NOT NULL,
   `id_usuario` int NOT NULL,
-  `id_grupo_funcionario` int DEFAULT NULL,
-  `id_grupo_servico` int DEFAULT NULL,
   `hora_ini` time NOT NULL COMMENT 'horario incial de atendimento',
   `hora_fim` int NOT NULL COMMENT 'horario final de atendimento',
   `dias` varchar(27) NOT NULL COMMENT 'dom,seg,ter,qua,qui,sex,sab\r\n\r\nrepresentaria que o funcionario trabalharia todos os dias da semana',

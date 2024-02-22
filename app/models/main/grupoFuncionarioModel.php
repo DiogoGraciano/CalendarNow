@@ -14,6 +14,19 @@ class grupoFuncionarioModel{
         return modelAbstract::getAll("grupo_funcionario");
     }
 
+    public static function getByEmpresa($id_empresa){
+        $db = new db("grupo_funcionario");
+
+        $values = $db->addFilter("id_empresa","=",$id_empresa)->selectAll();
+
+        if ($Mensagems = ($db->getError())){
+            mensagem::setErro($Mensagems);
+            return [];
+        }
+
+        return $values;
+    }
+
     public static function set($nome,$id){
 
         $db = new db("grupo_funcionario");
