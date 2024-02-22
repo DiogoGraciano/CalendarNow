@@ -17,6 +17,7 @@ class agendamentoModel{
         $results = $db->addFilter("dt_inicio",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",$id_agenda)
+                      ->addFilter("status","!=",99)
                       ->selectAll();
 
         $retorn = [];

@@ -110,7 +110,7 @@ class agendamentoController extends controllerAbstract{
             $elements->addOption("0","Agendado");
             $elements->addOption("1","Completo");
             $elements->addOption("99","Cancelado");
-            $status = $elements->select("Status","status ",$dado->status,true);
+            $status = $elements->select("Status","status ",$dado->status);
 
             $usuarios = usuarioModel::getByTipoUsuario(4);
 
@@ -131,13 +131,13 @@ class agendamentoController extends controllerAbstract{
                 $elements->addOption($agenda->id,$agenda->nome);
             }
 
-            $agenda = $elements->select("Agenda","agenda",$dado->id_agenda,true);
+            $agenda = $elements->select("Agenda","agenda",$dado->id_agenda);
 
             $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor,false,false,"","color","form-control form-control-color"),
                                 $agenda);
 
-            $form->addCustomInput(5,$cliente)
-                ->addCustomInput("1 col-6 d-flex align-items-end",$elements->button("Novo","novoCliente"))
+            $form->addCustomInput("4 usuario",$cliente,"usuario")
+                ->addCustomInput("2 col-6 d-flex align-items-end",$elements->button("Novo","novoCliente","button"),"w-100")
                 ->addCustomInput(6,$status)
                 ->setCustomInputs();
            
@@ -164,14 +164,18 @@ class agendamentoController extends controllerAbstract{
 
         $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
 
+        $i = 1;
         foreach ($servicos as $servico){
             $form->addCustomInput("4 col-4 d-flex align-items-end mb-2",$elements->label($servico->nome),"titulo");
-            $form->addCustomInput("2 col-2",$elements->input("qtd_item","",isset($dado->qtd_item)?$dado->qtd_item:1),"qtd_item");
-            $form->addCustomInput("2 col-2",$elements->input("tempo_item","",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true),"tempo_item");
-            $form->addCustomInput("2 col-2",$elements->input("total_item","",isset($dado->total_item)?$dado->total_item:$servico->valor,false,true),"total_item");
-            $form->addCustomInput("2 col-2 d-flex align-items-center",$elements->checkbox($servico->id,"",false,isset($dado->id_servico)?true:false,false));
+            $form->addCustomInput("2 col-2",$elements->input("qtd_item","",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control",'min="1" data-id_servico="'.$servico->id.'"'),"qtd_item");
+            $form->addCustomInput("2 col-2",$elements->input("tempo_item_".$servico->id,"",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true),"tempo_item");
+            $form->addCustomInput("2 col-2",$elements->input("total_item_".$servico->id,"",isset($dado->total_item)?$dado->total_item:$servico->valor,false,true),"total_item");
+            $form->addCustomInput("2 col-2 d-flex align-items-center mt-3",$elements->checkbox("servico_index_".$i,"",false,isset($dado->id_servico)?true:false,false,$servico->id));
             $form->setCustomInputs();
+            $i++;
         }
+
+        $form->setHidden("qtd_servico",$i);
 
         $form->setInputs($elements->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 

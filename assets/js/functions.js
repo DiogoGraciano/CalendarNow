@@ -402,6 +402,21 @@ $(document).ready(function(){
 
   $("#valor").on("blur",function(){validaValor("#valor")});
 
+  $("#novoCliente").on("click",function(){
+    if ($(".col-md-4.usuario.novoCliente").length){
+      $(".form-group.usuario").show();
+      $(".col-md-4.usuario").removeClass("novoCliente");
+      $(".form-group.novoCliente").remove();
+      $(this).text("Novo");
+    }
+    else{
+      $(".form-group.usuario").hide();
+      $(".col-md-4.usuario").addClass("novoCliente")
+      $(".col-md-4.usuario").append('<div class="form-group novoCliente"><label for="usuario">Cliente</label><input type="text" name="usuario" id="usuario" class="form-control" value="" placeholder="Novo Cliente"></div>')
+      $(this).text("Escolher");
+    }
+  })
+
   $("#telefone").blur(validaTelefone)
   function validaTelefone(){
     //retira todos os caracteres menos os numeros
