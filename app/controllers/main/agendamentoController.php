@@ -167,10 +167,10 @@ class agendamentoController extends controllerAbstract{
         $i = 1;
         foreach ($servicos as $servico){
             $form->addCustomInput("4 col-4 d-flex align-items-end mb-2",$elements->label($servico->nome),"titulo");
-            $form->addCustomInput("2 col-2",$elements->input("qtd_item","",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-id_servico="'.$servico->id.'"'),"qtd_item");
-            $form->addCustomInput("2 col-2",$elements->input("tempo_item_".$servico->id,"",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"tempo_item");
-            $form->addCustomInput("2 col-2",$elements->input("total_item_".$servico->id,"",isset($dado->total_item)?functions::formatCurrency($dado->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'"'),"total_item");
-            $form->addCustomInput("2 col-2 d-flex align-items-center mt-3",$elements->checkbox("servico_index_".$i,"",false,isset($dado->id_servico)?true:false,false,$servico->id,"checkbox","form-check-input check_item"));
+            $form->addCustomInput("2 col-2",$elements->input("qtd_item","",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"qtd_item");
+            $form->addCustomInput("2 col-2",$elements->input("tempo_item_".$i,"",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"tempo_item");
+            $form->addCustomInput("2 col-2",$elements->input("total_item_".$i,"",isset($dado->total_item)?functions::formatCurrency($dado->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"'),"total_item");
+            $form->addCustomInput("2 col-2 d-flex align-items-center mt-3",$elements->checkbox("servico_index_".$i,"",false,isset($dado->id_servico)?true:false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'));
             $form->setCustomInputs();
             $i++;
         }
@@ -179,8 +179,10 @@ class agendamentoController extends controllerAbstract{
 
         $form->setInputs($elements->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 
+        $total = $dado->total?:0;
+
         $form->addCustomInput("1 col-2 d-flex align-items-end mb-2",$elements->label("Total"),"total");
-        $form->addCustomInput("11 col-10",$elements->input("total","",$dado->total==""?0:$dado->total,false,true));
+        $form->addCustomInput("11 col-10",$elements->input("total","",$dado->total?functions::formatCurrency($dado->total):"R$ 0.00",false,true,"","text","form-control",'data-vl-total="'.$total.'"'));
         $form->setCustomInputs();
 
         $form->setButton($elements->button("Salvar","submit"));

@@ -170,26 +170,56 @@ $(document).ready(function(){
 
     $(".qtd_item").on("change",function(){
 
-      var servico = $(this).attr('data-id_servico')
+      var index = $(this).attr('data-index-servico')
       var qtd = parseInt($(this).val());
-      
-      var valor_base = $("#total_item_"+servico).attr('data-vl-base');
-      if (valor_base){
-        valor_base = parseFloat(valor_base);
-        var valor = valor_base*qtd
-        $("#total_item_"+servico).val(valor.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
-      }
 
-      var tempo_base = $("#tempo_item_"+servico).attr('data-vl-base');
-      if (tempo_base)
-        $("#tempo_item_"+servico).val(multiplicarTempo(tempo_base, qtd))
+      
+      var total_atual = parseFloat($("#total").attr('data-vl-total'));
+      var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
+      if ((total_atual && total_item) || (total_atual === 0 && total_item === 0)){
+        $("input[data-index-check="+index+"]").prop("checked", false);
+        if ($("input[data-index-check="+index+"]")){
+          var total = total_atual + total_item
+          $("#total").attr('data-vl-total',total)
+          $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+        }
+        else if(total_atual > 0){
+          var total = total_atual - total_item
+          $("#total").attr('data-vl-total',total) 
+          $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+        }
+      }
+      
+      if(qtd>0){
+        var valor_base = $("#total_item_"+index).attr('data-vl-base');
+        if (valor_base){
+          valor_base = parseFloat(valor_base);
+          var valor = valor_base*qtd
+          $("#total_item_"+index).attr('data-vl-atual',valor);
+          $("#total_item_"+index).val(valor.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+        }
+
+        var tempo_base = $("#tempo_item_"+index).attr('data-vl-base');
+        if (tempo_base)
+          $("#tempo_item_"+index).val(multiplicarTempo(tempo_base, qtd))
+      }
 
     })
 
     $(".check_item").on("change",function(){
-
-    
-
+      var index = $(this).attr('data-index-check');
+      var total_atual = parseFloat($("#total").attr('data-vl-total'));
+      var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
+      if (this.checked){
+        var total = total_atual + total_item
+        $("#total").attr('data-vl-total',total)
+        $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+      }
+      else if(total_atual > 0){
+        var total = total_atual - total_item
+        $("#total").attr('data-vl-total',total) 
+        $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+      }
     })
 
     // Remove máscara e limita quantidade de caracteres ao dar focus

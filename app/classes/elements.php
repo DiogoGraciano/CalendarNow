@@ -77,7 +77,7 @@ class elements extends pagina{
             $class_input .= " is-invalid";
         
         $tpl->class_input = $class_input;
-        
+
         if ($required == true)
             $extra_input = $extra_input." required";
         if ($readonly == true)
