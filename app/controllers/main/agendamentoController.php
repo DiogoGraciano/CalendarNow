@@ -133,7 +133,7 @@ class agendamentoController extends controllerAbstract{
 
             $agenda = $elements->select("Agenda","agenda",$dado->id_agenda);
 
-            $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor,false,false,"","color","form-control form-control-color"),
+            $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor?:"#4267b2",false,false,"","color","form-control form-control-color"),
                                 $agenda);
 
             $form->addCustomInput("4 usuario",$cliente,"usuario")
