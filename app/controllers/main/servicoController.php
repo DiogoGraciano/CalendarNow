@@ -37,8 +37,6 @@ class servicoController extends controllerAbstract{
 
         $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
 
-        $user = usuarioModel::getLogged();
-
         $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
 
         if ($funcionarios){

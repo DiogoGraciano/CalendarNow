@@ -44,23 +44,17 @@ class servicoModel{
                      ->addFilter("servico_funcionario.id_funcionario","=",$id_Funcionario)
                      ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
 
-        $valuesFinal = [];
+        
 
         if ($Mensagems = ($db->getError())){
             mensagem::setErro($Mensagems);
             return [];
         }
 
-        if ($values){
-            foreach ($values as $value){
-                if ($value->valor){
-                    $value->valor = functions::formatCurrency($value->valor);
-                }
-                $valuesFinal[] = $value;
-            }
+        
 
-            return $values;
-        }
+        return $values;
+        
     }
 
     public static function getByEmpresaAndId($id_servico,$id_empresa){

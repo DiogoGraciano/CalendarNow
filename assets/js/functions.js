@@ -49,6 +49,32 @@ function openModal(nome){
   $(".modal_container."+nome).show()
 }
 
+function multiplicarTempo(tempo, multiplicador) {
+  var partesTempo = tempo.split(":");
+  var horas = parseInt(partesTempo[0]);
+  var minutos = parseInt(partesTempo[1]);
+  var segundos = parseInt(partesTempo[2]);
+
+  var tempoTotalSegundos = horas * 3600 + minutos * 60 + segundos;
+
+  var tempoMultiplicadoSegundos = tempoTotalSegundos * multiplicador;
+
+  var horasMultiplicadas = Math.floor(tempoMultiplicadoSegundos / 3600);
+  var minutosMultiplicados = Math.floor((tempoMultiplicadoSegundos % 3600) / 60);
+  var segundosMultiplicados = Math.floor(tempoMultiplicadoSegundos % 60);
+
+  var tempoResultado = 
+      pad(horasMultiplicadas) + ":" + 
+      pad(minutosMultiplicados) + ":" + 
+      pad(segundosMultiplicados);
+
+  return tempoResultado;
+}
+
+function pad(num) {
+  return (num < 10 ? "0" : "") + num;
+}
+
 $(document).ready(function(){		
 
     var url_base = window.location.href.split("/");
@@ -141,6 +167,24 @@ $(document).ready(function(){
           return markup;
       }
     });
+
+    $(".qtd_item").on("change",function(){
+
+      var servico = $(this).attr('data-id_servico')
+      var qtd = parseInt($(this).val());
+      
+      var valor_base = $("#total_item_"+servico).attr('data-vl-base');
+      if (valor_base){
+        valor_base = parseFloat(valor_base);
+        var valor = valor_base*qtd
+        $("#total_item_"+servico).val(valor.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+      }
+
+      var tempo_base = $("#tempo_item_"+servico).attr('data-vl-base');
+      if (tempo_base)
+        $("#tempo_item_"+servico).val(multiplicarTempo(tempo_base, qtd))
+
+    })
 
     // Remove máscara e limita quantidade de caracteres ao dar focus
     $("#cpf_cnpj").focus(removeMascara);
