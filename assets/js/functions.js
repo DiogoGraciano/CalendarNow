@@ -173,23 +173,23 @@ $(document).ready(function(){
       var index = $(this).attr('data-index-servico')
       var qtd = parseInt($(this).val());
 
-      
-      var total_atual = parseFloat($("#total").attr('data-vl-total'));
-      var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
-      if ((total_atual && total_item) || (total_atual === 0 && total_item === 0)){
-        $("input[data-index-check="+index+"]").prop("checked", false);
-        if ($("input[data-index-check="+index+"]")){
+      console.log()
+      if ($("#servico_index_"+index).is(":checked")){
+        $('input[data-index-check="'+index+'"]').prop("checked", false);
+        var total_atual = parseFloat($("#total").attr('data-vl-total'));
+        var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
+        if ($("#servico_index_"+index).is(":checked") && total_atual && total_item){
           var total = total_atual + total_item
           $("#total").attr('data-vl-total',total)
           $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
         }
-        else if(total_atual > 0){
+        else if(total_atual > 0 && total_atual && total_item){
           var total = total_atual - total_item
           $("#total").attr('data-vl-total',total) 
           $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
         }
       }
-      
+
       if(qtd>0){
         var valor_base = $("#total_item_"+index).attr('data-vl-base');
         if (valor_base){
@@ -211,11 +211,13 @@ $(document).ready(function(){
       var total_atual = parseFloat($("#total").attr('data-vl-total'));
       var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
       if (this.checked){
+        $("input[data-index-check="+index+"]").prop("checked", true);
         var total = total_atual + total_item
         $("#total").attr('data-vl-total',total)
         $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
       }
       else if(total_atual > 0){
+        $("input[data-index-check="+index+"]").prop("checked", false);
         var total = total_atual - total_item
         $("#total").attr('data-vl-total',total) 
         $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
