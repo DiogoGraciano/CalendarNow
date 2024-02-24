@@ -172,8 +172,7 @@ $(document).ready(function(){
 
       var index = $(this).attr('data-index-servico')
       var qtd = parseInt($(this).val());
-
-      console.log()
+      
       if ($("#servico_index_"+index).is(":checked")){
         $('input[data-index-check="'+index+'"]').prop("checked", false);
         var total_atual = parseFloat($("#total").attr('data-vl-total'));
