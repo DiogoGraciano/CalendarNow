@@ -2,6 +2,21 @@ function go($url){
   window.location.href = $url
 }
 
+function calcularMinutos(tempo) {
+  // Dividir o tempo em horas, minutos e segundos
+  var partes = tempo.split(":");
+  
+  // Converter horas, minutos e segundos para números inteiros
+  var horas = parseInt(partes[0]);
+  var minutos = parseInt(partes[1]);
+  var segundos = parseInt(partes[2]);
+  
+  // Calcular o total de minutos
+  var totalMinutos = horas * 60 + minutos + Math.round(segundos / 60);
+  
+  return totalMinutos;
+}
+
 function validaVazio(seletor){
   var valor = $(seletor).val();
 
@@ -143,7 +158,7 @@ $(document).ready(function(){
     }
 
     function mensagem(mensagem,type="alert-danger"){
-      $('body').prepend('<div class="alert '+type+' mt-1 d-flex justify-content-between align-items-center" role="alert">'+mensagem+'</div>');
+      $('body').prepend('<div class="alert '+type+' mt-1 d-flex justify-content-between align-items-center" role="alert">'+mensagem+'</div>');  
       alertTimeout();
     }
 
@@ -172,7 +187,7 @@ $(document).ready(function(){
 
       var index = $(this).attr('data-index-servico')
       var qtd = parseInt($(this).val());
-      
+
       if ($("#servico_index_"+index).is(":checked")){
         $('input[data-index-check="'+index+'"]').prop("checked", false);
         var total_atual = parseFloat($("#total").attr('data-vl-total'));
@@ -206,20 +221,44 @@ $(document).ready(function(){
     })
 
     $(".check_item").on("change",function(){
+     
+
       var index = $(this).attr('data-index-check');
-      var total_atual = parseFloat($("#total").attr('data-vl-total'));
-      var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
-      if (this.checked){
-        $("input[data-index-check="+index+"]").prop("checked", true);
-        var total = total_atual + total_item
-        $("#total").attr('data-vl-total',total)
-        $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+
+      var data1 = new Date($("#dt_ini").val());
+      var data2 = new Date($("#dt_fim").val());
+
+      if(data1 && data2){
+        var diferenca = Math.abs(data2 - data1);
+        var diferencaEmMinutos = Math.ceil(diferenca / 60000);
       }
-      else if(total_atual > 0){
+
+      minutos = calcularMinutos($("#tempo_item_"+index).val())
+
+      if (diferencaEmMinutos > minutos){
+        var total_atual = parseFloat($("#total").attr('data-vl-total'));
+        var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
+        if (this.checked){
+          $("input[data-index-check="+index+"]").prop("checked", true);
+          var total = total_atual + total_item
+          $("#total").attr('data-vl-total',total)
+          $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+        }
+        else if(total_atual > 0){
+          $("input[data-index-check="+index+"]").prop("checked", false);
+          var total = total_atual - total_item
+          $("#total").attr('data-vl-total',total) 
+          $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+        }
+      }
+      else{
         $("input[data-index-check="+index+"]").prop("checked", false);
-        var total = total_atual - total_item
-        $("#total").attr('data-vl-total',total) 
-        $("#total").val(total.toLocaleString("pt-BR", { style: "currency" , currency:"BRL"}))
+        mensagem("Quantidade informada passa do tempo maximo de agendamento");
+        window.scroll({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        }); 
       }
     })
 
@@ -452,12 +491,7 @@ $(document).ready(function(){
               }
           }else{
               removeLoader();
-              mensagem("Não possivel verificar E-mail");  
-              window.scroll({
-                top: 0,
-                left: 0,
-                behavior: "smooth",
-              });                  
+              mensagem("Não possivel verificar E-mail");               
           }
         },
       });
