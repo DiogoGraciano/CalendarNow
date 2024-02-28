@@ -73,7 +73,7 @@ class usuarioModel{
         return $usuarios;
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd="",$tipo_usuario = 3,$id_empresa="null"){
+    public static function set($nome,$cpf_cnpj="",$email="",$telefone="",$senha="",$cd="",$tipo_usuario = 4,$id_empresa="null"){
 
         $db = new db("usuario");
     

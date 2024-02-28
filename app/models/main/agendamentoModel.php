@@ -52,20 +52,22 @@ class agendamentoModel{
         return $result;
     }
 
-    public static function set($id_agenda,$id_usuario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$cd_agenda){
+    public static function set($id_agenda,$id_usuario,$id_funcionario,$titulo,$dt_ini,$dt_fim,$cor,$obs,$total,$id=""){
 
         $db = new db("agendamento");
         
         $values = $db->getObject();
 
-        $values->cd_agenda = $cd_agenda;
+        $values->id = $id;
         $values->id_agenda = $id_agenda;
         $values->id_usuario = $id_usuario;
+        $values->id_usuario = $id_funcionario;
         $values->titulo = $titulo;
-        $values->dt_inicio= $dt_inicio;
+        $values->dt_ini= $dt_ini;
         $values->dt_fim = $dt_fim;
         $values->cor = $cor;
         $values->obs= $obs;
+        $values->total = $total;
 
         if ($values)
             $retorno = $db->store($values);
@@ -80,8 +82,6 @@ class agendamentoModel{
             mensagem::addErro($erros);
             return False;
         }
-
-       
     }
 
     public static function delete($cd){

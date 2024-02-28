@@ -235,7 +235,7 @@ $(document).ready(function(){
 
       minutos = calcularMinutos($("#tempo_item_"+index).val())
 
-      if (diferencaEmMinutos > minutos){
+      if (diferencaEmMinutos >= minutos){
         var total_atual = parseFloat($("#total").attr('data-vl-total'));
         var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
         if (this.checked){
