@@ -221,12 +221,20 @@ $(document).ready(function(){
     })
 
     $(".check_item").on("change",function(){
-     
-
+    
       var index = $(this).attr('data-index-check');
 
       var data1 = new Date($("#dt_ini").val());
       var data2 = new Date($("#dt_fim").val());
+
+      var tempo_outros = 0;
+
+      $("input:checked").each(function(){
+        var index_f = $(this).attr('data-index-check');
+        if ($(this).attr('data-index-check') != index){
+          tempo_outros += calcularMinutos($("#tempo_item_"+index_f).val());
+        }
+      });
 
       if(data1 && data2){
         var diferenca = Math.abs(data2 - data1);
@@ -235,7 +243,7 @@ $(document).ready(function(){
 
       minutos = calcularMinutos($("#tempo_item_"+index).val())
 
-      if (diferencaEmMinutos >= minutos){
+      if (diferencaEmMinutos >= (minutos+tempo_outros)){
         var total_atual = parseFloat($("#total").attr('data-vl-total'));
         var total_item = parseFloat($("#total_item_"+index).attr('data-vl-atual'))
         if (this.checked){

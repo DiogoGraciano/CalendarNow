@@ -52,7 +52,7 @@ class agendamentoModel{
         return $result;
     }
 
-    public static function set($id_agenda,$id_usuario,$id_funcionario,$titulo,$dt_ini,$dt_fim,$cor,$obs,$total,$id=""){
+    public static function set($id_agenda,$id_usuario,$id_funcionario,$titulo,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id=""){
 
         $db = new db("agendamento");
         
@@ -68,13 +68,14 @@ class agendamentoModel{
         $values->cor = $cor;
         $values->obs= $obs;
         $values->total = $total;
+        $values->status = $status;
 
         if ($values)
             $retorno = $db->store($values);
 
         if ($retorno == true){
             mensagem::setSucesso(array("Agendamento salvo com Sucesso"));
-            return True;
+            return $db->getLastID();
         }
         else {
             $erros = ($db->getError());

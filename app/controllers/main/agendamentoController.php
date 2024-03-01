@@ -9,6 +9,7 @@ use app\classes\filter;
 use app\classes\footer;
 use app\classes\functions;
 use app\classes\lista;
+use app\models\main\agendamentoItemModel;
 use app\models\main\agendamentoModel;
 use app\models\main\agendaModel;
 use app\models\main\empresaModel;
@@ -132,7 +133,7 @@ class agendamentoController extends controllerAbstract{
                 $elements->addOption($agenda->id,$agenda->nome);
             }
 
-            $agenda = $elements->select("Agenda","agenda",$dado->id_agenda);
+            $agenda = $elements->select("Agenda","agenda",$dado->id_agenda?:$id_agenda);
 
             $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor?:"#4267b2",false,false,"","color","form-control form-control-color"),
                                 $agenda);
@@ -144,8 +145,8 @@ class agendamentoController extends controllerAbstract{
            
         }
 
-        $form->addCustomInput("3 col-6 mb-2",$elements->input("dt_ini","Data Inicial:",$dado->dt_ini?:$dt_ini,true,false,"","datetime-local","form-control form-control-date"),"dt_ini");
-        $form->addCustomInput("3 col-6 mb-2",$elements->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,false,"","datetime-local","form-control form-control-date"),"dt_fim");
+        $form->addCustomInput("3 col-6 mb-2",$elements->input("dt_ini","Data Inicial:",$dado->dt_ini?:$dt_ini,true,true,"","datetime-local","form-control form-control-date"),"dt_ini");
+        $form->addCustomInput("3 col-6 mb-2",$elements->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,true,"","datetime-local","form-control form-control-date"),"dt_fim");
         $form->addCustomInput("3 col-6 d-flex align-items-end mb-2",$elements->button("Anterior","anterior","button","btn btn-primary w-100 btn-block"),"anterior w-100");
         $form->addCustomInput("3 col-6 d-flex align-items-end mb-2",$elements->button("Proximo","proximo","button","btn btn-primary w-100 btn-block"),"proximo w-100");
     
@@ -198,7 +199,7 @@ class agendamentoController extends controllerAbstract{
 
         if ($parameters){
             agendamentoModel::delete($parameters[0]);
-            $this->go("agendamento");
+            $this->go("home");
             return;
         }
 
@@ -244,9 +245,12 @@ class agendamentoController extends controllerAbstract{
         else 
             $usuario = $user;
 
-        $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id_usuario,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$id);
+        $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id_usuario,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+        if ($id_agendamento){
+            agendamentoItemModel::setMultiple($array_itens,$id_agendamento);
+        }
 
-        $this->go("agenda/manutencao/".functions::encrypt($id));
+        $this->go("agendamento/index/".functions::encrypt($id_agenda));
     }
 
     public function export(){
