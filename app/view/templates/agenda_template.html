@@ -8,6 +8,7 @@
         expandRows: true,
         slotMinTime: '{initial_time}',
         slotMaxTime: '{final_time}',
+        slotDuration: '{slot_duration}',
         locale: 'pt-br',
         headerToolbar: {
           left: 'prevYear,prev,next,nextYear today',
@@ -23,7 +24,8 @@
           window.location.href = "{action}" + btoa(arg.start).toString().replace("/","@") + "/" + btoa(arg.end).toString().replace("/","@");
         },
         eventClick: function(arg) {
-          window.location.href = "{action}" + arg.event.id;
+          if (arg.event.id)
+            window.location.href = "{action}" + arg.event.id;
         }, 
         events: {events}
       });

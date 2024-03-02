@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 23-Fev-2024 às 03:12
+-- Tempo de geração: 02-Mar-2024 às 20:38
 -- Versão do servidor: 8.0.31
 -- versão do PHP: 8.2.0
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `agenda` (
   `nome` varchar(250) NOT NULL COMMENT 'nome',
   PRIMARY KEY (`id`),
   KEY `fk_agenda_empresa` (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Extraindo dados da tabela `agenda`
@@ -55,18 +55,27 @@ CREATE TABLE IF NOT EXISTS `agendamento` (
   `id_agenda` int NOT NULL,
   `id_usuario` int NOT NULL,
   `id_funcionario` int NOT NULL,
-  `nome_cliente` varchar(150) CHARACTER SET utf8mb4  NOT NULL COMMENT 'titulo do agendamento',
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'titulo do agendamento',
   `dt_ini` datetime NOT NULL COMMENT 'data inicial do agendamento',
   `dt_fim` datetime NOT NULL COMMENT 'data final do agendamento',
-  `cor` varchar(7) CHARACTER SET utf8mb4  DEFAULT NULL COMMENT 'cor do agendamento',
+  `cor` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'cor do agendamento',
   `total` decimal(10,2) NOT NULL,
   `status` int NOT NULL COMMENT '1 -> finalizado 0 -> em andamento 99 -> Cancelado',
   `obs` varchar(400) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `getEventsbyFuncionario` (`id_agenda`,`id_funcionario`,`dt_ini`,`dt_fim`,`status`),
   KEY `fk_agendamento_agenda` (`id_agenda`),
   KEY `fk_agendamento_usuario` (`id_usuario`),
   KEY `fk_agendamento_funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Extraindo dados da tabela `agendamento`
+--
+
+INSERT INTO `agendamento` (`id`, `id_agenda`, `id_usuario`, `id_funcionario`, `titulo`, `dt_ini`, `dt_fim`, `cor`, `total`, `status`, `obs`) VALUES
+(1, 1, 4, 1, 'cliente_1', '2024-03-04 08:00:00', '2024-03-04 09:00:00', '#4267b2', '50.00', 0, ''),
+(2, 1, 4, 1, 'cliente_1', '2024-03-04 09:00:00', '2024-03-04 10:00:00', '#4267b2', '94.00', 0, '');
 
 -- --------------------------------------------------------
 
@@ -76,13 +85,26 @@ CREATE TABLE IF NOT EXISTS `agendamento` (
 
 DROP TABLE IF EXISTS `agendamento_item`;
 CREATE TABLE IF NOT EXISTS `agendamento_item` (
+  `id` int NOT NULL,
   `id_agendamento` int NOT NULL,
   `id_servico` int NOT NULL,
   `qtd_item` int NOT NULL,
   `tempo_item` time NOT NULL,
   `total_item` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`id_agendamento`,`id_servico`)
+  PRIMARY KEY (`id`),
+  KEY `fk_agendamento_agendamento_item` (`id_agendamento`),
+  KEY `fk_servico_agendamento_item` (`id_servico`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Extraindo dados da tabela `agendamento_item`
+--
+
+INSERT INTO `agendamento_item` (`id`, `id_agendamento`, `id_servico`, `qtd_item`, `tempo_item`, `total_item`) VALUES
+(1, 1, 1, 1, '00:30:00', '44.00'),
+(2, 1, 2, 1, '00:30:00', '50.00'),
+(3, 2, 1, 1, '00:30:00', '44.00'),
+(4, 2, 2, 1, '00:30:00', '50.00');
 
 -- --------------------------------------------------------
 
@@ -5763,7 +5785,7 @@ CREATE TABLE IF NOT EXISTS `empresa` (
   `fantasia` varchar(250) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cnpj` (`cnpj`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Extraindo dados da tabela `empresa`
@@ -5787,7 +5809,7 @@ CREATE TABLE IF NOT EXISTS `endereco` (
   `id_cidade` int NOT NULL COMMENT 'id tabela cidade',
   `id_estado` int NOT NULL COMMENT 'id tabela estado',
   `bairro` varchar(150) NOT NULL COMMENT 'bairro',
-  `rua` varchar(250) CHARACTER SET utf8mb4  NOT NULL COMMENT 'endereco',
+  `rua` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'endereco',
   `numero` int NOT NULL,
   `complemento` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -5795,7 +5817,7 @@ CREATE TABLE IF NOT EXISTS `endereco` (
   KEY `fk_endereco_cidade` (`id_cidade`),
   KEY `fk_endereco_usuario` (`id_usuario`),
   KEY `fk_endereco_empresa` (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Extraindo dados da tabela `endereco`
@@ -5877,14 +5899,16 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   `dias` varchar(27) NOT NULL COMMENT 'dom,seg,ter,qua,qui,sex,sab\r\n\r\nrepresentaria que o funcionario trabalharia todos os dias da semana',
   PRIMARY KEY (`id`),
   KEY `fk_funcionario_usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Extraindo dados da tabela `funcionario`
 --
 
 INSERT INTO `funcionario` (`id`, `id_usuario`, `nome`, `cpf_cnpj`, `email`, `telefone`, `hora_ini`, `hora_fim`, `hora_almoco_ini`, `hora_almoco_fim`, `dias`) VALUES
-(1, 3, 'testge', '6550936055', 'diogo.rj691@gmail.com', '48999999999', '08:00:00', '18:00:00', '12:00:00', '13:00:00', ',seg,ter,qua,qui,sex,');
+(1, 3, 'testge', '6550936055', 'diogo.rj691@gmail.com', '48999999999', '08:00:00', '18:00:00', '12:00:00', '13:00:00', ',seg,ter,qua,qui,sex,'),
+(2, 5, 'MICHELA GRACIANO', '61934963003', 'diogo.dg691@teste.com', '48999146201', '08:00:00', '18:00:00', '12:00:00', '13:00:00', 'dom,seg,ter,qua,qui,,'),
+(3, 6, 'Diogo Graciano Comin', '55379293093', 'diogo.dg681@gmail.com', '48996545657', '19:00:00', '05:00:00', '02:00:00', '02:00:00', ',,ter,qua,qui,sex,sab');
 
 -- --------------------------------------------------------
 
@@ -5912,7 +5936,7 @@ CREATE TABLE IF NOT EXISTS `grupo_funcionario` (
   `id_empresa` int NOT NULL,
   `nome` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -5926,7 +5950,7 @@ CREATE TABLE IF NOT EXISTS `grupo_servico` (
   `id_empresa` int NOT NULL,
   `nome` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -5943,7 +5967,7 @@ CREATE TABLE IF NOT EXISTS `servico` (
   `id_empresa` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_servico_empresa` (`id_empresa`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Extraindo dados da tabela `servico`
@@ -5987,7 +6011,7 @@ CREATE TABLE IF NOT EXISTS `servico_grupo_servico` (
   `id_servico` int NOT NULL,
   PRIMARY KEY (`id_grupo_servico`,`id_servico`),
   KEY `fk_agenda_servico_servico` (`id_servico`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -5999,16 +6023,16 @@ DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE IF NOT EXISTS `usuario` (
   `id` int NOT NULL COMMENT 'id do usuario',
   `nome` varchar(500) NOT NULL COMMENT 'nome do usuario',
-  `cpf_cnpj` varchar(14) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `cpf_cnpj` varchar(14) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `telefone` varchar(11) DEFAULT NULL,
-  `senha` varchar(150) CHARACTER SET utf8mb4  DEFAULT NULL COMMENT 'senha do usuario',
-  `email` varchar(200) CHARACTER SET utf8mb4  DEFAULT NULL COMMENT 'email do usuario',
+  `senha` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'senha do usuario',
+  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'email do usuario',
   `tipo_usuario` int NOT NULL COMMENT '0 -> ADM |\r\n1 -> empresa |\r\n2 -> funcionario |\r\n3 -> usuario |\r\n4 -> cliente cadastrado |',
   `id_empresa` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf_cnpj` (`cpf_cnpj`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  COMMENT='tabela de usuario';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='tabela de usuario';
 
 --
 -- Extraindo dados da tabela `usuario`
@@ -6017,7 +6041,10 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 INSERT INTO `usuario` (`id`, `nome`, `cpf_cnpj`, `telefone`, `senha`, `email`, `tipo_usuario`, `id_empresa`) VALUES
 (1, 'testes', '10237537907', '48999999999', '$2y$10$oMtbVXwj4H4gD0vZo9PmN.JtPS5Hij5vvALaRdv1ZwiX0YnwNVSOW', 'diogo.dg691@gmail.com', 2, 1),
 (2, 'diogo 11111111111', '84546988000189', '48999999999', '$2y$10$441Go9PLGOLjkkUX5IoTYuJwIt.aO6yYhTY1W/W7zbTehoIUZHxbu', 'admnitro@ffffffffff.com', 1, 1),
-(3, 'teste', '6550936055', '48999999999', '$2y$10$XpqUs10YjqJLZNXT61BkpOyFwvom0G3HhMSVm2pNntUdnzEReKhty', 'diogo.rj691@gmail.com', 2, 1);
+(3, 'teste', '6550936055', '48999999999', '$2y$10$XpqUs10YjqJLZNXT61BkpOyFwvom0G3HhMSVm2pNntUdnzEReKhty', 'diogo.rj691@gmail.com', 2, 1),
+(4, 'cliente_1', '', '', '$2y$10$lPm0eHPzGzU0f1RXztr3EuucEUBd0ej0oRISICZ0qXGRrMD.Ri6XO', '', 4, 0),
+(5, 'MICHELA GRACIANO', '61934963003', '48999146201', '$2y$10$8Sca31NKy.Flkv1CQGBFt.tkAHLR9xd8Jv9bRJ.woSciWo1EYpZ4q', 'diogo.dg691@teste.com', 2, 1),
+(6, 'Diogo Graciano Comin', '55379293093', '48996545657', '$2y$10$plh2MfiS0kK5wi2Bb1qDL.yZBXR7nPyK9r3E.zUfyctxzCcmFSb9C', 'diogo.dg681@gmail.com', 2, 1);
 
 --
 -- Restrições para despejos de tabelas
@@ -6036,6 +6063,13 @@ ALTER TABLE `agendamento`
   ADD CONSTRAINT `fk_agendamento_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_agendamento_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_agendamento_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Limitadores para a tabela `agendamento_item`
+--
+ALTER TABLE `agendamento_item`
+  ADD CONSTRAINT `fk_agendamento_agendamento_item` FOREIGN KEY (`id_agendamento`) REFERENCES `agendamento` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_servico_agendamento_item` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Limitadores para a tabela `agenda_funcionario`

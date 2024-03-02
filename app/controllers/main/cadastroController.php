@@ -146,22 +146,22 @@ class cadastroController extends controllerAbstract{
         $user = usuarioModel::getLogged();
 
         if (array_key_exists(0,$parameters)){
-            $form->setHidden("tipo_usuario",$parameters[0]);
             $tipo_usuario = functions::decrypt($parameters[0]);
+            $form->setHidden("tipo_usuario",$tipo_usuario); 
         }else{
             if ($login)
                 $this->go("login/index");
             else 
-                $this->go("cadastro/index");
+                $this->go("home");
         }
 
         if (array_key_exists(1,$parameters)){
-            $form->setHidden("cd",$parameters[1]);
-            $cd = functions::decrypt($parameters[1]);
+            $cd = functions::decrypt($parameters[1]); 
         }
         
         if ($tipo_usuario == 1){
             $dado = usuarioModel::get($cd);
+            $form->setHidden("cd",$cd);
             $dadoEndereco = enderecoModel::get($dado->id);
             $dadoEmpresa = empresaModel::get($dado->id_empresa);
         }
@@ -169,12 +169,14 @@ class cadastroController extends controllerAbstract{
         if ($tipo_usuario == 2){
             $dadoFuncionario = funcionarioModel::get($cd);
             $dado = usuarioModel::get($dadoFuncionario->id_usuario);
-            $form->setHidden("id_funcionario",functions::encrypt($dadoFuncionario->id));
-            $form->setHidden("id_empresa",functions::encrypt($user->id_empresa));
+            $form->setHidden("cd",$dado->id);
+            $form->setHidden("id_funcionario",$dadoFuncionario->id);
+            $form->setHidden("id_empresa",$user->id_empresa);
         }
 
         if ($tipo_usuario == 3){
             $dado = usuarioModel::get($cd);
+            $form->setHidden("cd",$cd);
             $dadoEndereco = enderecoModel::get($dado->id);
         }
 
@@ -286,14 +288,14 @@ class cadastroController extends controllerAbstract{
     }
     public function action($parameters = array(),$login=""){
 
-        $tipo_usuario = functions::decrypt($this->getValue('tipo_usuario'));
+        $tipo_usuario = $this->getValue('tipo_usuario');
        
         if (!$tipo_usuario && $login)
             $this->go("login/index");
         elseif(!$tipo_usuario)
-            $this->go("cadastro/index");
+            $this->go("home");
 
-        $cd = functions::decrypt($this->getValue('cd'));
+        $cd = $this->getValue('cd');
         $nome = $this->getValue('nome');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
@@ -337,10 +339,10 @@ class cadastroController extends controllerAbstract{
                
             $dias = implode(",",[$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")]);
 
-            if ($id_empresa = functions::decrypt($this->getValue("id_empresa"))){
+            if ($id_empresa = $this->getValue("id_empresa")){  
                 $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
                 if ($id_usuario){
-                    $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
+                    $id_funcionario = $this->getValue("id_funcionario");
                     $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
                     if($id_funcionario){
                         if ($id_grupo_funcionario && $id_funcionario)

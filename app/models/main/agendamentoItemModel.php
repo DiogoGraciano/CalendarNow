@@ -6,14 +6,10 @@ use app\classes\modelAbstract;
 
 class agendamentoItemModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("agendamento",$cd);
-    }
-
     public static function getItens($id_agendamento){
-        $db = new db("agendamento");
+        $db = new db("agendamento_item");
 
-        $result = $db->addJoin("INNER","servico","servico.id","agendamento.id_servico")
+        $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->selectAll();
 
@@ -65,6 +61,7 @@ class agendamentoItemModel{
             $total = floatval($item->total_item);
             if ($servico && ($servico->valor*$qtd) == $total){
                 $values = $db->getObject();
+                $values->id = intval($item->id);
                 $values->id_servico = $servico->id;
                 $values->id_agendamento = intval($id_agendamento);
                 $values->qtd_item = $qtd;
@@ -72,7 +69,7 @@ class agendamentoItemModel{
                 $values->tempo_item = $item->tempo_item; 
             }
 
-            $retorno = $db->storeMutiPrimary($values);
+            $retorno = $db->store($values);
             if ($retorno == false){
                 $db->rollback();
                 $erros = ($db->getError());

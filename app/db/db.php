@@ -307,6 +307,8 @@ class Db
                     $sql_instruction = "UPDATE " . $this->table . " SET ";
                     $i = 1;
                     foreach ($values as $key => $data) {
+                        if ($key == $this->columns[0])
+                            continue;
                         $sql_instruction .= $key . '=?,';
                         if (is_string($data) && $data != "null")
                             $valuesBind[$i] = [$data,\PDO::PARAM_STR]; 
@@ -317,7 +319,7 @@ class Db
                         $i++;  
                     }
                     $sql_instruction = substr($sql_instruction, 0, -1);
-                    $sql_instruction .= "WHERE ";
+                    $sql_instruction .= " WHERE ";
                     if ($this->filters){
                         foreach ($this->filters as $filter){
                             if ($i == 1){
@@ -342,6 +344,7 @@ class Db
             $this->error[] = "Erro: Valores não informados";
         } catch (\Exception $e) {
             $this->error[] = 'Erro: ' .  $e->getMessage();
+
         }
     }
 

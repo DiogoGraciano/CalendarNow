@@ -8,17 +8,26 @@ class agenda extends pagina{
 
     private $buttons;
     
-    public function show($action,$eventos,$days_off=",seg,ter,qua,qui,sex,",$initial_time = "08:00",$final_time = "19:00",$dinner_start="12:00",$dinner_end="13:00")
+    public function show($action,$eventos,$days_off=",seg,ter,qua,qui,sex,",$initial_time = "08:00",$final_time = "19:00",$dinner_start="12:00",$dinner_end="13:00",$slot_duration = 30)
     {
         $this->tpl = $this->getTemplate("agenda_template.html");
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
         $this->tpl->action = $action;
         $this->tpl->initial_time = $initial_time;
-        $this->tpl->final_time = $final_time;
 
+        $time = explode(":",$final_time);
+        $lastTime = intval($time[1]);
+        if ($slot_duration > $lastTime)
+            $lastTime = "00";
         
-        
+        $this->tpl->final_time = $time[0].":".$lastTime;
+
+        if ($slot_duration >= 60)
+            $this->tpl->slot_duration = "01:00";
+        else 
+            $this->tpl->slot_duration = "00:".$slot_duration;
+
 
         $days_off = str_replace("dom",0,$days_off);
         $days_off = str_replace("seg",1,$days_off);

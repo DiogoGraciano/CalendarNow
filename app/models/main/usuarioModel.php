@@ -80,14 +80,14 @@ class usuarioModel{
         $values = $db->getObject();
 
         if ($values){
-            $values->id = $cd;
-            $values->id_empresa = $id_empresa;
+            $values->id = intval($cd);
+            $values->id_empresa = intval($id_empresa);
             $values->cpf_cnpj = functions::onlynumber($cpf_cnpj);
-            $values->nome = $nome;
-            $values->email= $email;
+            $values->nome = trim($nome);
+            $values->email= trim($email);
             $values->senha = password_hash($senha,PASSWORD_DEFAULT);
             $values->telefone = functions::onlynumber($telefone);
-            $values->tipo_usuario = $tipo_usuario;
+            $values->tipo_usuario = intval($tipo_usuario);
             $retorno = $db->store($values);
         }
         if ($retorno == true){
