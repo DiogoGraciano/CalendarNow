@@ -1,7 +1,5 @@
 <?php 
 namespace app\models\main;
-
-use app\classes\functions;
 use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
@@ -60,15 +58,21 @@ class agendamentoItemModel{
         $db->transaction();
        
         foreach($array_items as $item){
-            $values = $db->getObject();
-            $values->id_agendamento = $id_agendamento;
-            $values->id_servico = $item->id_servico;
-            $values->total_item = $item->total_item;
-            $values->tempo_item = $item->tempo_item;
-            $values->qtd_item = $item->qtd_item;
+            
+            $servico = servicoModel::get($item->id_servico);
+            $retorno = false;
+            $qtd = intval($item->qtd_item);
+            $total = floatval($item->total_item);
+            if ($servico && ($servico->valor*$qtd) == $total){
+                $values = $db->getObject();
+                $values->id_servico = $servico->id;
+                $values->id_agendamento = intval($id_agendamento);
+                $values->qtd_item = $qtd;
+                $values->total_item = $total;
+                $values->tempo_item = $item->tempo_item; 
+            }
 
-            $retorno = $db->store($values);
-
+            $retorno = $db->storeMutiPrimary($values);
             if ($retorno == false){
                 $db->rollback();
                 $erros = ($db->getError());
@@ -78,7 +82,7 @@ class agendamentoItemModel{
             }
         }
         $db->commit();
-        return $db->getLastID();
+        return true;
     }
 
     public static function delete($cd){

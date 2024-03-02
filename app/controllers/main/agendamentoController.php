@@ -7,6 +7,8 @@ use app\classes\controllerAbstract;
 use app\classes\elements;
 use app\classes\filter;
 use app\classes\footer;
+use app\classes\tabela;
+use app\classes\tabelaMobile;
 use app\classes\functions;
 use app\models\main\agendamentoItemModel;
 use app\models\main\agendamentoModel;
@@ -60,7 +62,17 @@ class agendamentoController extends controllerAbstract{
 
         $agenda = new agenda();
         $agenda->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."home'"));
-        $agenda->show($this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?:$firstFuncionario)."/",agendamentoModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda));
+        $agenda->show(
+            $this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?:$firstFuncionario)."/",
+            agendamentoModel::getEventsbyFuncionario(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),
+            $id_agenda,
+            $Dadofuncionario->id),
+            $Dadofuncionario->dias,
+            $Dadofuncionario->hora_ini,
+            $Dadofuncionario->hora_fim,
+            $Dadofuncionario->hora_almoco_ini,
+            $Dadofuncionario->hora_almoco_fim
+        );
       
         $footer = new footer;
         $footer->show();
@@ -84,8 +96,8 @@ class agendamentoController extends controllerAbstract{
         $form = new form($this->url."agendamento/action/");
 
         if (array_key_exists(3,$parameters)){
-            $dt_fim = date("Y-m-d H:i:s",strtotime(substr(base64_decode(str_replace("@","/",$parameters[3])),0,34)));
-            $dt_ini = date("Y-m-d H:i:s",strtotime(substr(base64_decode(str_replace("@","/",$parameters[2])),0,34)));
+            $dt_fim = functions::dateTimeBd(substr(base64_decode(str_replace("@","/",$parameters[3])),0,34));
+            $dt_ini = functions::dateTimeBd(substr(base64_decode(str_replace("@","/",$parameters[2])),0,34));
         }
         elseif (!array_key_exists(3,$parameters) && array_key_exists(2,$parameters)){
            $cd = functions::decrypt($parameters[2]);
@@ -133,11 +145,10 @@ class agendamentoController extends controllerAbstract{
 
             $agenda = $elements->select("Agenda","agenda",$dado->id_agenda?:$id_agenda);
 
-            $form->setDoisInputs($elements->input("cor","Cor:",$dado->cor?:"#4267b2",false,false,"","color","form-control form-control-color"),
-                                $agenda);
-
-            $form->addCustomInput("4 col-sm-12 usuario mb-2",$cliente,"usuario")
+            $form->addCustomInput("1 col-sm-12 mb-2",$elements->input("cor","Cor:",$dado->cor?:"#4267b2",false,false,"","color","form-control form-control-color"))
+                ->addCustomInput("9 col-sm-12 usuario mb-2",$cliente,"usuario")
                 ->addCustomInput("2 col-sm-12 d-flex align-items-end mb-2",$elements->button("Novo","novoCliente","button"),"w-100")
+                ->addCustomInput(6,$agenda)
                 ->addCustomInput(6,$status)
                 ->setCustomInputs();
            
@@ -154,25 +165,43 @@ class agendamentoController extends controllerAbstract{
         
         $form->setInputs($elements->label("Serviços"));
 
-        $form->addCustomInput("4 col-4",$elements->label("Titulo"));
-        $form->addCustomInput("2 col-2",$elements->label("Quantidade"));
-        $form->addCustomInput("2 col-2",$elements->label("Tempo"));
-        $form->addCustomInput("2 col-2",$elements->label("Total"));
-        $form->addCustomInput("2 col-2",$elements->label("Selecionar"));
-
-        $form->setCustomInputs();
-
-        $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
-
         $i = 0;
-        foreach ($servicos as $servico){
-            $form->addCustomInput("4 col-4 d-flex align-items-end mb-2",$elements->label($servico->nome),"titulo");
-            $form->addCustomInput("2 col-2",$elements->input("qtd_item_".$i,"",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"qtd_item");
-            $form->addCustomInput("2 col-2",$elements->input("tempo_item_".$i,"",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"tempo_item");
-            $form->addCustomInput("2 col-2",$elements->input("total_item_".$i,"",isset($dado->total_item)?functions::formatCurrency($dado->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"'),"total_item");
-            $form->addCustomInput("2 col-2 d-flex align-items-center mt-3",$elements->checkbox("servico_index_".$i,"",false,isset($dado->id_servico)?true:false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'));
-            $form->setCustomInputs();
-            $i++;
+        if ($this->isMobile()){
+            $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
+
+            $table = new tabelaMobile();
+            
+            foreach ($servicos as $servico){
+                $table->addColumnsRows($elements->checkbox("servico_index_".$i,"",false,isset($dado->id_servico)?true:false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),"Selecionar");
+                $table->addColumnsRows($servico->nome,"Nome");
+                $table->addColumnsRows($elements->input("qtd_item_".$i,"",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"Quantidade");
+                $table->addColumnsRows($elements->input("tempo_item_".$i,"",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"Tempo");
+                $table->addColumnsRows($elements->input("total_item_".$i,"",isset($dado->total_item)?functions::formatCurrency($dado->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"'),"Total");
+                $i++;
+            }
+            $form->setInputs($table->parse());
+        }else {
+            $table = new tabela();
+
+            $table->addColumns("1","");
+            $table->addColumns("68","Nome");
+            $table->addColumns("10","Quantidade");
+            $table->addColumns("10","Tempo");
+            $table->addColumns("12","Total");
+            
+            $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
+
+            foreach ($servicos as $servico){
+                $table->addRow([
+                    $elements->checkbox("servico_index_".$i,"",false,isset($dado->id_servico)?true:false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
+                    $servico->nome,
+                    $elements->input("qtd_item_".$i,"",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
+                    $elements->input("tempo_item_".$i,"",isset($dado->tempo_item)?$dado->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
+                    $elements->input("total_item_".$i,"",isset($dado->total_item)?functions::formatCurrency($dado->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"')
+                ]);
+                $i++;
+            }
+            $form->setInputs($table->parse());
         }
 
         $form->setHidden("qtd_servico",$i);
@@ -204,18 +233,22 @@ class agendamentoController extends controllerAbstract{
         $id  = $this->getValue('cd');
         $dt_ini = $this->getValue('dt_ini');
         $dt_fim = $this->getValue('dt_fim');
-        $qtd_servico = $this->getValue("qtd_servico");
+        $qtd_servico = intval($this->getValue("qtd_servico"));
         $status = $this->getValue("status");
         $id_agenda = $this->getValue("agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
         $array_itens = []; 
         $total = 0;
         if ($qtd_servico){
-            for ($i = 1; $i <= $qtd_servico; $i++) {
+            for ($i = 0; $i <= $qtd_servico; $i++) {
                 $objeto_item = false;
-                if($servico_id = $this->getValue('servico_index_'.$i) && $qtd_item = $this->getValue('qtd_item_'.$i) && $tempo_item = $this->getValue('tempo_item_'.$i) && $total_item = $this->getValue('total_item_'.$i)){
+                $id_servico = $this->getValue('servico_index_'.$i);
+                $qtd_item = $this->getValue('qtd_item_'.$i);
+                $tempo_item = $this->getValue('tempo_item_'.$i);
+                $total_item = $this->getValue('total_item_'.$i);
+                if($id_servico && $qtd_item && $tempo_item && $total_item){
                     $objeto_item = new stdClass;
-                    $objeto_item->id_servico = $servico_id;
+                    $objeto_item->id_servico = $id_servico;
                     $objeto_item->qtd_item = $qtd_item;
                     $objeto_item->tempo_item = $tempo_item;
                     $objeto_item->total_item = functions::removeCurrency($total_item);
@@ -225,6 +258,7 @@ class agendamentoController extends controllerAbstract{
                     $array_itens[] = $objeto_item;
             }
         }
+      
         $cor = $this->getValue('cor');
         $obs = $this->getValue('obs');
 

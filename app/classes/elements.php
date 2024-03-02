@@ -68,7 +68,10 @@ class elements extends pagina{
 
         $tpl->type_input = $type_input;
         $tpl->placeholder = $placeholder;
-        $tpl->nm_label = $nm_label;
+        if ($nm_label){
+            $tpl->nm_label = $nm_label;
+            $tpl->block("BLOCK_LABEL_INPUT");  
+        }
         $tpl->nm_input = $nm_input;
 
         if ($vl_input)
@@ -94,7 +97,10 @@ class elements extends pagina{
 
         $tpl= $this->getTemplate("elements_template.html");
 
-        $tpl->nm_label = $nm_label;
+        if ($nm_label){
+            $tpl->nm_label = $nm_label;
+            $tpl->block("BLOCK_LABEL_TEXTAREA");  
+        }
         $tpl->placeholder = $placeholder;
         $tpl->nm_input = $nm_input;
         $tpl->class_input = $class_input;
@@ -119,7 +125,10 @@ class elements extends pagina{
 
         $tpl= $this->getTemplate("elements_template.html");
 
-        $tpl->nm_label = $nm_label;
+        if ($nm_label){
+            $tpl->nm_label = $nm_label;
+            $tpl->block("BLOCK_LABEL_SELECT");  
+        }
         $tpl->nm_input = $nm_input;
         if($required && !$vl_option)
             $class_input .= " is-invalid";
@@ -147,7 +156,10 @@ class elements extends pagina{
 
         $tpl= $this->getTemplate("elements_template.html");
 
-        $tpl->nm_label = $nm_label;
+        if ($nm_label){
+            $tpl->nm_label = $nm_label;
+            $tpl->block("BLOCK_LABEL_DATALIST");  
+        }
         $tpl->nm_input = $nm_input;
         if($required && !$vl_option)
             $class_input .= " is-invalid";

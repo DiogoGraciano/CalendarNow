@@ -190,7 +190,7 @@ class Db
         foreach ($this->propertys as $property){
             $sql .= $property;
         }
-        
+
         $object = $this->selectInstruction($sql,true);
         $this->clean();
         return $object;

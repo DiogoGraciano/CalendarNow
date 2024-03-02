@@ -12,12 +12,12 @@ class agendamentoModel{
         return modelAbstract::get("agendamento",$cd);
     }
 
-    public static function getEvents($dt_inicio,$dt_fim,$id_agenda){
+    public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$status=99){
         $db = new db("agendamento");
-        $results = $db->addFilter("dt_inicio",">=",$dt_inicio)
+        $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
-                      ->addFilter("id_agenda","=",$id_agenda)
-                      ->addFilter("status","!=",99)
+                      ->addFilter("id_agenda","=",intval($id_agenda))
+                      ->addFilter("status","!=",$status)
                       ->selectAll();
 
         $retorn = [];
@@ -33,7 +33,32 @@ class agendamentoModel{
                 ];
             }
         }
-        return json_encode($retorn);
+        return $retorn;
+    }
+
+    public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$status=99){
+        $db = new db("agendamento");
+        $results = $db->addFilter("dt_ini",">=",$dt_inicio)
+                      ->addFilter("dt_fim","<=",$dt_fim)
+                      ->addFilter("id_agenda","=",intval($id_agenda))
+                      ->addFilter("id_funcionario ","=",intval($id_funcionario))
+                      ->addFilter("status","!=",$status)
+                      ->selectAll();
+
+        $retorn = [];
+
+        if ($results){
+            foreach ($results as $result){
+                $retorn[] = [
+                    'id' => functions::encrypt($result->id),
+                    'title' => $result->titulo,
+                    'color' => $result->cor,
+                    'start' => $result->dt_ini,
+                    'end' => $result->dt_fim,
+                ];
+            }
+        }
+        return $retorn;
     }
 
     public static function getAgendamentos(){

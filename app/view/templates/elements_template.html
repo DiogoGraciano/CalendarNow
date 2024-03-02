@@ -1,6 +1,8 @@
 
     <!-- BEGIN BLOCK_INPUT -->
+         <!-- BEGIN BLOCK_LABEL_INPUT -->  
         <label for="{nm_input}">{nm_label}</label>
+        <!-- END BLOCK_LABEL_INPUT -->
         <input type="{type_input}" name="{nm_input}" id="{nm_input}" placeholder="{placeholder}" class="{class_input}" value="{vl_input}" {extra_input}/>
     <!-- END BLOCK_INPUT -->
 
@@ -12,8 +14,10 @@
         <label>{titulo}</label>
     <!-- END BLOCK_LABEL -->
 
-    <!-- BEGIN BLOCK_TEXTAREA -->   
+    <!-- BEGIN BLOCK_TEXTAREA -->
+        <!-- BEGIN BLOCK_LABEL_TEXTAREA -->    
         <label for="{nm_input}">{nm_label}</label>
+        <!-- END BLOCK_LABEL_TEXTAREA -->
         <textarea name="{nm_input}" id="{nm_input}" placeholder="{placeholder}" class="{class_input}" rows="{rows_input}" cols="{cols_input}" {extra_input}>
             {vl_input}
         </textarea>   
@@ -27,7 +31,9 @@
     <!-- END BLOCK_CHECKBOX -->
 
     <!-- BEGIN BLOCK_SELECT -->
+        <!-- BEGIN BLOCK_LABEL_SELECT -->
         <label for="{nm_input}">{nm_label}</label>
+        <!-- END BLOCK_LABEL_SELECT -->
         <select class="{class_input}" name="{nm_input}"  id="{nm_input}" {extra_input}>
             <!-- BEGIN BLOCK_OPTION_SELECT -->
                 <option value="{vl_option}" {extra_option}>{nm_option}</option>
@@ -36,7 +42,9 @@
     <!-- END BLOCK_SELECT -->
 
     <!-- BEGIN BLOCK_DATALIST -->
+        <!-- BEGIN BLOCK_LABEL_DATALIST -->
         <label for="{nm_input}">{nm_label}</label>
+        <!-- END BLOCK_LABEL_DATALIST -->
         <input class="{class_input}" list="{nm_input}s" name="{nm_input}"  id="{nm_input}" value="{vl_input}" {extra_input}>
         <datalist class="{class_input}" id="{nm_input}s" style="display: none;">
             <!-- BEGIN BLOCK_OPTION_DATALIST -->
