@@ -235,13 +235,10 @@ class Db
             foreach ($columns as $column){
                 if (!$all)
                     $sql .= $column.",";
-                  
-                $value = trim($values[$i]);
-
-                if (is_string($value) && $value != "null")
-                    $conditions[] = $column." = '".$value."' and ";
-                elseif (is_int($value) || is_float($value) || $value == "null")
-                    $conditions[] = $column." = ".$value." and ";  
+                if (is_string($values[$i]) && $values[$i] != "null")
+                    $conditions[] = $column." = '".$values[$i]."' and ";
+                elseif (is_int($values[$i]) || is_float($values[$i]) || $values[$i] == "null")
+                    $conditions[] = $column." = ".$values[$i]." and ";  
                 $i++;
             }
             $sql = substr($sql, 0, -1);

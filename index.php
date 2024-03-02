@@ -26,7 +26,9 @@
         $parameters = $parameters->load($controller);
 
         $controller->$method($parameters);
-        
+
+        $whoops = new \Whoops\Run;
+
     }
     catch (Exception $e){
         echo $e->getMessage();

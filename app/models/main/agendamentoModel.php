@@ -58,17 +58,17 @@ class agendamentoModel{
         
         $values = $db->getObject();
 
-        $values->id = $id;
-        $values->id_agenda = $id_agenda;
-        $values->id_usuario = $id_usuario;
-        $values->id_usuario = $id_funcionario;
+        $values->id = intval($id);
+        $values->id_agenda = intval($id_agenda);
+        $values->id_usuario = intval($id_usuario);
+        $values->id_funcionario = intval($id_funcionario);
         $values->titulo = $titulo;
-        $values->dt_ini= $dt_ini;
-        $values->dt_fim = $dt_fim;
+        $values->dt_ini= functions::dateTimeBd($dt_ini);
+        $values->dt_fim = functions::dateTimeBd($dt_fim);
         $values->cor = $cor;
-        $values->obs= $obs;
+        $values->obs = trim($obs);
         $values->total = $total;
-        $values->status = $status;
+        $values->status = intval($status);
 
         if ($values)
             $retorno = $db->store($values);
@@ -86,7 +86,7 @@ class agendamentoModel{
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_agendamento",$cd);
+        modelAbstract::delete("agendamento",$cd);
     }
 
 }

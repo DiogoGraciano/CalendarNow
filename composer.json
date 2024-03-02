@@ -4,5 +4,8 @@
             "app\\":"app",
             "core\\":"core"
         }
+    },
+    "require": {
+        "filp/whoops": "^2.15"
     }
 }

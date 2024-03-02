@@ -181,7 +181,10 @@ class elements extends pagina{
     }
 
     public function addOption($vl_option,$nm_option,$extra_option=""){
-        $this->options[] = json_decode('{"vl_option":"'.$vl_option.'","nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
+        if (is_int($vl_option))
+            $this->options[] = json_decode('{"vl_option":'.$vl_option.',"nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
+        else
+            $this->options[] = json_decode('{"vl_option":"'.$vl_option.'","nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
 
         return $this;
     }

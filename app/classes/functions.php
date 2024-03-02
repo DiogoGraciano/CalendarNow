@@ -16,6 +16,22 @@ class functions{
         return $value;
     }
 
+    public static function dateTimeBd($string){
+        $datetime = new \DateTimeImmutable($string);
+        if ($datetime !== false)
+            return $datetime->format('Y-m-d H:i:s');
+
+        return false;
+    }
+
+    public static function dateBd($string){
+        $datetime = new \DateTimeImmutable($string);
+        if ($datetime !== false)
+            return $datetime->format('Y-m-d');
+
+        return false;
+    }
+
     public static function formatCnpjCpf($value)
     {
         $CPF_LENGTH = 11;
@@ -119,13 +135,16 @@ class functions{
 
     public static function formatCurrency($input)
     {
-        $input = preg_replace('/[^\d\.]/', '', $input);
+        $input = preg_replace("/[^0-9.,]/", "", $input);
 
         $fmt = new \NumberFormatter('pt-BR', \NumberFormatter::CURRENCY );
         return $fmt->format($input);
     }
 
-    
+    public static function removeCurrency($input)
+    {
+        return floatval(str_replace(",",".",preg_replace("/[^0-9.,]/", "", $input)));
+    }
 }
 
 ?>

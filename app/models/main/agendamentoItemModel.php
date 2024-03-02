@@ -55,10 +55,10 @@ class agendamentoItemModel{
 
     public static function setMultiple($array_items,$id_agendamento){
 
-        $db = new db("agendamentoItem");
+        $db = new db("agendamento_item");
         
         $db->transaction();
-
+       
         foreach($array_items as $item){
             $values = $db->getObject();
             $values->id_agendamento = $id_agendamento;
@@ -78,7 +78,7 @@ class agendamentoItemModel{
             }
         }
         $db->commit();
-        return true;
+        return $db->getLastID();
     }
 
     public static function delete($cd){

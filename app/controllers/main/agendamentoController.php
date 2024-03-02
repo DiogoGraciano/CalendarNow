@@ -8,11 +8,9 @@ use app\classes\elements;
 use app\classes\filter;
 use app\classes\footer;
 use app\classes\functions;
-use app\classes\lista;
 use app\models\main\agendamentoItemModel;
 use app\models\main\agendamentoModel;
 use app\models\main\agendaModel;
-use app\models\main\empresaModel;
 use app\models\main\funcionarioModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
@@ -83,7 +81,7 @@ class agendamentoController extends controllerAbstract{
         $id_funcionario = "";
         $id_agenda = "";
 
-        $form = new form("Manutenção Agenda",$this->url."agenda/action/");
+        $form = new form($this->url."agendamento/action/");
 
         if (array_key_exists(3,$parameters)){
             $dt_fim = date("Y-m-d H:i:s",strtotime(substr(base64_decode(str_replace("@","/",$parameters[3])),0,34)));
@@ -166,7 +164,7 @@ class agendamentoController extends controllerAbstract{
 
         $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
 
-        $i = 1;
+        $i = 0;
         foreach ($servicos as $servico){
             $form->addCustomInput("4 col-4 d-flex align-items-end mb-2",$elements->label($servico->nome),"titulo");
             $form->addCustomInput("2 col-2",$elements->input("qtd_item_".$i,"",isset($dado->qtd_item)?$dado->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"qtd_item");
@@ -206,21 +204,22 @@ class agendamentoController extends controllerAbstract{
         $id  = $this->getValue('cd');
         $dt_ini = $this->getValue('dt_ini');
         $dt_fim = $this->getValue('dt_fim');
-        $qtd_list = $this->getValue("qtd_list");
+        $qtd_servico = $this->getValue("qtd_servico");
         $status = $this->getValue("status");
         $id_agenda = $this->getValue("agenda"); 
-        $id_funcionario = $this->getValue("id_funcionario");
+        $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
         $array_itens = []; 
         $total = 0;
-        if ($qtd_list){
-            for ($i = 1; $i <= $qtd_list; $i++) {
-                $objeto_item = new stdClass;
+        if ($qtd_servico){
+            for ($i = 1; $i <= $qtd_servico; $i++) {
+                $objeto_item = false;
                 if($servico_id = $this->getValue('servico_index_'.$i) && $qtd_item = $this->getValue('qtd_item_'.$i) && $tempo_item = $this->getValue('tempo_item_'.$i) && $total_item = $this->getValue('total_item_'.$i)){
-                    $objeto_item->servico_id = $servico_id;
+                    $objeto_item = new stdClass;
+                    $objeto_item->id_servico = $servico_id;
                     $objeto_item->qtd_item = $qtd_item;
                     $objeto_item->tempo_item = $tempo_item;
-                    $objeto_item->total_item = $total_item;
-                    $total =+ $total_item;
+                    $objeto_item->total_item = functions::removeCurrency($total_item);
+                    $total =+ $objeto_item->total_item;
                 }
                 if ($objeto_item)
                     $array_itens[] = $objeto_item;
@@ -235,7 +234,7 @@ class agendamentoController extends controllerAbstract{
         if ($user->tipo_usuario != 3){
             $usuario = $this->getValue('usuario');
             $id_usuario = "";
-            if (is_int($usuario))
+            if (intval($usuario))
                 $id_usuario = $usuario;
             else 
                 $id_usuario = usuarioModel::set($usuario);
@@ -245,16 +244,12 @@ class agendamentoController extends controllerAbstract{
         else 
             $usuario = $user;
 
-        $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id_usuario,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+        $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
         if ($id_agendamento){
-            agendamentoItemModel::setMultiple($array_itens,$id_agendamento);
+            if(!agendamentoItemModel::setMultiple($array_itens,$id_agendamento))
+                agendamentoModel::delete($id_agendamento);
         }
 
         $this->go("agendamento/index/".functions::encrypt($id_agenda));
     }
-
-    public function export(){
-        $this->go("tabela/exportar/tb_agenda");
-    }
-
 }
