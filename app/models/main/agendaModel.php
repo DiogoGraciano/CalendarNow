@@ -14,7 +14,19 @@ class agendaModel{
         $db = new db("agenda");
         
         $values = $db->addFilter("agenda.id_empresa","=",$id_empresa)
-                     ->selectColumns(["id","agenda.nome"]);
+                     ->selectColumns(["id","agenda.nome","agenda.codigo"]);
+        
+        if($values)
+            return $values;
+        
+        return false;
+    }
+
+    public static function getByCodigo($codigo = ""){
+        $db = new db("agenda");
+        
+        $values = $db->addFilter("agenda.codigo","=",$codigo)
+                     ->selectColumns(["id","agenda.nome","agenda.codigo"]);
         
         if($values)
             return $values;
@@ -66,7 +78,7 @@ class agendaModel{
             $retorno = $db->storeMutiPrimary($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+            mensagem::setSucesso(array("Agenda vinculada com Sucesso"));
             return $db->getLastID();
         }
         else {
@@ -110,6 +122,7 @@ class agendaModel{
         $values->id = $id;
         $values->id_empresa = $id_empresa;
         $values->nome = $nome;
+        $values->codigo = functions::genereteCode(7);
 
         if ($values)
             $retorno = $db->store($values);

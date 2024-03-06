@@ -31,7 +31,7 @@ class homeController extends controllerAbstract{
             }
         }
 
-        if ($user->tipo_usuario == 0 || $user->tipo_usuario == 1 || $user->tipo_usuario == 2){
+        if ($user->tipo_usuario != 3){
             $lista->addButton($elements->button("Opções","opcao","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."opcoes'"));
             $lista->addButton($elements->button("Sair","sair","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home/deslogar'"));
         }

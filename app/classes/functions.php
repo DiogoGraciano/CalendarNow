@@ -145,6 +145,10 @@ class functions{
     {
         return floatval(str_replace(",",".",preg_replace("/[^0-9.,]/", "", $input)));
     }
+
+    public static function genereteCode($number){
+        return strtoupper(substr(bin2hex(random_bytes($number)), 1));
+    }
 }
 
 ?>

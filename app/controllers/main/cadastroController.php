@@ -22,26 +22,24 @@ class cadastroController extends controllerAbstract{
 
     public function index($parameters){
 
-        $head = new head();
-        $head -> show("cadastro","consulta");
-
         $tipo_usuario = "";
 
         if (array_key_exists(0,$parameters)){
             $tipo_usuario = functions::decrypt($parameters[0]);
         }
 
+        if ($tipo_usuario != 2){
+            $this->go("opcoes");
+        }
+
+        $head = new head();
+        $head -> show("cadastro","consulta");
+
         $elements = new elements;
 
         $user = usuarioModel::getLogged();
 
         $cadastro = new consulta();
-
-        $filter = new filter($this->url."funcionario/filter/");
-
-        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
-
-        $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
 
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
@@ -51,12 +49,13 @@ class cadastroController extends controllerAbstract{
                 ->addColumns("15","Email","email")
                 ->addColumns("11","Telefone","telefone");
 
-        
-        if ($tipo_usuario == 1 || $tipo_usuario == 0){
-            $cadastro->addColumns("10","CPF/CNPJ Empresa","cnpj")->addColumns("15","Empresa","nome_empresa");
-            $dados = empresaModel::get();
-        }
         if ($tipo_usuario == 2){
+
+            $filter = new filter($this->url."funcionario/filter/");
+
+            $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+
+            $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
 
             $id_grupo_funcionario = "";
 
@@ -97,33 +96,34 @@ class cadastroController extends controllerAbstract{
                 $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
 
             $cadastro->addButtons($elements->button("Adicionar Agenda ao Funcionario","openModel","button","btn btn-primary","openModal('massActionAgenda')"));
-        }
-        $grupo_funcionarios = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
 
-        if ($grupo_funcionarios){
+            $grupo_funcionarios = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
 
-            $elements->addOption("","Selecione/Todos");
-            foreach ($grupo_funcionarios as $grupo_funcionario){
-                $elements->addOption($grupo_funcionario->id,$grupo_funcionario->nome);
+            if ($grupo_funcionarios){
+
+                $elements->addOption("","Selecione/Todos");
+                foreach ($grupo_funcionarios as $grupo_funcionario){
+                    $elements->addOption($grupo_funcionario->id,$grupo_funcionario->nome);
+                }
+
+                $grupo_funcionario = $elements->select("Grupo Funcionario","grupo_funcionario");
+
+                $modal = new modal($this->url."servico/massActionGrupoFuncionario/","massActionGrupoFuncionario");
+
+                $modal->setinputs($grupo_funcionario);
+
+                $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
+
+                $modal->show();
+
+                $filter->addFilter(4,[$grupo_funcionario]);
+
+                $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo","openModelGrupoFuncionario","button","btn btn-primary","openModal('massActionGrupoFuncionario')"));
             }
 
-            $grupo_funcionario = $elements->select("Grupo Funcionario","grupo_funcionario");
-
-            $modal = new modal($this->url."servico/massActionGrupoFuncionario/","massActionGrupoFuncionario");
-
-            $modal->setinputs($grupo_funcionario);
-
-            $modal->setButton($elements->button("Salvar","submitModalConsulta","button","btn btn-primary w-100 pt-2 btn-block"));
-
-            $modal->show();
-
-            $filter->addFilter(4,[$grupo_funcionario]);
-
-            $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo","openModelGrupoFuncionario","button","btn btn-primary","openModal('massActionGrupoFuncionario')"));
+            $filter->show();
         }
-
-        $filter->show();
-
+        
         $cadastro->addColumns("14","Ações","acoes");
 
         $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados,"id",true);
@@ -278,9 +278,9 @@ class cadastroController extends controllerAbstract{
         $form->setButton($elements->button("Salvar","submit"));
         if ($login)
             $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."login'"));
-        else 
+        else
             $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."cadastro/index/".functions::encrypt($tipo_usuario)."'"));
-
+        
         $form->show();
 
         $footer = new footer;

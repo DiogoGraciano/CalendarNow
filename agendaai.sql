@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `agenda` (
   `nome` varchar(250) NOT NULL COMMENT 'nome',
   PRIMARY KEY (`id`),
   KEY `fk_agenda_empresa` (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `agenda`
@@ -55,10 +55,10 @@ CREATE TABLE IF NOT EXISTS `agendamento` (
   `id_agenda` int NOT NULL,
   `id_usuario` int NOT NULL,
   `id_funcionario` int NOT NULL,
-  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'titulo do agendamento',
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'titulo do agendamento',
   `dt_ini` datetime NOT NULL COMMENT 'data inicial do agendamento',
   `dt_fim` datetime NOT NULL COMMENT 'data final do agendamento',
-  `cor` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'cor do agendamento',
+  `cor` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'cor do agendamento',
   `total` decimal(10,2) NOT NULL,
   `status` int NOT NULL COMMENT '1 -> finalizado 0 -> em andamento 99 -> Cancelado',
   `obs` varchar(400) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `agendamento` (
   KEY `fk_agendamento_agenda` (`id_agenda`),
   KEY `fk_agendamento_usuario` (`id_usuario`),
   KEY `fk_agendamento_funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `agendamento`
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `agendamento_item` (
   PRIMARY KEY (`id`),
   KEY `fk_agendamento_agendamento_item` (`id_agendamento`),
   KEY `fk_servico_agendamento_item` (`id_servico`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `agendamento_item`
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `agenda_funcionario` (
   `id_funcionario` int NOT NULL,
   PRIMARY KEY (`id_agenda`,`id_funcionario`),
   KEY `fk_agenda_funcionario_funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `agenda_funcionario`
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `agenda_usuario` (
   `id_usuario` int NOT NULL,
   PRIMARY KEY (`id_agenda`,`id_usuario`),
   KEY `fk_agenda_usuario_usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `agenda_usuario`
@@ -5785,7 +5785,7 @@ CREATE TABLE IF NOT EXISTS `empresa` (
   `fantasia` varchar(250) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cnpj` (`cnpj`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `empresa`
@@ -5809,7 +5809,7 @@ CREATE TABLE IF NOT EXISTS `endereco` (
   `id_cidade` int NOT NULL COMMENT 'id tabela cidade',
   `id_estado` int NOT NULL COMMENT 'id tabela estado',
   `bairro` varchar(150) NOT NULL COMMENT 'bairro',
-  `rua` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'endereco',
+  `rua` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'endereco',
   `numero` int NOT NULL,
   `complemento` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -5817,7 +5817,7 @@ CREATE TABLE IF NOT EXISTS `endereco` (
   KEY `fk_endereco_cidade` (`id_cidade`),
   KEY `fk_endereco_usuario` (`id_usuario`),
   KEY `fk_endereco_empresa` (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `endereco`
@@ -5899,7 +5899,7 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   `dias` varchar(27) NOT NULL COMMENT 'dom,seg,ter,qua,qui,sex,sab\r\n\r\nrepresentaria que o funcionario trabalharia todos os dias da semana',
   PRIMARY KEY (`id`),
   KEY `fk_funcionario_usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `funcionario`
@@ -5922,7 +5922,7 @@ CREATE TABLE IF NOT EXISTS `funcionario_grupo_funcionario` (
   `id_grupo_funcionario` int NOT NULL,
   KEY `fk_funcionario_grupo_funcionario_funcionario` (`id_funcionario`),
   KEY `fk_funcionario_grupo_funcionario_grupo_funcionario` (`id_grupo_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -5936,7 +5936,7 @@ CREATE TABLE IF NOT EXISTS `grupo_funcionario` (
   `id_empresa` int NOT NULL,
   `nome` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -5950,7 +5950,7 @@ CREATE TABLE IF NOT EXISTS `grupo_servico` (
   `id_empresa` int NOT NULL,
   `nome` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -5967,7 +5967,7 @@ CREATE TABLE IF NOT EXISTS `servico` (
   `id_empresa` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_servico_empresa` (`id_empresa`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `servico`
@@ -5989,7 +5989,7 @@ CREATE TABLE IF NOT EXISTS `servico_funcionario` (
   `id_servico` int NOT NULL,
   PRIMARY KEY (`id_funcionario`,`id_servico`),
   KEY `fk_servico_funcionario_servico` (`id_servico`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `servico_funcionario`
@@ -6011,7 +6011,7 @@ CREATE TABLE IF NOT EXISTS `servico_grupo_servico` (
   `id_servico` int NOT NULL,
   PRIMARY KEY (`id_grupo_servico`,`id_servico`),
   KEY `fk_agenda_servico_servico` (`id_servico`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -6023,16 +6023,16 @@ DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE IF NOT EXISTS `usuario` (
   `id` int NOT NULL COMMENT 'id do usuario',
   `nome` varchar(500) NOT NULL COMMENT 'nome do usuario',
-  `cpf_cnpj` varchar(14) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cpf_cnpj` varchar(14) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `telefone` varchar(11) DEFAULT NULL,
-  `senha` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'senha do usuario',
-  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'email do usuario',
+  `senha` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'senha do usuario',
+  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'email do usuario',
   `tipo_usuario` int NOT NULL COMMENT '0 -> ADM |\r\n1 -> empresa |\r\n2 -> funcionario |\r\n3 -> usuario |\r\n4 -> cliente cadastrado |',
   `id_empresa` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf_cnpj` (`cpf_cnpj`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='tabela de usuario';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='tabela de usuario';
 
 --
 -- Extraindo dados da tabela `usuario`
