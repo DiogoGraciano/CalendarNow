@@ -29,16 +29,7 @@ abstract class modelAbstract{
 
         $retorno = $db->delete($cd);
 
-        if ($retorno == true){
-            mensagem::setSucesso(array("Excluido com Sucesso"));
-            return True;
-        }
-        else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
-            return False;
-        }
+        return $retorno;
     }
 
 }

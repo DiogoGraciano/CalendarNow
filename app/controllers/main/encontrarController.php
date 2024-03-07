@@ -14,6 +14,8 @@ class encontrarController extends controllerAbstract{
 
     public function index($parameters){
 
+        $codigo = "";
+
         $head = new head();
         $head->show("Home","");
 
@@ -23,14 +25,12 @@ class encontrarController extends controllerAbstract{
 
         $elements = new elements;
 
-        $agendas = agendaModel::getByUser($user->id);
-
         $form = new form($this->url."encontrar/action");
 
         $elements = new elements;
 
         $form->setinputs($elements->input("codigo_agenda","Codigo da Agenda",$codigo));
-        $form->setButton($elements->button("Adicionar","submit","button","btn btn-primary w-100 pt-2 btn-block"));
+        $form->setButton($elements->button("Adicionar","submit","submit","btn btn-primary w-100 pt-2 btn-block"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home"."'"));
 
         $form->show();
@@ -43,6 +43,9 @@ class encontrarController extends controllerAbstract{
 
         $agenda = agendaModel::getByCodigo($this->getValue("codigo_agenda"));
 
-        agendaModel::setAgendaUsuario($user->id,$agenda->id);
+        if ($agenda && array_key_exists(0,$agenda))
+            agendaModel::setAgendaUsuario($user->id,$agenda[0]->id);
+
+        $this->go("encontrar");
     }
 }

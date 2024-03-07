@@ -3,7 +3,6 @@ namespace app\models\main;
 
 use app\classes\functions;
 use app\db\db;
-use app\classes\mensagem;
 use app\classes\modelAbstract;
 
 class empresaModel{
@@ -33,16 +32,11 @@ class empresaModel{
         $values->fantasia = $fantasia;
         $retorno = $db->store($values);
         
-        if ($retorno == true){
-            mensagem::setSucesso(array("Empresa salvo com Sucesso"));
+        if ($retorno == true)
             return $db->getLastID();
-        }
-        else {
-            $Mensagems = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($Mensagems);
+        else 
             return False;
-        }
+        
     }
     
     public static function delete($cd){

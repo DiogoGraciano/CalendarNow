@@ -10,12 +10,14 @@ use app\classes\footer;
 use app\classes\tabela;
 use app\classes\tabelaMobile;
 use app\classes\functions;
+use app\classes\mensagem;
 use app\models\main\agendamentoItemModel;
 use app\models\main\agendamentoModel;
 use app\models\main\agendaModel;
 use app\models\main\funcionarioModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
+use app\models\main\clienteModel;
 use stdClass;
 
 class agendamentoController extends controllerAbstract{
@@ -47,6 +49,7 @@ class agendamentoController extends controllerAbstract{
         foreach ($funcionarios as $funcionario){
             if ($i == 1){
                 $firstFuncionario = $funcionario->id;
+                $i++;
             }
             $elements->addOption($funcionario->id,$funcionario->nome);
         }
@@ -60,10 +63,8 @@ class agendamentoController extends controllerAbstract{
         $agenda = new agenda();
         $agenda->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."home'"));
         $agenda->show(
-            $this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?:$firstFuncionario)."/",
-            agendamentoModel::getEventsbyFuncionario(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),
-            $id_agenda,
-            $Dadofuncionario->id),
+            $this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?$firstFuncionario:$id_funcionario)."/",
+            agendamentoModel::getEventsbyFuncionario(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda,$Dadofuncionario->id),
             $Dadofuncionario->dias,
             $Dadofuncionario->hora_ini,
             $Dadofuncionario->hora_fim,
@@ -99,12 +100,13 @@ class agendamentoController extends controllerAbstract{
            $cd = functions::decrypt($parameters[2]);
            $form->setHidden("cd",$parameters[2]);
         }
-        if (array_key_exists(1,$parameters)){
+        if (array_key_exists(1,$parameters) && array_key_exists(0,$parameters)){
             $form->setHidden("id_funcionario",$parameters[1]);
             $id_funcionario = functions::decrypt($parameters[1]);
-        }if (array_key_exists(0,$parameters)){
-            $form->setHidden("id_agenda",$parameters[0]);
             $id_agenda = functions::decrypt($parameters[0]);
+            $form->setHidden("id_agenda",$id_agenda);
+        }else{
+            $this->go("home");
         }
         
         $elements = new elements;
@@ -120,13 +122,23 @@ class agendamentoController extends controllerAbstract{
             $elements->addOption("99","Cancelado");
             $status = $elements->select("Status","status",$dado->status);
 
-            $usuarios = usuarioModel::getByTipoUsuario(4);
+            $usuarios = usuarioModel::getByTipoUsuarioAgenda(3,$id_agenda);
 
+            $elements->addOption("","Selecionar/Vazio");
             foreach ($usuarios as $usuario){
                 $elements->addOption($usuario->id,$usuario->nome);
             }
 
-            $cliente = $elements->select("Cliente","usuario",$dado->id_usuario);
+            $usuario = $elements->select("Usuario","usuario",$dado->id_usuario);
+
+            $clientes = clienteModel::getByfuncionario($id_funcionario);
+
+            $elements->addOption("","Selecionar/Vazio");
+            foreach ($clientes as $cliente){
+                $elements->addOption($cliente->id,$cliente->nome);
+            }
+
+            $cliente = $elements->select("Cliente","cliente",$dado->id_cliente);
 
             $agendas = [];
 
@@ -142,12 +154,12 @@ class agendamentoController extends controllerAbstract{
             $agenda = $elements->select("Agenda","agenda",$dado->id_agenda?:$id_agenda);
 
             $form->addCustomInput("1 col-sm-12 mb-2",$elements->input("cor","Cor:",$dado->cor?:"#4267b2",false,false,"","color","form-control form-control-color"))
-                ->addCustomInput("9 col-sm-12 usuario mb-2",$cliente,"usuario")
+                ->addCustomInput("9 col-sm-12 cliente mb-2",$cliente,"cliente")
                 ->addCustomInput("2 col-sm-12 d-flex align-items-end mb-2",$elements->button("Novo","novoCliente","button"),"w-100")
+                ->addCustomInput(12,$usuario)
                 ->addCustomInput(6,$agenda)
                 ->addCustomInput(6,$status)
                 ->setCustomInputs();
-           
         }
 
         $form->addCustomInput("6",$elements->input("dt_ini","Data Inicial:",$dado->dt_ini?:$dt_ini,true,true,"","datetime-local","form-control form-control-date"),"dt_ini");
@@ -215,7 +227,7 @@ class agendamentoController extends controllerAbstract{
         $form->setCustomInputs();
 
         $form->setButton($elements->button("Salvar","submit"));
-        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agendamento/index/".$parameters[0]."'"));
+        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agendamento/index/".$parameters[0]."/".$parameters[1]."'"));
         
         $form->show();
 
@@ -230,12 +242,13 @@ class agendamentoController extends controllerAbstract{
             return;
         }
 
+        $erro = false;
         $id = functions::decrypt($this->getValue('cd'));
         $dt_ini = $this->getValue('dt_ini');
         $dt_fim = $this->getValue('dt_fim');
         $qtd_servico = intval($this->getValue("qtd_servico"));
         $status = $this->getValue("status");
-        $id_agenda = $this->getValue("agenda"); 
+        $id_agenda = $this->getValue("id_agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
         $array_itens = []; 
         $total = 0;
@@ -263,28 +276,34 @@ class agendamentoController extends controllerAbstract{
         $cor = $this->getValue('cor');
         $obs = $this->getValue('obs');
 
-        $usuario = "";
-
         $user = usuarioModel::getLogged();
-        if ($user->tipo_usuario != 3){
-            $usuario = $this->getValue('usuario');
-            $id_usuario = "";
-            if (intval($usuario))
-                $id_usuario = $usuario;
-            else 
-                $id_usuario = usuarioModel::set($usuario);
+        $id_agendamento = "";
 
-            $usuario = usuarioModel::get($id_usuario);
+        if ($user->tipo_usuario != 3 && $cliente = $this->getValue('cliente')){
+            $id_cliente = "";
+            if (intval($cliente))
+                $id_cliente = $cliente;
+            else 
+                $id_cliente = clienteModel::set($cliente,$user->id_empresa);
+
+            $cliente = clienteModel::get($id_cliente);
+            $id_agendamento = agendamentoModel::set($id_agenda,null,$cliente->id,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
         }
         else 
-            $usuario = $user;
+            $id_agendamento = agendamentoModel::set($id_agenda,$user->id,null,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
 
-        $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
         if ($id_agendamento){
             if(!agendamentoItemModel::setMultiple($array_itens,$id_agendamento))
-                agendamentoModel::delete($id_agendamento);
+                $erro = agendamentoModel::delete($id_agendamento);
         }
+        else 
+            $erro = true;
 
-        $this->go("agendamento/index/".functions::encrypt($id_agenda));
+        if ($erro)
+            mensagem::setErro(["Falha ao Agendar, tente novamente"]);
+        else 
+            mensagem::setSucesso(["Agendamento Concluido"]);
+
+        $this->go("agendamento/index/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario));
     }
 }

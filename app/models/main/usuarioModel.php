@@ -1,7 +1,6 @@
 <?php 
 namespace app\models\main;
 use app\db\db;
-use app\classes\mensagem;
 use app\classes\functions;
 use app\classes\modelAbstract;
 use app\models\main\loginModel;
@@ -25,8 +24,7 @@ class usuarioModel{
 
         $usuario = $db->selectByValues(["cpf_cnpj","email"],[$cpf_cnpj,$email],True);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
 
@@ -39,8 +37,7 @@ class usuarioModel{
 
         $usuario = $db->selectByValues(["cpf_cnpj"],[$cpf_cnpj]);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
 
@@ -53,27 +50,30 @@ class usuarioModel{
 
         $usuario = $db->selectByValues(["email"],[$email]);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
 
         return $usuario;
     }
 
-    public static function getByTipoUsuario($tipo_usuario){
+    public static function getByTipoUsuarioAgenda($tipo_usuario,$id_agenda){
         $db = new db("usuario");
-        $usuarios = $db->addFilter("tipo_usuario","=",$tipo_usuario)->selectAll();
+        $usuarios = $db->addJoin("INNER","agendamento","usuario.id","agendamento.id_usuario")
+                        ->addFilter("tipo_usuario","=",$tipo_usuario)
+                        ->addFilter("agendamento.id_agenda","=",$id_agenda)
+                        ->addFilter("usuario.tipo_usuario","=",$tipo_usuario)
+                        ->addGroup("usuario.id")
+                        ->selectColumns(['usuario.id','usuario.nome','usuario.cpf_cnpj','usuario.telefone','usuario.senha','usuario.email','usuario.tipo_usuario','usuario.id_empresa']);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
 
         return $usuarios;
     }
 
-    public static function set($nome,$cpf_cnpj="",$email="",$telefone="",$senha="",$cd="",$tipo_usuario = 4,$id_empresa="null"){
+    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario = 3,$id_empresa="null"){
 
         $db = new db("usuario");
     
@@ -90,16 +90,11 @@ class usuarioModel{
             $values->tipo_usuario = intval($tipo_usuario);
             $retorno = $db->store($values);
         }
-        if ($retorno == true){
-            mensagem::setSucesso(array("Usuario salvo com Sucesso"));
+        if ($retorno == true)
             return $db->getLastID();
-        }
-        else {
-            $Mensagems = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($Mensagems);
+        else 
             return False;
-        }
+        
         
     }
 

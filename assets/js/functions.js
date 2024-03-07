@@ -526,16 +526,16 @@ $(document).ready(function(){
   $("#valor").on("blur",function(){validaValor("#valor")});
 
   $("#novoCliente").on("click",function(){
-    if ($(".col-md-9.col-sm-12.usuario.mb-2.novoCliente").length){
-      $(".form-group.usuario").show();
-      $(".col-md-9.col-sm-12.usuario.mb-2").removeClass("novoCliente");
+    if ($(".col-md-9.col-sm-12.cliente.mb-2.novoCliente").length){
+      $(".form-group.cliente").show();
+      $(".col-md-9.col-sm-12.cliente.mb-2").removeClass("novoCliente");
       $(".form-group.novoCliente").remove();
       $(this).text("Novo");
     }
     else{
-      $(".form-group.usuario").hide();
-      $(".col-md-9.col-sm-12.usuario.mb-2").addClass("novoCliente")
-      $(".col-md-9.col-sm-12.usuario.mb-2").append('<div class="form-group novoCliente"><label for="usuario">Cliente</label><input type="text" name="usuario" id="usuario" class="form-control" value="" placeholder="Novo Cliente"></div>')
+      $(".form-group.cliente").hide();
+      $(".col-md-9.col-sm-12.cliente.mb-2").addClass("novoCliente")
+      $(".col-md-9.col-sm-12.cliente.mb-2").append('<div class="form-group novoCliente"><label for="cliente">Cliente</label><input type="text" name="cliente" id="cliente" class="form-control" value="" placeholder="Novo Cliente"></div>')
       $(this).text("Escolher");
     }
   })

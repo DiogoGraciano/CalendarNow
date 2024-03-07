@@ -13,8 +13,7 @@ class agendamentoItemModel{
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->selectAll();
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+         if ($db->getError()){
             return [];
         }
         
@@ -67,15 +66,12 @@ class agendamentoItemModel{
                 $values->qtd_item = $qtd;
                 $values->total_item = $total;
                 $values->tempo_item = $item->tempo_item; 
-            }
 
-            $retorno = $db->store($values);
-            if ($retorno == false){
-                $db->rollback();
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-                return False;
+                $retorno = $db->store($values);
+                if ($retorno == false){
+                    $db->rollback();
+                    return $retorno;
+                }
             }
         }
         $db->commit();

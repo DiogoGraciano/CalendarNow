@@ -16,8 +16,7 @@ class enderecoModel{
 
         $values = $db->selectByValues(["id_usuario"],[$id_usuario],true);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
 
@@ -42,16 +41,11 @@ class enderecoModel{
         $values->complemento = $complemento;
         $retorno = $db->store($values);
 
-        if ($retorno == true){
-            mensagem::setSucesso(array("Endereço salvo com Sucesso"));
+        if ($retorno == true)
             return $db->getLastID();
-        }
-        else {
-            $Mensagems = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($Mensagems);
+        else 
             return False;
-        }
+        
     }
     
     public static function delete($cd){

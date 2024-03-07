@@ -114,6 +114,7 @@ class Db
             foreach ($this->valuesBind as $key => $data) {
                 $sql->bindParam($key,$data[0],$data[1]);
             }
+            
             $sql->execute();
 
             $array = [];
@@ -220,7 +221,7 @@ class Db
         foreach ($this->propertys as $property){
             $sql .= $property;
         }
-    
+        
         $object = $this->selectInstruction($sql,true);
         $this->clean();
         return $object;
@@ -460,25 +461,17 @@ class Db
 
     //adiciona um LIMIT ao select
     public function addLimit($limitIni,$limitFim=""){
-        if ($limitFim)
-            $this->propertys[] = " LIMIT ?,?";
-        else 
-            $this->propertys[] = " LIMIT ?";
-
-        $this->valuesBind[$this->counterBind] = [$limitIni,\PDO::PARAM_INT];
-        $this->counterBind++;
-        $this->valuesBind[$this->counterBind] = [$limitFim,\PDO::PARAM_INT];
-        $this->counterBind++;
+        if ($limitFim){
+            $this->propertys[] = " LIMIT {$limitIni},{$limitFim}";
+        }else
+            $this->propertys[] = " LIMIT {$limitIni}";
 
         return $this;
     }
 
     //adiciona um GROUP ao select
     public function addGroup($columns){
-        $this->propertys[] = " GROUP by ?";
-
-        $this->valuesBind[$this->counterBind] = [$columns,\PDO::PARAM_INT];
-        $this->counterBind++;
+        $this->propertys[] = " GROUP by ".$columns;
 
         return $this;
     }

@@ -8,6 +8,7 @@ use app\classes\consulta;
 use app\classes\footer;
 use app\classes\functions;
 use app\classes\filter;
+use app\classes\mensagem;
 use app\classes\modal;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
@@ -320,15 +321,21 @@ class cadastroController extends controllerAbstract{
                 if ($id_usuario){
                     $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario,$id_empresa);
                     if ($id_endereco){
+                        mensagem::setSucesso(["Usuario empresarial salvo com sucesso"]);
                         if ($login)
                             $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                         else 
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
-                    }else
+                    }else{
                         usuarioModel::delete($id_usuario);
-                }else
+                        mensagem::setErro(["Não foi possivel salvar o endereço, verifique as informações e tente novamente"]);
+                    }
+                }else{
                     empresaModel::delete($id_empresa);
-            }
+                    mensagem::setErro(["Não foi possivel salvar o usuario empresarial, verifique as informações e tente novamente"]);
+                }
+            }else 
+                mensagem::setErro(["Não foi possivel salvar a empresa, verifique as informações e tente novamente"]);
         }
         elseif ($tipo_usuario == 2){
             $id_grupo_funcionario = $this->getValue('id_grupo_funcionario');
@@ -345,6 +352,7 @@ class cadastroController extends controllerAbstract{
                     $id_funcionario = $this->getValue("id_funcionario");
                     $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
                     if($id_funcionario){
+                        mensagem::setSucesso(["Funcionario salvo com sucesso"]);
                         if ($id_grupo_funcionario && $id_funcionario)
                             funcionarioModel::setFuncionarioGrupoFuncionario($id_grupo_funcionario,$id_funcionario);
                         if ($login)
@@ -353,6 +361,7 @@ class cadastroController extends controllerAbstract{
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
                     }
                     usuarioModel::delete($id_usuario);
+                    mensagem::setErro(["Não foi possivel salvar funcionario, verifique as informações e tente novamente"]);
                 }
             }
         }
@@ -361,12 +370,14 @@ class cadastroController extends controllerAbstract{
                 if ($id_usuario){
                     $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario);
                     if($id_endereco){
+                        mensagem::setSucesso(["Usuario salvo com sucesso"]);
                         if ($login)
                             $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                         else 
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
                     }
                     usuarioModel::delete($id_usuario);
+                    mensagem::setErro(["Não foi possivel salvar usuario, verifique as informações e tente novamente"]);
                 }
         }
         if ($login)

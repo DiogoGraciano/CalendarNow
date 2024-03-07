@@ -3,7 +3,6 @@ namespace app\models\main;
 
 use app\classes\functions;
 use app\db\db;
-use app\classes\mensagem;
 use app\classes\modelAbstract;
 
 class funcionarioModel{
@@ -41,8 +40,7 @@ class funcionarioModel{
             }
         }
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
         
@@ -75,8 +73,7 @@ class funcionarioModel{
             }
         }
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
         
@@ -91,8 +88,7 @@ class funcionarioModel{
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
                 ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias"]);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+       if ($db->getError()){
             return [];
         }
 
@@ -106,8 +102,7 @@ class funcionarioModel{
                 ->addFilter("usuario.id_empresa","=",$id_empresa)
                 ->selectColumns(["funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias"]);
 
-        if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
+        if ($db->getError()){
             return [];
         }
 
@@ -134,13 +129,9 @@ class funcionarioModel{
         $retorno = $db->store($values);
         
         if ($retorno == true){
-            mensagem::setSucesso(array("Funcionario salvo com Sucesso"));
             return $db->getLastID();
         }
         else {
-            $Mensagems = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($Mensagems);
             return False;
         }
     }
@@ -161,18 +152,12 @@ class funcionarioModel{
             if ($values)
                 $retorno = $db->storeMutiPrimary($values);
 
-            if ($retorno == true){
-                mensagem::setSucesso(array("Agenda salvo com Sucesso"));
+            if ($retorno == true)
                 return $db->getLastID();
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+            else 
                 return False;
-            }
+            
         }
-        mensagem::setErro(array("Já existe vinculo entre esse grupo e serviço"));
         return True;
     }
 
@@ -193,17 +178,12 @@ class funcionarioModel{
                 $retorno = $db->storeMutiPrimary($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Agenda salvo com Sucesso"));
                 return $db->getLastID();
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
                 return False;
             }
         }
-        mensagem::setErro(array("Já existe vinculo entre esse grupo e serviço"));
         return True;
     }
     
