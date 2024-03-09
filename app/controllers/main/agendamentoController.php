@@ -181,7 +181,7 @@ class agendamentoController extends controllerAbstract{
                 $agendaItem = agendamentoItemModel::getItemByServico($dado->id,$servico->id);
                 if (isset($agendaItem->id_servico) && $agendaItem->id_servico = $servico->id){
                     $form->setHidden("id_item_".$i,$agendaItem->id);
-                    $table->addColumnsRows($elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),"Selecionar");
+                    $table->addColumnsRows($elements->checkbox("servico_index_".$i,"",false,false,false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),"Selecionar");
                     $table->addColumnsRows($servico->nome,"Nome");
                     $table->addColumnsRows($elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"Quantidade");
                     $table->addColumnsRows($elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"Tempo");
@@ -210,7 +210,7 @@ class agendamentoController extends controllerAbstract{
                 if (isset($agendaItem->id_servico) && $agendaItem->id_servico = $servico->id){
                     $form->setHidden("id_item_".$i,$agendaItem->id);
                     $table->addRow([
-                        $elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,$agendaItem->id_servico?true:false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
+                        $elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,true,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
                         $servico->nome,
                         $elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
                         $elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
