@@ -3,6 +3,7 @@ namespace app\models\main;
 use app\db\db;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
+use app\classes\functions;
 
 class agendaModel{
 
@@ -69,51 +70,48 @@ class agendaModel{
     public static function setAgendaUsuario($id_usuario,$id_agenda){
         $db = new db("agenda_usuario");
 
-        $values = $db->getObject();
+        $retorno = $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
+                ->addFilter("agenda_usuario.id_agenda","=",$id_agendas)
+                ->selectAll();
 
-        $values->id_usuario = $id_usuario;
-        $values->id_agenda = $id_agenda;
+        if (!$retorno){
+            $values = $db->getObject();
 
-        if ($values)
+            $values->id_usuario = $id_usuario;
+            $values->id_agenda = $id_agenda;
+
             $retorno = $db->storeMutiPrimary($values);
 
-        if ($retorno == true){
-            mensagem::setSucesso(array("Agenda vinculada com Sucesso"));
-            return $db->getLastID();
+            return $retorno;
         }
-        else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
-            return False;
-        }
+
+        return true;
     }
 
     public static function setAgendaFuncionario($id_funcionario,$id_agenda){
         $db = new db("agenda_funcionario");
 
-        $values = $db->getObject();
+        $retorno = $db->addFilter("agenda_funcionario.id_funcionario","=",$id_funcionario)
+                ->addFilter("agenda_funcionario.id_agenda","=",$id_agendas)
+                ->selectAll();
 
-        $values->id_funcionario = $id_funcionario;
-        $values->id_agenda = $id_agenda;
+        if (!$retorno){
+            $values = $db->getObject();
 
-        if ($values)
-            $retorno = $db->storeMutiPrimary($values);
+            $values->id_funcionario = $id_funcionario;
+            $values->id_agenda = $id_agenda;
 
-        if ($retorno == true){
-            mensagem::setSucesso(array("Agenda salvo com Sucesso"));
-            return $db->getLastID();
+            if ($values)
+                $retorno = $db->storeMutiPrimary($values);
+
+            return $retorno;
         }
-        else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
-            return False;
-        }
+  
+        return true;
     }
 
 
-    public static function set($nome,$id_empresa,$id=""){
+    public static function set($nome,$id_empresa,$codigo="",$id=""){
 
         $db = new db("agenda");
         
@@ -122,19 +120,18 @@ class agendaModel{
         $values->id = $id;
         $values->id_empresa = $id_empresa;
         $values->nome = $nome;
-        $values->codigo = functions::genereteCode(7);
+        if ($codigo)
+            $values->codigo = $codigo;
+        else 
+            $values->codigo = functions::genereteCode(7);
 
         if ($values)
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Agenda salvo com Sucesso"));
             return $db->getLastID();
         }
         else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
             return False;
         }
     }
@@ -149,13 +146,9 @@ class agendaModel{
         $retorno =  $db->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Excluido com Sucesso"));
             return True;
         }
         else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
             return False;
         }
     }
@@ -166,13 +159,9 @@ class agendaModel{
         $retorno =  $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)->deleteByFilter();
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Excluido com Sucesso"));
             return True;
         }
         else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
             return False;
         }
     }

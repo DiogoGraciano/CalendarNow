@@ -45,7 +45,10 @@ class encontrarController extends controllerAbstract{
 
         if ($agenda && array_key_exists(0,$agenda))
             agendaModel::setAgendaUsuario($user->id,$agenda[0]->id);
+        else 
+            mensagem::setErro(["Agenda não encontrar"]);
 
+        mensagem::setSucesso(["Agenda vinculada com sucesso"]);
         $this->go("encontrar");
     }
 }

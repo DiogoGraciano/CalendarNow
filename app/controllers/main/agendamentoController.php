@@ -171,22 +171,28 @@ class agendamentoController extends controllerAbstract{
         
         $form->setInputs($elements->label("Serviços"));
 
-        $dadoServicoItem = agendamentoItemModel::getItens($dado->id);
-
         $i = 0;
+        $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
         if ($this->isMobile()){
-            $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
-
+        
             $table = new tabelaMobile();
 
             foreach ($servicos as $servico){
-                if (isset($dadoServicoItem[$i]))
-                    $form->setHidden("id_item_".$i,$dadoServicoItem->id);
-                $table->addColumnsRows($elements->checkbox("servico_index_".$i,"",false,isset($dadoServicoItem[$i]->id_servico)?true:false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),"Selecionar");
-                $table->addColumnsRows($servico->nome,"Nome");
-                $table->addColumnsRows($elements->input("qtd_item_".$i,"",isset($dadoServicoItem[$i]->qtd_item)?$dadoServicoItem[$i]->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"Quantidade");
-                $table->addColumnsRows($elements->input("tempo_item_".$i,"",isset($dadoServicoItem[$i]->tempo_item)?$dadoServicoItem[$i]->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"Tempo");
-                $table->addColumnsRows($elements->input("total_item_".$i,"",isset($dadoServicoItem[$i]->total_item)?functions::formatCurrency($dadoServicoItem[$i]->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"'),"Total");
+                $agendaItem = agendamentoItemModel::getItemByServico($dado->id,$servico->id);
+                if (isset($agendaItem->id_servico) && $agendaItem->id_servico = $servico->id){
+                    $form->setHidden("id_item_".$i,$agendaItem->id);
+                    $table->addColumnsRows($elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),"Selecionar");
+                    $table->addColumnsRows($servico->nome,"Nome");
+                    $table->addColumnsRows($elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"Quantidade");
+                    $table->addColumnsRows($elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"Tempo");
+                    $table->addColumnsRows($elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"'),"Total");
+                }else{
+                    $table->addColumnsRows($elements->checkbox("servico_index_".$i,"",false,isset($agendaItem->id_servico)?true:false,false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),"Selecionar");
+                    $table->addColumnsRows($servico->nome,"Nome");
+                    $table->addColumnsRows($elements->input("qtd_item_".$i,"",isset($agendaItem->qtd_item)?$agendaItem->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),"Quantidade");
+                    $table->addColumnsRows($elements->input("tempo_item_".$i,"",isset($agendaItem->tempo_item)?$agendaItem->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),"Tempo");
+                    $table->addColumnsRows($elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"'),"Total");
+                }
                 $i++;
             }
             $form->setInputs($table->parse());
@@ -198,19 +204,28 @@ class agendamentoController extends controllerAbstract{
             $table->addColumns("10","Quantidade");
             $table->addColumns("10","Tempo");
             $table->addColumns("12","Total");
-            
-            $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
 
             foreach ($servicos as $servico){
-                if (isset($dadoServicoItem[$i]))
-                    $form->setHidden("id_item_".$i,$dadoServicoItem[$i]->id);
-                $table->addRow([
-                    $elements->checkbox("servico_index_".$i,"",false,isset($dadoServicoItem[$i]->id_servico)?true:false,isset($dadoServicoItem[$i]->id_servico)?true:false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
-                    $servico->nome,
-                    $elements->input("qtd_item_".$i,"",isset($dadoServicoItem[$i]->qtd_item)?$dadoServicoItem[$i]->qtd_item:1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
-                    $elements->input("tempo_item_".$i,"",isset($dadoServicoItem[$i]->tempo_item)?$dadoServicoItem[$i]->tempo_item:$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
-                    $elements->input("total_item_".$i,"",isset($dadoServicoItem[$i]->total_item)?functions::formatCurrency($dadoServicoItem[$i]->total_item):functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"')
-                ]);
+                $agendaItem = agendamentoItemModel::getItemByServico($dado->id,$servico->id);
+                if (isset($agendaItem->id_servico) && $agendaItem->id_servico = $servico->id){
+                    $form->setHidden("id_item_".$i,$agendaItem->id);
+                    $table->addRow([
+                        $elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,$agendaItem->id_servico?true:false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
+                        $servico->nome,
+                        $elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
+                        $elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
+                        $elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"')
+                    ]);
+                }
+                else{
+                    $table->addRow([
+                        $elements->checkbox("servico_index_".$i,"",false,false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
+                        $servico->nome,
+                        $elements->input("qtd_item_".$i,"",1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
+                        $elements->input("tempo_item_".$i,"",$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
+                        $elements->input("total_item_".$i,"",functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"')
+                    ]); 
+                }
                 $i++;
             }
             $form->setInputs($table->parse());
@@ -287,10 +302,16 @@ class agendamentoController extends controllerAbstract{
                 $id_cliente = clienteModel::set($cliente,$user->id_empresa);
 
             $cliente = clienteModel::get($id_cliente);
-            $id_agendamento = agendamentoModel::set($id_agenda,null,$cliente->id,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+            if ($cliente)
+                $id_agendamento = agendamentoModel::set($id_agenda,null,$cliente->id,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
         }
-        else 
+        elseif($user->tipo_usuario == 3) 
             $id_agendamento = agendamentoModel::set($id_agenda,$user->id,null,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+        elseif($usuario = $this->getValue('usuario')){
+            $usuario = usuarioModel::get($usuario);
+            if ($usuario)
+                $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id,null,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+        }
 
         if ($id_agendamento){
             if(!agendamentoItemModel::setMultiple($array_itens,$id_agendamento))

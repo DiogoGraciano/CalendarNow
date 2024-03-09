@@ -20,6 +20,23 @@ class agendamentoItemModel{
         return $result;
     }
 
+    public static function getItemByServico($id_agendamento,$id_servico){
+        $db = new db("agendamento_item");
+
+        $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
+                    ->addFilter("id_agendamento","=",$id_agendamento)
+                    ->addFilter("id_servico","=",$id_servico)
+                    ->addLimit(1)
+                    ->selectAll();
+
+         if ($db->getError()){
+            return [];
+        }
+        
+        if ($result)
+            return $result[0];
+    }
+
     public static function set($qtd_item,$tempo_item,$total_item,$id_agendamento,$id_servico){
 
         $db = new db("agendamentoItem");
