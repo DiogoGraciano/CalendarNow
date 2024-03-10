@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Tempo de geração: 02-Mar-2024 às 20:38
--- Versão do servidor: 8.0.31
--- versão do PHP: 8.2.0
+-- Host: 127.0.0.1
+-- Tempo de geração: 10/03/2024 às 19:13
+-- Versão do servidor: 10.4.28-MariaDB
+-- Versão do PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,148 +24,141 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `agenda`
+-- Estrutura para tabela `agenda`
 --
 
-DROP TABLE IF EXISTS `agenda`;
-CREATE TABLE IF NOT EXISTS `agenda` (
-  `id` int NOT NULL COMMENT 'id da agenda',
-  `id_empresa` int NOT NULL COMMENT 'id da tabela de empresa',
+CREATE TABLE `agenda` (
+  `id` int(11) NOT NULL COMMENT 'id da agenda',
+  `id_empresa` int(11) NOT NULL COMMENT 'id da tabela de empresa',
   `nome` varchar(250) NOT NULL COMMENT 'nome',
-  PRIMARY KEY (`id`),
-  KEY `fk_agenda_empresa` (`id_empresa`)
+  `codigo` varchar(7) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `agenda`
+-- Despejando dados para a tabela `agenda`
 --
 
-INSERT INTO `agenda` (`id`, `id_empresa`, `nome`) VALUES
-(1, 1, 'teste');
+INSERT INTO `agenda` (`id`, `id_empresa`, `nome`, `codigo`) VALUES
+(1, 1, 'teste', 'ABCDEFG'),
+(2, 1, 'agenda', 'B8B8303');
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `agendamento`
+-- Estrutura para tabela `agendamento`
 --
 
-DROP TABLE IF EXISTS `agendamento`;
-CREATE TABLE IF NOT EXISTS `agendamento` (
-  `id` int NOT NULL COMMENT 'id do agendamento',
-  `id_agenda` int NOT NULL,
-  `id_usuario` int NOT NULL,
-  `id_funcionario` int NOT NULL,
-  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'titulo do agendamento',
+CREATE TABLE `agendamento` (
+  `id` int(11) NOT NULL COMMENT 'id do agendamento',
+  `id_agenda` int(11) NOT NULL,
+  `id_usuario` int(11) DEFAULT NULL,
+  `id_cliente` int(11) DEFAULT NULL,
+  `id_funcionario` int(11) NOT NULL,
+  `titulo` varchar(150) NOT NULL COMMENT 'titulo do agendamento',
   `dt_ini` datetime NOT NULL COMMENT 'data inicial do agendamento',
   `dt_fim` datetime NOT NULL COMMENT 'data final do agendamento',
-  `cor` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'cor do agendamento',
+  `cor` varchar(7) DEFAULT NULL COMMENT 'cor do agendamento',
   `total` decimal(10,2) NOT NULL,
-  `status` int NOT NULL COMMENT '1 -> finalizado 0 -> em andamento 99 -> Cancelado',
-  `obs` varchar(400) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `getEventsbyFuncionario` (`id_agenda`,`id_funcionario`,`dt_ini`,`dt_fim`,`status`),
-  KEY `fk_agendamento_agenda` (`id_agenda`),
-  KEY `fk_agendamento_usuario` (`id_usuario`),
-  KEY `fk_agendamento_funcionario` (`id_funcionario`)
+  `status` int(11) NOT NULL COMMENT '1 -> finalizado 0 -> em andamento 99 -> Cancelado',
+  `obs` varchar(400) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `agendamento`
+-- Despejando dados para a tabela `agendamento`
 --
 
-INSERT INTO `agendamento` (`id`, `id_agenda`, `id_usuario`, `id_funcionario`, `titulo`, `dt_ini`, `dt_fim`, `cor`, `total`, `status`, `obs`) VALUES
-(1, 1, 4, 1, 'cliente_1', '2024-03-04 08:00:00', '2024-03-04 09:00:00', '#4267b2', '50.00', 0, ''),
-(2, 1, 4, 1, 'cliente_1', '2024-03-04 09:00:00', '2024-03-04 10:00:00', '#4267b2', '94.00', 0, '');
+INSERT INTO `agendamento` (`id`, `id_agenda`, `id_usuario`, `id_cliente`, `id_funcionario`, `titulo`, `dt_ini`, `dt_fim`, `cor`, `total`, `status`, `obs`) VALUES
+(1, 1, NULL, 1, 1, 'Teste', '2024-03-08 08:00:00', '2024-03-08 09:00:00', '#4267b2', 44.00, 0, ''),
+(2, 2, 7, NULL, 1, 'Diogo Graciano Comin', '2024-03-08 08:00:00', '2024-03-08 08:30:00', '#4267b2', 44.00, 0, ''),
+(3, 2, NULL, 2, 1, 'Cliente_1', '2024-03-08 08:30:00', '2024-03-08 09:00:00', '#4267b2', 44.00, 99, ''),
+(4, 2, NULL, 2, 1, 'Cliente_1', '2024-03-08 09:00:00', '2024-03-08 09:30:00', '#4267b2', 44.00, 99, ''),
+(5, 2, NULL, 2, 1, 'Cliente_1', '2024-03-08 09:30:00', '2024-03-08 10:00:00', '#4267b2', 50.00, 99, ''),
+(6, 2, NULL, 1, 1, 'Teste', '2024-03-08 10:00:00', '2024-03-08 10:30:00', '#4267b2', 50.00, 99, ''),
+(7, 2, NULL, 2, 1, 'Cliente_1', '2024-03-08 08:30:00', '2024-03-08 09:30:00', '#4267b2', 88.00, 0, '');
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `agendamento_item`
+-- Estrutura para tabela `agendamento_item`
 --
 
-DROP TABLE IF EXISTS `agendamento_item`;
-CREATE TABLE IF NOT EXISTS `agendamento_item` (
-  `id` int NOT NULL,
-  `id_agendamento` int NOT NULL,
-  `id_servico` int NOT NULL,
-  `qtd_item` int NOT NULL,
+CREATE TABLE `agendamento_item` (
+  `id` int(11) NOT NULL,
+  `id_agendamento` int(11) NOT NULL,
+  `id_servico` int(11) NOT NULL,
+  `qtd_item` int(11) NOT NULL,
   `tempo_item` time NOT NULL,
-  `total_item` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_agendamento_agendamento_item` (`id_agendamento`),
-  KEY `fk_servico_agendamento_item` (`id_servico`)
+  `total_item` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `agendamento_item`
+-- Despejando dados para a tabela `agendamento_item`
 --
 
 INSERT INTO `agendamento_item` (`id`, `id_agendamento`, `id_servico`, `qtd_item`, `tempo_item`, `total_item`) VALUES
-(1, 1, 1, 1, '00:30:00', '44.00'),
-(2, 1, 2, 1, '00:30:00', '50.00'),
-(3, 2, 1, 1, '00:30:00', '44.00'),
-(4, 2, 2, 1, '00:30:00', '50.00');
+(1, 4, 1, 1, '00:30:00', 44.00),
+(2, 2, 1, 1, '00:30:00', 44.00),
+(3, 3, 1, 1, '00:30:00', 44.00),
+(5, 5, 2, 1, '00:30:00', 50.00),
+(6, 6, 2, 1, '00:30:00', 50.00),
+(7, 7, 1, 2, '01:00:00', 88.00);
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `agenda_funcionario`
+-- Estrutura para tabela `agenda_funcionario`
 --
 
-DROP TABLE IF EXISTS `agenda_funcionario`;
-CREATE TABLE IF NOT EXISTS `agenda_funcionario` (
-  `id_agenda` int NOT NULL,
-  `id_funcionario` int NOT NULL,
-  PRIMARY KEY (`id_agenda`,`id_funcionario`),
-  KEY `fk_agenda_funcionario_funcionario` (`id_funcionario`)
+CREATE TABLE `agenda_funcionario` (
+  `id_agenda` int(11) NOT NULL,
+  `id_funcionario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `agenda_funcionario`
+-- Despejando dados para a tabela `agenda_funcionario`
 --
 
 INSERT INTO `agenda_funcionario` (`id_agenda`, `id_funcionario`) VALUES
-(1, 1);
+(1, 1),
+(2, 1),
+(2, 2),
+(2, 3);
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `agenda_usuario`
+-- Estrutura para tabela `agenda_usuario`
 --
 
-DROP TABLE IF EXISTS `agenda_usuario`;
-CREATE TABLE IF NOT EXISTS `agenda_usuario` (
-  `id_agenda` int NOT NULL,
-  `id_usuario` int NOT NULL,
-  PRIMARY KEY (`id_agenda`,`id_usuario`),
-  KEY `fk_agenda_usuario_usuario` (`id_usuario`)
+CREATE TABLE `agenda_usuario` (
+  `id_agenda` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `agenda_usuario`
+-- Despejando dados para a tabela `agenda_usuario`
 --
 
 INSERT INTO `agenda_usuario` (`id_agenda`, `id_usuario`) VALUES
-(1, 2);
+(1, 2),
+(2, 2),
+(2, 7);
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `cidade`
+-- Estrutura para tabela `cidade`
 --
 
-DROP TABLE IF EXISTS `cidade`;
-CREATE TABLE IF NOT EXISTS `cidade` (
-  `id` int NOT NULL,
+CREATE TABLE `cidade` (
+  `id` int(11) NOT NULL,
   `nome` varchar(120) DEFAULT NULL,
-  `uf` int DEFAULT NULL,
-  `ibge` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_cidade_estado` (`uf`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='Municipios das Unidades Federativas';
+  `uf` int(11) DEFAULT NULL,
+  `ibge` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Municipios das Unidades Federativas';
 
 --
--- Extraindo dados da tabela `cidade`
+-- Despejando dados para a tabela `cidade`
 --
 
 INSERT INTO `cidade` (`id`, `nome`, `uf`, `ibge`) VALUES
@@ -5771,24 +5764,41 @@ INSERT INTO `cidade` (`id`, `nome`, `uf`, `ibge`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `empresa`
+-- Estrutura para tabela `cliente`
 --
 
-DROP TABLE IF EXISTS `empresa`;
-CREATE TABLE IF NOT EXISTS `empresa` (
-  `id` int NOT NULL,
+CREATE TABLE `cliente` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(300) NOT NULL,
+  `id_funcionario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `cliente`
+--
+
+INSERT INTO `cliente` (`id`, `nome`, `id_funcionario`) VALUES
+(1, 'teste', 1),
+(2, 'cliente_1', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `empresa`
+--
+
+CREATE TABLE `empresa` (
+  `id` int(11) NOT NULL,
   `nome` varchar(250) NOT NULL,
   `email` varchar(200) NOT NULL,
   `telefone` varchar(13) NOT NULL,
   `cnpj` varchar(14) NOT NULL,
   `razao` varchar(250) NOT NULL,
-  `fantasia` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `cnpj` (`cnpj`)
+  `fantasia` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `empresa`
+-- Despejando dados para a tabela `empresa`
 --
 
 INSERT INTO `empresa` (`id`, `nome`, `email`, `telefone`, `cnpj`, `razao`, `fantasia`) VALUES
@@ -5797,55 +5807,48 @@ INSERT INTO `empresa` (`id`, `nome`, `email`, `telefone`, `cnpj`, `razao`, `fant
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `endereco`
+-- Estrutura para tabela `endereco`
 --
 
-DROP TABLE IF EXISTS `endereco`;
-CREATE TABLE IF NOT EXISTS `endereco` (
-  `id` int NOT NULL,
-  `id_usuario` int DEFAULT NULL,
-  `id_empresa` int DEFAULT NULL,
-  `cep` int NOT NULL COMMENT 'cep',
-  `id_cidade` int NOT NULL COMMENT 'id tabela cidade',
-  `id_estado` int NOT NULL COMMENT 'id tabela estado',
+CREATE TABLE `endereco` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) DEFAULT NULL,
+  `id_empresa` int(11) DEFAULT NULL,
+  `cep` int(11) NOT NULL COMMENT 'cep',
+  `id_cidade` int(11) NOT NULL COMMENT 'id tabela cidade',
+  `id_estado` int(11) NOT NULL COMMENT 'id tabela estado',
   `bairro` varchar(150) NOT NULL COMMENT 'bairro',
-  `rua` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'endereco',
-  `numero` int NOT NULL,
-  `complemento` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_endereco_estado` (`id_estado`),
-  KEY `fk_endereco_cidade` (`id_cidade`),
-  KEY `fk_endereco_usuario` (`id_usuario`),
-  KEY `fk_endereco_empresa` (`id_empresa`)
+  `rua` varchar(250) NOT NULL COMMENT 'endereco',
+  `numero` int(11) NOT NULL,
+  `complemento` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `endereco`
+-- Despejando dados para a tabela `endereco`
 --
 
 INSERT INTO `endereco` (`id`, `id_usuario`, `id_empresa`, `cep`, `id_cidade`, `id_estado`, `bairro`, `rua`, `numero`, `complemento`) VALUES
 (1, 1, NULL, 88817380, 4487, 24, 'Vila Francesa', 'Rua Francisco Severo Pizetti', 315, ''),
-(2, NULL, 1, 88817380, 4487, 24, 'Vila Francesa', 'Rua Francisco Severo Pizetti', 315, '');
+(2, NULL, 1, 88817380, 4487, 24, 'Vila Francesa', 'Rua Francisco Severo Pizetti', 315, ''),
+(3, 7, 0, 88817380, 4487, 24, 'Vila Francesa', 'Rua Francisco Severo Pizzeti', 315, '            \r\n        ');
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `estado`
+-- Estrutura para tabela `estado`
 --
 
-DROP TABLE IF EXISTS `estado`;
-CREATE TABLE IF NOT EXISTS `estado` (
-  `id` int NOT NULL,
+CREATE TABLE `estado` (
+  `id` int(11) NOT NULL,
   `nome` varchar(75) DEFAULT NULL,
   `uf` varchar(2) DEFAULT NULL,
-  `ibge` int DEFAULT NULL,
-  `pais` int DEFAULT NULL,
-  `ddd` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='Unidades Federativas';
+  `ibge` int(11) DEFAULT NULL,
+  `pais` int(11) DEFAULT NULL,
+  `ddd` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Unidades Federativas';
 
 --
--- Extraindo dados da tabela `estado`
+-- Despejando dados para a tabela `estado`
 --
 
 INSERT INTO `estado` (`id`, `nome`, `uf`, `ibge`, `pais`, `ddd`) VALUES
@@ -5881,13 +5884,12 @@ INSERT INTO `estado` (`id`, `nome`, `uf`, `ibge`, `pais`, `ddd`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `funcionario`
+-- Estrutura para tabela `funcionario`
 --
 
-DROP TABLE IF EXISTS `funcionario`;
-CREATE TABLE IF NOT EXISTS `funcionario` (
-  `id` int NOT NULL,
-  `id_usuario` int NOT NULL,
+CREATE TABLE `funcionario` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
   `nome` varchar(200) NOT NULL,
   `cpf_cnpj` varchar(14) NOT NULL,
   `email` varchar(200) NOT NULL,
@@ -5896,13 +5898,11 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   `hora_fim` time NOT NULL COMMENT 'horario final de atendimento',
   `hora_almoco_ini` time NOT NULL,
   `hora_almoco_fim` time NOT NULL,
-  `dias` varchar(27) NOT NULL COMMENT 'dom,seg,ter,qua,qui,sex,sab\r\n\r\nrepresentaria que o funcionario trabalharia todos os dias da semana',
-  PRIMARY KEY (`id`),
-  KEY `fk_funcionario_usuario` (`id_usuario`)
+  `dias` varchar(27) NOT NULL COMMENT 'dom,seg,ter,qua,qui,sex,sab\r\n\r\nrepresentaria que o funcionario trabalharia todos os dias da semana'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `funcionario`
+-- Despejando dados para a tabela `funcionario`
 --
 
 INSERT INTO `funcionario` (`id`, `id_usuario`, `nome`, `cpf_cnpj`, `email`, `telefone`, `hora_ini`, `hora_fim`, `hora_almoco_ini`, `hora_almoco_fim`, `dias`) VALUES
@@ -5913,86 +5913,73 @@ INSERT INTO `funcionario` (`id`, `id_usuario`, `nome`, `cpf_cnpj`, `email`, `tel
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `funcionario_grupo_funcionario`
+-- Estrutura para tabela `funcionario_grupo_funcionario`
 --
 
-DROP TABLE IF EXISTS `funcionario_grupo_funcionario`;
-CREATE TABLE IF NOT EXISTS `funcionario_grupo_funcionario` (
-  `id_funcionario` int NOT NULL,
-  `id_grupo_funcionario` int NOT NULL,
-  KEY `fk_funcionario_grupo_funcionario_funcionario` (`id_funcionario`),
-  KEY `fk_funcionario_grupo_funcionario_grupo_funcionario` (`id_grupo_funcionario`)
+CREATE TABLE `funcionario_grupo_funcionario` (
+  `id_funcionario` int(11) NOT NULL,
+  `id_grupo_funcionario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `grupo_funcionario`
+-- Estrutura para tabela `grupo_funcionario`
 --
 
-DROP TABLE IF EXISTS `grupo_funcionario`;
-CREATE TABLE IF NOT EXISTS `grupo_funcionario` (
-  `id` int NOT NULL,
-  `id_empresa` int NOT NULL,
-  `nome` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `grupo_funcionario` (
+  `id` int(11) NOT NULL,
+  `id_empresa` int(11) NOT NULL,
+  `nome` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `grupo_servico`
+-- Estrutura para tabela `grupo_servico`
 --
 
-DROP TABLE IF EXISTS `grupo_servico`;
-CREATE TABLE IF NOT EXISTS `grupo_servico` (
-  `id` int NOT NULL,
-  `id_empresa` int NOT NULL,
-  `nome` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `grupo_servico` (
+  `id` int(11) NOT NULL,
+  `id_empresa` int(11) NOT NULL,
+  `nome` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `servico`
+-- Estrutura para tabela `servico`
 --
 
-DROP TABLE IF EXISTS `servico`;
-CREATE TABLE IF NOT EXISTS `servico` (
-  `id` int NOT NULL,
+CREATE TABLE `servico` (
+  `id` int(11) NOT NULL,
   `nome` varchar(250) NOT NULL,
   `valor` decimal(14,2) NOT NULL,
   `tempo` time NOT NULL,
-  `id_empresa` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_servico_empresa` (`id_empresa`) USING BTREE
+  `id_empresa` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `servico`
+-- Despejando dados para a tabela `servico`
 --
 
 INSERT INTO `servico` (`id`, `nome`, `valor`, `tempo`, `id_empresa`) VALUES
-(1, 'teste', '44.00', '00:30:00', 1),
-(2, 'testess', '50.00', '00:30:00', 1);
+(1, 'teste', 44.00, '00:30:00', 1),
+(2, 'testess', 50.00, '00:30:00', 1);
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `servico_funcionario`
+-- Estrutura para tabela `servico_funcionario`
 --
 
-DROP TABLE IF EXISTS `servico_funcionario`;
-CREATE TABLE IF NOT EXISTS `servico_funcionario` (
-  `id_funcionario` int NOT NULL,
-  `id_servico` int NOT NULL,
-  PRIMARY KEY (`id_funcionario`,`id_servico`),
-  KEY `fk_servico_funcionario_servico` (`id_servico`)
+CREATE TABLE `servico_funcionario` (
+  `id_funcionario` int(11) NOT NULL,
+  `id_servico` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `servico_funcionario`
+-- Despejando dados para a tabela `servico_funcionario`
 --
 
 INSERT INTO `servico_funcionario` (`id_funcionario`, `id_servico`) VALUES
@@ -6002,136 +5989,272 @@ INSERT INTO `servico_funcionario` (`id_funcionario`, `id_servico`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `servico_grupo_servico`
+-- Estrutura para tabela `servico_grupo_servico`
 --
 
-DROP TABLE IF EXISTS `servico_grupo_servico`;
-CREATE TABLE IF NOT EXISTS `servico_grupo_servico` (
-  `id_grupo_servico` int NOT NULL,
-  `id_servico` int NOT NULL,
-  PRIMARY KEY (`id_grupo_servico`,`id_servico`),
-  KEY `fk_agenda_servico_servico` (`id_servico`)
+CREATE TABLE `servico_grupo_servico` (
+  `id_grupo_servico` int(11) NOT NULL,
+  `id_servico` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `usuario`
+-- Estrutura para tabela `usuario`
 --
 
-DROP TABLE IF EXISTS `usuario`;
-CREATE TABLE IF NOT EXISTS `usuario` (
-  `id` int NOT NULL COMMENT 'id do usuario',
+CREATE TABLE `usuario` (
+  `id` int(11) NOT NULL COMMENT 'id do usuario',
   `nome` varchar(500) NOT NULL COMMENT 'nome do usuario',
-  `cpf_cnpj` varchar(14) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `cpf_cnpj` varchar(14) DEFAULT NULL,
   `telefone` varchar(11) DEFAULT NULL,
-  `senha` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'senha do usuario',
-  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'email do usuario',
-  `tipo_usuario` int NOT NULL COMMENT '0 -> ADM |\r\n1 -> empresa |\r\n2 -> funcionario |\r\n3 -> usuario |\r\n4 -> cliente cadastrado |',
-  `id_empresa` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `cpf_cnpj` (`cpf_cnpj`)
+  `senha` varchar(150) DEFAULT NULL COMMENT 'senha do usuario',
+  `email` varchar(200) DEFAULT NULL COMMENT 'email do usuario',
+  `tipo_usuario` int(11) NOT NULL COMMENT '0 -> ADM |\r\n1 -> empresa |\r\n2 -> funcionario |\r\n3 -> usuario |\r\n4 -> cliente cadastrado |',
+  `id_empresa` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='tabela de usuario';
 
 --
--- Extraindo dados da tabela `usuario`
+-- Despejando dados para a tabela `usuario`
 --
 
 INSERT INTO `usuario` (`id`, `nome`, `cpf_cnpj`, `telefone`, `senha`, `email`, `tipo_usuario`, `id_empresa`) VALUES
 (1, 'testes', '10237537907', '48999999999', '$2y$10$oMtbVXwj4H4gD0vZo9PmN.JtPS5Hij5vvALaRdv1ZwiX0YnwNVSOW', 'diogo.dg691@gmail.com', 2, 1),
 (2, 'diogo 11111111111', '84546988000189', '48999999999', '$2y$10$441Go9PLGOLjkkUX5IoTYuJwIt.aO6yYhTY1W/W7zbTehoIUZHxbu', 'admnitro@ffffffffff.com', 1, 1),
 (3, 'teste', '6550936055', '48999999999', '$2y$10$XpqUs10YjqJLZNXT61BkpOyFwvom0G3HhMSVm2pNntUdnzEReKhty', 'diogo.rj691@gmail.com', 2, 1),
-(4, 'cliente_1', '', '', '$2y$10$lPm0eHPzGzU0f1RXztr3EuucEUBd0ej0oRISICZ0qXGRrMD.Ri6XO', '', 4, 0),
 (5, 'MICHELA GRACIANO', '61934963003', '48999146201', '$2y$10$8Sca31NKy.Flkv1CQGBFt.tkAHLR9xd8Jv9bRJ.woSciWo1EYpZ4q', 'diogo.dg691@teste.com', 2, 1),
-(6, 'Diogo Graciano Comin', '55379293093', '48996545657', '$2y$10$plh2MfiS0kK5wi2Bb1qDL.yZBXR7nPyK9r3E.zUfyctxzCcmFSb9C', 'diogo.dg681@gmail.com', 2, 1);
+(6, 'Diogo Graciano Comin', '55379293093', '48996545657', '$2y$10$plh2MfiS0kK5wi2Bb1qDL.yZBXR7nPyK9r3E.zUfyctxzCcmFSb9C', 'diogo.dg681@gmail.com', 2, 1),
+(7, 'Diogo Graciano Comin', '07855172009', '48996545657', '$2y$10$hlR5HIahu.c/Ms3gG4Q3i.l953Y/I8mjPu0cZaXLG1SJ8xMUdixcW', 'diogo.dg691@teste.teste', 3, 0);
 
 --
--- Restrições para despejos de tabelas
+-- Índices para tabelas despejadas
 --
 
 --
--- Limitadores para a tabela `agenda`
+-- Índices de tabela `agenda`
 --
 ALTER TABLE `agenda`
-  ADD CONSTRAINT `fk_agenda_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codigo` (`codigo`),
+  ADD KEY `fk_agenda_empresa` (`id_empresa`);
 
 --
--- Limitadores para a tabela `agendamento`
+-- Índices de tabela `agendamento`
 --
 ALTER TABLE `agendamento`
-  ADD CONSTRAINT `fk_agendamento_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_agendamento_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_agendamento_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `getEventsbyFuncionario` (`id_agenda`,`id_funcionario`,`dt_ini`,`dt_fim`,`status`),
+  ADD KEY `fk_agendamento_agenda` (`id_agenda`),
+  ADD KEY `fk_agendamento_usuario` (`id_usuario`),
+  ADD KEY `fk_agendamento_funcionario` (`id_funcionario`),
+  ADD KEY `fk_agendamento_cliente` (`id_cliente`);
 
 --
--- Limitadores para a tabela `agendamento_item`
+-- Índices de tabela `agendamento_item`
 --
 ALTER TABLE `agendamento_item`
-  ADD CONSTRAINT `fk_agendamento_agendamento_item` FOREIGN KEY (`id_agendamento`) REFERENCES `agendamento` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_servico_agendamento_item` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `getItemByServico` (`id_agendamento`,`id_servico`) USING BTREE,
+  ADD KEY `fk_agendamento_agendamento_item` (`id_agendamento`),
+  ADD KEY `fk_servico_agendamento_item` (`id_servico`);
 
 --
--- Limitadores para a tabela `agenda_funcionario`
+-- Índices de tabela `agenda_funcionario`
 --
 ALTER TABLE `agenda_funcionario`
-  ADD CONSTRAINT `fk_agenda_funcionario_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_agenda_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id_agenda`,`id_funcionario`),
+  ADD KEY `fk_agenda_funcionario_funcionario` (`id_funcionario`);
 
 --
--- Limitadores para a tabela `agenda_usuario`
+-- Índices de tabela `agenda_usuario`
 --
 ALTER TABLE `agenda_usuario`
-  ADD CONSTRAINT `fk_agenda_usuario_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_agenda_usuario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id_agenda`,`id_usuario`),
+  ADD KEY `fk_agenda_usuario_usuario` (`id_usuario`);
 
 --
--- Limitadores para a tabela `cidade`
+-- Índices de tabela `cidade`
 --
 ALTER TABLE `cidade`
-  ADD CONSTRAINT `fk_cidade_estado` FOREIGN KEY (`uf`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_cidade_estado` (`uf`);
 
 --
--- Limitadores para a tabela `endereco`
+-- Índices de tabela `cliente`
+--
+ALTER TABLE `cliente`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_cliente_empresa` (`id_funcionario`);
+
+--
+-- Índices de tabela `empresa`
+--
+ALTER TABLE `empresa`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `cnpj` (`cnpj`);
+
+--
+-- Índices de tabela `endereco`
 --
 ALTER TABLE `endereco`
-  ADD CONSTRAINT `fk_endereco_cidade` FOREIGN KEY (`id_cidade`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_endereco_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_endereco_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_endereco_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_endereco_estado` (`id_estado`),
+  ADD KEY `fk_endereco_cidade` (`id_cidade`),
+  ADD KEY `fk_endereco_usuario` (`id_usuario`);
 
 --
--- Limitadores para a tabela `funcionario`
+-- Índices de tabela `estado`
+--
+ALTER TABLE `estado`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `funcionario`
 --
 ALTER TABLE `funcionario`
-  ADD CONSTRAINT `fk_funcionario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_funcionario_usuario` (`id_usuario`);
 
 --
--- Limitadores para a tabela `funcionario_grupo_funcionario`
+-- Índices de tabela `funcionario_grupo_funcionario`
 --
 ALTER TABLE `funcionario_grupo_funcionario`
-  ADD CONSTRAINT `fk_funcionario_grupo_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_funcionario_grupo_funcionario_grupo_funcionario` FOREIGN KEY (`id_grupo_funcionario`) REFERENCES `grupo_funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD KEY `fk_funcionario_grupo_funcionario_funcionario` (`id_funcionario`),
+  ADD KEY `fk_funcionario_grupo_funcionario_grupo_funcionario` (`id_grupo_funcionario`);
 
 --
--- Limitadores para a tabela `servico`
+-- Índices de tabela `grupo_funcionario`
+--
+ALTER TABLE `grupo_funcionario`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `grupo_servico`
+--
+ALTER TABLE `grupo_servico`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `servico`
 --
 ALTER TABLE `servico`
-  ADD CONSTRAINT `fk_servico_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_servico_empresa` (`id_empresa`) USING BTREE;
 
 --
--- Limitadores para a tabela `servico_funcionario`
+-- Índices de tabela `servico_funcionario`
 --
 ALTER TABLE `servico_funcionario`
-  ADD CONSTRAINT `fk_servico_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_servico_funcionario_servico` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id_funcionario`,`id_servico`),
+  ADD KEY `fk_servico_funcionario_servico` (`id_servico`);
 
 --
--- Limitadores para a tabela `servico_grupo_servico`
+-- Índices de tabela `servico_grupo_servico`
 --
 ALTER TABLE `servico_grupo_servico`
-  ADD CONSTRAINT `fk_grupo_servico_servico` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_servico_grupo_servico` FOREIGN KEY (`id_grupo_servico`) REFERENCES `grupo_servico` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD PRIMARY KEY (`id_grupo_servico`,`id_servico`),
+  ADD KEY `fk_agenda_servico_servico` (`id_servico`);
+
+--
+-- Índices de tabela `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `cpf_cnpj` (`cpf_cnpj`);
+
+--
+-- Restrições para tabelas despejadas
+--
+
+--
+-- Restrições para tabelas `agenda`
+--
+ALTER TABLE `agenda`
+  ADD CONSTRAINT `fk_agenda_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`);
+
+--
+-- Restrições para tabelas `agendamento`
+--
+ALTER TABLE `agendamento`
+  ADD CONSTRAINT `fk_agendamento_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`),
+  ADD CONSTRAINT `fk_agendamento_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id`),
+  ADD CONSTRAINT `fk_agendamento_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`),
+  ADD CONSTRAINT `fk_agendamento_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`);
+
+--
+-- Restrições para tabelas `agendamento_item`
+--
+ALTER TABLE `agendamento_item`
+  ADD CONSTRAINT `fk_agendamento_agendamento_item` FOREIGN KEY (`id_agendamento`) REFERENCES `agendamento` (`id`),
+  ADD CONSTRAINT `fk_servico_agendamento_item` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`);
+
+--
+-- Restrições para tabelas `agenda_funcionario`
+--
+ALTER TABLE `agenda_funcionario`
+  ADD CONSTRAINT `fk_agenda_funcionario_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`),
+  ADD CONSTRAINT `fk_agenda_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`);
+
+--
+-- Restrições para tabelas `agenda_usuario`
+--
+ALTER TABLE `agenda_usuario`
+  ADD CONSTRAINT `fk_agenda_usuario_agenda` FOREIGN KEY (`id_agenda`) REFERENCES `agenda` (`id`),
+  ADD CONSTRAINT `fk_agenda_usuario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`);
+
+--
+-- Restrições para tabelas `cidade`
+--
+ALTER TABLE `cidade`
+  ADD CONSTRAINT `fk_cidade_estado` FOREIGN KEY (`uf`) REFERENCES `estado` (`id`);
+
+--
+-- Restrições para tabelas `cliente`
+--
+ALTER TABLE `cliente`
+  ADD CONSTRAINT `fk_cliente_empresa` FOREIGN KEY (`id_funcionario`) REFERENCES `empresa` (`id`);
+
+--
+-- Restrições para tabelas `endereco`
+--
+ALTER TABLE `endereco`
+  ADD CONSTRAINT `fk_endereco_cidade` FOREIGN KEY (`id_cidade`) REFERENCES `cidade` (`id`),
+  ADD CONSTRAINT `fk_endereco_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id`),
+  ADD CONSTRAINT `fk_endereco_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`);
+
+--
+-- Restrições para tabelas `funcionario`
+--
+ALTER TABLE `funcionario`
+  ADD CONSTRAINT `fk_funcionario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`);
+
+--
+-- Restrições para tabelas `funcionario_grupo_funcionario`
+--
+ALTER TABLE `funcionario_grupo_funcionario`
+  ADD CONSTRAINT `fk_funcionario_grupo_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`),
+  ADD CONSTRAINT `fk_funcionario_grupo_funcionario_grupo_funcionario` FOREIGN KEY (`id_grupo_funcionario`) REFERENCES `grupo_funcionario` (`id`);
+
+--
+-- Restrições para tabelas `servico`
+--
+ALTER TABLE `servico`
+  ADD CONSTRAINT `fk_servico_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`);
+
+--
+-- Restrições para tabelas `servico_funcionario`
+--
+ALTER TABLE `servico_funcionario`
+  ADD CONSTRAINT `fk_servico_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`),
+  ADD CONSTRAINT `fk_servico_funcionario_servico` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`);
+
+--
+-- Restrições para tabelas `servico_grupo_servico`
+--
+ALTER TABLE `servico_grupo_servico`
+  ADD CONSTRAINT `fk_grupo_servico_servico` FOREIGN KEY (`id_servico`) REFERENCES `servico` (`id`),
+  ADD CONSTRAINT `fk_servico_grupo_servico` FOREIGN KEY (`id_grupo_servico`) REFERENCES `grupo_servico` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
