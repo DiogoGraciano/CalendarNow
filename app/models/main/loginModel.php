@@ -17,9 +17,7 @@ class loginModel{
             }
         }
         mensagem::setErro(array("Usuario ou Senha invalido"));
-        mensagem::addErro(array($db->getError()));
         return False;
-        
     }
     public static function deslogar(){
         session_destroy();
