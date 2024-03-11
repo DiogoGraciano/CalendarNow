@@ -1,6 +1,7 @@
 <?php
 namespace app\db;
 use app\db\configDB;
+use app\classes\Logger;
 
 class Db
 {
@@ -38,22 +39,25 @@ class Db
     public function transaction(){
         if ($this->pdo->beginTransaction())
             return True;
-        else 
-            $this->error[] = "Erro: Não foi possivel iniciar a transação";
+       
+        $this->error[] = "Erro: Não foi possivel iniciar a transação";
+        Logger::error('Tabela: '.$this->table.' Erro: Não foi possivel iniciar a transação');
     }
 
     public function commit(){
         if ($this->pdo->commit())
             return True;
-        else 
-            $this->error[] = "Erro: Não foi possivel finalizar a transação";
+         
+        $this->error[] = "Erro: Não foi possivel finalizar a transação";
+        Logger::error('Tabela: '.$this->table.' Erro: Não foi possivel finalizar a transação');
     }
 
     public function rollback(){
         if ($this->pdo->rollback())
             return True;
-        else 
-            $this->error[] = "Erro: Não foi possivel desafazer a transação";
+        
+        $this->error[] = "Erro: Não foi possivel desafazer a transação";
+        Logger::error('Tabela: '.$this->table.' Erro: Não foi possivel desafazer a transação');
     }
 
     //Retorna o ultimo ID da tabela
@@ -63,9 +67,10 @@ class Db
         if ($rows) {
             $column = $this->columns[0];
             return $rows->$column;
-        } else {
-            $this->error[] = "Erro: Tabela não encontrada";
-        }
+        } 
+
+        $this->error[] = "Erro: Tabela não encontrada";
+        Logger::error('Tabela: '.$this->table.' Erro: Tabela não encontrada');
     }
 
     public function getLastID(){
@@ -101,9 +106,10 @@ class Db
                 }
             }
             return $object;
-        } else {
-            $this->error[] = "Erro: Tabela não encontrada";
-        }
+        } 
+
+        $this->error[] = "Erro: Tabela não encontrada";
+        Logger::error('Tabela: '.$this->table.' Erro: Tabela não encontrada');
     }
 
     //Faz um select com base me uma instrução e retorna um objeto
@@ -138,7 +144,8 @@ class Db
 
             return $array;
         } catch (\Exception $e) {
-            $this->error[] = 'Erro: ' .  $e->getMessage();
+            $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
     
@@ -164,9 +171,10 @@ class Db
                 $object = $object[0];
                 return (object)$object;
             }
-        } else {
-            $this->error[] = 'Erro: Objeto vazio';
-        }
+        } 
+
+        $this->error[] = 'Tabela: '.$this->table.' Erro: Objeto vazio';
+        Logger::error('Tabela: '.$this->table.' Erro: Objeto vazio');
     }
 
     //Retorna um array com todos os registro da tabela
@@ -270,8 +278,10 @@ class Db
             $object = $this->selectInstruction($sql,true);
             $this->clean();
             return $object;
-        }else 
-           $this->error[] = "Erro: Quantidade de colunas diferente do total de Valores";
+        } 
+        
+        $this->error[] = "Erro: Quantidade de colunas diferente do total de Valores";
+        Logger::error('Tabela: '.$this->table.' Erro: Quantidade de colunas diferente do total de Valores');
     }
 
     //Salva ou atualiza um registro da tabela
@@ -343,9 +353,10 @@ class Db
                 return true;
             }
             $this->error[] = "Erro: Valores não informados";
+            Logger::error('Tabela: '.$this->table.' Erro: Valores não informados');
         } catch (\Exception $e) {
-            $this->error[] = 'Erro: ' .  $e->getMessage();
-
+            $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 
@@ -385,7 +396,8 @@ class Db
                 return true;
             }
         } catch (\Exception $e) {
-            $this->error[] = 'Erro: '.$e->getMessage();
+            $this->error[] = 'Tabela: '.$this->table.' Erro: '.$e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 
@@ -399,12 +411,13 @@ class Db
                 $sql->execute();
                 return true;
             }
-            else 
-                $this->error[] = 'Erro: ID Invalido';
-            return false;
+            $this->error[] = 'Tabela: '.$this->table.' Erro: ID Invalido';
+            Logger::error('Tabela: '.$this->table.' Erro: ID Invalido');
         } catch (\Exception $e) {
-            $this->error[] = 'Erro: ' .  $e->getMessage();
+            $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
+        return false;
     }
 
     //Deleta por filtro
@@ -427,11 +440,13 @@ class Db
                 $this->clean();
                 return true;
             }
-            else 
-                $this->error[] = 'Erro: Obrigatorio Uso de filtro';
+            $this->error[] = 'Tabela: '.$this->table.' Erro: Obrigatorio Uso de filtro';
+            Logger::error('Tabela: '.$this->table.' Erro: Obrigatorio Uso de filtro');
             return false;
+
         } catch (\Exception $e) {
-            $this->error[] = 'Erro: ' .  $e->getMessage();
+            $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 

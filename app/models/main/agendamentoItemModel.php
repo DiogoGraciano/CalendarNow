@@ -27,7 +27,7 @@ class agendamentoItemModel{
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->addFilter("id_servico","=",$id_servico)
                     ->addLimit(1)
-                    ->selectAll();
+                    ->selectColumns(["agendamento_item.id","id_agendamento","id_servico","qtd_item","tempo_item","total_item","nome","valor","tempo","id_empresa"]);
 
          if ($db->getError()){
             return [];
@@ -37,12 +37,13 @@ class agendamentoItemModel{
             return $result[0];
     }
 
-    public static function set($qtd_item,$tempo_item,$total_item,$id_agendamento,$id_servico){
+    public static function set($qtd_item,$tempo_item,$total_item,$id_agendamento,$id_servico,$id=""){
 
-        $db = new db("agendamentoItem");
+        $db = new db("agendamento_item");
         
         $values = $db->getObject();
 
+        $values->id = $id;
         $values->id_agendamento = $id_agendamento;
         $values->id_servico = $id_servico;
         $values->total_item = $total_item;
@@ -50,7 +51,7 @@ class agendamentoItemModel{
         $values->qtd_item = $qtd_item;
 
         if ($values)
-            $retorno = $db->storeMutiPrimary($values);
+            $retorno = $db->store($values);
 
         if ($retorno == true){
             return True;
@@ -70,7 +71,6 @@ class agendamentoItemModel{
         $db->transaction();
        
         foreach($array_items as $item){
-            
             $servico = servicoModel::get($item->id_servico);
             $retorno = false;
             $qtd = intval($item->qtd_item);
@@ -83,7 +83,6 @@ class agendamentoItemModel{
                 $values->qtd_item = $qtd;
                 $values->total_item = $total;
                 $values->tempo_item = $item->tempo_item; 
-
                 $retorno = $db->store($values);
                 if ($retorno == false){
                     $db->rollback();
@@ -96,7 +95,7 @@ class agendamentoItemModel{
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_agendamento",$cd);
+        return modelAbstract::delete("agendamento_item",$cd);
     }
 
 }
