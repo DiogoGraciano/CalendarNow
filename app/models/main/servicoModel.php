@@ -38,7 +38,7 @@ class servicoModel{
     }
 
     public static function getByFuncionario($id_Funcionario){
-        $db = new db("servico_funcionario");
+        $db = new servicoFuncionario;
         
         $values = $db->addjoin("INNER","servico","servico.id","servico_funcionario.id_servico")
                      ->addFilter("servico_funcionario.id_funcionario","=",$id_Funcionario)
@@ -58,7 +58,7 @@ class servicoModel{
     }
 
     public static function getByEmpresaAndId($id_servico,$id_empresa){
-        $db = new db("servico");
+        $db = new servico;
         
         $values = $db->addFilter("servico.id_empresa","=",$id_empresa)
                      ->addFilter("servico.id","=",$id_servico)
