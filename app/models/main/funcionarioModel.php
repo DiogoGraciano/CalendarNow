@@ -2,22 +2,24 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\db;
+use app\db\funcionario;
+use app\db\funcionarioGrupoFuncionario;
+use app\db\agendaFuncionario;
 use app\classes\modelAbstract;
 
 class funcionarioModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("funcionario",$cd);
+    public static function get($id){
+        return funcionario::selectOne($id);
     }
 
     public static function getAll(){
-        return modelAbstract::getAll("funcionario");
+        return funcionario::getAll();
     }
 
     public static function getListFuncionariosByEmpresa($id_empresa){
 
-        $db = new db("funcionario");
+        $db = new funcionario;
 
         $funcionarios = $db
                     ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
@@ -49,7 +51,7 @@ class funcionarioModel{
 
     public static function getListFuncionariosByGrupoFuncionario($id_grupo_funcionario){
 
-        $db = new db("funcionario_grupo_funcionario");
+        $db = new funcionarioGrupoFuncionario;
 
         $funcionarios = $db
                     ->addJoin("INNER","funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario")
@@ -81,7 +83,7 @@ class funcionarioModel{
     }
 
     public static function getByAgenda($id_agenda){
-        $db = new db("agenda_funcionario");
+        $db = new agendaFuncionario;
 
         $values = $db->addJoin("INNER","agenda","agenda.id","agenda_funcionario.id_agenda")
                 ->addJoin("INNER","funcionario","funcionario.id","agenda_funcionario.id_funcionario")
@@ -96,7 +98,7 @@ class funcionarioModel{
     }
 
     public static function getByEmpresa($id_empresa){
-        $db = new db("funcionario");
+        $db = new funcionario;
 
         $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                 ->addFilter("usuario.id_empresa","=",$id_empresa)
@@ -111,7 +113,7 @@ class funcionarioModel{
 
     public static function set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
 
-        $db = new db("funcionario");
+        $db = new funcionario;
 
         $values = $db->getObject();
 
@@ -137,7 +139,7 @@ class funcionarioModel{
     }
 
     public static function setAgendaFuncionario($id_funcionario,$id_agenda){
-        $db = new db("agenda_funcionario");
+        $db = new agendaFuncionario;
 
         $result = $db->addFilter("id_agenda","=",$id_agenda)
                     ->addFilter("id_funcionario","=",$id_funcionario)
@@ -162,7 +164,7 @@ class funcionarioModel{
     }
 
     public static function setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario){
-        $db = new db("funcionario_grupo_funcionario");
+        $db = new funcionarioGrupoFuncionario;
 
         $result = $db->addFilter("id_grupo_funcionario","=",$id_grupo_funcionario)
                     ->addFilter("id_funcionario","=",$id_funcionario)
@@ -187,8 +189,8 @@ class funcionarioModel{
         return True;
     }
     
-    public static function delete($cd){
-        modelAbstract::delete("funcionario",$cd);
+    public static function delete($id){
+        funcionario::delete($id);
     }
 
 }

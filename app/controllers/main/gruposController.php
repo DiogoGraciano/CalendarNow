@@ -48,7 +48,7 @@ class gruposController extends controllerAbstract{
         $head = new head();
         $head->show("Cadastro","");
 
-        $cd = "";
+        $id = "";
         $tipo_grupo = "";
         
         if (array_key_exists(0,$parameters))
@@ -60,13 +60,13 @@ class gruposController extends controllerAbstract{
 
         if (array_key_exists(1,$parameters)){
             $form->setHidden("cd",$parameters[1]);
-            $cd = functions::decrypt($parameters[1]);
+            $id = functions::decrypt($parameters[1]);
         }
 
         if ($tipo_grupo == "grupo_funcionario")
-            $dado = grupoFuncionarioModel::get($cd);
+            $dado = grupoFuncionarioModel::get($id);
         elseif ($tipo_grupo == "grupo_servico")
-            $dado = grupoServicoModel::get($cd);
+            $dado = grupoServicoModel::get($id);
         else    
             $this->go("home");
 
@@ -86,19 +86,19 @@ class gruposController extends controllerAbstract{
     }
     public function action($parameters){
 
-        $cd = "";
+        $id = "";
 
         if (array_key_exists(0,$parameters)){
             $tipo_grupo = functions::decrypt($parameters[0]);
         }
 
         if (array_key_exists(1,$parameters)){
-            $cd = functions::decrypt($parameters[1]);
+            $id = functions::decrypt($parameters[1]);
         }
 
         if ($tipo_grupo == "grupo_funcionario"){
-            if ($cd){
-                grupoFuncionarioModel::delete($cd);
+            if ($id){
+                grupoFuncionarioModel::delete($id);
             }
             else{
                 $id = functions::decrypt($this->getValue('cd'));
@@ -106,8 +106,8 @@ class gruposController extends controllerAbstract{
                 grupoFuncionarioModel::set($nome,$id);
             } 
         }elseif ($tipo_grupo == "grupo_servico"){
-            if ($cd){
-                grupoServicoModel::delete($cd);
+            if ($id){
+                grupoServicoModel::delete($id);
             }
             else{
                 $id = functions::decrypt($this->getValue('cd'));

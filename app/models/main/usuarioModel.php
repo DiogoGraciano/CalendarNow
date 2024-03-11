@@ -1,14 +1,13 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\usuario;
 use app\classes\functions;
-use app\classes\modelAbstract;
 use app\models\main\loginModel;
 
 class usuarioModel{
 
-    public static function get($cd){
-        return modelAbstract::get("usuario",$cd);
+    public static function get($id){
+        return usuario::selectOne($id);
     }
 
     public static function getLogged(){
@@ -20,7 +19,7 @@ class usuarioModel{
 
     public static function getByCpfEmail($cpf_cnpj,$email){
 
-        $db = new db("usuario");
+        $db = new usuario;
 
         $usuario = $db->selectByValues(["cpf_cnpj","email"],[$cpf_cnpj,$email],True);
 
@@ -33,7 +32,7 @@ class usuarioModel{
 
     public static function getByCpfCnpj($cpf_cnpj){
 
-        $db = new db("usuario");
+        $db = new usuario;
 
         $usuario = $db->selectByValues(["cpf_cnpj"],[$cpf_cnpj]);
 
@@ -46,7 +45,7 @@ class usuarioModel{
 
     public static function getByEmail($email){
 
-        $db = new db("usuario");
+        $db = new usuario;
 
         $usuario = $db->selectByValues(["email"],[$email]);
 
@@ -58,7 +57,7 @@ class usuarioModel{
     }
 
     public static function getByTipoUsuarioAgenda($tipo_usuario,$id_agenda){
-        $db = new db("usuario");
+        $db = new usuario;
         $usuarios = $db->addJoin("INNER","agendamento","usuario.id","agendamento.id_usuario")
                         ->addFilter("tipo_usuario","=",$tipo_usuario)
                         ->addFilter("agendamento.id_agenda","=",$id_agenda)
@@ -73,14 +72,14 @@ class usuarioModel{
         return $usuarios;
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario = 3,$id_empresa="null"){
+    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario = 3,$id_empresa="null"){
 
-        $db = new db("usuario");
+        $db = new usuario;
     
         $values = $db->getObject();
 
         if ($values){
-            $values->id = intval($cd);
+            $values->id = intval($id);
             $values->id_empresa = intval($id_empresa);
             $values->cpf_cnpj = functions::onlynumber($cpf_cnpj);
             $values->nome = trim($nome);
@@ -98,8 +97,8 @@ class usuarioModel{
         
     }
 
-    public static function delete($cd=""){
-        modelAbstract::delete("usuario",$cd);
+    public static function delete($id){
+        return usuario::delete($id);
     }
 
 }

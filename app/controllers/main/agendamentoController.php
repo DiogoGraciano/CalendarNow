@@ -85,7 +85,7 @@ class agendamentoController extends controllerAbstract{
         $head = new head;
         $head->show("Manutenção Agenda");
 
-        $cd = "";
+        $id = "";
         $dt_fim = "";
         $dt_ini = "";
         $id_funcionario = "";
@@ -98,7 +98,7 @@ class agendamentoController extends controllerAbstract{
             $dt_ini = functions::dateTimeBd(substr(base64_decode(str_replace("@","/",$parameters[2])),0,34));
         }
         elseif (!array_key_exists(3,$parameters) && array_key_exists(2,$parameters)){
-           $cd = functions::decrypt($parameters[2]);
+           $id = functions::decrypt($parameters[2]);
            $form->setHidden("cd",$parameters[2]);
         }
         if (array_key_exists(1,$parameters) && array_key_exists(0,$parameters)){
@@ -112,7 +112,7 @@ class agendamentoController extends controllerAbstract{
         
         $elements = new elements;
 
-        $dado = agendamentoModel::get($cd);
+        $dado = agendamentoModel::get($id);
 
         $user = usuarioModel::getLogged();
 

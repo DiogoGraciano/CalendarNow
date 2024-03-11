@@ -6,12 +6,12 @@ use app\classes\elements;
 
 class cidadeModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("cidade",$cd);
+    public static function get($id){
+        return cidade::selectOne($id);
     }
 
     public static function getByNome($nome){
-        $db = new db("cidade");
+        $db = new cidade;
 
         $cidade = $db->addFilter("nome","LIKE","%".$nome."%")->addLimit(1)->selectAll();
 
@@ -19,7 +19,7 @@ class cidadeModel{
     }
 
     public static function getByNomeIdUf($nome,$id_uf){
-        $db = new db("cidade");
+        $db = new cidade;
 
         $cidade = $db->addFilter("nome","LIKE","%".$nome."%")->addLimit(1)->selectByValues(array("uf"),array($id_uf),true);
 
@@ -27,7 +27,7 @@ class cidadeModel{
     }
 
     public static function getByIbge($ibge){
-        $db = new db("cidade");
+        $db = new cidade;
 
         $cidade = $db->selectByValues(array("ibge"),array($ibge),true);
 
@@ -35,7 +35,7 @@ class cidadeModel{
     }
 
     public static function getByEstado($id_estado){
-        $db = new db("cidade");
+        $db = new cidade;
 
         $cidade = $db->addFilter("uf","=",$id_estado)->selectAll();
 

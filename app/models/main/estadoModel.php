@@ -1,17 +1,17 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\estado;
 use app\classes\modelAbstract;
 use app\classes\mensagem;
 
 class estadoModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("estado",$cd);
+    public static function get($id){
+        return estado::selectOne($id);
     }
 
     public static function getByUf($uf){
-        $db = new db("estado");
+        $db = new estado;
 
         $estado = $db->selectByValues(["uf"],[$uf],true);
 

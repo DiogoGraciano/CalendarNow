@@ -142,7 +142,7 @@ class cadastroController extends controllerAbstract{
         $head = new head();
         $head->show("Cadastro","");
 
-        $cd = "";
+        $id = "";
         $tipo_usuario = "";
         $user = usuarioModel::getLogged();
 
@@ -157,18 +157,18 @@ class cadastroController extends controllerAbstract{
         }
 
         if (array_key_exists(1,$parameters)){
-            $cd = functions::decrypt($parameters[1]); 
+            $id = functions::decrypt($parameters[1]); 
         }
         
         if ($tipo_usuario == 1){
-            $dado = usuarioModel::get($cd);
-            $form->setHidden("cd",$cd);
+            $dado = usuarioModel::get($id);
+            $form->setHidden("cd",$id);
             $dadoEndereco = enderecoModel::get($dado->id);
             $dadoEmpresa = empresaModel::get($dado->id_empresa);
         }
 
         if ($tipo_usuario == 2){
-            $dadoFuncionario = funcionarioModel::get($cd);
+            $dadoFuncionario = funcionarioModel::get($id);
             $dado = usuarioModel::get($dadoFuncionario->id_usuario);
             $form->setHidden("cd",$dado->id);
             $form->setHidden("id_funcionario",$dadoFuncionario->id);
@@ -176,8 +176,8 @@ class cadastroController extends controllerAbstract{
         }
 
         if ($tipo_usuario == 3){
-            $dado = usuarioModel::get($cd);
-            $form->setHidden("cd",$cd);
+            $dado = usuarioModel::get($id);
+            $form->setHidden("cd",$id);
             $dadoEndereco = enderecoModel::get($dado->id);
         }
 
@@ -296,7 +296,7 @@ class cadastroController extends controllerAbstract{
         elseif(!$tipo_usuario)
             $this->go("home");
 
-        $cd = $this->getValue('cd');
+        $id = $this->getValue('cd');
         $nome = $this->getValue('nome');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
@@ -317,7 +317,7 @@ class cadastroController extends controllerAbstract{
             $fantasia = $this->getValue('fantasia');
             $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia);
             if ($id_empresa){
-                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
+                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario,$id_empresa);
                 if ($id_usuario){
                     $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario,$id_empresa);
                     if ($id_endereco){
@@ -347,7 +347,7 @@ class cadastroController extends controllerAbstract{
             $dias = implode(",",[$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")]);
 
             if ($id_empresa = $this->getValue("id_empresa")){  
-                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario,$id_empresa);
+                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario,$id_empresa);
                 if ($id_usuario){
                     $id_funcionario = $this->getValue("id_funcionario");
                     $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
@@ -366,7 +366,7 @@ class cadastroController extends controllerAbstract{
             }
         }
         elseif ($tipo_usuario == 3){ 
-            $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$cd,$tipo_usuario);
+            $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario);
                 if ($id_usuario){
                     $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario);
                     if($id_endereco){
@@ -383,7 +383,7 @@ class cadastroController extends controllerAbstract{
         if ($login)
             $this->go("login/cadastro/".functions::encrypt($tipo_usuario));
         else 
-            $this->go("cadastro/manutencao/".functions::encrypt($tipo_usuario)."/".functions::encrypt($cd)); 
+            $this->go("cadastro/manutencao/".functions::encrypt($tipo_usuario)."/".functions::encrypt($id)); 
     }
 
     public function filter(){

@@ -2,24 +2,24 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\db;
+use app\db\empresa;
 use app\classes\modelAbstract;
 
 class empresaModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("empresa",$cd);
+    public static function get($id){
+        return new empresa($id);
     }
 
     public static function getByAgenda($id_agenda){
-        $db = new db("empresa");
+        $db = new empresa;
         $db->addJoin("INNER","agenda","agenda.id_empresa","empresa.id");
 
     }
 
     public static function set($nome,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$id=""){
 
-        $db = new db("empresa");
+        $db = new empresa;
 
         $values = $db->getObject();
 
@@ -39,8 +39,8 @@ class empresaModel{
         
     }
     
-    public static function delete($cd){
-        modelAbstract::delete("empresa",$cd);
+    public static function delete($id){
+        empresa::delete($id);
     }
 
 }

@@ -114,7 +114,7 @@ class servicoController extends controllerAbstract{
     }
     public function manutencao($parameters){
 
-        $cd = "";
+        $id = "";
 
         $head = new head;
         $head->show("Manutenção Serviço");
@@ -124,11 +124,11 @@ class servicoController extends controllerAbstract{
         $elements = new elements;
 
         if (array_key_exists(0,$parameters)){
-            $cd = functions::decrypt($parameters[0]);
+            $id = functions::decrypt($parameters[0]);
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = servicoModel::get($cd);
+        $dado = servicoModel::get($id);
         
         $elements->setOptions("grupo_servico","id","nome");
         $id_grupo_servico = $elements->select("Grupo de Servicos:","id_grupo_servico");
@@ -159,13 +159,13 @@ class servicoController extends controllerAbstract{
         $user = usuarioModel::getLogged();
 
         if ($parameters){
-            $cd = functions::decrypt($parameters[0]);
-            $agendas = agendaModel::getByUserServico($cd,$user->id);
+            $id = functions::decrypt($parameters[0]);
+            $agendas = agendaModel::getByUserServico($id,$user->id);
             if ($agendas){
                 $agenda = $agendas[0];
             }
-            servicoModel::deleteAgendaServico($agenda->id,$cd);
-            servicoModel::delete($cd);
+            servicoModel::deleteAgendaServico($agenda->id,$id);
+            servicoModel::delete($id);
             $this->go("servico");
         }
 

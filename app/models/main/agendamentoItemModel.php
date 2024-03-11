@@ -7,7 +7,7 @@ use app\classes\modelAbstract;
 class agendamentoItemModel{
 
     public static function getItens($id_agendamento){
-        $db = new db("agendamento_item");
+        $db = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
@@ -21,7 +21,7 @@ class agendamentoItemModel{
     }
 
     public static function getItemByServico($id_agendamento,$id_servico){
-        $db = new db("agendamento_item");
+        $db = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
@@ -39,7 +39,7 @@ class agendamentoItemModel{
 
     public static function set($qtd_item,$tempo_item,$total_item,$id_agendamento,$id_servico,$id=""){
 
-        $db = new db("agendamento_item");
+        $db = new agendamentoItem;
         
         $values = $db->getObject();
 
@@ -66,7 +66,7 @@ class agendamentoItemModel{
 
     public static function setMultiple($array_items,$id_agendamento){
 
-        $db = new db("agendamento_item");
+        $db = new agendamentoItem;
         
         $db->transaction();
        
@@ -94,8 +94,8 @@ class agendamentoItemModel{
         return true;
     }
 
-    public static function delete($cd){
-        return modelAbstract::delete("agendamento_item",$cd);
+    public static function delete($id){
+        return agendamentoItem::delete($id);
     }
 
 }

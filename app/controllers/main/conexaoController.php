@@ -36,19 +36,19 @@ class conexaoController extends controllerAbstract{
     }
     public function manutencao($parameters){
 
-        $cd = "";
+        $id = "";
 
         if ($parameters)
-            $cd = $parameters[0];
+            $id = $parameters[0];
 
         $head = new head;
         $head->show("Manutenção Conexão");
 
-        $dado = conexaoModel::get($cd);
+        $dado = conexaoModel::get($id);
 
-        $form = new form("Manutenção Conexão",$this->url."conexao/action/".$cd);
+        $form = new form("Manutenção Conexão",$this->url."conexao/action/".$id);
 
-        $form->setHidden("cd",$cd);
+        $form->setHidden("cd",$id);
 
         $form->addOption("Balcão","Balcão");
         $form->addOption("Deposito","Deposito");

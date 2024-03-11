@@ -7,12 +7,12 @@ use app\classes\functions;
 
 class agendaModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("agenda",$cd);
+    public static function get($id = ""){
+        return agenda::selectOne("agenda",$id);
     }
 
     public static function getByEmpresa($id_empresa = ""){
-        $db = new db("agenda");
+        $db = new agenda;
         
         $values = $db->addFilter("agenda.id_empresa","=",$id_empresa)
                      ->selectColumns(["id","agenda.nome","agenda.codigo"]);
@@ -24,7 +24,7 @@ class agendaModel{
     }
 
     public static function getByCodigo($codigo = ""){
-        $db = new db("agenda");
+        $db = new agenda;
         
         $values = $db->addFilter("agenda.codigo","=",$codigo)
                      ->selectColumns(["id","agenda.nome","agenda.codigo"]);
@@ -36,7 +36,7 @@ class agendaModel{
     }
 
     public static function getByUser($id_usuario = ""){
-        $db = new db("agenda_usuario");
+        $db = new agendaUsuario;
         
         $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
                     
@@ -51,7 +51,7 @@ class agendaModel{
     }
 
     public static function getByUserServico($id_servico,$id_usuario){
-        $db = new db("agenda_usuario");
+        $db = new agendaUsuario;
         
         $values = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
                      ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
@@ -68,7 +68,7 @@ class agendaModel{
     }
 
     public static function setAgendaUsuario($id_usuario,$id_agenda){
-        $db = new db("agenda_usuario");
+        $db = new agendaUsuario;
 
         $retorno = $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
                 ->addFilter("agenda_usuario.id_agenda","=",$id_agendas)
@@ -89,7 +89,7 @@ class agendaModel{
     }
 
     public static function setAgendaFuncionario($id_funcionario,$id_agenda){
-        $db = new db("agenda_funcionario");
+        $db = new agendaFuncionario;
 
         $retorno = $db->addFilter("agenda_funcionario.id_funcionario","=",$id_funcionario)
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agendas)
@@ -113,7 +113,7 @@ class agendaModel{
 
     public static function set($nome,$id_empresa,$codigo="",$id=""){
 
-        $db = new db("agenda");
+        $db = new agenda;
         
         $values = $db->getObject();
 
@@ -136,12 +136,12 @@ class agendaModel{
         }
     }
 
-    public static function delete($cd){
-        modelAbstract::delete("agenda",$cd);
+    public static function delete($id){
+        agenda::delete($id);
     }
 
     public static function deleteAgendaUsuario($id_agenda){
-        $db = new db("agenda_usuario");
+        $db = new agendaUsuario;
 
         $retorno =  $db->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();
 
@@ -154,7 +154,7 @@ class agendaModel{
     }
 
     public static function deleteAgendaFuncionario($id_agenda){
-        $db = new db("agenda_funcionario");
+        $db = new agendaFuncionario;
 
         $retorno =  $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)->deleteByFilter();
 

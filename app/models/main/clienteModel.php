@@ -5,12 +5,12 @@ use app\classes\modelAbstract;
 
 class clienteModel{
 
-    public static function get($cd){
-        return modelAbstract::get("cliente",$cd);
+    public static function get($id){
+        return cliente::selectOne($id);
     }
 
     public static function getByFuncionario($id_funcionario){
-        $db = new db("cliente");
+        $db = new cliente;
         $cliente = $db->addFilter("cliente.id_funcionario","=",$id_funcionario)
                         ->selectAll();
 
@@ -21,14 +21,14 @@ class clienteModel{
         return $cliente;
     }
 
-    public static function set($nome,$id_empresa,$cd=""){
+    public static function set($nome,$id_empresa,$id=""){
 
-        $db = new db("cliente");
+        $db = new cliente;
     
         $values = $db->getObject();
 
         if ($values){
-            $values->id = intval($cd);
+            $values->id = intval($id);
             $values->id_empresa = intval($id_empresa);
             $values->nome = trim($nome);
             $retorno = $db->store($values);
@@ -41,8 +41,8 @@ class clienteModel{
         
     }
 
-    public static function delete($cd=""){
-        modelAbstract::delete("cliente",$cd);
+    public static function delete($id){
+        cliente::delete($id);
     }
 
 }

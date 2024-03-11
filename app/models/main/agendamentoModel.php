@@ -9,12 +9,12 @@ use stdClass;
 
 class agendamentoModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("agendamento",$cd);
+    public static function get($id = ""){
+        return agendamento::selectOne($id);
     }
 
     public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$status=99){
-        $db = new db("agendamento");
+        $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
@@ -38,7 +38,7 @@ class agendamentoModel{
     }
 
     public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$status=99){
-        $db = new db("agendamento");
+        $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
@@ -84,7 +84,7 @@ class agendamentoModel{
     }
 
     public static function getAgendamentos(){
-        $db = new db("agendamento");
+        $db = new agendamento;
 
         $result = $db->addJoin("INNER","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
@@ -100,7 +100,7 @@ class agendamentoModel{
 
     public static function set($id_agenda,$id_usuario,$id_cliente,$id_funcionario,$titulo,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id=""){
 
-        $db = new db("agendamento");
+        $db = new agendamento;
         
         $values = new stdClass;
 
@@ -129,8 +129,8 @@ class agendamentoModel{
         
     }
 
-    public static function delete($cd){
-        modelAbstract::delete("agendamento",$cd);
+    public static function delete($id){
+        agendamento::delete($id);
     }
 
 }

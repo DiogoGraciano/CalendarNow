@@ -4,12 +4,12 @@ use app\db\db;
 
 abstract class modelAbstract{
 
-    public static function get($table,$cd=""){
+    public static function get($table,$id=""){
 
         $db = new db($table);
 
-        if ($cd)
-            $retorno = $db->selectOne($cd);
+        if ($id)
+            $retorno = $db->selectOne($id);
         else
             $retorno = $db->getObject();
 
@@ -23,11 +23,11 @@ abstract class modelAbstract{
         return $db->selectAll();
     }
 
-    public static function delete($table,$cd){
+    public static function delete($table,$id){
 
         $db = new db($table);
 
-        $retorno = $db->delete($cd);
+        $retorno = $db->delete($id);
 
         return $retorno;
     }

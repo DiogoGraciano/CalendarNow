@@ -2,18 +2,18 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\db;
+use app\db\servico;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 
 class servicoModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("servico",$cd);
+    public static function get($id){
+        return servico::selectOne($id);
     }
 
     public static function getByEmpresa($id_empresa){
-        $db = new db("servico");
+        $db = new servico;
         
         $values = $db->addFilter("servico.id_empresa","=",$id_empresa)
                      ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
@@ -73,12 +73,12 @@ class servicoModel{
     }
 
 
-    public static function getByUser($cd = ""){
+    public static function getByUser($id = ""){
         $db = new db("servico");
         
         $values = $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id")
                     ->addJoin("INNER","funcionario","servico_funcionario.id_funcionario","funcionario.id")
-                    ->addFilter("funcionario.id_usuario","=",$cd)
+                    ->addFilter("funcionario.id_usuario","=",$id)
                     ->selectColumns(["servico.id","funcionario.nome as funcionario_nome","servico.nome as ser_nome","servico.tempo","servico.valor"]);
 
         if ($Mensagems = ($db->getError())){
@@ -193,8 +193,8 @@ class servicoModel{
         }
     }
 
-    public static function delete($cd){
-        modelAbstract::delete("servico",$cd);
+    public static function delete($id){
+        modelAbstract::delete("servico",$id);
     }
 
     public static function deleteAgendaServico($id_servico,$id_agenda){

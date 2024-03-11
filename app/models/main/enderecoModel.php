@@ -1,18 +1,18 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\endereco;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use app\classes\functions;
 
 class enderecoModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("endereco",$cd);
+    public static function get($id = ""){
+        return endereco::selectOne($id);
     }
 
     public static function getbyIdUsuario($id_usuario = ""){
-        $db = new db("endereco");
+        $db = new endereco;
 
         $values = $db->selectByValues(["id_usuario"],[$id_usuario],true);
 
@@ -23,13 +23,13 @@ class enderecoModel{
         return $values;
     }
 
-    public static function set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento="null",$cd = "",$id_usuario="null",$id_empresa="null"){
+    public static function set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento="null",$id = "",$id_usuario="null",$id_empresa="null"){
 
-        $db = new db("endereco");
+        $db = new endereco;
 
         $values = $db->getObject();
 
-        $values->id = $cd;
+        $values->id = $id;
         $values->id_usuario = $id_usuario;
         $values->id_empresa = $id_empresa;
         $values->cep = (int)functions::onlynumber($cep);
@@ -48,8 +48,8 @@ class enderecoModel{
         
     }
     
-    public static function delete($cd){
-        modelAbstract::delete("endereco",$cd);
+    public static function delete($id){
+        endereco::delete($id);
     }
 
 }

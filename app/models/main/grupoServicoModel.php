@@ -6,17 +6,17 @@ use app\classes\modelAbstract;
 
 class grupoServicoModel{
 
-    public static function get($cd = ""){
-        return modelAbstract::get("grupo_servico",$cd);
+    public static function get($id = ""){
+        return grupoServico::selectOne($id);
     }
 
     public static function getAll(){
-        return modelAbstract::getAll("grupo_servico");
+        return grupoServico::getAll();
     }
 
     public static function set($nome,$id){
 
-        $db = new db("grupo_servico");
+        $db = new grupoServico;
         
         $values = $db->getObject();
 
@@ -39,7 +39,7 @@ class grupoServicoModel{
     }
 
     public static function getByEmpresa($id_empresa){
-        $db = new db("grupo_servico");
+        $db = new grupoServico;
 
         $values = $db->addFilter("id_empresa","=",$id_empresa)->selectAll();
 
@@ -51,8 +51,8 @@ class grupoServicoModel{
         return $values;
     }
 
-    public static function delete($cd){
-        modelAbstract::delete("grupo_servico",$cd);
+    public static function delete($id){
+        grupoServico::delete($id);
     }
 
 }

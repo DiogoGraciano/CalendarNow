@@ -33,7 +33,7 @@ class agendaController extends controllerAbstract{
     }
     public function manutencao($parameters){
 
-        $cd = "";
+        $id = "";
 
         $head = new head;
         $head->show("Manutenção Agenda");
@@ -43,7 +43,7 @@ class agendaController extends controllerAbstract{
         $elements = new elements;
 
         if (array_key_exists(1,$parameters)){
-            $cd = functions::decrypt($parameters[1]);
+            $id = functions::decrypt($parameters[1]);
             $form->setHidden("cd",$parameters[1]);
         }
         
@@ -51,7 +51,7 @@ class agendaController extends controllerAbstract{
             $form->setHidden("id_empresa",$parameters[0]);
         }
 
-        $dado = agendaModel::get($cd);
+        $dado = agendaModel::get($id);
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
 
@@ -72,10 +72,10 @@ class agendaController extends controllerAbstract{
         $user = usuarioModel::getLogged();
 
         if ($parameters){
-            $cd = functions::decrypt($parameters[0]);
-            agendaModel::deleteAgendaUsuario($cd);
-            agendaModel::deleteAgendaFuncionario($cd);
-            agendaModel::delete($cd);
+            $id = functions::decrypt($parameters[0]);
+            agendaModel::deleteAgendaUsuario($id);
+            agendaModel::deleteAgendaFuncionario($id);
+            agendaModel::delete($id);
             mensagem::setSucesso(["Agenda deletada com sucesso"]);
             $this->go("agenda");
         }
