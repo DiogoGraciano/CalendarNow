@@ -1,6 +1,6 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\agendamentoItem;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 

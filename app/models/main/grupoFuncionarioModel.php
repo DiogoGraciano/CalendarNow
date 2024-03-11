@@ -1,6 +1,7 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\funcionario;
+use app\db\grupoFuncionario;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 

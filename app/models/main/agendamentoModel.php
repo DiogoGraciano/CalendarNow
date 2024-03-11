@@ -2,7 +2,7 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\db;
+use app\db\agendamento;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use stdClass;

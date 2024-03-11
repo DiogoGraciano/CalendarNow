@@ -3,6 +3,8 @@ namespace app\models\main;
 
 use app\classes\functions;
 use app\db\servico;
+use app\db\servicoFuncionario;
+use app\db\ServicoGrupoServico;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 
@@ -74,7 +76,7 @@ class servicoModel{
 
 
     public static function getByUser($id = ""){
-        $db = new db("servico");
+        $db = new servico;
         
         $values = $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id")
                     ->addJoin("INNER","funcionario","servico_funcionario.id_funcionario","funcionario.id")
@@ -90,7 +92,7 @@ class servicoModel{
     }
 
     public static function getByServicoGrupoServico($id_grupo_servico = ""){
-        $db = new db("servico_grupo_servico");
+        $db = new servicoGrupoServico;
         
         $values = $db->addJoin("INNER","servico","servico_funcionario.id_servico","servico.id")
                     ->addFilter("servico_grupo_servico.id_grupo_servico","=",$id_grupo_servico)
@@ -105,7 +107,7 @@ class servicoModel{
     }
 
     public static function setServicoGrupoServico($id_servico,$id_grupo_servico){
-        $db = new db("servico_grupo_servico");
+        $db = new servicoGrupoServico;
 
         $result = $db->addFilter("id_grupo_servico","=",$id_grupo_servico)
                     ->addFilter("id_servico","=",$id_servico)
@@ -136,7 +138,7 @@ class servicoModel{
     }
 
     public static function setServicoFuncionario($id_servico,$id_funcionario){
-        $db = new db("servico_funcionario");
+        $db = new servicoFuncionario;
 
         $result = $db->addFilter("id_funcionario","=",$id_funcionario)
                     ->addFilter("id_servico","=",$id_servico)
@@ -168,7 +170,7 @@ class servicoModel{
 
     public static function set($nome,$valor,$tempo,$id_empresa="",$id=""){
 
-        $db = new db("servico");
+        $db = new servico;
         
         $values = $db->getObject();
 
@@ -194,7 +196,7 @@ class servicoModel{
     }
 
     public static function delete($id){
-        modelAbstract::delete("servico",$id);
+        servico::delete("servico",$id);
     }
 
     public static function deleteAgendaServico($id_servico,$id_agenda){

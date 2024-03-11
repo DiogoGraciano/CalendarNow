@@ -1,6 +1,8 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\agenda;
+use app\db\agendaUsuario;
+use app\db\agendaFuncionario;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use app\classes\functions;

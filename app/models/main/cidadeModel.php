@@ -1,6 +1,6 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\cidade;
 use app\classes\modelAbstract;
 use app\classes\elements;
 
