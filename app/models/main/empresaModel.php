@@ -8,7 +8,7 @@ use app\classes\modelAbstract;
 class empresaModel{
 
     public static function get($id){
-        return new empresa($id);
+        return (new empresa)->get($id);
     }
 
     public static function getByAgenda($id_agenda){
@@ -40,7 +40,7 @@ class empresaModel{
     }
     
     public static function delete($id){
-        empresa::delete($id);
+       return (new empresa)->delete($id);
     }
 
 }

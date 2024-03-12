@@ -7,7 +7,7 @@ use app\classes\elements;
 class cidadeModel{
 
     public static function get($id){
-        return cidade::selectOne($id);
+        return (new cidade)->get($id);
     }
 
     public static function getByNome($nome){

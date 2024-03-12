@@ -7,7 +7,7 @@ use app\classes\mensagem;
 class estadoModel{
 
     public static function get($id){
-        return estado::selectOne($id);
+        return (new estado)->get($id);
     }
 
     public static function getByUf($uf){

@@ -30,13 +30,15 @@ class massAgendamentoController extends controllerAbstract{
                 ->addColumns("15","Nome","nome")
                 ->addColumns("15","Email","email")
                 ->addColumns("10","Telefone","telefone")
-                ->addColumns("15","Agenda","agenda")
-                ->addColumns("15","Funcionario","agenda")
+                ->addColumns("10","Agenda","agenda")
+                ->addColumns("10","Funcionario","agenda")
                 ->addColumns("15","Data Inicial","dt_ini")
                 ->addColumns("15","Data Final","dt_fim")
                 ->addColumns("14","Ações","acoes");
 
-        $dados = agendamentoModel::getAgendamentos();
+        $user = usuarioModel::getLogged();
+
+        $dados = agendamentoModel::getAgendamentosByEmpresa($user->id_empresa);
 
         $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados,"id",true,"massaction");
       

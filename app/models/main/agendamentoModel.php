@@ -10,7 +10,7 @@ use stdClass;
 class agendamentoModel{
 
     public static function get($id = ""){
-        return agendamento::selectOne($id);
+        return (new agendamento)->get($id);
     }
 
     public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$status=99){
@@ -83,15 +83,16 @@ class agendamentoModel{
         return $retorn;
     }
 
-    public static function getAgendamentos(){
+    public static function getAgendamentosByEmpresa($id_empresa){
         $db = new agendamento;
 
         $result = $db->addJoin("INNER","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
                     ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
-                    ->selectColumns(["agendamento.id","cpf_cnpj","nome as usu_nome","email","telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim","status"]);
+                    ->addFilter("agenda.id_empresa","=",$id_empresa)
+                    ->selectColumns(["agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim"]);
 
-         if ($db->getError()){
+        if ($db->getError()){
             return [];
         }
         
@@ -130,7 +131,7 @@ class agendamentoModel{
     }
 
     public static function delete($id){
-        agendamento::delete($id);
+        return (new agendamento)->delete($id);
     }
 
 }

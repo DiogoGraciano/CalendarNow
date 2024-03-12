@@ -92,6 +92,8 @@ class agendamentoController extends controllerAbstract{
         $id_agenda = "";
 
         $form = new form($this->url."agendamento/action/");
+        
+
 
         if (array_key_exists(3,$parameters)){
             $dt_fim = functions::dateTimeBd(substr(base64_decode(str_replace("@","/",$parameters[3])),0,34));
@@ -109,7 +111,7 @@ class agendamentoController extends controllerAbstract{
         }else{
             $this->go("home");
         }
-        
+
         $elements = new elements;
 
         $dado = agendamentoModel::get($id);

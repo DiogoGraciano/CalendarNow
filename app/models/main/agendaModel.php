@@ -10,7 +10,7 @@ use app\classes\functions;
 class agendaModel{
 
     public static function get($id = ""){
-        return agenda::selectOne("agenda",$id);
+        return (new agenda)->get($id);
     }
 
     public static function getByEmpresa($id_empresa = ""){
@@ -73,7 +73,7 @@ class agendaModel{
         $db = new agendaUsuario;
 
         $retorno = $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
-                ->addFilter("agenda_usuario.id_agenda","=",$id_agendas)
+                ->addFilter("agenda_usuario.id_agenda","=",$id_agenda)
                 ->selectAll();
 
         if (!$retorno){
@@ -94,7 +94,7 @@ class agendaModel{
         $db = new agendaFuncionario;
 
         $retorno = $db->addFilter("agenda_funcionario.id_funcionario","=",$id_funcionario)
-                ->addFilter("agenda_funcionario.id_agenda","=",$id_agendas)
+                ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
                 ->selectAll();
 
         if (!$retorno){
@@ -139,7 +139,7 @@ class agendaModel{
     }
 
     public static function delete($id){
-        agenda::delete($id);
+        return (new agenda)->delete($id);
     }
 
     public static function deleteAgendaUsuario($id_agenda){

@@ -9,6 +9,7 @@ use app\classes\footer;
 use app\classes\functions;
 use app\models\main\grupoFuncionarioModel;
 use app\models\main\grupoServicoModel;
+use app\models\main\usuarioModel;
 
 class gruposController extends controllerAbstract{
 
@@ -18,10 +19,12 @@ class gruposController extends controllerAbstract{
             $tipo_grupo = functions::decrypt($parameters[0]);
         }
 
+        $user = usuarioModel::getLogged();
+
         if ($tipo_grupo == "grupo_funcionario")
-            $dados = grupoFuncionarioModel::getAll();
+            $dados = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
         elseif ($tipo_grupo == "grupo_servico")
-            $dados = grupoServicoModel::getAll();
+            $dados = grupoServicoModel::getByEmpresa($user->id_empresa);
         else    
             $this->go("home");
 

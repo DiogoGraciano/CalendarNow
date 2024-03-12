@@ -11,7 +11,7 @@ use app\classes\modelAbstract;
 class servicoModel{
 
     public static function get($id){
-        return servico::selectOne($id);
+        return (new servico)->get($id);
     }
 
     public static function getByEmpresa($id_empresa){
@@ -196,7 +196,7 @@ class servicoModel{
     }
 
     public static function delete($id){
-        servico::delete("servico",$id);
+        return (new servico)->delete($id);
     }
 
     public static function deleteAgendaServico($id_servico,$id_agenda){

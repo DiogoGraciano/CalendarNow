@@ -8,11 +8,11 @@ use app\classes\modelAbstract;
 class grupoFuncionarioModel{
 
     public static function get($id = ""){
-        return funcionario::selectOne($id);
+        return (new grupoFuncionario)->get($id);
     }
 
     public static function getAll(){
-        return funcionario::selectAll();
+        return (new grupoFuncionario)->selectAll();
     }
 
     public static function getByEmpresa($id_empresa){
@@ -53,7 +53,7 @@ class grupoFuncionarioModel{
     }
 
     public static function delete($id){
-        funcionario::delete($id);
+        return (new grupoFuncionario)->delete($id);
     }
 
 }

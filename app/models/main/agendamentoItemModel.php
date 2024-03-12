@@ -95,7 +95,7 @@ class agendamentoItemModel{
     }
 
     public static function delete($id){
-        return agendamentoItem::delete($id);
+        return (new agendamentoItem)->delete($id);
     }
 
 }

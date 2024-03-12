@@ -7,11 +7,11 @@ use app\classes\modelAbstract;
 class grupoServicoModel{
 
     public static function get($id = ""){
-        return grupoServico::selectOne($id);
+        return (new grupoServico)->get($id);
     }
 
     public static function getAll(){
-        return grupoServico::getAll();
+        return (new grupoServico)->getAll($id);
     }
 
     public static function set($nome,$id){
@@ -52,7 +52,7 @@ class grupoServicoModel{
     }
 
     public static function delete($id){
-        grupoServico::delete($id);
+        return (new grupoServico)->delete($id);
     }
 
 }

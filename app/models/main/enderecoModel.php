@@ -8,7 +8,7 @@ use app\classes\functions;
 class enderecoModel{
 
     public static function get($id = ""){
-        return endereco::selectOne($id);
+        return (new endereco)->get($id);
     }
 
     public static function getbyIdUsuario($id_usuario = ""){
@@ -49,7 +49,7 @@ class enderecoModel{
     }
     
     public static function delete($id){
-        endereco::delete($id);
+       return (new endereco)->delete($id);
     }
 
 }

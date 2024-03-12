@@ -7,7 +7,7 @@ use app\models\main\loginModel;
 class usuarioModel{
 
     public static function get($id){
-        return usuario::selectOne($id);
+        return (new usuario)->get($id);
     }
 
     public static function getLogged(){
@@ -98,7 +98,7 @@ class usuarioModel{
     }
 
     public static function delete($id){
-        return usuario::delete($id);
+        return (new usuario)->delete($id);
     }
 
 }

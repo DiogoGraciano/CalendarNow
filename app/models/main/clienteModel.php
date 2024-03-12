@@ -1,12 +1,12 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\cliente;
 use app\classes\modelAbstract;
 
 class clienteModel{
 
     public static function get($id){
-        return cliente::selectOne($id);
+        return (new cliente)->get($id);
     }
 
     public static function getByFuncionario($id_funcionario){
@@ -42,7 +42,7 @@ class clienteModel{
     }
 
     public static function delete($id){
-        cliente::delete($id);
+        return (new cliente)->delete($id);
     }
 
 }

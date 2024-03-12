@@ -9,12 +9,12 @@ use app\classes\modelAbstract;
 
 class funcionarioModel{
 
-    public static function get($id){
-        return funcionario::selectOne($id);
+    public static function get($id=""){
+        return (new funcionario)->get($id);
     }
 
     public static function getAll(){
-        return funcionario::getAll();
+        return (new funcionario)->getAll();
     }
 
     public static function getListFuncionariosByEmpresa($id_empresa){
@@ -190,7 +190,7 @@ class funcionarioModel{
     }
     
     public static function delete($id){
-        funcionario::delete($id);
+        return (new funcionario)->delete($id);
     }
 
 }
