@@ -144,7 +144,7 @@ class tabelaController extends controllerAbstract{
             $footer->show();
 
         }else{
-            mensagem::setErro(array("Tabela não informada"));
+            mensagem::setErro("Tabela não informada");
             header("location: ".$this->url."tabela/tabela_exportar");
         }
     }

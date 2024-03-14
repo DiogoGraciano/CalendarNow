@@ -26,7 +26,7 @@ class ajaxController extends controllerAbstract{
 
     public function getCidadeOption($id_estado){
         echo json_encode(["sucesso" => True,
-                          "retorno" => cidadeModel::getOptionsbyEstado($id_estado)]);
+                          "retorno" => cidadeModel::getByEstado($id_estado)]);
     }
     
     public function getEmpresa($cnpj){

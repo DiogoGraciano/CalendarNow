@@ -21,7 +21,6 @@ class grupoFuncionarioModel{
         $values = $db->addFilter("id_empresa","=",$id_empresa)->selectAll();
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
 
@@ -41,15 +40,10 @@ class grupoFuncionarioModel{
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Grupo Funcionario salvo com Sucesso"));
             return True;
         }
-        else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
-            return False;
-        }
+        
+        return False;
     }
 
     public static function delete($id){

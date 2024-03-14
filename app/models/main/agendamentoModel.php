@@ -86,15 +86,37 @@ class agendamentoModel{
     public static function getAgendamentosByEmpresa($id_empresa){
         $db = new agendamento;
 
-        $result = $db->addJoin("INNER","usuario","usuario.id","agendamento.id_usuario")
+        $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
+                    ->addJoin("LEFT","cliente","cliente.id","agendamento.id_cliente")
                     ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
                     ->addFilter("agenda.id_empresa","=",$id_empresa)
+                    ->selectColumns(["agendamento.id","usuario.cpf_cnpj","cliente.nome as cli_nome","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim"]);
+
+        if ($db->getError()){
+            return [];
+        }
+
+        var_dump($result);
+        
+        return $result;
+    }
+
+    public static function getAgendamentosByUsuario($id_usuario){
+        $db = new agendamento;
+
+        $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
+                    ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
+                    ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
+                    ->addFilter("usuario.id","=",$id_usuario)
                     ->selectColumns(["agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim"]);
 
         if ($db->getError()){
             return [];
         }
+
+        var_dump("hhee");
+        var_dump($result);
         
         return $result;
     }

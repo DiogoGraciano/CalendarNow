@@ -4,6 +4,7 @@ use app\classes\head;
 use app\classes\form;
 use app\classes\elements;
 use app\classes\footer;
+use app\classes\mensagem;
 use app\classes\controllerAbstract;
 use app\classes\functions;
 use app\models\main\loginModel;
@@ -46,9 +47,9 @@ class encontrarController extends controllerAbstract{
         if ($agenda && array_key_exists(0,$agenda))
             agendaModel::setAgendaUsuario($user->id,$agenda[0]->id);
         else 
-            mensagem::setErro(["Agenda não encontrar"]);
+            mensagem::setErro("Agenda não encontrar");
 
-        mensagem::setSucesso(["Agenda vinculada com sucesso"]);
+        mensagem::setSucesso("Agenda vinculada com sucesso");
         $this->go("encontrar");
     }
 }

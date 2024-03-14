@@ -57,9 +57,6 @@ class agendamentoItemModel{
             return True;
         }
         else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
             return False;
         }
     }

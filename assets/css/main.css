@@ -172,3 +172,7 @@ button.btn-close {
 .fc-button-primary:hover {
 	background-color: #376edf!important;
 }
+
+input[type=time]::-webkit-datetime-edit-ampm-field {
+	display: none;
+  }

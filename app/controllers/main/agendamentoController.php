@@ -295,7 +295,7 @@ class agendamentoController extends controllerAbstract{
         }
 
         if (!$array_itens){
-            mensagem::setErro(["Selecione ao menos um serviço"]);
+            mensagem::setErro("Selecione ao menos um serviço");
             $this->go("agendamento/manutencao/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario)."/".functions::encrypt($id));
         }
 
@@ -332,9 +332,9 @@ class agendamentoController extends controllerAbstract{
             $erro = true;
 
         if ($erro)
-            mensagem::setErro(["Falha ao Agendar, tente novamente"]);
+            mensagem::setErro("Falha ao Agendar, tente novamente");
         else 
-            mensagem::setSucesso(["Agendamento Concluido"]);
+            mensagem::setSucesso("Agendamento Concluido");
 
         $this->go("agendamento/index/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario));
     }

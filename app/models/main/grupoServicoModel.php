@@ -27,13 +27,9 @@ class grupoServicoModel{
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Grupo Serviço salvo com Sucesso"));
             return True;
         }
         else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
             return False;
         }
     }
@@ -44,7 +40,6 @@ class grupoServicoModel{
         $values = $db->addFilter("id_empresa","=",$id_empresa)->selectAll();
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
 

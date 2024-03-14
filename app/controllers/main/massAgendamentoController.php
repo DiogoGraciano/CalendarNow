@@ -38,7 +38,10 @@ class massAgendamentoController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $dados = agendamentoModel::getAgendamentosByEmpresa($user->id_empresa);
+        if ($user->tipo_usuario != 3)
+            $dados = agendamentoModel::getAgendamentosByEmpresa($user->id_empresa);
+        else 
+            $dados = agendamentoModel::getAgendamentosByUsuario($user->id);
 
         $cadastro->show($this->url."cadastro/manutencao/".functions::encrypt($tipo_usuario),$this->url."cadastro/action/",$dados,"id",true,"massaction");
       

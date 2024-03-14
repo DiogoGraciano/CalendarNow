@@ -16,7 +16,6 @@ class estadoModel{
         $estado = $db->selectByValues(["uf"],[$uf],true);
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
 

@@ -115,12 +115,12 @@ $(document).ready(function(){
       document.querySelector("body").style.display = "block";
     }
 
-    function getInvalid(mensagem){
-      return '<div class="invalid-feedback">'+mensagem+'</div>';
+    function getInvalid(mensagem,id){
+      return '<div id="#'+id+'" class="invalid-feedback">'+mensagem+'</div>';
     }
 
-    function getValid(mensagem){
-      return '<div class="valid-feedback">'+mensagem+'</div>';
+    function getValid(mensagem,id){
+      return '<div id="#'+id+'" class="valid-feedback">'+mensagem+'</div>';
     }
 
     function verificarEDesabilitarBotao() {
@@ -154,7 +154,7 @@ $(document).ready(function(){
     });
 
     function getOptionCidade(option){
-      $('#id_cidade').append('<option value="'+option.vl_option+'" '+option.extra_option+'>'+option.nm_option+'</option>')
+      $('#id_cidade').append('<option value="'+option.id+'">'+option.nome+'</option>').trigger('change');
     }
 
     function mensagem(mensagem,type="alert-danger"){
@@ -417,9 +417,9 @@ $(document).ready(function(){
 
   $("#cep").blur(validaCep)
   function validaCep(){
-    var cep = parseInt($('#cep').val().replace(/[^0-9]/g,""));
+    var cep = $('#cep').val().replace(/[^0-9]/g,"");
 
-    if(cep > 80000000 && cep < 89999999) { 
+    if(cep) { 
       showLoader();
       $.ajax({
         type: "POST",
@@ -429,14 +429,15 @@ $(document).ready(function(){
           if (response.sucesso) {
               removeLoader();
               if ($("#id_estado").val() != response.retorno.uf){
-                $("#id_estado").val(response.retorno.uf)
+                $("#id_estado").val(response.retorno.uf).trigger('change');
                 getCidades()
+                validaCep()
               }
-              $("#id_cidade").val(response.retorno.localidade);
+              $("#id_cidade").val(response.retorno.localidade).trigger('change');
               $("#bairro").val(response.retorno.bairro);
-              validaBairro()
+              validaVazio("#bairro");
               $("#rua").val(response.retorno.logradouro);
-              validaRua()
+              validaVazio("#rua");
           }else{
               removeLoader();
               mensagem("Não possivel encontrar CEP");                   
@@ -492,6 +493,7 @@ $(document).ready(function(){
           if (response.sucesso) {
               if (response.retorno){
                 $("#email").removeClass('is-valid').addClass('is-invalid');
+                
                 $(".email").append(getInvalid("E-mail Já cadastrado"));
               }else{
                 $("#email").removeClass('is-invalid')

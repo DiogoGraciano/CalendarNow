@@ -23,7 +23,6 @@ class servicoModel{
         $valuesFinal = [];
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
 
@@ -49,7 +48,6 @@ class servicoModel{
         
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
 
@@ -67,7 +65,6 @@ class servicoModel{
                      ->selectColumns(["servico.id","servico.nome","servico.tempo","servico.valor"]);
         
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
         
@@ -84,7 +81,6 @@ class servicoModel{
                     ->selectColumns(["servico.id","funcionario.nome as funcionario_nome","servico.nome as ser_nome","servico.tempo","servico.valor"]);
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
                     
@@ -99,7 +95,6 @@ class servicoModel{
                     ->selectColumns(["servico.id","servico.nome","servico.id_empresa","servico.tempo","servico.valor"]);
 
         if ($Mensagems = ($db->getError())){
-            mensagem::setErro($Mensagems);
             return [];
         }
                     
@@ -123,17 +118,10 @@ class servicoModel{
                 $retorno = $db->storeMutiPrimary($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Agenda salvo com Sucesso"));
                 return $db->getLastID();
             }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-                return False;
-            }
+            return False;
         }
-        mensagem::setErro(array("Já existe vinculo entre esse grupo e serviço"));
         return True;
     }
 
@@ -154,17 +142,10 @@ class servicoModel{
                 $retorno = $db->storeMutiPrimary($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Vinculados com Sucesso"));
                 return $db->getLastID();
             }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-                return False;
-            }
+            return False;
         }
-        mensagem::setErro(array("Já existe vinculo entre esse funcionario e serviço"));
         return True;
     }
 
@@ -184,15 +165,9 @@ class servicoModel{
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Serviço salvo com Sucesso"));
             return $db->getLastID();
         }
-        else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
-            return False;
-        }
+        return False;
     }
 
     public static function delete($id){
@@ -205,15 +180,10 @@ class servicoModel{
         $retorno =  $db->addFilter("agenda_servico.id_servico","=",$id_servico)->addFilter("agenda_servico.id_agenda","=",$id_agenda)->deleteByFilter();
 
         if ($retorno == true){
-            mensagem::setSucesso(array("Excluido com Sucesso"));
+           
             return True;
         }
-        else {
-            $erros = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($erros);
-            return False;
-        }
+        return False;
     }
 
 }

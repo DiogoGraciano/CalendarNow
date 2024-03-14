@@ -26,7 +26,7 @@ class agendaController extends controllerAbstract{
         $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $agenda->addColumns("1","Id","id")->addColumns("70","Nome","nome")->addColumns("8","Codigo","codigo")->addColumns("11","Ações","acoes")
-        ->show($this->url."agenda/manutencao/".functions::encrypt($user->id_empresa),$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa));
+        ->show($this->url."agenda/manutencao/",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa));
       
         $footer = new footer;
         $footer->show();
@@ -42,15 +42,11 @@ class agendaController extends controllerAbstract{
 
         $elements = new elements;
 
-        if (array_key_exists(1,$parameters)){
-            $id = functions::decrypt($parameters[1]);
-            $form->setHidden("cd",$parameters[1]);
+        if (array_key_exists(0,$parameters)){
+            $id = functions::decrypt($parameters[0]);
+            $form->setHidden("cd",$parameters[0]);
         }
         
-        if (array_key_exists(0,$parameters)){
-            $form->setHidden("id_empresa",$parameters[0]);
-        }
-
         $dado = agendaModel::get($id);
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
@@ -76,7 +72,7 @@ class agendaController extends controllerAbstract{
             agendaModel::deleteAgendaUsuario($id);
             agendaModel::deleteAgendaFuncionario($id);
             agendaModel::delete($id);
-            mensagem::setSucesso(["Agenda deletada com sucesso"]);
+            mensagem::setSucesso("Agenda deletada com sucesso");
             $this->go("agenda");
         }
 
@@ -84,14 +80,14 @@ class agendaController extends controllerAbstract{
         $nome  = $this->getValue('nome');
         $id_funcionario  = $this->getValue('funcionario');
         $codigo  = $this->getValue('codigo');
-        $id_empresa  = functions::decrypt($this->getValue('id_empresa'));
+        $id_empresa = $user->id_empresa;
 
         if ($id_agenda = agendaModel::set($nome,$id_empresa,$codigo,$id)){ 
             agendaModel::setAgendaUsuario($user->id,$id_agenda);
             agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
         }
        
-        mensagem::setSucesso(["Agenda salva com sucesso"]);
+        mensagem::setSucesso("Agenda salva com sucesso");
         $this->go("agenda");
     }
 }

@@ -16,7 +16,7 @@ class loginModel{
                 return True;
             }
         }
-        mensagem::setErro(array("Usuario ou Senha invalido"));
+        mensagem::setErro("Usuario ou Senha invalido");
         return False;
     }
     public static function deslogar(){
