@@ -149,7 +149,7 @@ $(document).ready(function(){
     
     // Chame a função no início e, em seguida, defina um intervalo para verificar periodicamente
     verificarEDesabilitarBotao();
-    setInterval(verificarEDesabilitarBotao, 1000);
+    setInterval(verificarEDesabilitarBotao, 500);
 
     setTimeout(function() {
       $(".alert-success").fadeOut("fast", function(){
@@ -175,10 +175,32 @@ $(document).ready(function(){
           uiLibrary: 'bootstrap5',
           format: 'HH:MM',
           mode: '24hr', 
-          value: $(this).val()
+          value: $(this).val(),
+          locale: 'pt-br'
       });
     });
-  
+
+    setInterval(verificaTempo, 20);
+    function verificaTempo(){
+      if ($(".gj-picker.gj-picker-bootstrap.timepicker").length && $(".gj-picker.gj-picker-bootstrap.timepicker").attr("hour") == "0" && $(".gj-picker.timepicker [role=header] [role=hour]").text() != "00"){
+        if($(".gj-picker.gj-picker-bootstrap.timepicker").length == 1){
+          $(".gj-picker span.selected").removeClass("selected");
+          let span = $(".gj-picker span")[23]
+          $(span).addClass("selected");
+          $(".gj-picker.timepicker [role=header] [role=hour]").text("00");
+        }
+        else{
+          $(".gj-picker.gj-picker-bootstrap.timepicker").each(function() {
+            if($(this).attr("hour") == "0" && $(this).find("[role=header] [role=hour]").text() != "00"){
+              $(this).find("span.selected").removeClass("selected");
+              let span =  $(this).find("span")[23]
+              $(span).addClass("selected");
+              $(this).find("[role=header] [role=hour]").text("00");
+            }
+        });
+        } 
+      }		
+    }
 
     $("select").select2({
       theme: "bootstrap-5",

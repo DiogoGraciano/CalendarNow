@@ -1,7 +1,5 @@
 <?php
 namespace app\db;
-use app\db\configDB;
-use app\classes\Logger;
 
 class agenda extends db{
     public function __construct(){
