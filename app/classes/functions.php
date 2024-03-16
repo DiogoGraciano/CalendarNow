@@ -71,6 +71,21 @@ class functions{
         }
     }
 
+    public static function removeSecondsTime($time){
+        if ($tamanho = substr_count($time,":")){
+            if ($tamanho == 2){
+                $time = explode(":",$time);
+                return $time[0].":".$time[1];
+            }
+            if ($tamanho == 1){
+                return $time;
+            }
+        }
+        else{
+            return $time.":00";
+        }
+    }
+
     public static function formatDias($dias){
         $dias = str_replace(","," ",$dias);
         $dias = trim($dias);

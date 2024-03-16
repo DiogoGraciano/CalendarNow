@@ -5,7 +5,6 @@ use app\classes\functions;
 use app\db\funcionario;
 use app\db\funcionarioGrupoFuncionario;
 use app\db\agendaFuncionario;
-use app\classes\modelAbstract;
 
 class funcionarioModel{
 
