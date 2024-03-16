@@ -206,7 +206,12 @@ class cadastroController extends controllerAbstract{
         }
 
         if ($tipo_usuario == 2){
-            $elements->setOptions("grupo_funcionario","id","nome");
+
+            $grupos_funcionarios = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
+
+            foreach ($grupos_funcionarios as $grupo_funcionario){
+                $elements->addOption($grupo_funcionario->id,$grupo_funcionario->nome);
+            }
             $id_grupo_funcionario = $elements->select("Grupo de Funcionarios","id_grupo_funcionario");
 
             $form->setInputs(
