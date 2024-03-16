@@ -75,9 +75,11 @@ class ajaxController extends controllerAbstract{
     }
 
     public function existsCpfCnpj($cpf_cnpj){
+        $cpf_cnpj = functions::onlynumber($cpf_cnpj);
+
         $usuario = usuarioModel::getByCpfCnpj($cpf_cnpj);
 
-        if(array_key_exists(0,$usuario) && !array_key_exists(1,$usuario))
+        if($usuario)
             $retorno = True;
         else 
             $retorno = False;

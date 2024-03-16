@@ -10,6 +10,7 @@ use app\classes\functions;
 use app\classes\mensagem;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
+use app\models\main\funcionarioModel;
 
 class agendaController extends controllerAbstract{
 
@@ -51,7 +52,13 @@ class agendaController extends controllerAbstract{
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
 
-        $elements->setOptions("funcionario","id","nome");
+        $user = usuarioModel::getLogged();
+
+        $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
+
+        foreach ($funcionarios as $funcionario){
+            $elements->addOption($funcionario->id,$funcionario->nome);
+        }
         $form->setInputs($elements->select("Funcionario:","funcionario",""));
 
         $form->setInputs($elements->input("codigo","Codigo:",$dado->codigo,false,true));

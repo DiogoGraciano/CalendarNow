@@ -6,6 +6,8 @@
       var calendar = new FullCalendar.Calendar(calendarEl, {
         height: "auto",
         expandRows: true,
+        timeZone: 'local',
+        initialDate: "{initial_date}",
         slotMinTime: '{initial_time}',
         slotMaxTime: '{final_time}',
         slotDuration: '{slot_duration}',
@@ -21,7 +23,17 @@
         allDaySlot: false,
         dayMaxEvents: true,
         select: function(arg) {
-          window.location.href = "{action}" + btoa(arg.start).toString().replace("/","@") + "/" + btoa(arg.end).toString().replace("/","@");
+          let dataAtual = new Date();
+          if (arg.start > dataAtual)
+            window.location.href = "{action}" + btoa(arg.start).toString().replace("/","@") + "/" + btoa(arg.end).toString().replace("/","@");
+          else{
+            mensagem("Data menor que a data atual")
+            window.scroll({
+              top: 0,
+              left: 0,
+              behavior: "smooth",
+            });
+          }
         },
         eventClick: function(arg) {
           if (arg.event.id)

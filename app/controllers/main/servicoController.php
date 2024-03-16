@@ -142,7 +142,7 @@ class servicoController extends controllerAbstract{
         );
 
         $form->setDoisInputs(
-            $elements->input("tempo","Tempo de Trabalho:",$dado->tempo==""?"00:30:00":functions::formatTime($dado->tempo),true,false,"","time","form-control"),
+            $elements->input("tempo","Tempo de Trabalho:",$dado->tempo==""?"00:30":functions::formatTime($dado->tempo),true,true,"","time2",""),
             $elements->input("valor","Valor:",$dado->valor,true,false,""),
             array("tempo","valor")
         );

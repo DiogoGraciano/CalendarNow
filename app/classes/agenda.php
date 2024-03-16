@@ -64,6 +64,9 @@ class agenda extends pagina{
 
         $this->tpl->days_off = json_encode($daysOffFinal);
 
+        $date = new \DateTimeImmutable();
+        $this->tpl->initial_date = $date->format(\DateTimeInterface::ISO8601);
+
         foreach ($this->buttons as $button){
             $this->tpl->button = $button;
             $this->tpl->block("BLOCK_BUTTON");

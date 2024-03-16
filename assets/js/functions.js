@@ -90,6 +90,54 @@ function pad(num) {
   return (num < 10 ? "0" : "") + num;
 }
 
+function mensagem(mensagem,type="alert-danger"){
+  $('body').prepend('<div class="alert '+type+' mt-1 d-flex justify-content-between align-items-center" role="alert">'+mensagem+'</div>');  
+  alertTimeout();
+}
+
+function alertTimeout(){
+  setTimeout(function(){
+    $(".alert").fadeOut("fast", function(){
+      $(this).alert('close');
+    });	
+  }, 4000);
+}
+
+function showLoader(){
+  if (!$("#loader").length){
+    $("html").append('<div id="loader"></div>');
+    document.querySelector("body").style.display = "none";
+  }
+  else{
+    document.getElementById("loader").style.display = "block";
+    document.querySelector("body").style.display = "none";
+  }
+}
+
+function removeLoader(){
+document.getElementById("loader").style.display = "none";
+document.querySelector("body").style.display = "block";
+}
+
+function getInvalid(mensagem,id){
+return '<div id="#'+id+'" class="invalid-feedback">'+mensagem+'</div>';
+}
+
+function getValid(mensagem,id){
+return '<div id="#'+id+'" class="valid-feedback">'+mensagem+'</div>';
+}
+
+function verificarEDesabilitarBotao() {
+var botao = $('#submit');
+var algumElementoComClasse = $('.is-invalid').length > 0;
+
+botao.prop('disabled', algumElementoComClasse);
+}
+
+function getOptionCidade(option){
+  $('#id_cidade').append('<option value="'+option.id+'">'+option.nome+'</option>').trigger('change');
+}
+
 $(document).ready(function(){		
 
     var url_base = window.location.href.split("/");
@@ -98,37 +146,6 @@ $(document).ready(function(){
     let url_atual = window.location.href;
 
     qtd_bara = window.location.href.split("/").length
-
-    function showLoader(){
-        if (!$("#loader").length){
-          $("html").append('<div id="loader"></div>');
-          document.querySelector("body").style.display = "none";
-        }
-        else{
-          document.getElementById("loader").style.display = "block";
-          document.querySelector("body").style.display = "none";
-        }
-    }
-
-    function removeLoader(){
-      document.getElementById("loader").style.display = "none";
-      document.querySelector("body").style.display = "block";
-    }
-
-    function getInvalid(mensagem,id){
-      return '<div id="#'+id+'" class="invalid-feedback">'+mensagem+'</div>';
-    }
-
-    function getValid(mensagem,id){
-      return '<div id="#'+id+'" class="valid-feedback">'+mensagem+'</div>';
-    }
-
-    function verificarEDesabilitarBotao() {
-      var botao = $('#submit');
-      var algumElementoComClasse = $('.is-invalid').length > 0;
-
-      botao.prop('disabled', algumElementoComClasse);
-    }
     
     // Chame a função no início e, em seguida, defina um intervalo para verificar periodicamente
     verificarEDesabilitarBotao();
@@ -153,22 +170,15 @@ $(document).ready(function(){
       });
     });
 
-    function getOptionCidade(option){
-      $('#id_cidade').append('<option value="'+option.id+'">'+option.nome+'</option>').trigger('change');
-    }
-
-    function mensagem(mensagem,type="alert-danger"){
-      $('body').prepend('<div class="alert '+type+' mt-1 d-flex justify-content-between align-items-center" role="alert">'+mensagem+'</div>');  
-      alertTimeout();
-    }
-
-    function alertTimeout(){
-      setTimeout(function(){
-        $(".alert").fadeOut("fast", function(){
-          $(this).alert('close');
-        });	
-      }, 4000);
-    }
+    $('input[type="time2"]').each(function() {
+          $(this).timepicker({
+          uiLibrary: 'bootstrap5',
+          format: 'HH:MM',
+          mode: '24hr', 
+          value: $(this).val()
+      });
+    });
+  
 
     $("select").select2({
       theme: "bootstrap-5",
@@ -310,7 +320,6 @@ $(document).ready(function(){
             $("#cpf_cnpj").mask("999.999.999-99");
         } else if(contador == 14) {
             if(validaCNPJ($("#cpf_cnpj").val())) {
-              url_login = url_base+"login";
               if (url_login != url_atual)
                 existsCpfCnpj()
               else 
@@ -397,7 +406,8 @@ $(document).ready(function(){
         if (response.sucesso) {
             if (response.retorno){
               $("#cpf_cnpj").removeClass('is-valid').addClass('is-invalid');
-              $(".cpf_cnpj").append(getInvalid("CPF Já cadastrado"));
+              if(!$("div#\\#cpf_cnpj.invalid-feedback").length)
+                $(".cpf_cnpj").append(getInvalid("CPF Já cadastrado","cpf_cnpj"));
             }else{
               $("#cpf_cnpj").removeClass('is-invalid')
               $(".invalid-feedback").remove();
@@ -493,8 +503,8 @@ $(document).ready(function(){
           if (response.sucesso) {
               if (response.retorno){
                 $("#email").removeClass('is-valid').addClass('is-invalid');
-                
-                $(".email").append(getInvalid("E-mail Já cadastrado"));
+                if(!$("div#\\#email.invalid-feedback").length)
+                  $(".email").append(getInvalid("E-mail Já cadastrado","email"));
               }else{
                 $("#email").removeClass('is-invalid')
                 $(".invalid-feedback").remove();

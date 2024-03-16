@@ -214,14 +214,14 @@ class cadastroController extends controllerAbstract{
             );
 
             $form->setDoisInputs(
-                $elements->input("hora_ini","Hora Inicial de Trabalho",functions::formatTime($dadoFuncionario->hora_ini),true,false,"","time"),
-                $elements->input("hora_fim","Hora Final de Trabalho",functions::formatTime($dadoFuncionario->hora_fim),true,false,"","time"),
+                $elements->input("hora_ini","Hora Inicial de Trabalho",functions::formatTime($dadoFuncionario->hora_ini),true,true,"","time2"),
+                $elements->input("hora_fim","Hora Final de Trabalho",functions::formatTime($dadoFuncionario->hora_fim),true,true,"","time2"),
                 array("hora_ini","hora_fim")
             );
 
             $form->setDoisInputs(
-                $elements->input("hora_almoco_ini","Hora Inicial de Almoço",functions::formatTime($dadoFuncionario->hora_almoco_ini),true,false,"","time"),
-                $elements->input("hora_almoco_fim","Hora Final de Almoço",functions::formatTime($dadoFuncionario->hora_almoco_fim),true,false,"","time"),
+                $elements->input("hora_almoco_ini","Hora Inicial de Almoço",functions::formatTime($dadoFuncionario->hora_almoco_ini),true,true,"","time2"),
+                $elements->input("hora_almoco_fim","Hora Final de Almoço",functions::formatTime($dadoFuncionario->hora_almoco_fim),true,true,"","time2"),
                 array("hora_almoco_ini","hora_almoco_fim")
             );
 
