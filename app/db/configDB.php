@@ -13,6 +13,8 @@ class ConfigDB{
         $this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=agenda;user=root");
         //$this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=calendar;user=root");
         //$this->pdo = new \PDO("mysql:host=mysql;port=3306;dbname=basenox_bd;user=root;password=rootpass");
+        //$this->pdo = new \PDO("mysql:host=sql112.infinityfree.com;port=3306;dbname=if0_36174711_callendar;user=if0_36174711;password=Diogo15432678");
+
 
         return $this->pdo;
     }

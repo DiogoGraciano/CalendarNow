@@ -31,9 +31,9 @@ class tabelaMobile extends pagina{
         return $this->tpl->parse();
     }
 
-    public function addColumns($titulo){
+    public function addColumns($width,$nome){
 
-        $this->columns[] = $titulo;
+        $this->columns[] = $nome;
 
         return $this;
     }
@@ -45,7 +45,7 @@ class tabelaMobile extends pagina{
         return $this;
     }
 
-    public function addColumnsRows($row,$titulo){
+    private function addColumnsRows($row,$titulo){
 
         $this->columnsrows[] = json_decode('{"row":"'.base64_encode($row).'","titulo":"'.$titulo.'"}');
 

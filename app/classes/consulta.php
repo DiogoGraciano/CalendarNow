@@ -29,16 +29,13 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
 
         if ($checkbox){
             if($this->isMobile())
-                $table->addColumns("Selecionar");
+                $table->addColumns("1","Selecionar");
             else
                 $table->addColumns("1","");
         }
 
         foreach ($this->columns as $columns){
-            if($this->isMobile())
-                $table->addColumns($columns->nome);
-            else
-                $table->addColumns($columns->width,$columns->nome);
+            $table->addColumns($columns->width,$columns->nome);
         }
 
         if ($dados){
