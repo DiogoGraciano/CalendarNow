@@ -137,12 +137,14 @@ class elements extends pagina{
             $tpl->extra_input = $extra_input." required";
 
         foreach ($this->options as $option){
-            $tpl->vl_option = $option->vl_option;
-            if ($vl_option == $option->vl_option)
-                $tpl->extra_option = "selected";
-            $tpl->nm_option = $option->nm_option;
-            $tpl->block("BLOCK_OPTION_SELECT");
-            $tpl->extra_option = "";
+            if(isset($option->vl_option) && isset($option->nm_option) && $option->vl_option && $option->nm_option){
+                $tpl->vl_option = $option->vl_option;
+                if ($vl_option == $option->vl_option)
+                    $tpl->extra_option = "selected";
+                $tpl->nm_option = $option->nm_option;
+                $tpl->block("BLOCK_OPTION_SELECT");
+                $tpl->extra_option = "";
+            }
         }
         
         $tpl->block("BLOCK_SELECT"); 
@@ -168,10 +170,12 @@ class elements extends pagina{
             $tpl->extra_input = $extra_input." required";
 
         foreach ($this->options as $option){
-            $tpl->vl_option = $option->vl_option;
-            $tpl->nm_option = $option->nm_option;
-            $tpl->extra_option = $option->extra_option;
-            $tpl->block("BLOCK_OPTION_DATALIST");
+            if(isset($option->vl_option) && isset($option->nm_option) && $option->vl_option && $option->nm_option){
+                $tpl->vl_option = $option->vl_option;
+                $tpl->nm_option = $option->nm_option;
+                $tpl->extra_option = $option->extra_option;
+                $tpl->block("BLOCK_OPTION_DATALIST");
+            }
         }
         
         $tpl->block("BLOCK_DATALIST");  
@@ -193,7 +197,7 @@ class elements extends pagina{
     }
 
     public function addOption($vl_option,$nm_option,$extra_option=""){
-        if (is_int($vl_option))
+        if (is_int($vl_option) || is_float($vl_option))
             $this->options[] = json_decode('{"vl_option":'.$vl_option.',"nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
         else
             $this->options[] = json_decode('{"vl_option":"'.$vl_option.'","nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
