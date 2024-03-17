@@ -6,32 +6,25 @@
     use core\Parameter;
     use app\classes\uri;
 
-    try {
-
-        $controller = new Controller;
+    $controller = new Controller;
+    
+    if (!isset($_SESSION))
+        session_start();
+    
+    if (isset($_SESSION["user"]) || uri::getUri() == "/ajax")
+        $controller = $controller->load();
+    else 
+        $controller = $controller->load("login");
         
-        if (!isset($_SESSION))
-            session_start();
-        
-        if (isset($_SESSION["user"]) || uri::getUri() == "/ajax")
-            $controller = $controller->load();
-        else 
-            $controller = $controller->load("login");
-            
 
-        $method = new Method();
-        $method = $method->load($controller);
+    $method = new Method();
+    $method = $method->load($controller);
 
-        $parameters = new Parameter();
-        $parameters = $parameters->load($controller);
+    $parameters = new Parameter();
+    $parameters = $parameters->load($controller);
 
-        $controller->$method($parameters);
+    $controller->$method($parameters);
 
-        $whoops = new \Whoops\Run;
-
-    }
-    catch (Exception $e){
-        echo $e->getMessage();
-    }
+    $whoops = new \Whoops\Run;
 
 ?>
