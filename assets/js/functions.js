@@ -17,6 +17,10 @@ function calcularMinutos(tempo) {
   return totalMinutos;
 }
 
+function confirmaExcluir(){
+  return confirm("Desaja Excluir?");
+}
+
 function validaVazio(seletor){
   var valor = $(seletor).val();
 

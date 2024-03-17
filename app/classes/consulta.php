@@ -13,8 +13,6 @@ class consulta extends pagina{
 public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id",$checkbox=false){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
-        $this->tpl->pagina_manutencao = $pagina_manutencao;
-        $this->tpl->pagina_action = $pagina_action;
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
 
@@ -23,39 +21,59 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
             $this->tpl->block("BLOCK_BUTTONS");   
         }
 
+        if($this->isMobile())
+            $table = new tabelaMobile;
+        else{
+            $table = new tabela;
+        }
+
         if ($checkbox){
-            $this->tpl->block('BLOCK_CHECK');
+            if($this->isMobile())
+                $table->addColumns("Selecionar");
+            else
+                $table->addColumns("1","");
         }
 
         foreach ($this->columns as $columns){
-            $this->tpl->columns_width = $columns->width;
-            $this->tpl->columns_name = $columns->nome;
-            $this->tpl->block("BLOCK_COLUMNS");   
+            if($this->isMobile())
+                $table->addColumns($columns->nome);
+            else
+                $table->addColumns($columns->width,$columns->nome);
         }
 
         if ($dados){
             $i = 0;
             foreach ($dados as $data){
+                $row = [];
+                $b = 1;
+                $row_action = "";
                 foreach ($data as $key => $value){
-                    $this->tpl->data = $value;
-                    $this->tpl->block("BLOCK_DADOS");
+                    if ($checkbox && $b == 1){
+                        $row[] = (new elements)->checkbox("id_check_".$i+1,false,false,false,false,$value);
+                        $b++;
+                    }
+                    $row[] = $value;
                     if ($key == $coluna_action){
-                        $this->tpl->cd_editar = functions::encrypt($value);
-                        $this->tpl->cd_excluir = functions::encrypt($value);
-                        $this->tpl->block("BLOCK_BUTTONS_TB"); 
-                        if ($checkbox){
-                            $this->tpl->check = (new elements)->checkbox("id_check_".$i+1,false,false,false,false,$value);
-                            $this->tpl->block('BLOCK_DADO_CHECK');
-                        }
+                        $row[] = '<button type="button" class="btn btn btn-primary">
+                                    <a href="'.$pagina_manutencao.'/'.functions::encrypt($value).'">Editar</a>
+                                </button>
+                                <button class="btn btn btn-primary" onclick="confirmaExcluir()" type="button">
+                                    <a href="'.$pagina_action.'/'.functions::encrypt($value).'">Excluir</a>
+                                </button>';
+                        $row_action = array_key_last($row);
                     }
                    
                 } 
+                $row_buttoms = $row[$row_action];
+                unset($row[$row_action]);
+                $row[] = $row_buttoms;
                 $i++;
-                $this->tpl->block('BLOCK_TABELA');
+                $table->addRow(array_values($row));
             }
             $this->tpl->qtd_list = $i;
+            $this->tpl->table = $table->parse();
         }
-       else 
+        else 
             $this->tpl->block('BLOCK_SEMDADOS');
 
         $this->tpl->show();

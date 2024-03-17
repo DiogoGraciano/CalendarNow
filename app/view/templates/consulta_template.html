@@ -7,40 +7,7 @@
             <!-- END BLOCK_BUTTONS -->
         </div>
         <input type="hidden" name="qtd_list" id="qtd_list" value="{qtd_list}">
-        <table id="ctabela" width="100%" class="sortable table table-hover table-bordered table-sm caption-top">
-            <thead>
-                <tr>
-                    <!-- BEGIN BLOCK_CHECK -->
-                        <th width="1%"></th>
-                    <!-- END BLOCK_CHECK -->
-                    <!-- BEGIN BLOCK_COLUMNS -->
-                        <th width="{columns_width}">{columns_name}</th>
-                    <!-- END BLOCK_COLUMNS -->
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- BEGIN BLOCK_TABELA -->
-                    <tr> 
-                        <!-- BEGIN BLOCK_DADO_CHECK -->
-                        <td>{check}</td>
-                        <!-- END BLOCK_DADO_CHECK -->
-                        <!-- BEGIN BLOCK_DADOS -->
-                        <td>{data}</td>
-                        <!-- END BLOCK_DADOS -->
-                        <!-- BEGIN BLOCK_BUTTONS_TB -->
-                        <td>
-                            <button type="button" class="btn btn btn-primary">
-                                <a href='{pagina_manutencao}/{cd_editar}'>Editar</a>
-                            </button>
-                            <button class="btn btn btn-primary" onclick="return confirm('Deseja Excluir?')" type="button">
-                                <a href='{pagina_action}/{cd_excluir}'>Excluir</a>
-                            </button>
-                        </td>
-                        <!-- END BLOCK_BUTTONS_TB -->
-                    <tr>
-                    <!-- END BLOCK_TABELA -->
-            </tbody>
-        </table>
+        {table}
     </form>
     <!-- BEGIN BLOCK_SEMDADOS -->
         <div class="col-md-12">

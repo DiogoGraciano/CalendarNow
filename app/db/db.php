@@ -1,7 +1,7 @@
 <?php
 namespace app\db;
 use app\db\configDB;
-use app\classes\Logger;
+use app\classes\logger;
 
 class Db
 {
