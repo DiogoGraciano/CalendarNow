@@ -15,6 +15,7 @@ public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id
         $this->tpl = $this->getTemplate("consulta_template.html");
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
+        $this->tpl->pagina_manutencao = $pagina_manutencao;
 
         foreach ($this->buttons as $button){
             $this->tpl->button = $button;
