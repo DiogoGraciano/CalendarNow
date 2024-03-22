@@ -14,7 +14,6 @@ if ($environment !== 'production') {
     $whoops->pushHandler(function($e){
         Logger::error($e->getMessage());
     });
-
 }
 $whoops->register();
 ?>

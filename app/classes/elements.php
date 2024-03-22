@@ -137,7 +137,7 @@ class elements extends pagina{
             $tpl->extra_input = $extra_input." required";
 
         foreach ($this->options as $option){
-            if(isset($option->vl_option) && isset($option->nm_option) && $option->vl_option && $option->nm_option){
+            if(isset($option->vl_option) && isset($option->nm_option)){
                 $tpl->vl_option = $option->vl_option;
                 if ($vl_option == $option->vl_option)
                     $tpl->extra_option = "selected";
@@ -170,7 +170,7 @@ class elements extends pagina{
             $tpl->extra_input = $extra_input." required";
 
         foreach ($this->options as $option){
-            if(isset($option->vl_option) && isset($option->nm_option) && $option->vl_option && $option->nm_option){
+            if(isset($option->vl_option) && isset($option->nm_option)){
                 $tpl->vl_option = $option->vl_option;
                 $tpl->nm_option = $option->nm_option;
                 $tpl->extra_option = $option->extra_option;

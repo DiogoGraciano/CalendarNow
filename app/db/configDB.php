@@ -1,22 +1,20 @@
 <?php
 namespace app\db;
+use app\classes\logger;
 
 class ConfigDB{
 
-    private $pdo;
+    protected $pdo = false;
     
-    public function getPDO() {
+    protected function getConnection() {
+        try {
+            $this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=agenda;user=root;charset=utf8mb4");
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        //futuramente terá possibilidade de ultilizar o postgresql
-        //$this->pdo = new PDO("pgsql:host=localhost;port=5432;dbname=app;user=postgres;password=154326;charset=utf8mb4");
-        //seta as configurações de acesso ao banco
-        $this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=agenda;user=root;charset=utf8mb4");
-        //$this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=calendar;user=root;charset=utf8mb4");
-        //$this->pdo = new \PDO("mysql:host=mysql;port=3306;dbname=basenox_bd;user=root;password=rootpass;charset=utf8mb4");
-        //$this->pdo = new \PDO("mysql:host=sql112.infinityfree.com;port=3306;dbname=if0_36174711_callendar;user=if0_36174711;password=Diogo15432678;charset=utf8mb4");
-
-
-        return $this->pdo;
+            return $this->pdo;
+        } catch(\PDOException $e) {
+            Logger::error($e->getMessage());
+        }
     }
 }
 

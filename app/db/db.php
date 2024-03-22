@@ -3,9 +3,8 @@ namespace app\db;
 use app\db\configDB;
 use app\classes\logger;
 
-class Db
+class Db extends ConfigDB
 {
-    private $pdo;
     private $config;
     private $table;
     private $object;
@@ -20,9 +19,10 @@ class Db
 
     function __construct($table)
     {
-        //Pega configuração do PDO
-        $this->config = new configDB;
-        $this->pdo = $this->config->getPDO();
+        //Inicia a Conexão
+        if (!$this->pdo){
+            $this->getConnection();
+        }
 
         //Seta Tabela
         $this->table = $table;
@@ -31,9 +31,7 @@ class Db
         $this->object = $this->getObjectTable();
 
         //Transforma as colunas da tabela em uma array
-        $this->columns = (array)$this->object;
-        $this->columns = array_keys($this->columns);
-      
+        $this->columns = array_keys(get_object_vars($this->object));      
     }
 
     public function transaction(){
@@ -63,10 +61,18 @@ class Db
     //Retorna o ultimo ID da tabela
     private function getlastIdBd()
     {
-        $rows = $this->selectInstruction('SELECT ' . $this->columns[0] . ' FROM ' . $this->table . ' ORDER BY ' . $this->columns[0] . ' DESC LIMIT 1');
+        $sql = $this->pdo->prepare('SELECT ' . $this->columns[0] . ' FROM ' . $this->table . ' ORDER BY ' . $this->columns[0] . ' DESC LIMIT 1');
+       
+        $sql->execute();
+
+        $rows = [];
+
+        if ($sql->rowCount() > 0) {
+            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
+        }
+
         if ($rows) {
-            $column = $this->columns[0];
-            return $rows->$column;
+            return $rows[0];
         } 
 
         $this->error[] = "Erro: Tabela não encontrada";
@@ -97,23 +103,33 @@ class Db
     //Pega as colunas da tabela e tranforma em Objeto
     private function getObjectTable()
     {
-        $rows = (array)$this->selectInstruction('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "' . $this->table . '" ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
+        $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "' . $this->table . '" ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
+       
+        $sql->execute();
+
+        $rows = [];
+
+        if ($sql->rowCount() > 0) {
+            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
+        }
+
         if ($rows) {
             $object = new \stdClass;
             foreach ($rows as $row) {
-                foreach ($row as $columns) {
-                    $object->$columns = "";
-                }
+                $object->$row = null;
             }
+
             return $object;
         } 
 
         $this->error[] = "Erro: Tabela não encontrada";
         Logger::error('Tabela: '.$this->table.' Erro: Tabela não encontrada');
+
+        return false;
     }
 
     //Faz um select com base me uma instrução e retorna um objeto
-    public function selectInstruction($sql_instruction,$asArray=false)
+    public function selectInstruction($sql_instruction)
     {
         try {
             $sql = $this->pdo->prepare($sql_instruction);
@@ -123,26 +139,13 @@ class Db
             
             $sql->execute();
 
-            $array = [];
+            $rows = [];
 
             if ($sql->rowCount() > 0) {
-
-                $rows = $sql->fetchAll(\PDO::FETCH_ASSOC);
-                
-                if ($rows) {
-                    foreach ($rows as $row) {
-                        $object = new \stdClass();
-                        foreach ($row as $key => $data) {
-                            $object->$key = $data;
-                        }
-                        $array[] = $object;
-                    }
-                }
+                $rows = $sql->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
             }
-            if ($asArray == false)
-                $array =  $this->isOneObject($array);
-
-            return $array;
+        
+            return $rows;
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
             Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
@@ -156,25 +159,6 @@ class Db
         $object = $this->selectInstruction("SELECT * FROM " . $this->table . " WHERE " . $this->columns[0] . "=?");
         
         return $object;
-    }
-
-    //Converte para objeto caso o retorno seja de apenas um registro
-    private function isOneObject($object)
-    {
-        if ($object) {
-
-            $object = (array)$object;
-
-            if (array_key_exists(1, $object)) {
-                return (object)$object;
-            } elseif (array_key_exists(0, $object)) {
-                $object = $object[0];
-                return (object)$object;
-            }
-        } 
-
-        $this->error[] = 'Tabela: '.$this->table.' Erro: Objeto vazio';
-        Logger::error('Tabela: '.$this->table.' Erro: Objeto vazio');
     }
 
     //Retorna um array com todos os registro da tabela
@@ -200,7 +184,7 @@ class Db
             $sql .= $property;
         }
 
-        $object = $this->selectInstruction($sql,true);
+        $object = $this->selectInstruction($sql);
         $this->clean();
         return $object;
     }
@@ -230,7 +214,7 @@ class Db
             $sql .= $property;
         }
         
-        $object = $this->selectInstruction($sql,true);
+        $object = $this->selectInstruction($sql);
         $this->clean();
         return $object;
     }
@@ -275,7 +259,7 @@ class Db
                 $sql .= $property;
             }
 
-            $object = $this->selectInstruction($sql,true);
+            $object = $this->selectInstruction($sql);
             $this->clean();
             return $object;
         } 

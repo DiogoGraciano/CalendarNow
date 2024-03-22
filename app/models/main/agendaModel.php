@@ -127,8 +127,9 @@ class agendaModel{
         else 
             $values->codigo = functions::genereteCode(7);
 
-        if ($values)
+        if ($values){
             $retorno = $db->store($values);
+        }
 
         if ($retorno == true){
             return $db->getLastID();

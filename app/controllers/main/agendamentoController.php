@@ -92,9 +92,7 @@ class agendamentoController extends controllerAbstract{
         $id_agenda = "";
 
         $form = new form($this->url."agendamento/action/");
-        
-
-
+    
         if (array_key_exists(3,$parameters)){
             $dt_fim = functions::dateTimeBd(substr(base64_decode(str_replace("@","/",$parameters[3])),0,34));
             $dt_ini = functions::dateTimeBd(substr(base64_decode(str_replace("@","/",$parameters[2])),0,34));
