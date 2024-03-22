@@ -8,7 +8,7 @@ class ConfigDB{
     
     protected function getConnection() {
         try {
-            $this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=agenda;user=root;charset=utf8mb4");
+            $this->pdo = new \PDO("mysql:host=localhost;port=3306;dbname=agenda;charset=utf8mb4","root");
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             return $this->pdo;
