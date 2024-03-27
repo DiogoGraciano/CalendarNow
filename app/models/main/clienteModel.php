@@ -21,7 +21,7 @@ class clienteModel{
         return $cliente;
     }
 
-    public static function set($nome,$id_empresa,$id=""){
+    public static function set($nome,$id_empresa,$id_funcionario,$id=""){
 
         $db = new cliente;
     
@@ -30,6 +30,7 @@ class clienteModel{
         if ($values){
             $values->id = intval($id);
             $values->id_empresa = intval($id_empresa);
+            $values->id_funcionario = intval($id_funcionario);
             $values->nome = trim($nome);
             $retorno = $db->store($values);
         }

@@ -37,7 +37,7 @@ class Logger {
      * Directory where the log will be dumped, without final slash; default
      * is this file's directory
      */
-    public static $log_dir = "logs";
+    public static $log_dir = "log";
     
     /**
      * File name for the log saved in the log dir
@@ -77,7 +77,7 @@ class Logger {
     /**
      * Absolute path of the log file, built at run time
      */
-    private static $log_file_path = 'logs';
+    private static $log_file_path = 'log';
 
     /**
      * Where should we write/print the output to? Built at run time

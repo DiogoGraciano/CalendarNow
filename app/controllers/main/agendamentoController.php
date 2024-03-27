@@ -289,11 +289,13 @@ class agendamentoController extends controllerAbstract{
             if (intval($cliente))
                 $id_cliente = $cliente;
             else 
-                $id_cliente = clienteModel::set($cliente,$user->id_empresa);
+                $id_cliente = clienteModel::set($cliente,$user->id_empresa,$id_funcionario);
 
             $cliente = clienteModel::get($id_cliente);
+
             if ($cliente)
                 $id_agendamento = agendamentoModel::set($id_agenda,null,$cliente->id,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+
         }
         elseif($user->tipo_usuario == 3) 
             $id_agendamento = agendamentoModel::set($id_agenda,$user->id,null,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
