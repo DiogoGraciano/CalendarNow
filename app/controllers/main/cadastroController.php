@@ -56,7 +56,7 @@ class cadastroController extends controllerAbstract{
 
             $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
-            $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
+            $filter->addFilter(4,$elements->input("pesquisa","Pesquisa:"));
 
             $id_grupo_funcionario = "";
 
@@ -82,7 +82,7 @@ class cadastroController extends controllerAbstract{
 
                 $modal->show();
 
-                $filter->addFilter(4,[$agenda]);
+                $filter->addFilter(4,$agenda);
             }
 
             $cadastro->addColumns("5","Inicio Expediente","hora_ini")
@@ -117,7 +117,7 @@ class cadastroController extends controllerAbstract{
 
                 $modal->show();
 
-                $filter->addFilter(4,[$grupo_funcionario]);
+                $filter->addFilter(4,$grupo_funcionario);
 
                 $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo","openModelGrupoFuncionario","button","btn btn-primary","openModal('massActionGrupoFuncionario')"));
             }

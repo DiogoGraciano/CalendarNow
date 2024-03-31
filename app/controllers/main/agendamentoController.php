@@ -57,7 +57,7 @@ class agendamentoController extends controllerAbstract{
 
         $Dadofuncionario = funcionarioModel::get($id_funcionario==""?$firstFuncionario:$id_funcionario);
 
-        $filter->addFilter(6,[$elements->select("Funcionario","funcionario",$Dadofuncionario->id)]);
+        $filter->addFilter(6,$elements->select("Funcionario","funcionario",$Dadofuncionario->id));
 
         $filter->show();
 

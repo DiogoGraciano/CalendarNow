@@ -17,13 +17,10 @@ class filter extends pagina{
         $this->tplform->block("BLOCK_LINHA_FILTER");
     }
 
-    public function addFilter($tamanho, $inputs = []){
+    public function addFilter($tamanho, $input){
         $this->tplform->tamanho = $tamanho;
-        foreach ($inputs as $input){
-            $this->tplform->filter = $input;
-            $this->tplform->block("BLOCK_INPUT");
-        }
-
+        $this->tplform->filter = $input;
+        $this->tplform->block("BLOCK_INPUT");
         $this->tplform->block("BLOCK_FILTER");
     }
 

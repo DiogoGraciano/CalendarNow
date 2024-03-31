@@ -35,7 +35,7 @@ class servicoController extends controllerAbstract{
         $filter = new filter($this->url."servico/filter/");
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
-        $filter->addFilter(4,[$elements->input("pesquisa","Pesquisa:")]);
+        $filter->addFilter(4,$elements->input("pesquisa","Pesquisa:"));
 
         $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
 
@@ -61,7 +61,7 @@ class servicoController extends controllerAbstract{
 
             $modal->show();
 
-            $filter->addFilter(4,[$funcionarios]);
+            $filter->addFilter(4,$funcionarios);
         }
 
         $grupo_servicos = grupoServicoModel::getByEmpresa($user->id_empresa);
@@ -83,7 +83,7 @@ class servicoController extends controllerAbstract{
 
             $modal->show();
 
-            $filter->addFilter(4,[$grupo_servico]);
+            $filter->addFilter(4,$grupo_servico);
         }
 
         $filter->show();
