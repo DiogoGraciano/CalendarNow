@@ -4,10 +4,25 @@ namespace app\classes;
 use app\classes\pagina;
 use app\classes\mensagem;
 
+/**
+ * Classe agenda representa uma agenda de eventos.
+ *
+ * Esta classe estende a classe pagina e implementa funcionalidades específicas para exibir uma agenda de eventos.
+ */
 class agenda extends pagina{
 
+    /**
+     * @var array $buttons Array que armazena os botões a serem exibidos na agenda.
+    */
     private $buttons;
     
+    /**
+     * Exibe a agenda com os eventos fornecidos.
+     *
+     * @param string $action Ação a ser executada ao interagir com a agenda.
+     * @param string $eventos JSON de eventos a serem exibidos na agenda.
+     * @param int $slot_duration Duração do intervalo de tempo entre os slots da agenda, em minutos.
+    */
     public function show($action,$eventos,$days_off=",seg,ter,qua,qui,sex,",$initial_time = "08:00",$final_time = "19:00",$dinner_start="12:00",$dinner_end="13:00",$slot_duration = 30)
     {
         $this->tpl = $this->getTemplate("agenda_template.html");
@@ -75,6 +90,11 @@ class agenda extends pagina{
         $this->tpl->show();
     }
 
+    /**
+     * Adiciona um botão à agenda.
+     *
+     * @param string $button Botão a ser adicionado.
+    */
     public function addButton($button){
         $this->buttons[] = $button;
     }

@@ -13,7 +13,7 @@ use app\models\main\agendaModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
-use app\models\main\grupoServicoModel;
+use app\models\main\GrupoServicoModel;
 
 class servicoController extends controllerAbstract{
 
@@ -129,11 +129,13 @@ class servicoController extends controllerAbstract{
         }
         
         $dado = servicoModel::get($id);
-        
-        $elements->setOptions("grupo_servico","id","nome");
-        $id_grupo_servico = $elements->select("Grupo de Servicos:","id_grupo_servico");
 
-        $elements->setOptions("funcionario","id","nome");
+        $grupo_servicos = GrupoServicoModel::getByEmpresa($user->id_empresa);
+        foreach ($grupo_servicos as $grupo_servico){
+            $elements->addOption($grupo_servico->id,$grupo_servico->nome);
+        }
+
+        $id_grupo_servico = $elements->select("Grupo Serviço","grupo_servico");
 
         $form->setDoisInputs(
             $elements->input("nome","Nome:",$dado->nome,true),

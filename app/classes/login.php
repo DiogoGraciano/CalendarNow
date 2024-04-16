@@ -5,8 +5,15 @@ use app\classes\pagina;
 use app\classes\functions;
 use app\classes\mensagem;
 
+/**
+ * Classe para gerar a página de login.
+ * Esta classe estende a classe 'pagina' para herdar métodos relacionados ao template.
+ */
 class login extends pagina{
 
+    /**
+     * Exibe o template da página de login.
+    */
     public function show($usuario="",$senha=""){
         $this->getTemplate("../templates/login.html");
         $this->tpl->caminho = Functions::getUrlBase();

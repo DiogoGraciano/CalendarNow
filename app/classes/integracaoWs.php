@@ -4,19 +4,37 @@ namespace app\classes;
 use stdClass;
 use Exception;
 
+/**
+ * Classe para integração com serviços web externos.
+ * Esta classe oferece métodos para obter informações de empresas e endereços usando diferentes serviços web.
+ */
 class integracaoWs{
 
-    public function getEmpresa($cnpj){
+    /**
+     * Obtém informações da empresa com base no CNPJ fornecido.
+     *
+     * @param string $cnpj CNPJ da empresa.
+     * @return mixed Retorna os dados da empresa em formato JSON ou False em caso de falha.
+     */
+    public function getEmpresa(string $cnpj){
        
         $url = "https://receitaws.com.br/v1/cnpj/".$cnpj;
 
         return $this->getResult($url);
     }
 
-    public function getEndereco($cep){
+    /**
+     * Obtém informações de endereço com base no CEP fornecido.
+     * Utiliza múltiplos serviços web para obter os dados e retorna a primeira resposta válida.
+     *
+     * @param string|int $cep CEP do endereço.
+     * @return stdClass|null Retorna um objeto contendo os dados do endereço ou null se nenhum resultado válido for encontrado.
+     */
+    public function getEndereco(string|int $cep){
 
-        $urls = array('https://viacep.com.br/ws/'. $cep . '/json/',
-        'http://republicavirtual.com.br/web_cep.php?cep='.$cep.'&formato=json'
+        $urls = array(
+            'https://viacep.com.br/ws/'. $cep . '/json/',
+            'http://republicavirtual.com.br/web_cep.php?cep='.$cep.'&formato=json'
         );
         
         foreach ($urls as $url){
@@ -39,7 +57,13 @@ class integracaoWs{
         }
     }
 
-    private function getResult($urlCompleta){
+    /**
+     * Realiza uma requisição HTTP GET para o URL fornecido e retorna a resposta decodificada em JSON.
+     *
+     * @param string $urlCompleta URL completa para a requisição.
+     * @return mixed Retorna os dados da resposta em formato JSON ou False em caso de falha.
+     */
+    private function getResult(string $urlCompleta){
 
         try{
             $response = file_get_contents($urlCompleta);
@@ -55,3 +79,5 @@ class integracaoWs{
 
     }
 }
+
+?>

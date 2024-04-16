@@ -7,6 +7,8 @@ class agenda extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -32,6 +34,8 @@ class agendamento extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -57,6 +61,8 @@ class agendamentoItem extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -82,6 +88,8 @@ class agendaFuncionario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -107,6 +115,8 @@ class agendaUsuario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -132,6 +142,8 @@ class cidade extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -157,6 +169,8 @@ class cliente extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -182,6 +196,8 @@ class empresa extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -207,6 +223,8 @@ class endereco extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -232,6 +250,8 @@ class estado extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -257,6 +277,8 @@ class funcionario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -282,6 +304,8 @@ class funcionarioGrupoFuncionario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -307,6 +331,8 @@ class grupoFuncionario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -332,6 +358,8 @@ class grupoServico extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -357,6 +385,8 @@ class servico extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -382,6 +412,8 @@ class servicoFuncionario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -407,6 +439,8 @@ class servicoGrupoServico extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else
@@ -432,6 +466,8 @@ class usuario extends db{
     }
 
     public function get($value="",$column="id"){
+        $retorno = [];
+        
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
         else

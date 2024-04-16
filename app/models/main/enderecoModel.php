@@ -4,6 +4,7 @@ use app\db\endereco;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use app\classes\functions;
+use app\classes\estadoModel;
 
 class enderecoModel{
 
@@ -27,24 +28,66 @@ class enderecoModel{
 
         $db = new endereco;
 
+        $mensagens = [];
+
+        if(!validaCep($cep)){
+            $mensagens[] = "CEP é invalido";
+        }
+
+        if(!estadoModel::get($id_estado)->id){
+            $mensagens[] = "Estado é invalido";
+        }
+
+        if(!cidadeModel::get($id_cidade)->id){
+            $mensagens[] = "Cidade é invalida";
+        }
+
+        if(!filter_var($bairro)){
+            $mensagens[] = "Bairro é Invalido";
+        }
+
+        if(!filter_var($rua)){
+            $mensagens[] = "Rua é Invalido";
+        }
+
+        if(!filter_var($numero)){
+            $mensagens[] = "Numero é Invalido";
+        }
+
+        if(!filter_var($complemento)){
+            $mensagens[] = "Complemento é Invalido";
+        }
+
+        if(!$id_usuario && !$id_empresa){
+            $mensagens[] = "Usuario ou Empresa precisa ser informado para cadastro";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
+        }
+
         $values = $db->getObject();
 
-        $values->id = $id;
-        $values->id_usuario = $id_usuario;
-        $values->id_empresa = $id_empresa;
+        $values->id = intval($id);
+        $values->id_usuario = intval($id_usuario);
+        $values->id_empresa = intval($id_empresa);
         $values->cep = (int)functions::onlynumber($cep);
-        $values->id_estado = $id_estado;
-        $values->id_cidade = $id_cidade;
-        $values->bairro = $bairro;
-        $values->rua = $rua;
-        $values->numero = $numero;
-        $values->complemento = $complemento;
+        $values->id_estado = intval($id_estado);
+        $values->id_cidade = intval($id_cidade);
+        $values->bairro = trim($bairro);
+        $values->rua = trim($rua);
+        $values->numero = trim($numero);
+        $values->complemento = trim($complemento);
         $retorno = $db->store($values);
 
-        if ($retorno == true)
+        if ($retorno == true){
+            mensagem::setSucesso("Endereço salva com sucesso");
             return $db->getLastID();
-        else 
+        }else{
+            mensagem::setErro("Erro ao cadastrar a endereço");
             return False;
+        }
         
     }
     

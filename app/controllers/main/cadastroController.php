@@ -10,6 +10,7 @@ use app\classes\functions;
 use app\classes\filter;
 use app\classes\mensagem;
 use app\classes\modal;
+use app\db\estado;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
@@ -251,7 +252,7 @@ class cadastroController extends controllerAbstract{
         }
 
         if ($tipo_usuario != 2){
-            $elements->setOptions("estado","id","nome");
+            $elements->setOptions(new estado,"id","nome");
             $estado = $elements->select("Estado","id_estado",$dadoEndereco->id_estado?:24,true);
 
             $form->setDoisInputs(
@@ -326,21 +327,21 @@ class cadastroController extends controllerAbstract{
                 if ($id_usuario){
                     $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario,$id_empresa);
                     if ($id_endereco){
-                        mensagem::setSucesso("Usuario empresarial salvo com sucesso");
+                        //mensagem::setSucesso("Usuario empresarial salvo com sucesso");
                         if ($login)
                             $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                         else 
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
                     }else{
                         usuarioModel::delete($id_usuario);
-                        mensagem::setErro("Não foi possivel salvar o endereço, verifique as informações e tente novamente");
+                        //mensagem::setErro("Não foi possivel salvar o endereço, verifique as informações e tente novamente");
                     }
                 }else{
                     empresaModel::delete($id_empresa);
-                    mensagem::setErro("Não foi possivel salvar o usuario empresarial, verifique as informações e tente novamente");
+                    //mensagem::setErro("Não foi possivel salvar o usuario empresarial, verifique as informações e tente novamente");
                 }
-            }else 
-                mensagem::setErro("Não foi possivel salvar a empresa, verifique as informações e tente novamente");
+            }//else 
+                //mensagem::setErro("Não foi possivel salvar a empresa, verifique as informações e tente novamente");
         }
         elseif ($tipo_usuario == 2){
             $id_grupo_funcionario = $this->getValue('id_grupo_funcionario');

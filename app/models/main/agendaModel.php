@@ -17,7 +17,7 @@ class agendaModel{
         $db = new agenda;
         
         $values = $db->addFilter("agenda.id_empresa","=",$id_empresa)
-                     ->selectColumns(["id","agenda.nome","agenda.codigo"]);
+                     ->selectColumns("id","agenda.nome","agenda.codigo");
         
         if($values)
             return $values;
@@ -29,7 +29,7 @@ class agendaModel{
         $db = new agenda;
         
         $values = $db->addFilter("agenda.codigo","=",$codigo)
-                     ->selectColumns(["id","agenda.nome","agenda.codigo"]);
+                     ->selectColumns("id","agenda.nome","agenda.codigo");
         
         if($values)
             return $values;
@@ -46,7 +46,7 @@ class agendaModel{
             $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario);  
         }
         
-        if($values = $db->selectColumns(["agenda.id","agenda.nome","empresa.nome as emp_nome"]))
+        if($values = $db->selectColumns("agenda.id","agenda.nome","empresa.nome as emp_nome"))
             return $values;
         
         return false;

@@ -2,11 +2,28 @@
 namespace app\classes;
 use app\db\db;
 
+/**
+ * Classe elements é responsável por gerar diversos elementos HTML, como botões, labels, checkboxes, inputs, textareas, selects e datalists.
+ */
 class elements extends pagina{
 
+    /**
+     * @var array $options Lista de opções para elementos select e datalist.
+     */
     private $options = []; 
 
-    public function button($button_nome,$nm_input,$type_input="submit",$class_input="btn btn-primary w-100 pt-2 btn-block",$button_action="",$extra_input=""){
+    /**
+     * Gera um botão HTML.
+     *
+     * @param string $button_nome Nome do botão.
+     * @param string $nm_input Nome do input.
+     * @param string $type_input Tipo do input (default é "submit").
+     * @param string $class_input Classes CSS do input.
+     * @param string $button_action Ação do botão.
+     * @param string $extra_input Atributos extras do input.
+     * @return string HTML do botão.
+     */
+    public function button(string $button_nome,string $nm_input,string $type_input="submit",string $class_input="btn btn-primary w-100 pt-2 btn-block",string $button_action="",string $extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -24,7 +41,13 @@ class elements extends pagina{
 
     }
 
-    public function label($titulo){
+    /**
+     * Gera uma label HTML.
+     *
+     * @param string $titulo Título da label.
+     * @return string HTML da label.
+     */
+    public function label(string $titulo){
         $tpl= $this->getTemplate("elements_template.html");
 
         $tpl->titulo = $titulo;
@@ -34,7 +57,21 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function checkbox($nm_input,$nm_label="",$required=false,$checked=false,$readonly=false,$value="on",$type_input="checkbox",$class_input="form-check-input",$extra_input=""){
+     /**
+     * Gera um checkbox HTML.
+     *
+     * @param string $nm_input Nome do input.
+     * @param string $nm_label Label do checkbox.
+     * @param bool $required Indica se é obrigatório.
+     * @param bool $checked Indica se está marcado.
+     * @param bool $readonly Indica se é somente leitura.
+     * @param string $value Valor do checkbox.
+     * @param string $type_input Tipo do input (default é "checkbox").
+     * @param string $class_input Classes CSS do input.
+     * @param string $extra_input Atributos extras do input.
+     * @return string HTML do checkbox.
+     */
+    public function checkbox(string $nm_input,string $nm_label="",bool $required=false,bool $checked=false,bool $readonly=false,$value="on",string $type_input="checkbox",string $class_input="form-check-input",string $extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -62,7 +99,21 @@ class elements extends pagina{
         return $tpl->parse();
     }
     
-    public function input($nm_input,$nm_label,$vl_input="",$required=false,$readonly=false,$placeholder="",$type_input="text",$class_input="form-control",$extra_input=""){
+    /**
+     * Gera um input HTML.
+     *
+     * @param string $nm_input Nome do input.
+     * @param string $nm_label Label do input.
+     * @param string $vl_input Valor do input.
+     * @param bool $required Indica se é obrigatório.
+     * @param bool $readonly Indica se é somente leitura.
+     * @param string $placeholder Placeholder do input.
+     * @param string $type_input Tipo do input (default é "text").
+     * @param string $class_input Classes CSS do input.
+     * @param string $extra_input Atributos extras do input.
+     * @return string HTML do input.
+     */
+    public function input(string $nm_input,string $nm_label,$vl_input="",bool $required=false,bool $readonly=false,string $placeholder="",string $type_input="text",string $class_input="form-control",string $extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -93,7 +144,22 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function textarea($nm_input,$nm_label,$vl_input,$required=false,$readonly=false,$placeholder="",$rows_input="",$cols_input="",$class_input="form-control",$extra_input=""){
+    /**
+     * Gera um textarea HTML.
+     *
+     * @param string $nm_input Nome do input.
+     * @param string $nm_label Label do textarea.
+     * @param string $vl_input Valor do textarea.
+     * @param bool $required Indica se é obrigatório.
+     * @param bool $readonly Indica se é somente leitura.
+     * @param string $placeholder Placeholder do textarea.
+     * @param string $rows_input Número de linhas.
+     * @param string $cols_input Número de colunas.
+     * @param string $class_input Classes CSS do textarea.
+     * @param string $extra_input Atributos extras do textarea.
+     * @return string HTML do textarea.
+     */
+    public function textarea(string $nm_input,string $nm_label,$vl_input,bool $required=false,bool $readonly=false,string $placeholder="",$rows_input="",$cols_input="",string $class_input="form-control",string $extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -121,7 +187,18 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function select($nm_label,$nm_input,$vl_option="",$required=false,$class_input="form-select",$extra_input=""){
+    /**
+     * Gera um select HTML.
+     *
+     * @param string $nm_label Label do select.
+     * @param string $nm_input Nome do input.
+     * @param mixed $vl_option Valor da opção selecionada.
+     * @param bool $required Indica se é obrigatório.
+     * @param string $class_input Classes CSS do select.
+     * @param string $extra_input Atributos extras do select.
+     * @return string HTML do select.
+     */
+    public function select(string $nm_label,string $nm_input,$vl_option="",bool $required=false,string $class_input="form-select",string $extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -154,7 +231,18 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function datalist($nm_label,$nm_input,$vl_option="",$required=false,$class_input="form-control",$extra_input=""){
+    /**
+     * Gera um datalist HTML.
+     *
+     * @param string $nm_label Label do datalist.
+     * @param string $nm_input Nome do input.
+     * @param mixed $vl_option Valor do datalist.
+     * @param bool $required Indica se é obrigatório.
+     * @param string $class_input Classes CSS do datalist.
+     * @param string $extra_input Atributos extras do datalist.
+     * @return string HTML do datalist.
+     */
+    public function datalist(string $nm_label,string $nm_input,$vl_option="",bool $required=false,string $class_input="form-control",string $extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -163,6 +251,7 @@ class elements extends pagina{
             $tpl->block("BLOCK_LABEL_DATALIST");  
         }
         $tpl->nm_input = $nm_input;
+        $tpl->vl_input = $vl_option;
         if($required && !$vl_option)
             $class_input .= " is-invalid";
         $tpl->class_input = $class_input;
@@ -185,9 +274,16 @@ class elements extends pagina{
         return $tpl->parse();
     }
 
-    public function setOptions($tb,$coluna_vl,$coluna_nm){
-        $db = new db($tb);
-        $dados = $db->selectColumns(array($coluna_vl,$coluna_nm));
+    /**
+     * Define as opções para elementos select e datalist.
+     *
+     * @param db $class Classe da tabela do banco de dados.
+     * @param string $coluna_vl Nome da coluna com o valor.
+     * @param string $coluna_nm Nome da coluna com o nome.
+     */
+    public function setOptions(db $class,$coluna_vl,$coluna_nm){
+        $db = $class;
+        $dados = $db->selectColumns($coluna_vl,$coluna_nm);
 
         if ($dados){
             foreach ($dados as $dado){
@@ -196,7 +292,15 @@ class elements extends pagina{
         }
     }
 
-    public function addOption($vl_option,$nm_option,$extra_option=""){
+    /**
+     * Adiciona uma opção para elementos select e datalist.
+     *
+     * @param mixed $vl_option Valor da opção.
+     * @param string $nm_option Nome da opção.
+     * @param string $extra_option Atributo extra da opção.
+     * @return $this
+     */
+    public function addOption($vl_option,string $nm_option,string $extra_option=""){
         if (is_int($vl_option) || is_float($vl_option))
             $this->options[] = json_decode('{"vl_option":'.$vl_option.',"nm_option":"'.$nm_option.'","extra_option":"'.$extra_option.'"}');
         else

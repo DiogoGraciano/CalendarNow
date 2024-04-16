@@ -23,7 +23,7 @@ class funcionarioModel{
         $funcionarios = $db
                     ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                     ->addFilter("usuario.id_empresa","=",$id_empresa)
-                    ->selectColumns(["funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
+                    ->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
 
         $funcionarioFinal = [];
         if ($funcionarios){
@@ -56,7 +56,7 @@ class funcionarioModel{
                     ->addJoin("INNER","funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario")
                     ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                     ->addFilter("funcionario_grupo_funcionario.id_grupo_funcionario","=",$id_grupo_funcionario)
-                    ->selectColumns(["funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias"]);
+                    ->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
 
         $funcionarioFinal = [];
         if ($funcionarios){
@@ -87,7 +87,7 @@ class funcionarioModel{
         $values = $db->addJoin("INNER","agenda","agenda.id","agenda_funcionario.id_agenda")
                 ->addJoin("INNER","funcionario","funcionario.id","agenda_funcionario.id_funcionario")
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
-                ->selectColumns(["funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias"]);
+                ->selectColumns("funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
 
        if ($db->getError()){
             return [];
@@ -101,7 +101,7 @@ class funcionarioModel{
 
         $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                 ->addFilter("usuario.id_empresa","=",$id_empresa)
-                ->selectColumns(["funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias"]);
+                ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
 
         if ($db->getError()){
             return [];

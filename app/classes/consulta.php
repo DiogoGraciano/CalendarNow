@@ -1,96 +1,134 @@
 <?php
 
 namespace app\classes;
+
 use app\classes\pagina;
 use app\classes\mensagem;
 use app\classes\elements;
 
-class consulta extends pagina{
-
+/**
+ * Classe consulta representa uma consulta de dados.
+ *
+ * Esta classe estende a classe pagina e implementa funcionalidades específicas para exibir uma consulta de dados em uma tabela.
+ */
+class consulta extends pagina
+{
+    /**
+     * @var array $columns Array que armazena as colunas da tabela.
+     */
     private $columns = [];
+
+    /**
+     * @var array $buttons Array que armazena os botões a serem exibidos na consulta.
+     */
     private $buttons = [];
 
-public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id",$checkbox=false){
-
+    /**
+     * Exibe a consulta de dados em uma tabela.
+     *
+     * @param string $pagina_manutencao URL da página de manutenção.
+     * @param string $pagina_action URL da página de ação.
+     * @param bool|array $dados Array de dados a serem exibidos na tabela.
+     * @param string $coluna_action Nome da coluna que contém a ação (Editar/Excluir).
+     * @param bool $checkbox Indica se a coluna de checkbox deve ser exibida.
+     */
+    public function show(string $pagina_manutencao,string $pagina_action,bool|array $dados,string $coluna_action = "id",bool $checkbox = false)
+    {
+        // Carrega o template de consulta
         $this->tpl = $this->getTemplate("consulta_template.html");
+        
+        // Instancia a classe mensagem para exibir mensagens
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
         $this->tpl->pagina_manutencao = $pagina_manutencao;
 
-        foreach ($this->buttons as $button){
+        // Adiciona botões ao template
+        foreach ($this->buttons as $button) {
             $this->tpl->button = $button;
-            $this->tpl->block("BLOCK_BUTTONS");   
+            $this->tpl->block("BLOCK_BUTTONS");
         }
 
-        if($this->isMobile())
-            $table = new tabelaMobile;
-        else{
-            $table = new tabela;
+        // Cria uma instância da tabela com base no dispositivo
+        $table = $this->isMobile() ? new tabelaMobile : new tabela;
+
+        // Adiciona colunas à tabela
+        if ($checkbox) {
+            $table->addColumns("1", $this->isMobile() ? "Selecionar" : "");
         }
 
-        if ($checkbox){
-            if($this->isMobile())
-                $table->addColumns("1","Selecionar");
-            else
-                $table->addColumns("1","");
+        foreach ($this->columns as $column) {
+            $table->addColumns($column->width, $column->nome);
         }
 
-        foreach ($this->columns as $columns){
-            $table->addColumns($columns->width,$columns->nome);
-        }
-
-        if ($dados){
+        // Popula a tabela com os dados fornecidos
+        if ($dados) {
             $i = 0;
-            foreach ($dados as $data){
+            foreach ($dados as $data) {
                 $row = [];
                 $b = 1;
                 $row_action = "";
-                foreach ($data as $key => $value){
-                    if ($checkbox && $b == 1){
-                        $row[] = (new elements)->checkbox("id_check_".$i+1,false,false,false,false,$value);
+
+                foreach ($data as $key => $value) {
+                    if ($checkbox && $b == 1) {
+                        $row[] = (new elements)->checkbox("id_check_" . ($i + 1), false, false, false, false, $value);
                         $b++;
                     }
                     $row[] = $value;
-                    if ($key == $coluna_action){
+
+                    if ($key == $coluna_action) {
                         $row[] = '<button type="button" class="btn btn btn-primary">
-                                    <a href="'.$pagina_manutencao.'/'.functions::encrypt($value).'">Editar</a>
+                                    <a href="' . $pagina_manutencao . '/' . functions::encrypt($value) . '">Editar</a>
                                 </button>
                                 <button class="btn btn btn-primary" onclick="confirmaExcluir()" type="button">
-                                    <a href="'.$pagina_action.'/'.functions::encrypt($value).'">Excluir</a>
+                                    <a href="' . $pagina_action . '/' . functions::encrypt($value) . '">Excluir</a>
                                 </button>';
                         $row_action = array_key_last($row);
                     }
-                   
-                } 
-                $row_buttoms = $row[$row_action];
+                }
+
+                $row_buttons = $row[$row_action];
                 unset($row[$row_action]);
-                $row[] = $row_buttoms;
+                $row[] = $row_buttons;
+
                 $i++;
                 $table->addRow(array_values($row));
             }
+
             $this->tpl->qtd_list = $i;
             $this->tpl->table = $table->parse();
-        }
-        else 
+        } else {
             $this->tpl->block('BLOCK_SEMDADOS');
+        }
 
+        // Exibe o template
         $this->tpl->show();
     }
 
-    public function addColumns($width,$nome,$coluna){
-
-        $this->columns[] = json_decode('{"nome":"'.$nome.'","width":"'.$width.'%","coluna":"'.$coluna.'"}');
-
+    /**
+     * Adiciona uma coluna à tabela.
+     *
+     * @param string|int $width Largura da coluna em porcentagem.
+     * @param string $nome Nome da coluna.
+     * @param string $coluna Nome da coluna associada aos dados.
+     * @return $this
+     */
+    public function addColumns(string|int $width,string $nome,string $coluna)
+    {
+        $this->columns[] = json_decode('{"nome":"' . $nome . '","width":"' . $width . '%","coluna":"' . $coluna . '"}');
         return $this;
     }
 
-    public function addButtons($button){
-
+    /**
+     * Adiciona um botão à consulta.
+     *
+     * @param string $button Botão a ser adicionado.
+     * @return $this
+     */
+    public function addButtons(string $button)
+    {
         $this->buttons[] = $button;
-
         return $this;
     }
-
 }
 
 ?>

@@ -4,14 +4,14 @@
     use core\Controller;    
     use core\Method;
     use core\Parameter;
-    use app\classes\uri;
+    use app\classes\functions;
 
     $controller = new Controller;
     
     if (!isset($_SESSION))
         session_start();
     
-    if (isset($_SESSION["user"]) || uri::getUri() == "/ajax")
+    if (isset($_SESSION["user"]) || functions::getUri() == "/ajax")
         $controller = $controller->load();
     else 
         $controller = $controller->load("login");

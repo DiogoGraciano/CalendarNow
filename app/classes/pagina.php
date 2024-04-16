@@ -1,13 +1,30 @@
 <?php
+
 namespace app\classes;
 use app\classes\template;
 use app\classes\functions;
 
+/**
+ * Classe base para páginas, contendo métodos comuns para a construção de páginas web.
+ */
 class pagina{
 
+    /**
+     * Objeto template para manipulação de templates.
+     *
+     * @var template
+     */
     public $tpl;
 
-    public function getTemplate($caminho,$accurate=false){
+    /**
+     * Retorna uma instância do template com base no caminho fornecido.
+     *
+     * @param string $caminho  Caminho do template.
+     * @param bool $accurate   Se verdadeiro, o caminho deve ser exato; caso contrário, busca o template dentro do diretório padrão.
+     *
+     * @return template|bool   Retorna o objeto template ou false se falhar.
+     */
+    public function getTemplate(string $caminho,bool $accurate=false){
 
         $this->tpl = new template(Functions::getRaiz()."/app/view/templates/".$caminho,$accurate); 
 
@@ -17,6 +34,11 @@ class pagina{
             return false;     
     }
 
+    /**
+     * Verifica se o usuário está acessando via dispositivo móvel.
+     *
+     * @return bool  Retorna true se o acesso for via dispositivo móvel; caso contrário, false.
+     */
     public function isMobile(){
         $useragent = $_SERVER['HTTP_USER_AGENT'];
 
