@@ -99,7 +99,7 @@ class usuarioModel{
             $mensagens[] = "Tipo de Usuario Invalido";
         }
 
-        if($tipo_usuario == 2 || $tipo_usuario == 1){
+        if(($tipo_usuario == 2 || $tipo_usuario == 1) && !$id_empresa){
             $mensagens[] = "Informar a empresa é obrigatorio para esse tipo de usuario";
         }
 

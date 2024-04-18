@@ -1,3 +1,8 @@
 2024-03-27T22:33:16+00:00 [ERROR] : Tabela: cliente Erro: Tabela não encontrada
 2024-03-27T22:33:16+00:00 [ERROR] : Tabela: cliente Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_empresa' in 'field list'
 2024-03-27T22:36:12+00:00 [ERROR] : Tabela: cliente Erro: Tabela não encontrada
+2024-04-18T00:01:30+00:00 [ERROR] : Tabela: empresa Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '61934963003' for key 'empresa.cnpj'
+2024-04-18T00:07:08+00:00 [ERROR] : Tabela: empresa Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '71130113060' for key 'empresa.cnpj'
+2024-04-18T00:08:56+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-18T00:16:30+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-18T00:17:09+00:00 [ERROR] : Tabela: empresa Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '71130113060' for key 'empresa.cnpj'

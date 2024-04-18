@@ -8,8 +8,8 @@ use app\classes\mensagem;
 
 class empresaModel{
 
-    public static function get($id){
-        return (new empresa)->get($id);
+    public static function get($id,$coluna="id"){
+        return (new empresa)->get($id,$coluna="id");
     }
 
     public static function getByAgenda($id_agenda){
@@ -39,9 +39,17 @@ class empresaModel{
         if(!functions::validaCpfCnpj($cpf_cnpj)){
             $mensagens[] = "CPF/CNPJ invalido";
         }
+
+        if(self::get($cpf_cnpj = functions::onlynumber($cpf_cnpj),"cpf_cnpj")->id){
+            $mensagens[] = "CPF/CNPJ já cadastrado";
+        }
   
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
             $mensagens[] = "E-mail Invalido";
+        }
+
+        if(self::get($email,"email")->id){
+            $mensagens[] = "Email já cadastrado";
         }
 
         if(!functions::validaTelefone($telefone)){
@@ -57,13 +65,13 @@ class empresaModel{
 
         $values->id = $id;
         $values->nome = trim($nome);
-        $values->cnpj = functions::onlynumber($cpf_cnpj);
+        $values->cnpj = $cpf_cnpj;
         $values->email = trim($email);
         $values->telefone = functions::onlynumber($telefone);
         $values->razao = trim($razao);
         $values->fantasia = trim($fantasia);
         $retorno = $db->store($values);
-        
+
         if ($retorno == true){
             mensagem::setSucesso("Empresa salva com sucesso");
             return $db->getLastID();

@@ -30,7 +30,7 @@ class enderecoModel{
 
         $mensagens = [];
 
-        if(!validaCep($cep)){
+        if(!functions::validaCep($cep)){
             $mensagens[] = "CEP é invalido";
         }
 

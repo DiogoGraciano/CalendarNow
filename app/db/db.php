@@ -1,6 +1,7 @@
 <?php
 namespace app\db;
 use app\db\configDB;
+use app\classes\logger;
 
 /**
  * Classe base para interação com o banco de dados.
@@ -122,6 +123,7 @@ class Db extends ConfigDB
             return True;
        
         $this->error[] = "Erro: Não foi possível iniciar a transação";
+        Logger::error('Erro: Não foi possível iniciar a transação');
     }
 
     /**
@@ -134,6 +136,7 @@ class Db extends ConfigDB
             return True;
          
         $this->error[] = "Erro: Não foi possível finalizar a transação";
+        Logger::error("Erro: Não foi possível finalizar a transação");
     }
 
     /**
@@ -146,6 +149,7 @@ class Db extends ConfigDB
             return True;
         
         $this->error[] = "Erro: Não foi possível desfazer a transação";
+        Logger::error("Erro: Não foi possível desfazer a transação");
     }
 
     /**
@@ -170,6 +174,7 @@ class Db extends ConfigDB
         } 
 
         $this->error[] = "Erro: Tabela não encontrada";
+        Logger::error("Erro: Tabela não encontrada");
     }
 
     /**
@@ -234,6 +239,7 @@ class Db extends ConfigDB
         } 
 
         $this->error[] = "Erro: Tabela não encontrada";
+        Logger::error("Erro: Tabela não encontrada");
         return new \StdClass;
     }
 
@@ -262,6 +268,7 @@ class Db extends ConfigDB
             return $rows;
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
     
@@ -399,6 +406,7 @@ class Db extends ConfigDB
         } 
         
         $this->error[] = "Erro: Quantidade de colunas diferente do total de Valores";
+        Logger::error("Erro: Quantidade de colunas diferente do total de Valores");
     }
 
     /**
@@ -475,6 +483,7 @@ class Db extends ConfigDB
             $this->error[] = "Erro: Valores não informados";
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }    
     /**
@@ -519,6 +528,7 @@ class Db extends ConfigDB
             }
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: '.$e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 
@@ -538,8 +548,10 @@ class Db extends ConfigDB
                 return true;
             }
             $this->error[] = 'Tabela: '.$this->table.' Erro: ID Invalido';
+            Logger::error('Tabela: '.$this->table.' Erro: ID Invalido');
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
         return false;
     }
@@ -572,10 +584,12 @@ class Db extends ConfigDB
                 return true;
             }
             $this->error[] = 'Tabela: '.$this->table.' Erro: Obrigatorio Uso de filtro';
+            Logger::error('Tabela: '.$this->table.' Erro: Obrigatorio Uso de filtro');
             return false;
 
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
+            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 
