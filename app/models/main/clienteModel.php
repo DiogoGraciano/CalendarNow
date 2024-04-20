@@ -1,18 +1,38 @@
-<?php 
+<?php
 namespace app\models\main;
+
 use app\db\cliente;
 use app\classes\modelAbstract;
 
+/**
+ * Classe clienteModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados de clientes.
+ * Ela utiliza a classe cliente para realizar operações de consulta, inserção e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class clienteModel{
 
-    public static function get($id){
+    /**
+     * Obtém um cliente pelo ID.
+     * 
+     * @param string $id O ID do cliente a ser buscado.
+     * @return array|object Retorna os dados do cliente ou objeto se não encontrado.
+     */
+    public static function get(int $id){
         return (new cliente)->get($id);
     }
 
-    public static function getByFuncionario($id_funcionario){
+    /**
+     * Obtém clientes pelo ID do funcionário associado.
+     * 
+     * @param int $id_funcionario O ID do funcionário associado aos clientes.
+     * @return array Retorna um array de clientes ou um array vazio se não encontrado.
+     */
+    public static function getByFuncionario(int $id_funcionario){
         $db = new cliente;
-        $cliente = $db->addFilter("cliente.id_funcionario","=",$id_funcionario)
-                        ->selectAll();
+        $cliente = $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
 
         if ($db->getError()){
             return [];
@@ -21,8 +41,16 @@ class clienteModel{
         return $cliente;
     }
 
-    public static function set($nome,$id_empresa,$id_funcionario,$id=""){
-
+    /**
+     * Insere ou atualiza um cliente.
+     * 
+     * @param string $nome O nome do cliente.
+     * @param int $id_empresa O ID da empresa associada.
+     * @param int $id_funcionario O ID do funcionário associado.
+     * @param int $id O ID do cliente (opcional).
+     * @return int|bool Retorna o ID do cliente inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function set(string $nome,int $id_empresa,int $id_funcionario,int $id = null){
         $db = new cliente;
     
         $values = $db->getObject();
@@ -34,15 +62,21 @@ class clienteModel{
             $values->nome = trim($nome);
             $retorno = $db->store($values);
         }
-        if ($retorno == true)
+
+        if ($retorno == true){
             return $db->getLastID();
-        else 
-            return False;
-        
-        
+        } else {
+            return false;
+        }
     }
 
-    public static function delete($id){
+    /**
+     * Exclui um registro de cliente.
+     * 
+     * @param int $id O ID do cliente a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function delete(int $id){
         return (new cliente)->delete($id);
     }
 

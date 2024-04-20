@@ -5,12 +5,31 @@ use app\classes\functions;
 use app\classes\mensagem;
 use app\models\main\loginModel;
 
+/**
+ * Classe usuarioModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados de usuários.
+ * Ela utiliza a classe usuario para realizar operações de consulta, inserção e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+*/
 class usuarioModel{
 
-    public static function get($id){
+    /**
+     * Obtém um usuário pelo ID.
+     * 
+     * @param string $id O ID do usuário a ser buscado.
+     * @return array|object Retorna os dados do usuário ou objeto se não encontrado.
+    */
+    public static function get(int $id){
         return (new usuario)->get($id);
     }
 
+    /**
+     * Obtém o usuário logado.
+     * 
+     * @return array|null Retorna os dados do usuário logado ou null se não houver usuário logado.
+    */
     public static function getLogged(){
         if (isset($_SESSION["user"]) && $_SESSION["user"])
             return $_SESSION["user"];
@@ -18,7 +37,14 @@ class usuarioModel{
         loginModel::deslogar();
     }
 
-    public static function getByCpfEmail($cpf_cnpj,$email){
+    /**
+     * Obtém um usuário pelo CPF/CNPJ e e-mail.
+     * 
+     * @param string $cpf_cnpj O CPF ou CNPJ do usuário.
+     * @param string $email O e-mail do usuário.
+     * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
+    */
+    public static function getByCpfEmail(string $cpf_cnpj,string $email){
 
         $db = new usuario;
 
@@ -31,7 +57,13 @@ class usuarioModel{
         return $usuario;
     }
 
-    public static function getByCpfCnpj($cpf_cnpj){
+    /**
+     * Obtém um usuário pelo CPF/CNPJ.
+     * 
+     * @param string $cpf_cnpj O CPF ou CNPJ do usuário.
+     * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
+    */
+    public static function getByCpfCnpj(string $cpf_cnpj){
 
         $db = new usuario;
 
@@ -44,7 +76,13 @@ class usuarioModel{
         return $usuario;
     }
 
-    public static function getByEmail($email){
+    /**
+     * Obtém um usuário pelo e-mail.
+     * 
+     * @param string $email O e-mail do usuário.
+     * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
+    */
+    public static function getByEmail(string $email){
 
         $db = new usuario;
 
@@ -57,7 +95,14 @@ class usuarioModel{
         return $usuario;
     }
 
-    public static function getByTipoUsuarioAgenda($tipo_usuario,$id_agenda){
+    /**
+     * Obtém usuários pelo tipo de usuário e ID da agenda.
+     * 
+     * @param int $tipo_usuario O tipo de usuário.
+     * @param string $id_agenda O ID da agenda.
+     * @return array Retorna um array de usuários.
+    */
+    public static function getByTipoUsuarioAgenda(int $tipo_usuario,string $id_agenda){
         $db = new usuario;
         $usuarios = $db->addJoin("INNER","agendamento","usuario.id","agendamento.id_usuario")
                         ->addFilter("tipo_usuario","=",$tipo_usuario)
@@ -73,7 +118,20 @@ class usuarioModel{
         return $usuarios;
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario = 3,$id_empresa="null"){
+    /**
+     * Insere ou atualiza um usuário.
+     * 
+     * @param string $nome O nome do usuário.
+     * @param string $cpf_cnpj O CPF ou CNPJ do usuário.
+     * @param string $email O e-mail do usuário.
+     * @param string $telefone O telefone do usuário.
+     * @param string $senha A senha do usuário.
+     * @param string $id O ID do usuário (opcional).
+     * @param int $tipo_usuario O tipo de usuário (padrão é 3).
+     * @param int $id_empresa O ID da empresa associada (opcional, padrão é "null").
+     * @return string|bool Retorna o ID do usuário inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int $id,int $tipo_usuario = 3,int $id_empresa = null){
 
         $db = new usuario;
 
@@ -130,7 +188,13 @@ class usuarioModel{
         }
     }
 
-    public static function delete($id){
+    /**
+     * Exclui um registro de usuário.
+     * 
+     * @param int $id O ID do usuário a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function delete(int $id){
         return (new usuario)->delete($id);
     }
 

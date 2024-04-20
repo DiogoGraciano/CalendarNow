@@ -6,11 +6,11 @@ class agenda extends db{
         parent::__construct("agenda");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -35,11 +35,11 @@ class agendamento extends db{
         parent::__construct("agendamento");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -64,11 +64,11 @@ class agendamentoItem extends db{
         parent::__construct("agendamento_item");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -93,11 +93,11 @@ class agendaFuncionario extends db{
         parent::__construct("agenda_funcionario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -122,11 +122,11 @@ class agendaUsuario extends db{
         parent::__construct("agenda_usuario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -151,11 +151,11 @@ class cidade extends db{
         parent::__construct("cidade");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -180,11 +180,11 @@ class cliente extends db{
         parent::__construct("cliente");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -209,11 +209,11 @@ class empresa extends db{
         parent::__construct("empresa");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -238,11 +238,11 @@ class endereco extends db{
         parent::__construct("endereco");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -267,11 +267,11 @@ class estado extends db{
         parent::__construct("estado");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -296,11 +296,11 @@ class funcionario extends db{
         parent::__construct("funcionario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -325,11 +325,11 @@ class funcionarioGrupoFuncionario extends db{
         parent::__construct("funcionario_grupo_funcionario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -354,11 +354,11 @@ class grupoFuncionario extends db{
         parent::__construct("grupo_funcionario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -383,11 +383,11 @@ class grupoServico extends db{
         parent::__construct("grupo_servico");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -412,11 +412,11 @@ class servico extends db{
         parent::__construct("servico");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -441,11 +441,11 @@ class servicoFuncionario extends db{
         parent::__construct("servico_funcionario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -470,11 +470,11 @@ class servicoGrupoServico extends db{
         parent::__construct("servico_grupo_servico");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))
@@ -499,11 +499,11 @@ class usuario extends db{
         parent::__construct("usuario");
     }
 
-    public function get($value="",$column="id",$limit = true){
-        $retorno = "";
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
 
         if($limit){
-            $this->addLimit(1);
+            $this->addLimit($limit);
         }
 
         if ($value && in_array($column,$this->getColumns()))

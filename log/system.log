@@ -6,3 +6,15 @@
 2024-04-18T00:08:56+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-04-18T00:16:30+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-04-18T00:17:09+00:00 [ERROR] : Tabela: empresa Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '71130113060' for key 'empresa.cnpj'
+2024-04-19T21:48:19+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T21:48:19+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T21:53:28+00:00 [ERROR] : Tabela: empresa Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '61934963003' for key 'empresa.cnpj'
+2024-04-19T22:04:08+00:00 [ERROR] : Tabela: empresa Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '61934963003' for key 'empresa.cnpj'
+2024-04-19T22:04:50+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T22:04:50+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T22:15:57+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T22:15:57+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T22:15:57+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T22:20:43+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-19T22:20:43+00:00 [ERROR] : Tabela: agenda_funcionario Erro: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`agenda`.`agenda_funcionario`, CONSTRAINT `fk_agenda_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`))
+2024-04-19T22:20:49+00:00 [ERROR] : Tabela: agenda_funcionario Erro: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`agenda`.`agenda_funcionario`, CONSTRAINT `fk_agenda_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`))

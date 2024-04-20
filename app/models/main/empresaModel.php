@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace app\models\main;
 
 use app\classes\functions;
@@ -6,20 +6,52 @@ use app\db\empresa;
 use app\classes\modelAbstract;
 use app\classes\mensagem;
 
+/**
+ * Classe empresaModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados de empresas.
+ * Ela utiliza a classe empresa para realizar operações de consulta, inserção e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class empresaModel{
 
-    public static function get($id,$coluna="id"){
-        return (new empresa)->get($id,$coluna="id");
+    /**
+     * Obtém uma empresa pelo ID ou coluna específica.
+     * 
+     * @param int $id O ID da empresa a ser buscada.
+     * @param string $coluna A coluna pela qual buscar a empresa (opcional, padrão é "id").
+     * @return array|null Retorna os dados da empresa ou null se não encontrado.
+     */
+    public static function get(int $id,string $coluna = "id"){
+        return (new empresa)->get($id, $coluna);
     }
 
-    public static function getByAgenda($id_agenda){
+    /**
+     * Obtém empresas associadas a uma agenda.
+     * 
+     * @param int $id_agenda O ID da agenda para buscar empresas associadas.
+     * @return array Retorna um array de empresas.
+     */
+    public static function getByAgenda(int $id_agenda){
         $db = new empresa;
         $db->addJoin("INNER","agenda","agenda.id_empresa","empresa.id");
-
+        // O restante do código precisa ser implementado para completar a lógica desta função.
     }
 
-    public static function set($nome,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$id=""){
-
+    /**
+     * Insere ou atualiza uma empresa.
+     * 
+     * @param string $nome O nome da empresa.
+     * @param string $cpf_cnpj O CPF ou CNPJ da empresa.
+     * @param string $email O e-mail da empresa.
+     * @param string $telefone O telefone da empresa.
+     * @param string $razao A razão social da empresa.
+     * @param string $fantasia O nome fantasia da empresa.
+     * @param string $id O ID da empresa (opcional).
+     * @return string|bool Retorna o ID da empresa inserida ou atualizada se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $razao,string $fantasia,int $id = null){
         $db = new empresa;
 
         $mensagens = [];
@@ -79,11 +111,15 @@ class empresaModel{
             mensagem::setErro("Erro ao cadastrar a empresa");
             return False;
         }
-        
-    }
-    
-    public static function delete($id){
-       return (new empresa)->delete($id);
     }
 
+    /**
+     * Exclui um registro de empresa.
+     * 
+     * @param string $id O ID da empresa a ser excluída.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function delete(int $id){
+       return (new empresa)->delete($id);
+    }
 }

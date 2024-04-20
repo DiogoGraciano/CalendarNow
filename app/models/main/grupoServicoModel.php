@@ -1,21 +1,47 @@
-<?php 
+<?php
 namespace app\models\main;
+
 use app\db\grupoServico;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 
+/**
+ * Classe grupoServicoModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados de grupos de serviço.
+ * Ela utiliza a classe grupoServico para realizar operações de consulta, inserção e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class grupoServicoModel{
 
-    public static function get($id = ""){
+    /**
+     * Obtém um grupo de serviço pelo ID.
+     * 
+     * @param int $id O ID do grupo de serviço a ser buscado.
+     * @return array|object Retorna os dados do grupo de serviço ou object se não encontrado.
+     */
+    public static function get(int $id = null){
         return (new grupoServico)->get($id);
     }
 
+    /**
+     * Obtém todos os grupos de serviço.
+     * 
+     * @return array Retorna um array com todos os grupos de serviço.
+     */
     public static function getAll(){
-        return (new grupoServico)->getAll($id);
+        return (new grupoServico)->selectAll();
     }
 
-    public static function set($nome,$id){
-
+    /**
+     * Insere ou atualiza um grupo de serviço.
+     * 
+     * @param string $nome O nome do grupo de serviço.
+     * @param int $id O ID do grupo de serviço (opcional).
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function set(string $nome,int $id){
         $db = new grupoServico;
         
         $values = $db->getObject();
@@ -27,17 +53,23 @@ class grupoServicoModel{
             $retorno = $db->store($values);
 
         if ($retorno == true){
-            return True;
+            return true;
         }
         else {
-            return False;
+            return false;
         }
     }
 
-    public static function getByEmpresa($id_empresa){
+    /**
+     * Obtém grupos de serviço por ID da empresa.
+     * 
+     * @param int $id_empresa O ID da empresa dos grupos de serviço a serem buscados.
+     * @return array Retorna um array com os grupos de serviço da empresa especificada.
+     */
+    public static function getByEmpresa(int $id_empresa){
         $db = new grupoServico;
 
-        $values = $db->addFilter("id_empresa","=",$id_empresa)->selectAll();
+        $values = $db->addFilter("id_empresa", "=", $id_empresa)->selectAll();
 
         if ($Mensagems = ($db->getError())){
             return [];
@@ -46,7 +78,13 @@ class grupoServicoModel{
         return $values;
     }
 
-    public static function delete($id){
+    /**
+     * Exclui um grupo de serviço pelo ID.
+     * 
+     * @param string $id O ID do grupo de serviço a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function delete(int $id){
         return (new grupoServico)->delete($id);
     }
 
