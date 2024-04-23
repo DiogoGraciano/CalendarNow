@@ -35,12 +35,21 @@ class agendaModel{
      * @param int|null $id_empresa O ID da empresa para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa = null){
+    public static function getByEmpresa(int $id_empresa,string $nome = null,string $codigo = null){
         $db = new agenda;
         
-        $values = $db->addFilter("agenda.id_empresa","=",$id_empresa)
-                     ->selectColumns("id","agenda.nome","agenda.codigo");
-        
+        $db->addFilter("agenda.id_empresa","=",$id_empresa);
+
+        if($nome){
+            $db->addFilter("nome","LIKE","%".$nome."%");
+        }
+
+        if($codigo){
+            $db->addFilter("codigo","LIKE","%".$codigo."%");
+        }
+
+        $values = $db->selectColumns("id","agenda.nome","agenda.codigo");
+
         if($values)
             return $values;
         

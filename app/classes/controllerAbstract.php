@@ -61,7 +61,7 @@ abstract class controllerAbstract
         elseif (isset($_SESSION[$var]))
             return $_SESSION[$var];
         else
-            return "";
+            return null;
     }
 
     /**

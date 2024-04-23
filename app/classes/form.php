@@ -108,9 +108,9 @@ class form extends pagina
      * Define um input hidden no formulário.
      *
      * @param string $nome Nome do input hidden.
-     * @param string $valor Valor do input hidden.
+     * @param mixed $valor Valor do input hidden.
      */
-    public function setHidden(string $nome,string $valor)
+    public function setHidden(string $nome,$valor)
     {
         $this->tplform->nome = $nome;
         $this->tplform->cd_value = $valor;

@@ -64,12 +64,19 @@ class grupoServicoModel{
      * Obtém grupos de serviço por ID da empresa.
      * 
      * @param int $id_empresa O ID da empresa dos grupos de serviço a serem buscados.
+     * @param string $nome para filtrar por nome.
      * @return array Retorna um array com os grupos de serviço da empresa especificada.
      */
-    public static function getByEmpresa(int $id_empresa){
+    public static function getByEmpresa(int $id_empresa,string $nome = null){
         $db = new grupoServico;
 
-        $values = $db->addFilter("id_empresa", "=", $id_empresa)->selectAll();
+        $db->addFilter("id_empresa", "=", $id_empresa);
+
+        if($nome){
+            $db->addFilter("nome", "=", $nome);
+        }
+
+        $values = $db->selectAll();
 
         if ($Mensagems = ($db->getError())){
             return [];

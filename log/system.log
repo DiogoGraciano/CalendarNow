@@ -18,3 +18,8 @@
 2024-04-19T22:20:43+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-04-19T22:20:43+00:00 [ERROR] : Tabela: agenda_funcionario Erro: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`agenda`.`agenda_funcionario`, CONSTRAINT `fk_agenda_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`))
 2024-04-19T22:20:49+00:00 [ERROR] : Tabela: agenda_funcionario Erro: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`agenda`.`agenda_funcionario`, CONSTRAINT `fk_agenda_funcionario_funcionario` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id`))
+2024-04-22T22:56:38+00:00 [ERROR] : Tabela: funcionario Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'usuario.id' in 'on clause'
+2024-04-22T23:56:37+00:00 [ERROR] : Tabela: usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'diogo.dg691@gmail.comrr' for key 'usuario.email'
+2024-04-22T23:57:56+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-23T00:01:08+00:00 [ERROR] : Tabela: funcionario Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'usuario.id' in 'on clause'
+2024-04-23T00:05:16+00:00 [ERROR] : Tabela: funcionario Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'funcionario.id_funcionario' in 'on clause'

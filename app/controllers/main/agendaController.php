@@ -8,6 +8,7 @@ use app\classes\elements;
 use app\classes\footer;
 use app\classes\functions;
 use app\classes\mensagem;
+use app\classes\filter;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
@@ -15,10 +16,22 @@ use app\models\main\funcionarioModel;
 class agendaController extends controllerAbstract{
 
     public function index(){
+
+        $nome = $this->getValue("nome");
+        $codigo = $this->getValue("codigo");
+
         $head = new head();
         $head -> show("agendas","consulta");
 
         $elements = new elements;
+
+        $filter = new filter($this->url."agenda/index/");
+
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
+                ->addFilter(3,$elements->input("nome","Nome:",$nome))
+                ->addFilter(3,$elements->input("codigo","Codigo:",$codigo));
+
+        $filter->show();
 
         $user = usuarioModel::getLogged();
 
@@ -27,7 +40,7 @@ class agendaController extends controllerAbstract{
         $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $agenda->addColumns("1","Id","id")->addColumns("70","Nome","nome")->addColumns("8","Codigo","codigo")->addColumns("11","Ações","acoes")
-        ->show($this->url."agenda/manutencao/",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa));
+        ->show($this->url."agenda/manutencao/",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo));
       
         $footer = new footer;
         $footer->show();

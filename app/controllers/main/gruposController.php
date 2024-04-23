@@ -7,6 +7,7 @@ use app\classes\controllerAbstract;
 use app\classes\consulta;
 use app\classes\footer;
 use app\classes\functions;
+use app\classes\filter;
 use app\models\main\grupoFuncionarioModel;
 use app\models\main\grupoServicoModel;
 use app\models\main\usuarioModel;
@@ -15,6 +16,8 @@ class gruposController extends controllerAbstract{
 
     public function index($parameters = array()){
 
+        $nome = $this->getValue("nome");
+
         if (array_key_exists(0,$parameters)){
             $tipo_grupo = functions::decrypt($parameters[0]);
         }
@@ -22,9 +25,9 @@ class gruposController extends controllerAbstract{
         $user = usuarioModel::getLogged();
 
         if ($tipo_grupo == "grupo_funcionario")
-            $dados = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
+            $dados = grupoFuncionarioModel::getByEmpresa($user->id_empresa,$nome);
         elseif ($tipo_grupo == "grupo_servico")
-            $dados = grupoServicoModel::getByEmpresa($user->id_empresa);
+            $dados = grupoServicoModel::getByEmpresa($user->id_empresa,$nome);
         else    
             $this->go("home");
 
@@ -32,6 +35,14 @@ class gruposController extends controllerAbstract{
         $head -> show("grupos","consulta");
 
         $elements = new elements;
+
+        
+        $filter = new filter($this->url."agenda/index/");
+
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
+                ->addFilter(3,$elements->input("nome","Nome:",$nome));
+
+        $filter->show();
 
         $cadastro = new consulta();
 
@@ -51,19 +62,20 @@ class gruposController extends controllerAbstract{
         $head = new head();
         $head->show("Cadastro","");
 
-        $id = "";
-        $tipo_grupo = "";
+        $id = null;
+        $tipo_grupo = null;
         
-        if (array_key_exists(0,$parameters))
+        if (array_key_exists(0,$parameters)){
             $tipo_grupo = functions::decrypt($parameters[0]);
-        else 
+            $form->setHidden("tipo_grupo",$tipo_grupo);
+        }else 
             $this->go("home");
 
         $form = new form($this->url."grupos/action/".$parameters[0]);
 
         if (array_key_exists(1,$parameters)){
             $form->setHidden("cd",$parameters[1]);
-            $id = functions::decrypt($parameters[1]);
+            $id = intval(functions::decrypt($parameters[1]));
         }
 
         if ($tipo_grupo == "grupo_funcionario")
@@ -80,7 +92,7 @@ class gruposController extends controllerAbstract{
         );
       
         $form->setButton($elements->button("Salvar","submit"));
-        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/index/".$parameters[0]."'"));
+        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/index/'"));
 
         $form->show();
 
@@ -89,15 +101,8 @@ class gruposController extends controllerAbstract{
     }
     public function action($parameters){
 
-        $id = "";
-
-        if (array_key_exists(0,$parameters)){
-            $tipo_grupo = functions::decrypt($parameters[0]);
-        }
-
-        if (array_key_exists(1,$parameters)){
-            $id = functions::decrypt($parameters[1]);
-        }
+        $id = $this->getValue("cd");
+        $tipo_grupo = $this->getValue("tipo_grupo");
 
         if ($tipo_grupo == "grupo_funcionario"){
             if ($id){

@@ -6,25 +6,56 @@ use app\db\funcionario;
 use app\db\funcionarioGrupoFuncionario;
 use app\db\agendaFuncionario;
 
+/**
+ * Classe funcionarioModel
+ * 
+ * Esta classe fornece métodos para interagir com os funcionários.
+ * Ela utiliza as classes funcionario, funcionarioGrupoFuncionario e agendaFuncionario
+ * para realizar operações de consulta, inserção, atualização e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+*/
 class funcionarioModel{
 
-    public static function get($id=""){
+    /**
+     * Obtém um funcionário pelo ID.
+     * 
+     * @param string $id O ID do funcionário.
+     * @return object|null Retorna o objeto do funcionário ou null se não encontrado.
+    */
+    public static function get(int $id = null){
         return (new funcionario)->get($id);
     }
 
-    public static function getAll(){
-        return (new funcionario)->getAll();
-    }
-
-    public static function getListFuncionariosByEmpresa($id_empresa){
+    /**
+     * Lista os funcionários por empresa, nome, agenda e grupo de funcionários.
+     * 
+     * @param int $id_empresa O ID da empresa.
+     * @param string $nome O nome do funcionário (opcional).
+     * @param int $id_agenda O ID da agenda (opcional).
+     * @param int $id_grupo_funcionarios O ID do grupo de funcionários (opcional).
+     * @return array Retorna um array com os funcionários filtrados.
+     */
+    public static function getListFuncionariosByEmpresa(int $id_empresa,string $nome = null,int $id_agenda = null,int $id_grupo_funcionarios = null){
 
         $db = new funcionario;
 
-        $funcionarios = $db
-                    ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
-                    ->addFilter("usuario.id_empresa","=",$id_empresa)
-                    ->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
+        $db->addJoin("LEFT","funcionario_grupo_funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario")
+            ->addJoin("LEFT","agenda_funcionario","agenda_funcionario.id_funcionario","funcionario.id")  
+            ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
+           ->addFilter("usuario.id_empresa","=",$id_empresa);
 
+        if($id_grupo_funcionarios)
+            $db->addFilter("funcionario_grupo_funcionario.id_grupo_funcionario","=",$id_grupo_funcionarios);
+
+        if($id_agenda)
+            $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda);
+
+        if($nome)
+            $db->addFilter("funcionario.nome","LIKE","%".$nome."%");
+                    
+        $funcionarios = $db->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
+        
         $funcionarioFinal = [];
         if ($funcionarios){
             foreach ($funcionarios as $funcionario){
@@ -48,40 +79,13 @@ class funcionarioModel{
         return $funcionarioFinal;
     }
 
-    public static function getListFuncionariosByGrupoFuncionario($id_grupo_funcionario){
-
-        $db = new funcionarioGrupoFuncionario;
-
-        $funcionarios = $db
-                    ->addJoin("INNER","funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario")
-                    ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
-                    ->addFilter("funcionario_grupo_funcionario.id_grupo_funcionario","=",$id_grupo_funcionario)
-                    ->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
-
-        $funcionarioFinal = [];
-        if ($funcionarios){
-            foreach ($funcionarios as $funcionario){
-                if ($funcionario->cpf_cnpj){
-                    $funcionario->cpf_cnpj = functions::formatCnpjCpf($funcionario->cpf_cnpj);
-                }
-                if ($funcionario->telefone){
-                    $funcionario->telefone = functions::formatPhone($funcionario->telefone);
-                }
-                if ($funcionario->dias){
-                    $funcionario->dias = functions::formatDias($funcionario->dias);
-                }
-                $funcionarioFinal[] = $funcionario;
-            }
-        }
-
-        if ($db->getError()){
-            return [];
-        }
-        
-        return $funcionarioFinal;
-    }
-
-    public static function getByAgenda($id_agenda){
+    /**
+     * Obtém os funcionários por agenda.
+     * 
+     * @param int $id_agenda O ID da agenda.
+     * @return array Retorna um array com os funcionários associados à agenda.
+    */
+    public static function getByAgenda(int $id_agenda){
         $db = new agendaFuncionario;
 
         $values = $db->addJoin("INNER","agenda","agenda.id","agenda_funcionario.id_agenda")
@@ -96,7 +100,13 @@ class funcionarioModel{
         return $values;
     }
 
-    public static function getByEmpresa($id_empresa){
+    /**
+     * Obtém os funcionários por empresa.
+     * 
+     * @param int $id_empresa O ID da empresa.
+     * @return array Retorna um array com os funcionários associados à empresa.
+    */
+    public static function getByEmpresa(int $id_empresa){
         $db = new funcionario;
 
         $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
@@ -110,7 +120,23 @@ class funcionarioModel{
         return $values;
     }
 
-    public static function set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id=""){
+    /**
+     * Insere ou atualiza um funcionário.
+     * 
+     * @param int $id_usuario O ID do usuário associado ao funcionário.
+     * @param string $nome O nome do funcionário.
+     * @param string $cpf_cnpj O CPF/CNPJ do funcionário.
+     * @param string $email O email do funcionário.
+     * @param string $telefone O telefone do funcionário.
+     * @param string $hora_ini O horário de início de trabalho.
+     * @param string $hora_fim O horário de término de trabalho.
+     * @param string $hora_almoco_ini O horário de início do almoço.
+     * @param string $hora_almoco_fim O horário de término do almoço.
+     * @param string $dias Os dias de trabalho do funcionário.
+     * @param string $id O ID do funcionário (opcional).
+     * @return string|bool Retorna o ID do funcionário se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function set(int $id_usuario,string $nome,string $cpf_cnpj,string $email,string $telefone,string $hora_ini,string $hora_fim,string $hora_almoco_ini,string $hora_almoco_fim,string $dias,int $id = null){
 
         $db = new funcionario;
 
@@ -137,7 +163,14 @@ class funcionarioModel{
         }
     }
 
-    public static function setAgendaFuncionario($id_funcionario,$id_agenda){
+    /**
+     * Associa um funcionário a uma agenda.
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @param int $id_agenda O ID da agenda.
+     * @return int|bool Retorna o ID da associação se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda){
         $db = new agendaFuncionario;
 
         $result = $db->addFilter("id_agenda","=",$id_agenda)
@@ -162,7 +195,14 @@ class funcionarioModel{
         return True;
     }
 
-    public static function setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario){
+    /**
+     * Associa um funcionário a um grupo de funcionários.
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @param int $id_grupo_funcionario O ID do grupo de funcionários.
+     * @return int|bool Retorna o ID da associação se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function setFuncionarioGrupoFuncionario(int $id_funcionario,int $id_grupo_funcionario){
         $db = new funcionarioGrupoFuncionario;
 
         $result = $db->addFilter("id_grupo_funcionario","=",$id_grupo_funcionario)
@@ -188,7 +228,13 @@ class funcionarioModel{
         return True;
     }
     
-    public static function delete($id){
+    /**
+     * Exclui um funcionário pelo ID.
+     * 
+     * @param int $id O ID do funcionário a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function delete(int $id){
         return (new funcionario)->delete($id);
     }
 

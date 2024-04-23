@@ -53,11 +53,15 @@ class cadastroController extends controllerAbstract{
 
         if ($tipo_usuario == 2){
 
-            $filter = new filter($this->url."funcionario/filter/");
+            $nome = $this->getValue("nome");
+            $id_agenda = $this->getValue("agenda");
+            $id_grupo_funcionarios = $this->getValue("grupo_funcionarios");
+
+            $filter = new filter($this->url."funcionario/index/");
 
             $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
-            $filter->addFilter(4,$elements->input("pesquisa","Pesquisa:"));
+            $filter->addFilter(3,$elements->input("nome","Nome:",$nome));
 
             $id_grupo_funcionario = "";
 
@@ -75,7 +79,7 @@ class cadastroController extends controllerAbstract{
                 foreach ($agendas as $agenda){
                     $elements->addOption($agenda->id,$agenda->nome);
                 }
-                $agenda = $elements->select("Agenda:","agenda");
+                $agenda = $elements->select("Agenda:","agenda",$id_agenda);
 
                 $modal->setinputs($agenda);
 
@@ -83,7 +87,7 @@ class cadastroController extends controllerAbstract{
 
                 $modal->show();
 
-                $filter->addFilter(4,$agenda);
+                $filter->addFilter(3,$agenda);
             }
 
             $cadastro->addColumns("5","Inicio Expediente","hora_ini")
@@ -91,11 +95,6 @@ class cadastroController extends controllerAbstract{
             ->addColumns("5","Inicio Almoço","hora_almoco_ini")
             ->addColumns("5","Fim Almoço","hora_almoco_fim")
             ->addColumns("14","Dias","dia");
-
-            if ($id_grupo_funcionario)
-                $dados = funcionarioModel::getListFuncionariosByGrupoFuncionario($id_grupo_funcionario);
-            else  
-                $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa);
 
             $cadastro->addButtons($elements->button("Adicionar Agenda ao Funcionario","openModel","button","btn btn-primary","openModal('massActionAgenda')"));
 
@@ -118,12 +117,14 @@ class cadastroController extends controllerAbstract{
 
                 $modal->show();
 
-                $filter->addFilter(4,$grupo_funcionario);
+                $filter->addFilter(3,$id_grupo_funcionarios);
 
                 $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo","openModelGrupoFuncionario","button","btn btn-primary","openModal('massActionGrupoFuncionario')"));
             }
 
             $filter->show();
+
+            $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa,$nome,intval($id_agenda),intval($id_grupo_funcionarios));
         }
         
         $cadastro->addColumns("14","Ações","acoes");
@@ -133,7 +134,7 @@ class cadastroController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function manutencao($parameters = array(),$login=False){
+    public function manutencao($parameters = [],$login=False){
 
         if ($login)
             $form = new form($this->url."login/save");
@@ -143,8 +144,8 @@ class cadastroController extends controllerAbstract{
         $head = new head();
         $head->show("Cadastro","");
 
-        $id = "";
-        $tipo_usuario = "";
+        $id = null;
+        $tipo_usuario = null;
         $user = usuarioModel::getLogged();
 
         if (array_key_exists(0,$parameters)){
@@ -158,7 +159,7 @@ class cadastroController extends controllerAbstract{
         }
 
         if (array_key_exists(1,$parameters)){
-            $id = functions::decrypt($parameters[1]); 
+            $id = intval(functions::decrypt($parameters[1])); 
         }
         
         if ($tipo_usuario == 1){
@@ -220,14 +221,14 @@ class cadastroController extends controllerAbstract{
             );
 
             $form->setDoisInputs(
-                $elements->input("hora_ini","Hora Inicial de Trabalho",functions::removeSecondsTime($dadoFuncionario->hora_ini),true,true,"","time2"),
-                $elements->input("hora_fim","Hora Final de Trabalho",functions::removeSecondsTime($dadoFuncionario->hora_fim),true,true,"","time2"),
+                $elements->input("hora_ini","Hora Inicial de Trabalho",functions::removeSecondsTime($dadoFuncionario->hora_ini?:"08:00"),true,true,"","time2"),
+                $elements->input("hora_fim","Hora Final de Trabalho",functions::removeSecondsTime($dadoFuncionario->hora_fim?:"18:00"),true,true,"","time2"),
                 array("hora_ini","hora_fim")
             );
 
             $form->setDoisInputs(
-                $elements->input("hora_almoco_ini","Hora Inicial de Almoço",functions::removeSecondsTime($dadoFuncionario->hora_almoco_ini),true,true,"","time2"),
-                $elements->input("hora_almoco_fim","Hora Final de Almoço",functions::removeSecondsTime($dadoFuncionario->hora_almoco_fim),true,true,"","time2"),
+                $elements->input("hora_almoco_ini","Hora Inicial de Almoço",functions::removeSecondsTime($dadoFuncionario->hora_almoco_ini?:"12:00"),true,true,"","time2"),
+                $elements->input("hora_almoco_fim","Hora Final de Almoço",functions::removeSecondsTime($dadoFuncionario->hora_almoco_fim?:"13:30"),true,true,"","time2"),
                 array("hora_almoco_ini","hora_almoco_fim")
             );
 
@@ -302,7 +303,7 @@ class cadastroController extends controllerAbstract{
         elseif(!$tipo_usuario)
             $this->go("home");
 
-        $id = $this->getValue('cd');
+        $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
@@ -355,7 +356,7 @@ class cadastroController extends controllerAbstract{
             if ($id_empresa = $this->getValue("id_empresa")){  
                 $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario,$id_empresa);
                 if ($id_usuario){
-                    $id_funcionario = $this->getValue("id_funcionario");
+                    $id_funcionario = intval($this->getValue("id_funcionario"));
                     $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
                     if($id_funcionario){
                         mensagem::setSucesso("Funcionario salvo com sucesso");
@@ -366,6 +367,7 @@ class cadastroController extends controllerAbstract{
                         else 
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
                     }
+                    mensagem::setSucesso(false);
                     usuarioModel::delete($id_usuario);
                 }
             }

@@ -21,7 +21,7 @@ class usuarioModel{
      * @param string $id O ID do usuário a ser buscado.
      * @return array|object Retorna os dados do usuário ou objeto se não encontrado.
     */
-    public static function get(int $id){
+    public static function get(int $id=null){
         return (new usuario)->get($id);
     }
 

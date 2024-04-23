@@ -66,11 +66,11 @@ class agendamentoController extends controllerAbstract{
         $agenda->show(
             $this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?$firstFuncionario:$id_funcionario)."/",
             agendamentoModel::getEventsbyFuncionario(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda,$Dadofuncionario->id),
-            $Dadofuncionario->dias,
-            $Dadofuncionario->hora_ini,
-            $Dadofuncionario->hora_fim,
-            $Dadofuncionario->hora_almoco_ini,
-            $Dadofuncionario->hora_almoco_fim
+            $Dadofuncionario->dias?:"seg,ter,qua,qui,sex",
+            $Dadofuncionario->hora_ini?:"08:00",
+            $Dadofuncionario->hora_fim?:"18:00",
+            $Dadofuncionario->hora_almoco_ini?:"12:00",
+            $Dadofuncionario->hora_almoco_fim?:"13:30"
         );
       
         $footer = new footer;

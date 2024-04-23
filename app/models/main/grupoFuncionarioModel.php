@@ -19,32 +19,30 @@ class grupoFuncionarioModel{
     /**
      * Obtém um grupo de funcionário pelo ID.
      * 
-     * @param string $id O ID do grupo de funcionário a ser buscado.
+     * @param int $id O ID do grupo de funcionário a ser buscado.
      * @return array|null Retorna os dados do grupo de funcionário ou null se não encontrado.
      */
-    public static function get($id = ""){
+    public static function get(int $id = null){
         return (new grupoFuncionario)->get($id);
-    }
-
-    /**
-     * Obtém todos os grupos de funcionários.
-     * 
-     * @return array Retorna um array com todos os grupos de funcionários.
-     */
-    public static function getAll(){
-        return (new grupoFuncionario)->selectAll();
     }
 
     /**
      * Obtém grupos de funcionários por ID da empresa.
      * 
-     * @param string $id_empresa O ID da empresa dos grupos de funcionários a serem buscados.
+     * @param int $id_empresa O ID da empresa dos grupos de funcionários a serem buscados.
+     * @param string $nome para filtrar por nome.
      * @return array Retorna um array com os grupos de funcionários da empresa especificada.
      */
-    public static function getByEmpresa($id_empresa){
+    public static function getByEmpresa(int $id_empresa,string $nome = null){
         $db = new grupoFuncionario;
 
-        $values = $db->addFilter("id_empresa", "=", $id_empresa)->selectAll();
+        $db->addFilter("id_empresa", "=", $id_empresa);
+
+        if($nome){
+            $db->addFilter("nome", "=", $nome);
+        }
+
+        $values = $db->selectAll();
 
         if ($Mensagems = ($db->getError())){
             return [];
