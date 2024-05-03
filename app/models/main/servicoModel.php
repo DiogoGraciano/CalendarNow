@@ -14,11 +14,28 @@ class servicoModel{
         return (new servico)->get($id);
     }
 
-    public static function getByEmpresa($id_empresa){
+    public static function getByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null){
         $db = new servico;
+
+        $db->addFilter("servico.id_empresa","=",$id_empresa);
+
+        if($nome){
+            $db->addFilter("servico.nome","like","%".$nome."%");
+        }
+
+        if($id_funcionario){
+            $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id");
+            $db->addFilter("servico_funcionario.id_funcionario","=",$id_funcionario);
+        }
+
+        if($id_grupo_servico){
+            $db->addJoin("INNER","servico_grupo_servico","servico_grupo_servico.id_servico","servico.id");
+            $db->addFilter("servico_grupo_servico.id_grupo_servico","=",$id_grupo_servico);
+        }
+
+        $db->addGroup("servico.id");
         
-        $values = $db->addFilter("servico.id_empresa","=",$id_empresa)
-                     ->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
+        $values = $db->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
 
         $valuesFinal = [];
 
@@ -36,69 +53,6 @@ class servicoModel{
 
             return $values;
         }
-    }
-
-    public static function getByFuncionario($id_Funcionario){
-        $db = new servicoFuncionario;
-        
-        $values = $db->addjoin("INNER","servico","servico.id","servico_funcionario.id_servico")
-                     ->addFilter("servico_funcionario.id_funcionario","=",$id_Funcionario)
-                     ->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
-
-        
-
-        if ($Mensagems = ($db->getError())){
-            return [];
-        }
-
-        
-
-        return $values;
-        
-    }
-
-    public static function getByEmpresaAndId($id_servico,$id_empresa){
-        $db = new servico;
-        
-        $values = $db->addFilter("servico.id_empresa","=",$id_empresa)
-                     ->addFilter("servico.id","=",$id_servico)
-                     ->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
-        
-        if ($Mensagems = ($db->getError())){
-            return [];
-        }
-        
-        return $values;
-    }
-
-
-    public static function getByUser($id = ""){
-        $db = new servico;
-        
-        $values = $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id")
-                    ->addJoin("INNER","funcionario","servico_funcionario.id_funcionario","funcionario.id")
-                    ->addFilter("funcionario.id_usuario","=",$id)
-                    ->selectColumns("servico.id","funcionario.nome as funcionario_nome","servico.nome as ser_nome","servico.tempo","servico.valor");
-
-        if ($Mensagems = ($db->getError())){
-            return [];
-        }
-                    
-        return $values;
-    }
-
-    public static function getByServicoGrupoServico($id_grupo_servico = ""){
-        $db = new servicoGrupoServico;
-        
-        $values = $db->addJoin("INNER","servico","servico_funcionario.id_servico","servico.id")
-                    ->addFilter("servico_grupo_servico.id_grupo_servico","=",$id_grupo_servico)
-                    ->selectColumns("servico.id","servico.nome","servico.id_empresa","servico.tempo","servico.valor");
-
-        if ($Mensagems = ($db->getError())){
-            return [];
-        }
-                    
-        return $values;
     }
 
     public static function setServicoGrupoServico($id_servico,$id_grupo_servico){

@@ -18,6 +18,8 @@ class gruposController extends controllerAbstract{
 
         $nome = $this->getValue("nome");
 
+        $tipo_grupo = null;
+
         if (array_key_exists(0,$parameters)){
             $tipo_grupo = functions::decrypt($parameters[0]);
         }
@@ -49,33 +51,32 @@ class gruposController extends controllerAbstract{
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
 
         $cadastro->addColumns("1","Id","id")
-                ->addColumns("90","Nome","nome")
-                ->addColumns("10","Ações","acoes");
+                ->addColumns("85","Nome","nome")
+                ->addColumns("15","Ações","acoes");
 
         $cadastro->show($this->url."grupos/manutencao/".functions::encrypt($tipo_grupo),$this->url."grupos/action/".functions::encrypt($tipo_grupo),$dados,"id");
       
         $footer = new footer;
         $footer->show();
     }
-    public function manutencao($parameters = array()){
+    public function manutencao($parameters = []){
 
         $head = new head();
         $head->show("Cadastro","");
 
         $id = null;
         $tipo_grupo = null;
-        
-        if (array_key_exists(0,$parameters)){
+
+        if (array_key_exists(0,$parameters))
             $tipo_grupo = functions::decrypt($parameters[0]);
-            $form->setHidden("tipo_grupo",$tipo_grupo);
-        }else 
+        else 
             $this->go("home");
 
         $form = new form($this->url."grupos/action/".$parameters[0]);
-
+        
         if (array_key_exists(1,$parameters)){
             $form->setHidden("cd",$parameters[1]);
-            $id = intval(functions::decrypt($parameters[1]));
+            $id = functions::decrypt($parameters[1]);
         }
 
         if ($tipo_grupo == "grupo_funcionario")
@@ -88,11 +89,11 @@ class gruposController extends controllerAbstract{
         $elements = new elements;
 
         $form->setInputs(
-            $elements->input("nome","Nome",$dado->nome,true),
+            $elements->input("nome","Nome",$dado->nome,true)
         );
       
         $form->setButton($elements->button("Salvar","submit"));
-        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/index/'"));
+        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/index/".$parameters[0]."'"));
 
         $form->show();
 
@@ -101,31 +102,35 @@ class gruposController extends controllerAbstract{
     }
     public function action($parameters){
 
-        $id = $this->getValue("cd");
-        $tipo_grupo = $this->getValue("tipo_grupo");
+        $cd = null;
+
+        if (array_key_exists(0,$parameters))
+            $tipo_grupo = functions::decrypt($parameters[0]);
+        else 
+            $this->go("home");
+
+        if (array_key_exists(1,$parameters))
+            $cd = functions::decrypt($parameters[1]);
+
+        $id = intval(functions::decrypt($this->getValue("cd")));
+        $nome  = $this->getValue('nome');
+
+        $id_empresa = UsuarioModel::getLogged()->id_empresa;
 
         if ($tipo_grupo == "grupo_funcionario"){
-            if ($id){
-                grupoFuncionarioModel::delete($id);
-            }
-            else{
-                $id = functions::decrypt($this->getValue('cd'));
-                $nome  = $this->getValue('nome');
-                grupoFuncionarioModel::set($nome,$id);
-            } 
+            if ($cd && !$nome)
+                grupoFuncionarioModel::delete($cd);
+            else
+                grupoFuncionarioModel::set($nome,$id_empresa,$id);
+            
         }elseif ($tipo_grupo == "grupo_servico"){
-            if ($id){
-                grupoServicoModel::delete($id);
-            }
-            else{
-                $id = functions::decrypt($this->getValue('cd'));
-                $nome  = $this->getValue('nome');
-                grupoServicoModel::set($nome,$id);
-            }
-
+            if ($cd && !$nome)
+                grupoServicoModel::delete($cd);
+            else
+                grupoServicoModel::set($nome,$id_empresa,$id);
         }   
         
-        $this->go("grupos/index/".functions::encrypt($tipo_grupo));
+        $this->go("grupos/index/".$parameters[0]);
     }
 
 }

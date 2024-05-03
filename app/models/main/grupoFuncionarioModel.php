@@ -39,10 +39,10 @@ class grupoFuncionarioModel{
         $db->addFilter("id_empresa", "=", $id_empresa);
 
         if($nome){
-            $db->addFilter("nome", "=", $nome);
+            $db->addFilter("nome", "like", "%".$nome."%");
         }
 
-        $values = $db->selectAll();
+        $values = $db->selectColumns("id","nome");
 
         if ($Mensagems = ($db->getError())){
             return [];
@@ -55,24 +55,26 @@ class grupoFuncionarioModel{
      * Insere ou atualiza um grupo de funcionário.
      * 
      * @param string $nome O nome do grupo de funcionário.
-     * @param string $id O ID do grupo de funcionário (opcional).
+     * @param int $id O ID do grupo de funcionário (opcional).
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set($nome, $id){
+    public static function set(string $nome,int $id_empresa,int $id = null){
         $db = new grupoFuncionario;
         
         $values = $db->getObject();
 
         $values->id = $id;
+        $values->id_empresa = $id_empresa;
         $values->nome = $nome;
 
-        if ($values)
-            $retorno = $db->store($values);
+        $retorno = $db->store($values);
 
         if ($retorno == true){
+            mensagem::setSucesso("Grupo de funcionarios salvo com sucesso");
             return true;
         }
         
+        mensagem::setErro("Erro ao salvar grupo de funcionarios");
         return false;
     }
 

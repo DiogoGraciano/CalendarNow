@@ -23,3 +23,24 @@
 2024-04-22T23:57:56+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-04-23T00:01:08+00:00 [ERROR] : Tabela: funcionario Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'usuario.id' in 'on clause'
 2024-04-23T00:05:16+00:00 [ERROR] : Tabela: funcionario Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'funcionario.id_funcionario' in 'on clause'
+2024-04-29T21:54:22+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T21:54:22+00:00 [ERROR] : Tabela: grupo_servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'id_empresa' cannot be null
+2024-04-29T21:54:30+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T21:54:30+00:00 [ERROR] : Tabela: grupo_servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'id_empresa' cannot be null
+2024-04-29T22:00:06+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T22:00:06+00:00 [ERROR] : Tabela: grupo_servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'id_empresa' cannot be null
+2024-04-29T22:10:32+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T22:10:32+00:00 [ERROR] : Tabela: grupo_servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'id_empresa' cannot be null
+2024-04-29T22:17:56+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T22:17:56+00:00 [ERROR] : Tabela: grupo_servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'id_empresa' cannot be null
+2024-04-29T22:18:46+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T22:35:53+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T23:54:30+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-04-29T23:57:32+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[42000]: Syntax error or access violation: 1066 Not unique table/alias: 'agenda_usuario'
+2024-04-30T00:07:04+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[42000]: Syntax error or access violation: 1066 Not unique table/alias: 'agenda_usuario'
+2024-04-30T00:09:02+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[42000]: Syntax error or access violation: 1066 Not unique table/alias: 'agenda_usuario'
+2024-04-30T00:09:02+00:00 [ERROR] : Tabela: servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'nome' cannot be null
+2024-04-30T00:09:06+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[42000]: Syntax error or access violation: 1066 Not unique table/alias: 'agenda_usuario'
+2024-04-30T00:09:06+00:00 [ERROR] : Tabela: servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'nome' cannot be null
+2024-04-30T00:12:52+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[42000]: Syntax error or access violation: 1066 Not unique table/alias: 'agenda_usuario'
+2024-04-30T00:39:02+00:00 [ERROR] : Tabela: servico Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'funcionario.id' in 'on clause'

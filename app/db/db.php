@@ -347,7 +347,6 @@ class Db extends ConfigDB
         foreach ($this->propertys as $property){
             $sql .= $property;
         }
-        
         $object = $this->selectInstruction($sql);
         $this->clean();
         return $object;

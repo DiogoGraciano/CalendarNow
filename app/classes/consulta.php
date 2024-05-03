@@ -32,7 +32,7 @@ class consulta extends pagina
      * @param string $coluna_action Nome da coluna que contém a ação (Editar/Excluir).
      * @param bool $checkbox Indica se a coluna de checkbox deve ser exibida.
      */
-    public function show(string $pagina_manutencao,string $pagina_action,bool|array $dados,string $coluna_action = "id",bool $checkbox = false)
+    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id",bool $checkbox = false)
     {
         // Carrega o template de consulta
         $this->tpl = $this->getTemplate("consulta_template.html");

@@ -19,11 +19,9 @@ class servicoController extends controllerAbstract{
 
     public function index($parameters = []){
 
-        $id_funcionario = "";
-
-        if($parameters && array_key_exists(0,$parameters)){
-            $id_funcionario = functions::decrypt($parameters[0]);
-        }
+        $id_funcionario = $this->getValue("funcionario");
+        $id_grupo_servico = $this->getValue("grupo_servico");
+        $nome = $this->getValue("nome");
 
         $head = new head();
         $head -> show("serviços","consulta");
@@ -32,10 +30,10 @@ class servicoController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $filter = new filter($this->url."servico/filter/");
+        $filter = new filter($this->url."servico/");
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
-        $filter->addFilter(4,$elements->input("pesquisa","Pesquisa:"));
+        $filter->addFilter(4,$elements->input("nome","Nome:",$nome));
 
         $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
 
@@ -51,7 +49,7 @@ class servicoController extends controllerAbstract{
                 $elements->addOption($funcionario->id,$funcionario->nome);
             }
 
-            $funcionarios = $elements->select("Funcionario","funcionario",$id_funcionario=""?$firstFuncionario:$id_funcionario);
+            $funcionarios = $elements->select("Funcionario","funcionario",$id_funcionario);
 
             $modal = new modal($this->url."servico/massActionFuncionario/","massActionFuncionario");
 
@@ -73,7 +71,7 @@ class servicoController extends controllerAbstract{
                 $elements->addOption($grupo_servico->id,$grupo_servico->nome);
             }
 
-            $grupo_servico = $elements->select("Grupo Serviço","grupo_servico");
+            $grupo_servico = $elements->select("Grupo Serviço","grupo_servico",$id_grupo_servico);
 
             $modal = new modal($this->url."servico/massActionGrupoServico/","massActionGrupoServico");
 
@@ -94,13 +92,9 @@ class servicoController extends controllerAbstract{
         $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModelFuncionario","button","btn btn-primary","openModal('massActionFuncionario')")); 
         $servico->addButtons($elements->button("Adicionar Serviço ao Grupo","openModelGrupoServico","button","btn btn-primary","openModal('massActionGrupoServico')")); 
         
-
         $data = [];
 
-        if ($id_funcionario)
-            $data = servicoModel::getByFuncionario($id_funcionario);
-        else 
-            $data = servicoModel::getByEmpresa($user->id_empresa);
+        $data = servicoModel::getByEmpresa(intval($user->id_empresa),$nome,intval($id_funcionario),intVal($id_grupo_servico));
 
         $servico->addColumns("1","Id","id")
                 ->addColumns("60","Nome","nome")
@@ -113,6 +107,8 @@ class servicoController extends controllerAbstract{
         $footer->show();
     }
     public function manutencao($parameters){
+
+        $user = usuarioModel::getLogged();
 
         $id = "";
 
@@ -163,10 +159,10 @@ class servicoController extends controllerAbstract{
         if ($parameters){
             $id = functions::decrypt($parameters[0]);
             $agendas = agendaModel::getByUserServico($id,$user->id);
-            if ($agendas){
+            if ($agendas && isset($agendas[0])){
                 $agenda = $agendas[0];
+                servicoModel::deleteAgendaServico($agenda->id,$id);
             }
-            servicoModel::deleteAgendaServico($agenda->id,$id);
             servicoModel::delete($id);
             $this->go("servico");
         }
@@ -182,10 +178,6 @@ class servicoController extends controllerAbstract{
         }
 
         $this->go("servico");
-    }
-
-    public function filter(){
-        $this->go("servico/index/".functions::encrypt($this->getValue("funcionario")));
     }
 
     public function massActionFuncionario(){
