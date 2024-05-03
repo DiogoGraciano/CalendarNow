@@ -5,6 +5,7 @@ use app\classes\functions;
 use app\db\servico;
 use app\db\servicoFuncionario;
 use app\db\ServicoGrupoServico;
+use app\db\agendaServico;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 
@@ -129,7 +130,7 @@ class servicoModel{
     }
 
     public static function deleteAgendaServico($id_servico,$id_agenda){
-        $db = new db("agenda_servico");
+        $db = new agendaServico;
 
         $retorno =  $db->addFilter("agenda_servico.id_servico","=",$id_servico)->addFilter("agenda_servico.id_agenda","=",$id_agenda)->deleteByFilter();
 

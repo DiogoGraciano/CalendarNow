@@ -28,7 +28,7 @@ class usuarioModel{
     /**
      * Obtém o usuário logado.
      * 
-     * @return array|null Retorna os dados do usuário logado ou null se não houver usuário logado.
+     * @return object|null Retorna os dados do usuário logado ou null se não houver usuário logado.
     */
     public static function getLogged(){
         if (isset($_SESSION["user"]) && $_SESSION["user"])
