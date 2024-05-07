@@ -49,7 +49,7 @@ class agendamentoItemModel{
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->addFilter("id_servico","=",$id_servico)
                     ->addLimit(1)
-                    ->selectColumns(["agendamento_item.id","id_agendamento","id_servico","qtd_item","tempo_item","total_item","nome","valor","tempo","id_empresa"]);
+                    ->selectColumns("agendamento_item.id","id_agendamento","id_servico","qtd_item","tempo_item","total_item","nome","valor","tempo","id_empresa");
 
         if ($db->getError()){
             return [];

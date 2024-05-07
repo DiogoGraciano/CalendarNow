@@ -56,6 +56,32 @@ class servicoModel{
         }
     }
 
+    public static function getByFuncionario(int $id_funcionario){
+        $db = new servico;
+
+        $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id");
+        $db->addFilter("servico_funcionario.id_funcionario","=",$id_funcionario);
+        
+        $db->addGroup("servico.id");
+        
+        $values = $db->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
+
+        if ($Mensagems = ($db->getError())){
+            return [];
+        }
+
+        if ($values){
+            foreach ($values as $value){
+                if ($value->valor){
+                    $value->valor = functions::formatCurrency($value->valor);
+                }
+                $valuesFinal[] = $value;
+            }
+
+            return $values;
+        }
+    }
+
     public static function setServicoGrupoServico($id_servico,$id_grupo_servico){
         $db = new servicoGrupoServico;
 

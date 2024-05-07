@@ -65,12 +65,12 @@ class cidadeModel{
     /**
      * Obtém cidades pela (UF).
      * 
-     * @param string $id_estado O (UF) das cidades.
+     * @param string $uf O (UF) das cidades.
      * @return array Retorna um array de cidades.
      */
     public static function getByEstado(string $uf){
         $db = new cidade;
-        $cidade = $db->addFilter("uf", "=", $id_estado)->selectAll();
+        $cidade = $db->addFilter("uf", "=", $uf)->selectAll();
         return $cidade;
     }
 
