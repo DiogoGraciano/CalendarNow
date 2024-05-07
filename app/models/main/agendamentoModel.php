@@ -96,8 +96,6 @@ class agendamentoModel{
         if ($db->getError()){
             return [];
         }
-
-        var_dump($result);
         
         return $result;
     }
@@ -114,9 +112,6 @@ class agendamentoModel{
         if ($db->getError()){
             return [];
         }
-
-        var_dump("hhee");
-        var_dump($result);
         
         return $result;
     }
