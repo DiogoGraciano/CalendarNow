@@ -28,19 +28,16 @@ class agendamentoController extends controllerAbstract{
         $head->show("Agenda","agenda");
 
         $id_agenda = "";
-        $id_funcionario = "";
+        $id_funcionario = $this->getValue("id_funcionario");
 
         if (array_key_exists(0,$parameters))
             $id_agenda = functions::decrypt($parameters[0]);
         else
             $this->go("home");
 
-        if (array_key_exists(1,$parameters))
-            $id_funcionario = functions::decrypt($parameters[1]);
-
         $elements = new elements;
 
-        $filter = new filter($this->url."agendamento/filter/".$parameters[0]);
+        $filter = new filter($this->url."agendamento/index/".$parameters[0]);
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
         $funcionarios = funcionarioModel::getByAgenda($id_agenda);
@@ -55,7 +52,7 @@ class agendamentoController extends controllerAbstract{
             $elements->addOption($funcionario->id,$funcionario->nome);
         }
 
-        $Dadofuncionario = funcionarioModel::get($id_funcionario==""?$firstFuncionario:$id_funcionario);
+        $Dadofuncionario = funcionarioModel::get(!$id_funcionario?$firstFuncionario:$id_funcionario);
 
         $filter->addFilter(6,$elements->select("Funcionario","funcionario",$Dadofuncionario->id));
 
@@ -77,9 +74,6 @@ class agendamentoController extends controllerAbstract{
         $footer->show();
     }
     
-    public function filter($parameters){
-        $this->go("agendamento/index/".$parameters[0]."/".functions::encrypt($this->getValue("funcionario")));
-    }
     public function manutencao($parameters){
 
         $head = new head;
@@ -289,13 +283,12 @@ class agendamentoController extends controllerAbstract{
             if (intval($cliente))
                 $id_cliente = $cliente;
             else 
-                $id_cliente = clienteModel::set($cliente,$user->id_empresa,$id_funcionario);
+                $id_cliente = clienteModel::set($cliente,$id_funcionario);
 
             $cliente = clienteModel::get($id_cliente);
 
-            if ($cliente)
+            if (isset($cliente->id))
                 $id_agendamento = agendamentoModel::set($id_agenda,null,$cliente->id,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
-
         }
         elseif($user->tipo_usuario == 3) 
             $id_agendamento = agendamentoModel::set($id_agenda,$user->id,null,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);

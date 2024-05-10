@@ -94,7 +94,7 @@ class servicoController extends controllerAbstract{
         
         $data = [];
 
-        $data = servicoModel::getByEmpresa(intval($user->id_empresa),$nome,intval($id_funcionario),intVal($id_grupo_servico));
+        $data = servicoModel::getListByEmpresa(intval($user->id_empresa),$nome,intval($id_funcionario),intVal($id_grupo_servico));
 
         $servico->addColumns("1","Id","id")
                 ->addColumns("60","Nome","nome")

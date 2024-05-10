@@ -71,15 +71,10 @@ class servicoModel{
         }
 
         if ($values){
-            foreach ($values as $value){
-                if ($value->valor){
-                    $value->valor = functions::formatCurrency($value->valor);
-                }
-                $valuesFinal[] = $value;
-            }
-
             return $values;
         }
+
+        return [];
     }
 
     public static function setServicoGrupoServico($id_servico,$id_grupo_servico){

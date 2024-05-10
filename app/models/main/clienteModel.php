@@ -50,14 +50,13 @@ class clienteModel{
      * @param int $id O ID do cliente (opcional).
      * @return int|bool Retorna o ID do cliente inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,int $id_empresa,int $id_funcionario,int $id = null){
+    public static function set(string $nome,int $id_funcionario,int $id = null){
         $db = new cliente;
     
         $values = $db->getObject();
 
         if ($values){
             $values->id = intval($id);
-            $values->id_empresa = intval($id_empresa);
             $values->id_funcionario = intval($id_funcionario);
             $values->nome = trim($nome);
             $retorno = $db->store($values);
