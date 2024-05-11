@@ -7,12 +7,35 @@ use app\classes\mensagem;
 use app\classes\modelAbstract;
 use stdClass;
 
+/**
+ * Classe agendamentoModel
+ * 
+ * Esta classe fornece métodos para interagir com os agendamentos.
+ * Ela utiliza a classe agendamento para realizar operações de consulta, inserção, atualização e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+*/
 class agendamentoModel{
 
+    /**
+     * Obtém um agendamento pelo ID.
+     * 
+     * @param string $id O ID do agendamento.
+     * @return object|null Retorna o objeto do agendamento ou null se não encontrado.
+    */
     public static function get($id = ""){
         return (new agendamento)->get($id);
     }
 
+    /**
+     * Obtém os eventos de agendamento dentro de um intervalo de datas para uma determinada agenda.
+     * 
+     * @param string $dt_inicio A data de início do intervalo.
+     * @param string $dt_fim A data de término do intervalo.
+     * @param string $id_agenda O ID da agenda.
+     * @param string $status O status do agendamento (opcional, padrão é 99).
+     * @return array Retorna um array com os eventos de agendamento dentro do intervalo de datas especificado.
+    */
     public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$status=99){
         $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
@@ -37,6 +60,16 @@ class agendamentoModel{
         return $retorn;
     }
 
+    /**
+     * Obtém os eventos de agendamento dentro de um intervalo de datas para um funcionário específico em uma determinada agenda.
+     * 
+     * @param string $dt_inicio A data de início do intervalo.
+     * @param string $dt_fim A data de término do intervalo.
+     * @param string $id_agenda O ID da agenda.
+     * @param string $id_funcionario O ID do funcionário.
+     * @param string $status O status do agendamento (opcional, padrão é 99).
+     * @return array Retorna um array com os eventos de agendamento dentro do intervalo de datas especificado para o funcionário.
+    */
     public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$status=99){
         $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
@@ -83,6 +116,12 @@ class agendamentoModel{
         return $retorn;
     }
 
+    /**
+     * Obtém os agendamentos associados a uma empresa.
+     * 
+     * @param string $id_empresa O ID da empresa.
+     * @return array Retorna um array com os agendamentos associados à empresa.
+    */
     public static function getAgendamentosByEmpresa($id_empresa){
         $db = new agendamento;
 
@@ -100,6 +139,12 @@ class agendamentoModel{
         return $result;
     }
 
+    /**
+     * Obtém os agendamentos associados a um usuário.
+     * 
+     * @param string $id_usuario O ID do usuário.
+     * @return array Retorna um array com os agendamentos associados ao usuário.
+    */
     public static function getAgendamentosByUsuario($id_usuario){
         $db = new agendamento;
 
@@ -116,26 +161,87 @@ class agendamentoModel{
         return $result;
     }
 
-    public static function set($id_agenda,$id_usuario,$id_cliente,$id_funcionario,$titulo,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id=""){
+     /**
+     * Insere ou atualiza um agendamento.
+     * 
+     * @param int $id_agenda O ID da agenda.
+     * @param int $id_usuario O ID do usuário associado ao agendamento.
+     * @param int $id_cliente O ID do cliente associado ao agendamento.
+     * @param int $id_funcionario O ID do funcionário associado ao agendamento.
+     * @param string $titulo O título do agendamento.
+     * @param string $dt_ini A data e hora de início do agendamento.
+     * @param string $dt_fim A data e hora de término do agendamento.
+     * @param string $cor A cor do agendamento.
+     * @param string $obs Observações do agendamento.
+     * @param string $total O total do agendamento.
+     * @param string $status O status do agendamento.
+     * @param string $id O ID do agendamento (opcional).
+     * @return string|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,string $status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null){
 
         $db = new agendamento;
         
         $values = new stdClass;
 
-        $values->id = intval($id);
-        $values->id_agenda = intval($id_agenda);
-        if ($id_usuario)
-            $values->id_usuario = intval($id_usuario);
-        if ($id_cliente)
-            $values->id_cliente = intval($id_cliente);
-        $values->id_funcionario = intval($id_funcionario);
-        $values->titulo = ucwords(strtolower($titulo));
-        $values->dt_ini= functions::dateTimeBd($dt_ini);
-        $values->dt_fim = functions::dateTimeBd($dt_fim);
-        $values->cor = $cor;
+        $mensagens = [];
+
+        if(!$id || !$values->id = self::get($id)->id){
+            $mensagens[] = "Agendamento não encontrada";
+        }
+
+        if(!$id_agenda || !$values->id_agenda = agendaModel::get($id_agenda)->id){
+            $mensagens[] = "Agenda não encontrada";
+        }
+
+        if(!$id_cliente && !$id_usuario){
+            $mensagens[] = "Obrigatorio Informar Cliente ou Usuario";
+        }
+        else{
+            if($id_usuario && !$values->id_usuario = usuarioModel::get($id_usuario)->id){
+                $mensagens[] = "Usuario não encontrado";
+            }
+
+            if($id_cliente && !$values->id_cliente = clienteModel::get($id_cliente)->id){
+                $mensagens[] = "Cliente não cadastrado";
+            }
+        }
+
+        if(!$id_funcionario || !$values->id_funcionario = funcionarioModel::get($id_funcionario)->id){
+            $mensagens[] = "Funcionario não cadastrado";
+        }
+
+        if(!$values->titulo = ucwords(strtolower(trim($titulo)))){
+            $mensagens[] = "Titulo deve ser informado";
+        }
+
+        if(!$values->dt_ini = functions::dateTimeBd($dt_ini)){
+            $mensagens[] = "Data inicial invalida";
+        }
+
+        if(!$values->dt_fim = functions::dateTimeBd($dt_fim)){
+            $mensagens[] = "Data final invalida";
+        }
+
+        if(!$values->cor = functions::validaCor($cor)){
+            $mensagens[] = "Cor invalida";
+        }
+
+        if(($values->total = $total) < 0){
+            $mensagens[] = "Total deve ser maior que 0";
+        }
+
+        $values->status = $status;
+        if($values->status != 1 || $values->status != 2 || $values->status != 98 || $values->status != 99){
+            $mensagens[] = "Status informado invalido";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
+        }
+
         $values->obs = trim($obs);
-        $values->total = $total;
-        $values->status = intval($status);
 
         if ($values)
             $retorno = $db->store($values);
@@ -147,7 +253,13 @@ class agendamentoModel{
         
     }
 
-    public static function delete($id){
+    /**
+     * Exclui um agendamento pelo ID.
+     * 
+     * @param int $id O ID do agendamento a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function delete(int $id){
         return (new agendamento)->delete($id);
     }
 

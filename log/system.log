@@ -53,3 +53,5 @@
 2024-05-10T22:44:55+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-05-10T22:44:56+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-05-10T22:44:56+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-05-11T00:25:49+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'total' cannot be null
+2024-05-11T00:28:00+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'total' cannot be null

@@ -101,34 +101,52 @@ class agendamentoItemModel{
      * @param string $id_agendamento O ID do agendamento.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function setMultiple($array_items,$id_agendamento){
+    public static function setMultiple(array $array_items,int $id_agendamento){
 
-        $db = new agendamentoItem;
+        try{
+            $db = new agendamentoItem;
+            
+            $db->transaction();
+
+            if(!$id_agendamento = agendamentoModel::get($id_agendamento)->id){
+                mensagem::setErro("Agendamento não existe");
+                return false;
+            }
         
-        $db->transaction();
-       
-        foreach($array_items as $item){
-            $servico = servicoModel::get($item->id_servico);
-            $retorno = false;
-            $qtd = intval($item->qtd_item);
-            $total = floatval($item->total_item);
-            if ($servico && ($servico->valor*$qtd) == $total){
-                $values = $db->getObject();
-                $values->id = intval($item->id);
-                $values->id_servico = $servico->id;
-                $values->id_agendamento = intval($id_agendamento);
-                $values->qtd_item = $qtd;
-                $values->total_item = $total;
-                $values->tempo_item = $item->tempo_item; 
-                $retorno = $db->store($values);
-                if ($retorno == false){
-                    $db->rollback();
-                    return $retorno;
+            foreach($array_items as $item){
+                $servico = servicoModel::get($item->id_servico);
+                $qtd = intval($item->qtd_item);
+                $total = floatval($item->total_item);
+                $id = intval($item->id);
+                if ($servico && ($servico->valor*$qtd) == $total){
+
+                    $values = $db->getObject();
+
+                    if ($id){
+                        $values->id = $id;
+                    }
+
+                    $values->id_servico = $servico->id;
+                    $values->id_agendamento = $id_agendamento;
+                    $values->qtd_item = $qtd;
+                    $values->total_item = $total;
+                    $values->tempo_item = $item->tempo_item; 
+                    $retorno = $db->store($values);
+                    if ($retorno == false){
+                        mensagem::setErro("Erro ao salvar o serviço {$servico->nome}, tente novamente");
+                        $db->rollback();
+                        return $retorno;
+                    }
                 }
             }
+
+            $db->commit();
+
+            return true;
+        }catch(exception $e){
+            mensagem::setErro("Erro ao salvar os serviços do agendamento, tente novamente");
+            return false;
         }
-        $db->commit();
-        return true;
     }
 
     /**

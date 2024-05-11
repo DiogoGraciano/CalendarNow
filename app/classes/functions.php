@@ -71,6 +71,27 @@ class functions{
     }
 
     /**
+     * Validada se uma cor é valida
+     *
+     * @param string $string A string contendo a data
+     * @return string|bool A string formatada ou false se falhar
+     */
+    public static function validaCor(string $cor) {
+        // Expressão regular para verificar cor hexadecimal
+        $padrao_hex = '/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/';
+        
+        // Expressão regular para verificar cor RGB
+        $padrao_rgb = '/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/';
+        
+        // Verificar se a cor é hexadecimal ou RGB
+        if (preg_match($padrao_hex, $cor) || preg_match($padrao_rgb, $cor)) {
+            return $cor;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Converte uma string para o formato de data do banco de dados
      *
      * @param string $string A string contendo a data

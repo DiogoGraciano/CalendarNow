@@ -110,8 +110,10 @@ class agendamentoController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $elements->addOption("0","Agendado");
-        $elements->addOption("99","Cancelado");
+        $elements->addOption(1,"Agendado");
+        $elements->addOption(2,"Concluido");
+        $elements->addOption(98,"Não Atendido");
+        $elements->addOption(99,"Cancelado");
         $status = $elements->select("Status","status",$dado->status);
 
         if ($user->tipo_usuario != 3){
@@ -231,7 +233,6 @@ class agendamentoController extends controllerAbstract{
             return;
         }
 
-        $erro = false;
         $id = functions::decrypt($this->getValue('cd'));
         $dt_ini = $this->getValue('dt_ini');
         $dt_fim = $this->getValue('dt_fim');
@@ -288,27 +289,25 @@ class agendamentoController extends controllerAbstract{
             $cliente = clienteModel::get($id_cliente);
 
             if (isset($cliente->id))
-                $id_agendamento = agendamentoModel::set($id_agenda,null,$cliente->id,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$total,$status,$obs,null,$cliente->id,$id);
         }
         elseif($user->tipo_usuario == 3) 
-            $id_agendamento = agendamentoModel::set($id_agenda,$user->id,null,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$total,$status,$obs,$user->id,null,$id);
         elseif($usuario = $this->getValue('usuario')){
             $usuario = usuarioModel::get($usuario);
             if ($usuario)
-                $id_agendamento = agendamentoModel::set($id_agenda,$usuario->id,null,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$obs,$total,$status,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$total,$status,$obs,$usuario->id,null,$id);
         }
 
         if ($id_agendamento){
             if(!agendamentoItemModel::setMultiple($array_itens,$id_agendamento))
-                $erro = agendamentoModel::delete($id_agendamento);
+                agendamentoModel::delete($id_agendamento);
         }
-        else 
-            $erro = true;
 
-        if ($erro)
-            mensagem::setErro("Falha ao Agendar, tente novamente");
-        else 
+        if(!mensagem::getErro())
             mensagem::setSucesso("Agendamento Concluido");
+        else
+            mensagem::setSucesso(false);
 
         $this->go("agendamento/index/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario));
     }
