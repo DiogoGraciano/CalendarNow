@@ -4,10 +4,9 @@ namespace app\models\main;
 use app\classes\functions;
 use app\db\servico;
 use app\db\servicoFuncionario;
-use app\db\ServicoGrupoServico;
+use app\db\servicoGrupoServico;
 use app\db\agendaServico;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 class servicoModel{
 
@@ -15,7 +14,7 @@ class servicoModel{
         return (new servico)->get($id);
     }
 
-    public static function getByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null){
+    public static function getListByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null){
         $db = new servico;
 
         $db->addFilter("servico.id_empresa","=",$id_empresa);

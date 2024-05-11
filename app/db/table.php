@@ -30,6 +30,35 @@ class agenda extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+class agendaServico extends db{
+    public function __construct(){
+        parent::__construct("agenda_servico");
+    }
+
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
+
+        if($limit){
+            $this->addLimit($limit);
+        }
+
+        if ($value && in_array($column,$this->getColumns()))
+            $retorno = $this->addFilter($column,"=",$value)->selectAll();
+        
+        if (is_array($retorno) && count($retorno) == 1)
+            return $retorno[0];
+
+        return $retorno?:$this->getObject();
+    }
+
+    public function getAll(){
+        return $this->selectAll();
+    }
+
+    public function delete($value,$column="id"){
+        return $this->addFilter($column,"=",$value)->deleteByFilter();
+    }
+}
 class agendamento extends db{
     public function __construct(){
         parent::__construct("agendamento");

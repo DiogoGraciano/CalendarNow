@@ -23,7 +23,7 @@ class agendaModel{
      * @param string $value O valor para buscar.
      * @param string $column A coluna onde buscar o valor.
      * @param int $limit O número máximo de registros a serem retornados.
-     * @return array|null Retorna os dados da agenda ou null se não encontrado.
+     * @return object|null Retorna os dados da agenda ou null se não encontrado.
      */
     public static function get($value = "",string $column = "id",int $limit = 1){
         return (new agenda)->get($value,$column,$limit);

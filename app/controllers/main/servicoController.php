@@ -13,7 +13,7 @@ use app\models\main\agendaModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
-use app\models\main\GrupoServicoModel;
+use app\models\main\grupoServicoModel;
 
 class servicoController extends controllerAbstract{
 

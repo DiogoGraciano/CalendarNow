@@ -3,7 +3,6 @@ namespace app\models\main;
 
 use app\db\grupoServico;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 /**
  * Classe grupoServicoModel

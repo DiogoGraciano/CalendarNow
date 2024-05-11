@@ -10,7 +10,6 @@ use app\classes\footer;
 use app\classes\tabela;
 use app\classes\tabelaMobile;
 use app\classes\functions;
-use app\classes\Logger;
 use app\classes\mensagem;
 use app\models\main\agendamentoItemModel;
 use app\models\main\agendamentoModel;
@@ -237,7 +236,7 @@ class agendamentoController extends controllerAbstract{
         $dt_ini = $this->getValue('dt_ini');
         $dt_fim = $this->getValue('dt_fim');
         $qtd_servico = intval($this->getValue("qtd_servico"));
-        $status = $this->getValue("status");
+        $status = intval($this->getValue("status"));
         $id_agenda = $this->getValue("id_agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
         $array_itens = []; 

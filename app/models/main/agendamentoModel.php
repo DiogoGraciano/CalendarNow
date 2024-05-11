@@ -165,20 +165,20 @@ class agendamentoModel{
      * Insere ou atualiza um agendamento.
      * 
      * @param int $id_agenda O ID da agenda.
-     * @param int $id_usuario O ID do usuário associado ao agendamento.
-     * @param int $id_cliente O ID do cliente associado ao agendamento.
      * @param int $id_funcionario O ID do funcionário associado ao agendamento.
      * @param string $titulo O título do agendamento.
      * @param string $dt_ini A data e hora de início do agendamento.
      * @param string $dt_fim A data e hora de término do agendamento.
      * @param string $cor A cor do agendamento.
+     * @param float $total O total do agendamento.
+     * @param int $status O status do agendamento.
      * @param string $obs Observações do agendamento.
-     * @param string $total O total do agendamento.
-     * @param string $status O status do agendamento.
-     * @param string $id O ID do agendamento (opcional).
+     * @param int $id_usuario O ID do usuário associado ao agendamento.
+     * @param int $id_cliente O ID do cliente associado ao agendamento.
+     * @param int $id O ID do agendamento (opcional).
      * @return string|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,string $status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null){
+    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,int $status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null){
 
         $db = new agendamento;
         
@@ -186,7 +186,7 @@ class agendamentoModel{
 
         $mensagens = [];
 
-        if(!$id || !$values->id = self::get($id)->id){
+        if($id && !$values->id = self::get($id)->id){
             $mensagens[] = "Agendamento não encontrada";
         }
 
@@ -232,7 +232,7 @@ class agendamentoModel{
         }
 
         $values->status = $status;
-        if($values->status != 1 || $values->status != 2 || $values->status != 98 || $values->status != 99){
+        if($values->status != 1 && $values->status != 2 && $values->status != 98 && $values->status != 99){
             $mensagens[] = "Status informado invalido";
         }
 
