@@ -10,12 +10,13 @@
     
     if (!isset($_SESSION))
         session_start();
+
+    (new connectionDb)->startConnection();
     
     if (isset($_SESSION["user"]) || functions::getUri() == "/ajax")
         $controller = $controller->load();
     else 
         $controller = $controller->load("login");
-        
 
     $method = new Method();
     $method = $method->load($controller);

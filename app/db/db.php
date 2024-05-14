@@ -1,12 +1,11 @@
 <?php
 namespace app\db;
-use app\db\configDB;
 use app\classes\logger;
 
 /**
  * Classe base para interação com o banco de dados.
  */
-class Db extends ConfigDB
+class Db extends connectionDb
 {
     /**
      * Tabela atual.
@@ -101,7 +100,7 @@ class Db extends ConfigDB
     {
         // Inicia a Conexão
         if (!$this->pdo)
-            $this->getConnection();
+            $this->startConnection();
 
         // Seta Tabela
         $this->table = $table;

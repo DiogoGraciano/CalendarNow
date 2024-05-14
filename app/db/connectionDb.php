@@ -8,7 +8,7 @@ use PDOException;
 /**
  * Classe para configuração e obtenção da conexão com o banco de dados.
  */
-class ConfigDB{
+class connectionDb{
 
     /**
      * Instância do objeto PDO para a conexão com o banco de dados.
@@ -16,6 +16,18 @@ class ConfigDB{
      * @var PDO
      */
     protected $pdo;
+
+    protected const host = "localhost";
+
+    protected const port = "3306";
+
+    protected const dbname = "agenda";
+
+    protected const charset = "utf8mb4";
+
+    protected const user = "root";
+
+    protected const password = "";
     
     /**
      * Obtém a conexão com o banco de dados usando o PDO.
@@ -24,9 +36,9 @@ class ConfigDB{
      * 
      * @throws ErrorException Lança uma exceção se ocorrer um erro ao conectar com o banco de dados.
      */
-    protected function getConnection() {
+    protected function startConnection() {
         try {
-            $this->pdo = new PDO("mysql:host=localhost;port=3306;dbname=agenda;charset=utf8mb4","root");
+            $this->pdo = new PDO("mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=".$this->charset,$this->user,$this->password);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             return $this->pdo;
