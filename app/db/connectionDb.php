@@ -10,13 +10,6 @@ use PDOException;
  */
 class connectionDb{
 
-    /**
-     * Instância do objeto PDO para a conexão com o banco de dados.
-     *
-     * @var PDO
-     */
-    protected $pdo;
-
     protected const host = "localhost";
 
     protected const port = "3306";
@@ -28,7 +21,14 @@ class connectionDb{
     protected const user = "root";
 
     protected const password = "";
-    
+
+    /**
+     * Instância do objeto PDO para a conexão com o banco de dados.
+     *
+     * @var PDO
+     */
+    protected $pdo;
+
     /**
      * Obtém a conexão com o banco de dados usando o PDO.
      *

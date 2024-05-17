@@ -175,6 +175,9 @@ class tableDb extends connectionDB
     }
 
     public function update($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
+
+        $table = $this->getObjectTable();
+        
         $sql = "CREATE TABLE IF NOT EXISTS {$this->table} ( ";
         foreach ($this->columns as $column) {
             $sql .= $column;
@@ -207,7 +210,7 @@ class tableDb extends connectionDB
     {
         $sql = $this->pdo->prepare('SELECT column_name, data_type, character_maximum_length
         FROM information_schema.columns
-        WHERE table_schema = '.$this->database.' AND table_name = '.$this->table);
+        WHERE table_schema = '.$this->dbname.' AND table_name = '.$this->table);
        
         $sql->execute();
 
