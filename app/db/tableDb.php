@@ -64,11 +64,12 @@ class tableDb extends connectionDB
 
     public function addColumn(columnDb $column){
         $column_ = $column->getColumn();
+        $json_column_ = json_decode($column->getColumn());
 
         if($column_->size)
-            $this->columns[$column_->name] = $column;
+            $this->columns[$json_column_] = $column;
         else 
-            $this->columns[$column_->name] = $column;
+            $this->columns[$json_column_] = $column;
 
         return $this;
     }
@@ -174,13 +175,51 @@ class tableDb extends connectionDB
         $this->pdo->execute();
     }
 
+    public function recreate($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
+        $sql = "DROP TABLE IF EXISTS {$this->table};
+                CREATE TABLE IF NOT EXISTS {$this->table} ( ";
+
+        foreach ($this->columns as $column) {
+            if($column->size)
+                $sql .= "{$column->name} {$column->type}({$column->size}) {$column->null} {$column->defaut} {$column->comment},";
+            else 
+                $sql .= "{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment},";
+        }
+        $sql .= ") ENGINE={$engine} DEFAULT CHARSET={$charset} COLLATE={$collate};";
+
+        foreach ($this->foreingKeys as $foreingKey) {
+            $sql .= $foreingKey;
+        }
+
+        foreach ($this->primarys as $primary) {
+            $sql .= $primary;
+        }
+
+        foreach ($this->unique as $unique) {
+            $sql .= $unique;
+        }
+
+        foreach ($this->others as $other) {
+            $sql .= $other;
+        }
+
+        $this->pdo->prepare($sql);
+
+        $this->pdo->execute();
+    }
+
     public function update($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
 
         $table = $this->getObjectTable();
+
+        $table->column_name;
+        $table->data_type;
+        $table->character_maximum_length;
         
         $sql = "CREATE TABLE IF NOT EXISTS {$this->table} ( ";
-        foreach ($this->columns as $column) {
-            $sql .= $column;
+        foreach ($this->columns as $key => $column) {
+            if($table->column_name != $key)
+                $sql .= $column;
         }
         $sql .= ") ENGINE={$engine} DEFAULT CHARSET={$charset} COLLATE={$collate};";
 
