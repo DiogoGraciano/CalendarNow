@@ -1,6 +1,5 @@
 <?php
 namespace app\db;
-use app\classes\logger;
 
 /**
  * Classe base para criação do banco de dados.
@@ -12,7 +11,7 @@ class tableDb extends connectionDB
      *
      * @var string
      */
-    protected $table;
+    private $table;
 
     /**
      * Colunas.
@@ -57,47 +56,20 @@ class tableDb extends connectionDB
         if (!$this->pdo)
             $this->startConnection(); 
         
-        if(!validateName($this->table = strtolower(trim($table)))){
+        if(!$this->validateName($this->table = strtolower(trim($table)))){
             throw new Exception("Nome é invalido");
         }
     }
 
     public function addColumn(columnDb $column){
-        $column_ = $column->getColumn();
-        $json_column_ = json_decode($column->getColumn());
+        $column = $column->getColumn();
 
-        if($column_->size)
-            $this->columns[$json_column_] = $column;
+        if($column->size)
+            $column->columnSql = ["{$column->name} {$column->type}({$column->size}) {$column->null} {$column->defaut} {$column->comment}",$column->primary,$column->unique,$column->foreingKey];
         else 
-            $this->columns[$json_column_] = $column;
+            $column->columnSql = ["{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment}",$column->primary,$column->unique,$column->foreingKey];
 
-        return $this;
-    }
-
-    public function isForeingKey(tableDb $foreingTable,string $foreingColumn){
-
-        if($this->columns){
-            $column = array_key_first(end($this->columns));
-
-            $this->foreingKeys[] =  "ALTER TABLE {$this->table}
-            ADD FOREIGN KEY ({$column}) REFERENCES {$foreingTable->table}({$foreingColumn});";
-        }
-        else{
-            throw new Exception("é preciso ter pelo menos uma coluna para adicionar uma ForeingKey");
-        }
-
-        return $this;
-    }
-
-    public function isPrimary(){
-        if($this->columns){
-            $column = array_key_first(end($this->columns));
-
-            $this->primarys[] = "ALTER TABLE {$this->table} ADD PRIMARY KEY ({$column});";
-        }
-        else{
-            throw new Exception("é preciso ter pelo menos uma coluna para adicionar uma PrimaryKey");
-        }
+        $this->columns[$column->name] = $column;
 
         return $this;
     }
@@ -131,142 +103,107 @@ class tableDb extends connectionDB
         }
     }
 
-    public function isUnique(){
-        if($this->columns){
-            $column = array_key_first(end($this->columns));
-
-            $this->unique[] = "ALTER TABLE {$this->table} ADD UNIQUE ({$column});";
-        }
-        else{
-            throw new Exception("é preciso ter pelo menos uma coluna para adicionar uma Unique");
-        }
-
-        return $this;
-    }
-
-    public function create($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
-        $sql = "CREATE TABLE IF NOT EXISTS {$this->table} ( ";
-        foreach ($this->columns as $column) {
-            if($column->size)
-                $sql .= "{$column->name} {$column->type}({$column->size}) {$column->null} {$column->defaut} {$column->comment},";
-            else 
-                $sql .= "{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment},";
-        }
-        $sql .= ") ENGINE={$engine} DEFAULT CHARSET={$charset} COLLATE={$collate};";
-
-        foreach ($this->foreingKeys as $foreingKey) {
-            $sql .= $foreingKey;
-        }
-
-        foreach ($this->primarys as $primary) {
-            $sql .= $primary;
-        }
-
-        foreach ($this->unique as $unique) {
-            $sql .= $unique;
-        }
-
-        foreach ($this->others as $other) {
-            $sql .= $other;
-        }
-
-        $this->pdo->prepare($sql);
-
-        $this->pdo->execute();
-    }
-
-    public function recreate($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
+    private function create($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
         $sql = "DROP TABLE IF EXISTS {$this->table};
                 CREATE TABLE IF NOT EXISTS {$this->table} ( ";
 
-        foreach ($this->columns as $column) {
-            if($column->size)
-                $sql .= "{$column->name} {$column->type}({$column->size}) {$column->null} {$column->defaut} {$column->comment},";
-            else 
-                $sql .= "{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment},";
+        foreach ($this->columns as $column) {            
+            $sql .= implode(",",array_filter($column->columnSql));
         }
+
         $sql .= ") ENGINE={$engine} DEFAULT CHARSET={$charset} COLLATE={$collate};";
-
-        foreach ($this->foreingKeys as $foreingKey) {
-            $sql .= $foreingKey;
-        }
-
-        foreach ($this->primarys as $primary) {
-            $sql .= $primary;
-        }
-
-        foreach ($this->unique as $unique) {
-            $sql .= $unique;
-        }
 
         foreach ($this->others as $other) {
             $sql .= $other;
         }
+
+        var_dump($sql);
+        die;
 
         $this->pdo->prepare($sql);
 
         $this->pdo->execute();
     }
 
-    public function update($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
+    public function execute($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci",$recreate = false){
+
+        if($recreate){
+            $this->create($engine,$charset,$collate);
+        }
 
         $table = $this->getObjectTable();
 
-        $table->column_name;
-        $table->data_type;
-        $table->character_maximum_length;
+        if(!$table){
+            return $this->create($engine,$charset,$collate);
+        }
+
+        foreach ($table->column_name as $column_db){
+            if(!in_array($column_db,$this->columns)){
+                $sql .= "ALTER TABLE {$this->table} DROP COLUMN $column_db;";
+            }  
+        }
         
-        $sql = "CREATE TABLE IF NOT EXISTS {$this->table} ( ";
-        foreach ($this->columns as $key => $column) {
-            if($table->column_name != $key)
-                $sql .= $column;
-        }
-        $sql .= ") ENGINE={$engine} DEFAULT CHARSET={$charset} COLLATE={$collate};";
+        foreach ($this->columns as $column) {
 
-        foreach ($this->foreingKeys as $foreingKey) {
-            $sql .= $foreingKey;
+            $inDb = false;
+            foreach ($table->column_name as $column_db){
+                if($column_db == $column->name){
+                    $inDb = true;
+                }
+            }
+
+            if($inDb){
+                $sql .= "ALTER TABLE {$this->table} MODIFY COLUMN {$column->columnSql};";
+            }
+            else{
+                $sql .= "ALTER TABLE {$this->table} ADD {$column->columnSql};";
+            }
+
+            foreach ($this->primarys as $primary) {
+                $sql .= $primary;
+            }
         }
 
-        foreach ($this->primarys as $primary) {
-            $sql .= $primary;
-        }
+        if($engine)
+            $sql .= "ALTER TABLE {$this->table} ENGINE = {$engine};";
 
-        foreach ($this->unique as $unique) {
-            $sql .= $unique;
-        }
+        if($charset)
+            $sql .= "ALTER TABLE {$this->table} ENGINE = {$charset};";
+
+        if($collate)
+            $sql .= "ALTER TABLE {$this->table} ENGINE = {$collate};";
 
         foreach ($this->others as $other) {
             $sql .= $other;
         }
 
+        var_dump($sql);
+        die;
+
         $this->pdo->prepare($sql);
 
         $this->pdo->execute();
+    }
+
+    public function getTable(){
+        return $this->table;
     }
 
     //Pega as colunas da tabela e tranforma em Objeto
     private function getObjectTable()
     {
-        $sql = $this->pdo->prepare('SELECT column_name, data_type, character_maximum_length
-        FROM information_schema.columns
-        WHERE table_schema = '.$this->dbname.' AND table_name = '.$this->table);
+        $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM information_schema.columns
+        WHERE table_schema = "'.self::dbname.'" AND table_name = "'.$this->table.'"');
        
         $sql->execute();
 
         $rows = [];
 
         if ($sql->rowCount() > 0) {
-            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
+            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN|\PDO::FETCH_GROUP);
         }
 
-        if ($rows) {
-            $object = new \stdClass;
-            foreach ($rows as $row) {
-                $object->$row = null;
-            }
-
-            return $object;
-        } 
+        return $rows;   
 
         $this->error[] = "Erro: Tabela não encontrada";
         Logger::error("Erro: Tabela não encontrada");
@@ -278,13 +215,10 @@ class tableDb extends connectionDB
         $regex = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
         
         // Verifica se o nome da tabela corresponde à expressão regular
-        if (preg_match($regex, $nomeTabela)) {
+        if (preg_match($regex, $name)) {
             return true; // Nome da tabela é válido
         } else {
             return false; // Nome da tabela é inválido
         }
     }
-
-    
-
 }

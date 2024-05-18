@@ -4,14 +4,12 @@
     use core\Controller;    
     use core\Method;
     use core\Parameter;
+    use app\db\connectionDb;
     use app\classes\functions;
 
-    $controller = new Controller;
-    
-    if (!isset($_SESSION))
-        session_start();
-
     (new connectionDb)->startConnection();
+
+    $controller = new Controller;
     
     if (isset($_SESSION["user"]) || functions::getUri() == "/ajax")
         $controller = $controller->load();

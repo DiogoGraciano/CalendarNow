@@ -1,16 +1,17 @@
 <?php
 namespace app\db;
-use app\classes\logger;
+use stdClass;
+use Exception;
 
 /**
  * Classe base para criação do banco de dados.
  */
-class TableDb extends connectionDB
+class columnDb extends connectionDB
 {
     /**
      * Colunas.
      *
-     * @var string
+     * @var object
      */
     private $column;
 
@@ -53,25 +54,28 @@ class TableDb extends connectionDB
     {
         $type = strtoupper(trim($type));
         
-        if(in_array($this->types)){
+        if(in_array($type,self::types)){
 
             if($size){
-                validateSize($type,$size);
+                $this->validateSize($type,$size);
             }
 
             $name = strtolower(trim($name));
 
-            if(!validateName($name)){
+            if(!$this->validateName($name)){
                 throw new Exception("Nome é invalido");
             }
 
             $this->column = new StdClass;
-            $this->columns->name = $name;
-            $this->columns->type = $type;
-            $this->columns->size = $size;
-            $this->columns->null = "";
-            $this->columns->defaut = "";
-            $this->columns->comment = "";
+            $this->column->name = $name;
+            $this->column->type = $type;
+            $this->column->size = $size;
+            $this->column->primary = "";
+            $this->column->unique = "";
+            $this->column->null = "";
+            $this->column->defaut = "";
+            $this->column->comment = "";
+            $this->column->foreingKey = "";
         }
         else 
             throw new Exception("Tipo é invalido");
@@ -79,7 +83,22 @@ class TableDb extends connectionDB
     }
 
     public function isNotNull(){
-        $this->column->null = "NOT NULL";
+        $this->column->null = " NOT NULL";
+        return $this;
+    }
+
+    public function isPrimary(){
+        $this->column->primary = " PRIMARY KEY ({$this->column->name})";
+        return $this;
+    }
+
+    public function isUnique(){
+        $this->column->unique = " UNIQUE ({$this->column->name})";
+        return $this;
+    }
+
+    public function isForeingKey(tableDb $foreingTable,string $foreingColumn = "id"){
+        $this->column->foreingKey = " FOREIGN KEY ({$this->column->name}) REFERENCES {$foreingTable->getTable()}({$foreingColumn})";
         return $this;
     }
 
@@ -108,16 +127,16 @@ class TableDb extends connectionDB
         if($size < 0){
             throw new Exception("Tamanho é invalido");
         }
-        else if(($type == "CHAR" || $type ==  "BINARY") && $size > 255){
-            throw new Exception("Tamanho é invalido para o tipo informado");
-        }
-        else if(($type == "VARCHAR" || $type ==  "VARBINARY") && $size > 65535){
-            throw new Exception("Tamanho é invalido para o tipo informado");
-        }
-        else{
+        elseif(!in_array($type,["CHAR","BINARY","VARCHAR","VARBINARY"])){
             throw new Exception("Tamanho não deve ser informado para o tipo informado");
         }
-
+        elseif(($type == "CHAR" || $type ==  "BINARY") && $size > 255){
+            throw new Exception("Tamanho é invalido para o tipo informado");
+        }
+        elseif(($type == "VARCHAR" || $type ==  "VARBINARY") && $size > 65535){
+            throw new Exception("Tamanho é invalido para o tipo informado");
+        }
+    
         return true;
     }
 
@@ -126,7 +145,7 @@ class TableDb extends connectionDB
         $regex = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
         
         // Verifica se o nome da tabela corresponde à expressão regular
-        if (preg_match($regex, $nomeTabela)) {
+        if (preg_match($regex, $name)) {
             return true; // Nome da tabela é válido
         } else {
             return false; // Nome da tabela é inválido

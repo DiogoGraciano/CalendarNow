@@ -5,7 +5,7 @@
             "core\\":"core"
         },
         "files": [
-            "app\\db\\table.php" 
+            "app\\db\\tablesClass.php" 
         ]
     },
     "require": {

@@ -36,9 +36,15 @@ class connectionDb{
      * 
      * @throws ErrorException Lança uma exceção se ocorrer um erro ao conectar com o banco de dados.
      */
-    protected function startConnection() {
+    public function startConnection() {
+
+        $host = self::host;
+        $port = self::port;
+        $dbname = self::dbname;
+        $charset = self::charset;
+
         try {
-            $this->pdo = new PDO("mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=".$this->charset,$this->user,$this->password);
+            $this->pdo = new PDO("mysql:host={$host};port={$port};dbname={$dbname};charset=".$charset,self::user,self::password);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             return $this->pdo;

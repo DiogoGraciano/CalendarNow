@@ -1,4 +1,8 @@
 <?php
+
+if (!isset($_SESSION))
+    session_start();
+
 //ini_set(default_charset, "utf-8");
 define('FIRSTKEY','mHWEcxTwCNPSl1Ul5YuPjA6p2uswTpA3CI5jjbE/4yU=');
 define('SECONDKEY','KGRne+mLxVR29uCBIAOdYLRbnr/MIfGEiP+HRJ5SQdFgatgvuq4Nm/OmA73H5sniB4XJLNMzFoS/41eEgfVRYA==');
