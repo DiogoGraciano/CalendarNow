@@ -2,8 +2,6 @@
 namespace app\models\main;
 
 use app\db\estado;
-use app\classes\modelAbstract;
-use app\classes\mensagem;
 
 /**
  * Classe estadoModel
@@ -19,9 +17,10 @@ class estadoModel{
      * Obtém um estado pelo ID.
      * 
      * @param string $id O ID do estado a ser buscado.
-     * @return array|null Retorna os dados do estado ou null se não encontrado.
+     * @return object Retorna os dados do estado ou null se não encontrado.
      */
-    public static function get(int $id){
+    public static function get(int $id):object
+    {
         return (new estado)->get($id);
     }
 
@@ -31,12 +30,13 @@ class estadoModel{
      * @param string $uf A UF (Unidade Federativa) do estado a ser buscado.
      * @return array Retorna um array com os dados do estado ou um array vazio se não encontrado.
      */
-    public static function getByUf(string $uf){
+    public static function getByUf(string $uf):array
+    {
         $db = new estado;
         
         $estado = $db->selectByValues(["uf"], [$uf], true);
         
-        if ($mensagens = $db->getError()){
+        if ($db->getError()){
             return [];
         }
 

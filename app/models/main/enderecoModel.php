@@ -5,7 +5,6 @@ use app\db\endereco;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use app\classes\functions;
-use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
 
 /**

@@ -1,10 +1,8 @@
 <?php
 namespace app\models\main;
 
-use app\db\funcionario;
 use app\db\grupoFuncionario;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 /**
  * Classe grupoFuncionarioModel
@@ -20,9 +18,9 @@ class grupoFuncionarioModel{
      * Obtém um grupo de funcionário pelo ID.
      * 
      * @param int $id O ID do grupo de funcionário a ser buscado.
-     * @return array|null Retorna os dados do grupo de funcionário ou null se não encontrado.
+     * @return object Retorna os dados do grupo de funcionário ou null se não encontrado.
      */
-    public static function get(int $id = null){
+    public static function get(int $id = null):object{
         return (new grupoFuncionario)->get($id);
     }
 
@@ -33,7 +31,7 @@ class grupoFuncionarioModel{
      * @param string $nome para filtrar por nome.
      * @return array Retorna um array com os grupos de funcionários da empresa especificada.
      */
-    public static function getByEmpresa(int $id_empresa,string $nome = null){
+    public static function getByEmpresa(int $id_empresa,string $nome = null):array{
         $db = new grupoFuncionario;
 
         $db->addFilter("id_empresa", "=", $id_empresa);
@@ -44,7 +42,7 @@ class grupoFuncionarioModel{
 
         $values = $db->selectColumns("id","nome");
 
-        if ($Mensagems = ($db->getError())){
+        if ($db->getError()){
             return [];
         }
 
@@ -58,14 +56,24 @@ class grupoFuncionarioModel{
      * @param int $id O ID do grupo de funcionário (opcional).
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,int $id_empresa,int $id = null){
+    public static function set(string $nome,int $id_empresa,int $id = null):bool{
         $db = new grupoFuncionario;
         
         $values = $db->getObject();
 
-        $values->id = $id;
-        $values->id_empresa = $id_empresa;
-        $values->nome = $nome;
+        $mensagens = [];
+
+        if($values->id = $id && !self::get($values->id)->id){
+            $mensagens[] = "Grupo de Funcionarios não encontrada";
+        }
+        
+        if(!empresaModel::get($values->id_empresa = $id_empresa)->id){
+            $mensagens[] = "Empresa não encontrada";
+        }
+
+        if(!$values->nome = filter_var(trim($nome))){
+            $mensagens[] = "Nome invalido";
+        }
 
         $retorno = $db->store($values);
 
@@ -84,7 +92,7 @@ class grupoFuncionarioModel{
      * @param string $id O ID do grupo de funcionário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete($id){
+    public static function delete($id):bool{
         return (new grupoFuncionario)->delete($id);
     }
 

@@ -8,13 +8,38 @@ use app\db\servicoGrupoServico;
 use app\db\agendaServico;
 use app\classes\mensagem;
 
+/**
+ * Classe servicoModel
+ * 
+ * Esta classe fornece métodos para interagir com os serviços.
+ * Ela utiliza a classe servico para realizar operações de consulta, inserção, atualização e exclusão no banco de dados.
+ * 
+ * @package app\models\main
+*/
 class servicoModel{
 
-    public static function get($id){
+    /**
+     * Obtém um serviço pelo ID.
+     * 
+     * @param int $id O ID do serviço.
+     * @return object Retorna o objeto do serviço ou null se não encontrado.
+    */
+    public static function get(int $id):object
+    {
         return (new servico)->get($id);
     }
 
-    public static function getListByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null){
+    /**
+     * Obtém uma lista de serviços por empresa, podendo filtrar por nome, funcionário ou grupo de serviço.
+     * 
+     * @param int $id_empresa O ID da empresa.
+     * @param string|null $nome O nome do serviço (opcional).
+     * @param int|null $id_funcionario O ID do funcionário (opcional).
+     * @param int|null $id_grupo_servico O ID do grupo de serviço (opcional).
+     * @return array Retorna um array com os serviços filtrados.
+    */
+    public static function getListByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null):array
+    {
         $db = new servico;
 
         $db->addFilter("servico.id_empresa","=",$id_empresa);
@@ -39,7 +64,7 @@ class servicoModel{
 
         $valuesFinal = [];
 
-        if ($Mensagems = ($db->getError())){
+        if ($db->getError()){
             return [];
         }
 
@@ -55,7 +80,14 @@ class servicoModel{
         }
     }
 
-    public static function getByFuncionario(int $id_funcionario){
+    /**
+     * Obtém os serviços associados a um funcionário.
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @return array Retorna um array com os serviços associados ao funcionário.
+    */
+    public static function getByFuncionario(int $id_funcionario):array
+    {
         $db = new servico;
 
         $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id");
@@ -65,7 +97,7 @@ class servicoModel{
         
         $values = $db->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
 
-        if ($Mensagems = ($db->getError())){
+        if ($db->getError()){
             return [];
         }
 
@@ -76,65 +108,120 @@ class servicoModel{
         return [];
     }
 
-    public static function setServicoGrupoServico($id_servico,$id_grupo_servico){
+    /**
+     * Associa um serviço a um grupo de serviço.
+     * 
+     * @param int $id_servico O ID do serviço.
+     * @param int $id_grupo_servico O ID do grupo de serviço.
+     * @return bool Retorna o ID da associação se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function setServicoGrupoServico(int $id_servico,int $id_grupo_servico):bool
+    {
         $db = new servicoGrupoServico;
+
+        $values = $db->getObject();
+
+        if(!grupoServicoModel::get($values->id_grupo_servico = $id_grupo_servico)){
+            mensagem::setErro("Grupo de serviço não existe");
+            return false;
+        }
+        if(self::get($values->id_servico = $id_servico)){
+            mensagem::setErro("Serviço não existe");
+            return false;
+        }
 
         $result = $db->addFilter("id_grupo_servico","=",$id_grupo_servico)
                     ->addFilter("id_servico","=",$id_servico)
                     ->selectAll();
 
         if (!$result){
-            $values = $db->getObject();
+           
+            $retorno = $db->storeMutiPrimary($values);
 
-            $values->id_grupo_servico = $id_grupo_servico;
-            $values->id_servico = $id_servico;
-
-            if ($values)
-                $retorno = $db->storeMutiPrimary($values);
-
-            if ($retorno == true){
-                return $db->getLastID();
-            }
-            return False;
+            return $retorno;
         }
         return True;
     }
 
-    public static function setServicoFuncionario($id_servico,$id_funcionario){
+    /**
+     * Associa um serviço a um funcionário.
+     * 
+     * @param int $id_servico O ID do serviço.
+     * @param int $id_funcionario O ID do funcionário.
+     * @return bool Retorna o ID da associação se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function setServicoFuncionario(int $id_servico,int $id_funcionario):bool
+    {
         $db = new servicoFuncionario;
+
+        $values = $db->getObject();
+
+        if(!funcionarioModel::get($values->id_funcionario = $id_funcionario)){
+            mensagem::setErro("Funcionario não existe");
+            return false;
+        }
+        if(self::get($values->id_servico = $id_servico)){
+            mensagem::setErro("Serviço não existe");
+            return false;
+        }
 
         $result = $db->addFilter("id_funcionario","=",$id_funcionario)
                     ->addFilter("id_servico","=",$id_servico)
                     ->selectAll();
 
         if (!$result){
-            $values = $db->getObject();
 
-            $values->id_funcionario = $id_funcionario;
-            $values->id_servico = $id_servico;
+            $retorno = $db->storeMutiPrimary($values);
 
-            if ($values)
-                $retorno = $db->storeMutiPrimary($values);
-
-            if ($retorno == true){
-                return $db->getLastID();
-            }
-            return False;
+            return $retorno;
         }
+
         return True;
     }
 
-    public static function set($nome,$valor,$tempo,$id_empresa="",$id=""){
+    /**
+     * Insere ou atualiza um serviço.
+     * 
+     * @param string $nome O nome do serviço.
+     * @param float $valor O valor do serviço.
+     * @param string $tempo O tempo estimado do serviço.
+     * @param int|string $id_empresa O ID da empresa.
+     * @param string $id O ID do serviço (opcional).
+     * @return int|bool Retorna o ID do serviço se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function set(string $nome,float $valor,string $tempo,int|null $id_empresa = null,int|null $id = null):int|bool
+    {
 
         $db = new servico;
         
         $values = $db->getObject();
 
-        $values->id = $id;
-        $values->valor = $valor;
-        $values->tempo = $tempo;
-        $values->id_empresa = $id_empresa;
-        $values->nome = $nome;
+        $mensagens = [];
+
+        if(!$values->nome = filter_var(trim($nome))){
+            $mensagens[] = "Nome é invalido";
+        }
+
+        if($values->valor = $valor <= 0){
+            $mensagens[] = "Valor do serviço invalido";
+        }
+
+        if(!functions::validaHorario($values->tempo = functions::formatTime($tempo))){
+            $mensagens[] = "Tempo do serviço invalido";
+        }
+
+        if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)){
+            $mensagens[] = "Empresa não existe";
+        }
+
+        if($values->id = $id && !self::get($values->id)){
+            $mensagens[] = "Serviço não existe";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
+        }
 
         if ($values)
             $retorno = $db->store($values);
@@ -142,23 +229,32 @@ class servicoModel{
         if ($retorno == true){
             return $db->getLastID();
         }
+
         return False;
     }
 
-    public static function delete($id){
+    /**
+     * Exclui um serviço pelo ID.
+     * 
+     * @param int $id O ID do serviço a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function delete(int $id):bool{
         return (new servico)->delete($id);
     }
 
-    public static function deleteAgendaServico($id_servico,$id_agenda){
+    /**
+     * Exclui a associação de um serviço com uma agenda.
+     * 
+     * @param int $id_servico O ID do serviço.
+     * @param int $id_agenda O ID da agenda.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function deleteAgendaServico(int $id_servico,int $id_agenda):bool
+    {
         $db = new agendaServico;
 
-        $retorno =  $db->addFilter("agenda_servico.id_servico","=",$id_servico)->addFilter("agenda_servico.id_agenda","=",$id_agenda)->deleteByFilter();
-
-        if ($retorno == true){
-           
-            return True;
-        }
-        return False;
+        return $db->addFilter("agenda_servico.id_servico","=",$id_servico)->addFilter("agenda_servico.id_agenda","=",$id_agenda)->deleteByFilter();
     }
 
 }

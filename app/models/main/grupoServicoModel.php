@@ -18,19 +18,11 @@ class grupoServicoModel{
      * Obtém um grupo de serviço pelo ID.
      * 
      * @param int $id O ID do grupo de serviço a ser buscado.
-     * @return array|object Retorna os dados do grupo de serviço ou object se não encontrado.
+     * @return object Retorna os dados do grupo de serviço ou object se não encontrado.
      */
-    public static function get(int $id = null){
+    public static function get(int $id = null):object
+    {
         return (new grupoServico)->get($id);
-    }
-
-    /**
-     * Obtém todos os grupos de serviço.
-     * 
-     * @return array Retorna um array com todos os grupos de serviço.
-     */
-    public static function getAll(){
-        return (new grupoServico)->selectAll();
     }
 
     /**
@@ -40,14 +32,23 @@ class grupoServicoModel{
      * @param int $id O ID do grupo de serviço (opcional).
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,int $id_empresa,int $id = null){
+    public static function set(string $nome,int $id_empresa,int $id = null):bool
+    {
         $db = new grupoServico;
         
         $values = $db->getObject();
 
-        $values->id = $id;
-        $values->id_empresa = $id_empresa;
-        $values->nome = $nome;
+        if($values->id = $id && !self::get($values->id)->id){
+            $mensagens[] = "Grupo de Serviço não encontrada";
+        }
+        
+        if(!empresaModel::get($values->id_empresa = $id_empresa)->id){
+            $mensagens[] = "Empresa não encontrada";
+        }
+
+        if(!$values->nome = filter_var(trim($nome))){
+            $mensagens[] = "Nome invalido";
+        }
 
         $retorno = $db->store($values);
 
@@ -68,7 +69,8 @@ class grupoServicoModel{
      * @param string $nome para filtrar por nome.
      * @return array Retorna um array com os grupos de serviço da empresa especificada.
      */
-    public static function getByEmpresa(int $id_empresa,string $nome = null){
+    public static function getByEmpresa(int $id_empresa,string $nome = null):array
+    {
         $db = new grupoServico;
 
         $db->addFilter("id_empresa", "=", $id_empresa);
@@ -79,7 +81,7 @@ class grupoServicoModel{
 
         $values = $db->selectColumns("id","nome");
 
-        if ($Mensagems = ($db->getError())){
+        if ($db->getError()){
             return [];
         }
 
@@ -92,7 +94,8 @@ class grupoServicoModel{
      * @param string $id O ID do grupo de serviço a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id){
+    public static function delete(int $id):bool
+    {
         return (new grupoServico)->delete($id);
     }
 

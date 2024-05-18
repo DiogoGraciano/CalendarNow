@@ -181,7 +181,11 @@ class agendamentoController extends controllerAbstract{
 
         if($servicos){
             foreach ($servicos as $servico){
-                $agendaItem = agendamentoItemModel::getItemByServico($dado->id,$servico->id);
+                if($dado->id && $servico->id)
+                    $agendaItem = agendamentoItemModel::getItemByServico($dado->id,$servico->id);
+                else 
+                    $agendaItem = null;
+
                 if (isset($agendaItem->id_servico) && $agendaItem->id_servico == $servico->id){
                     $form->setHidden("id_item_".$i,$agendaItem->id);
                     $table->addRow([

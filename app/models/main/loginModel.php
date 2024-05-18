@@ -22,7 +22,8 @@ class loginModel{
      * @param string $senha A senha do usuário.
      * @return bool Retorna true se o login for bem-sucedido, caso contrário retorna false.
      */
-    public static function login($cpf_cnpj, $senha){
+    public static function login($cpf_cnpj, $senha):bool
+    {
         $db = new usuario;
         $login = $db->selectByValues(["cpf_cnpj"], [functions::onlynumber($cpf_cnpj)], true);
 
@@ -41,8 +42,9 @@ class loginModel{
     /**
      * Desloga o usuário, destruindo a sessão.
      */
-    public static function deslogar(){
-        session_destroy();
+    public static function deslogar():bool
+    {
+        return session_destroy();
     }
 
 }

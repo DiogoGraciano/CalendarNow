@@ -105,7 +105,8 @@ class functions{
         return false;
     }
 
-    public static function validaCpfCnpj($cpf_cnpj){
+    public static function validaCpfCnpj($cpf_cnpj):bool
+    {
         $cpf_cnpj = preg_replace('/[^0-9]/', '', (string)$cpf_cnpj);
 
         if (strlen($cpf_cnpj) == 14)
@@ -122,7 +123,8 @@ class functions{
      * @param string $cnpj A string contendo a data
      * @return bool Se for validado true senão fals
     */
-    public static function validaCnpj($cnpj){
+    public static function validaCnpj($cnpj):bool
+    {
         $cnpj = preg_replace('/[^0-9]/', '', (string)$cnpj);
 
         // Valida tamanho
@@ -163,7 +165,8 @@ class functions{
      * @param string $cnpj A string contendo a data
      * @return bool Se for validado true senão false
     */
-    public static function validaCpf($cpf){
+    public static function validaCpf($cpf):bool
+    {
         // Extrai somente os números
         $cpf = preg_replace( '/[^0-9]/', '', (string)$cpf);
         
@@ -233,13 +236,81 @@ class functions{
         return $maskared;
     }
 
+
+    /**
+     * Valida se uma email é valido
+     *
+     * @param string $email A string com o email
+     * @return bool se é valido
+    */
+    public static function validaEmail($email) {
+        // Usar filter_var com FILTER_VALIDATE_EMAIL para validar o e-mail
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    /**
+     * Valida se os dias são validos
+     *
+     * @param string $dias A string com os dias
+     * @return bool se é valido
+    */
+    public static function validarDiasSemana($dias_semana) {
+        // Expressão regular para validar o formato geral
+        $padrao_formato = '/^(dom|seg|ter|qua|qui|sex|sab)(,(dom|seg|ter|qua|qui|sex|sab))*$/';
+        
+        // Verificar se o formato geral está correto
+        if (preg_match($padrao_formato, $dias_semana)) {
+            // Dividir a lista em dias individuais
+            $dias = explode(",", $dias_semana);
+            
+            // Verificar cada dia individualmente
+            foreach ($dias as $dia) {
+                $dia = trim($dia);
+                if (!in_array($dia, ["dom", "seg", "ter", "qua", "qui", "sex", "sab"])) {
+                    return false; // Dia inválido encontrado
+                }
+            }
+            
+            return true; // Todos os dias são válidos
+        }
+        
+        return false; // Formato geral inválido
+    }
+
+    /**
+     * Valida se uma horario é valido
+     *
+     * @param string $horario A string com o horario
+     * @return bool se é valido
+    */
+    public static function validaHorario(string $horario):bool
+    {
+        // Expressão regular para validar o formato HH:MM:SS
+        $padrao_horario = '/^([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/';
+        
+        // Verificar se o horário corresponde ao padrão
+        if (preg_match($padrao_horario, $horario, $matches)) {
+            // Verificar se os valores de hora, minuto e segundo estão dentro dos limites corretos
+            $hora = intval($matches[1]);
+            $minuto = intval($matches[2]);
+            $segundo = intval($matches[3]);
+            
+            if ($hora >= 0 && $hora <= 23 && $minuto >= 0 && $minuto <= 59 && $segundo >= 0 && $segundo <= 59) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     /**
      * Formata uma string de tempo para o formato HH:MM:SS ou HH:MM
      *
      * @param string $time A string de tempo a ser formatada
      * @return string A string de tempo formatada
      */
-    public static function formatTime($time){
+    public static function formatTime(string $time):string
+    {
         if ($tamanho = substr_count($time,":")){
             if ($tamanho == 2){
                 return $time;
@@ -251,6 +322,33 @@ class functions{
         else{
             return $time.":00:00";
         }
+    }
+
+    /**
+     * Multiplica um tempo pela quantidade informada
+     *
+     * @param string $tempo A string de tempo a ser modificada
+     * @return int A string de tempo sem os segundos
+    */
+    public static function multiplicarTempo(string $tempo,int $quantidade):string
+    {
+        // Divide o tempo em horas, minutos e segundos
+        list($horas, $minutos, $segundos) = explode(':', $tempo);
+    
+        // Converte tudo para segundos
+        $totalSegundos = $horas * 3600 + $minutos * 60 + $segundos;
+    
+        // Multiplica pelos segundos pela quantidade especificada
+        $totalSegundos *= $quantidade;
+    
+        // Calcula as novas horas, minutos e segundos
+        $novasHoras = floor($totalSegundos / 3600);
+        $totalSegundos %= 3600;
+        $novosMinutos = floor($totalSegundos / 60);
+        $novosSegundos = $totalSegundos % 60;
+    
+        // Formata a nova hora no formato HH:MM:SS
+        return sprintf('%02d:%02d:%02d', $novasHoras, $novosMinutos, $novosSegundos);
     }
 
     /**
@@ -421,9 +519,9 @@ class functions{
      * Valida um número de telefone para o formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX
      *
      * @param string $telefone O número de telefone a ser validadp
-     * @return string|bool O número de telefone valido ou false se inválido
+     * @return bool O número de telefone valido ou false se inválido
      */
-    public static function validaTelefone($telefone) {
+    public static function validaTelefone($telefone):bool {
         // Remover quaisquer caracteres que não sejam dígitos
         $telefone = preg_replace('/\D/', '', $telefone);
             

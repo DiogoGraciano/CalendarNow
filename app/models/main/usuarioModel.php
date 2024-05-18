@@ -19,22 +19,25 @@ class usuarioModel{
      * Obtém um usuário pelo ID.
      * 
      * @param string $id O ID do usuário a ser buscado.
-     * @return array|object Retorna os dados do usuário ou objeto se não encontrado.
+     * @return object Retorna os dados do usuário ou objeto se não encontrado.
     */
-    public static function get(int $id=null){
+    public static function get(int $id=null):object
+    {
         return (new usuario)->get($id);
     }
 
     /**
      * Obtém o usuário logado.
      * 
-     * @return object|null Retorna os dados do usuário logado ou null se não houver usuário logado.
+     * @return object|bool Retorna os dados do usuário logado ou null se não houver usuário logado.
     */
-    public static function getLogged(){
+    public static function getLogged():object|bool
+    {
         if (isset($_SESSION["user"]) && $_SESSION["user"])
             return $_SESSION["user"];
 
         loginModel::deslogar();
+        return false;
     }
 
     /**
@@ -44,7 +47,8 @@ class usuarioModel{
      * @param string $email O e-mail do usuário.
      * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
     */
-    public static function getByCpfEmail(string $cpf_cnpj,string $email){
+    public static function getByCpfEmail(string $cpf_cnpj,string $email):array
+    {
 
         $db = new usuario;
 
@@ -63,7 +67,8 @@ class usuarioModel{
      * @param string $cpf_cnpj O CPF ou CNPJ do usuário.
      * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
     */
-    public static function getByCpfCnpj(string $cpf_cnpj){
+    public static function getByCpfCnpj(string $cpf_cnpj):array
+    {
 
         $db = new usuario;
 
@@ -82,7 +87,8 @@ class usuarioModel{
      * @param string $email O e-mail do usuário.
      * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
     */
-    public static function getByEmail(string $email){
+    public static function getByEmail(string $email):array
+    {
 
         $db = new usuario;
 
@@ -102,7 +108,8 @@ class usuarioModel{
      * @param string $id_agenda O ID da agenda.
      * @return array Retorna um array de usuários.
     */
-    public static function getByTipoUsuarioAgenda(int $tipo_usuario,string $id_agenda){
+    public static function getByTipoUsuarioAgenda(int $tipo_usuario,string $id_agenda):array
+    {
         $db = new usuario;
         $usuarios = $db->addJoin("INNER","agendamento","usuario.id","agendamento.id_usuario")
                         ->addFilter("tipo_usuario","=",$tipo_usuario)
@@ -129,63 +136,65 @@ class usuarioModel{
      * @param string $id O ID do usuário (opcional).
      * @param int $tipo_usuario O tipo de usuário (padrão é 3).
      * @param int $id_empresa O ID da empresa associada (opcional, padrão é "null").
-     * @return string|bool Retorna o ID do usuário inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
+     * @return int|bool Retorna o ID do usuário inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int $id,int $tipo_usuario = 3,int $id_empresa = null){
+    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int $id,int $tipo_usuario = 3,int $id_empresa = null):int|bool
+    {
 
         $db = new usuario;
 
         $mensagens = [];
 
-        if(!filter_var($nome)){
-            $mensagens[] = "Nome da Empresa é obrigatorio";
+        $values = $db->getObject();
+
+        if(!$values->nome = filter_var(trim($nome))){
+            $mensagens[] = "Nome é invalido";
         }
 
-        if(!functions::validaCpfCnpj($cpf_cnpj)){
+        if(!$values->cpf_cnpj = functions::onlynumber($cpf_cnpj) || functions::validaCpfCnpj($cpf_cnpj)){
             $mensagens[] = "CPF/CNPJ invalido";
         }
 
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if(!$values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL)){
             $mensagens[] = "E-mail Invalido";
         }
 
-        if(!functions::validaTelefone($telefone)){
+        if(!$values->telefone = functions::onlynumber($cpf_cnpj) || !functions::validaTelefone($telefone)){
             $mensagens[] = "Telefone Invalido";
         }
 
-        if($tipo_usuario < 0 || $tipo_usuario > 3){
+        if(!$values->tipo_usuario = $tipo_usuario || $values->tipo_usuario  < 0 || $values->tipo_usuario  > 3){
             $mensagens[] = "Tipo de Usuario Invalido";
         }
 
-        if(($tipo_usuario == 2 || $tipo_usuario == 1) && !$id_empresa){
+        if(($values->tipo_usuario  == 2 || $values->tipo_usuario == 1) && !$id_empresa){
             $mensagens[] = "Informar a empresa é obrigatorio para esse tipo de usuario";
+        }
+
+        if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)->id){
+            $mensagens[] = "Empresa não existe";
+        }
+
+        if($values->id = $id && !self::get($values->id)->id){
+            $mensagens[] = "Usuario não existe";
         }
 
         if($mensagens){
             mensagem::setErro(...$mensagens);
             return false;
         }
-    
-        $values = $db->getObject();
 
-        if ($values){
-            $values->id = intval($id);
-            $values->id_empresa = intval($id_empresa);
-            $values->cpf_cnpj = functions::onlynumber($cpf_cnpj);
-            $values->nome = trim($nome);
-            $values->email= trim($email);
-            $values->senha = password_hash(trim($senha),PASSWORD_DEFAULT);
-            $values->telefone = functions::onlynumber($telefone);
-            $values->tipo_usuario = intval($tipo_usuario);
-            $retorno = $db->store($values);
-        }
+        $values->senha = password_hash(trim($senha),PASSWORD_DEFAULT);
+
+        $retorno = $db->store($values);
+        
         if ($retorno == true){
             mensagem::setSucesso("Usuario salvo com sucesso");
             return $db->getLastID();
-        }else{
-            mensagem::setErro("Erro ao cadastrar usuario");
-            return False;
         }
+
+        mensagem::setErro("Erro ao cadastrar usuario");
+        return False;
     }
 
     /**
@@ -194,7 +203,8 @@ class usuarioModel{
      * @param int $id O ID do usuário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete(int $id){
+    public static function delete(int $id):bool
+    {
         return (new usuario)->delete($id);
     }
 

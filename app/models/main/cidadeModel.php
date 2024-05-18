@@ -19,9 +19,10 @@ class cidadeModel{
      * Obtém uma cidade pelo ID.
      * 
      * @param string $id O ID da cidade a ser buscada.
-     * @return array|null Retorna os dados da cidade ou null se não encontrado.
+     * @return object Retorna os dados da cidade ou null se não encontrado.
      */
-    public static function get(int $id){
+    public static function get(int $id):object
+    {
         return (new cidade)->get($id);
     }
 
@@ -31,9 +32,15 @@ class cidadeModel{
      * @param string $nome O nome da cidade a ser buscada.
      * @return array Retorna um array com os dados da cidade ou um array vazio se não encontrado.
      */
-    public static function getByNome(string $nome){
+    public static function getByNome(string $nome):array
+    {
         $db = new cidade;
         $cidade = $db->addFilter("nome", "LIKE", "%" . $nome . "%")->addLimit(1)->selectAll();
+
+        if ($db->getError()){
+            return [];
+        }
+
         return $cidade;
     }
 
@@ -44,9 +51,15 @@ class cidadeModel{
      * @param string $uf O ID do estado (UF) da cidade.
      * @return array Retorna um array com os dados da cidade ou um array vazio se não encontrado.
      */
-    public static function getByNomeIdUf(string $nome,string $uf){
+    public static function getByNomeIdUf(string $nome,string $uf):array
+    {
         $db = new cidade;
-        $cidade = $db->addFilter("nome", "LIKE", "%" . $nome . "%")->addLimit(1)->selectByValues(["uf"], [$id_uf], true);
+        $cidade = $db->addFilter("nome", "LIKE", "%" . $nome . "%")->addLimit(1)->selectByValues(["uf"], [$uf], true);
+        
+        if ($db->getError()){
+            return [];
+        }
+        
         return $cidade;
     }
 
@@ -56,9 +69,15 @@ class cidadeModel{
      * @param string $ibge O código IBGE da cidade.
      * @return array Retorna um array com os dados da cidade ou um array vazio se não encontrado.
      */
-    public static function getByIbge(string $ibge){
+    public static function getByIbge(string $ibge):array
+    {
         $db = new cidade;
         $cidade = $db->selectByValues(["ibge"], [$ibge], true);
+
+        if ($db->getError()){
+            return [];
+        }
+
         return $cidade;
     }
 
@@ -68,9 +87,14 @@ class cidadeModel{
      * @param string $uf O (UF) das cidades.
      * @return array Retorna um array de cidades.
      */
-    public static function getByEstado(string $uf){
+    public static function getByEstado(string $uf):array {
         $db = new cidade;
         $cidade = $db->addFilter("uf", "=", $uf)->selectAll();
+
+        if ($db->getError()){
+            return [];
+        }
+
         return $cidade;
     }
 

@@ -3,7 +3,8 @@ namespace app\models\main;
 
 use app\db\agendamentoItem;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
+use app\classes\functions;
+use Exception;
 
 /**
  * Classe agendamentoItemModel
@@ -16,12 +17,23 @@ use app\classes\modelAbstract;
 class agendamentoItemModel{
 
     /**
+     * Obtém um Agendamento Item pelo ID.
+     * 
+     * @param int $id O ID do serviço.
+     * @return object Retorna o objeto do Agendamento Item.
+    */
+    public static function get(int $id):object
+    {
+        return (new agendamentoItem)->get($id);
+    }
+    /**
      * Obtém os itens de um agendamento pelo ID do agendamento.
      * 
-     * @param string $id_agendamento O ID do agendamento.
+     * @param int $id_agendamento O ID do agendamento.
      * @return array Retorna um array com os itens do agendamento especificado.
      */
-    public static function getItens($id_agendamento){
+    public static function getItens(int $id_agendamento):array
+    {
         $db = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
@@ -38,11 +50,12 @@ class agendamentoItemModel{
     /**
      * Obtém um item de agendamento pelo ID do agendamento e ID do serviço.
      * 
-     * @param string $id_agendamento O ID do agendamento.
-     * @param string $id_servico O ID do serviço.
-     * @return array|null Retorna os dados do item do agendamento ou null se não encontrado.
+     * @param int $id_agendamento O ID do agendamento.
+     * @param int $id_servico O ID do serviço.
+     * @return object|bool Retorna os dados do item do agendamento ou false se não encontrado.
      */
-    public static function getItemByServico($id_agendamento,$id_servico){
+    public static function getItemByServico(int $id_agendamento,int $id_servico):object|bool
+    {
         $db = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
@@ -52,42 +65,68 @@ class agendamentoItemModel{
                     ->selectColumns("agendamento_item.id","id_agendamento","id_servico","qtd_item","tempo_item","total_item","nome","valor","tempo","id_empresa");
 
         if ($db->getError()){
-            return [];
+            return false;
         }
         
         if ($result)
             return $result[0];
+        
+        return false;
     }
 
     /**
      * Insere ou atualiza um item de agendamento.
      * 
      * @param int $qtd_item A quantidade do item.
-     * @param float $tempo_item O tempo do item.
+     * @param string $tempo_item O tempo do item.
      * @param float $total_item O total do item.
      * @param string $id_agendamento O ID do agendamento.
      * @param string $id_servico O ID do serviço.
      * @param string $id O ID do item de agendamento (opcional).
-     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     * @return int|bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set($qtd_item,$tempo_item,$total_item,$id_agendamento,$id_servico,$id=""){
-
+    public static function set(int $qtd_item,int $id_agendamento,int $id_servico,int $id):int|bool
+    {
         $db = new agendamentoItem;
         
         $values = $db->getObject();
 
-        $values->id = $id;
-        $values->id_agendamento = $id_agendamento;
-        $values->id_servico = $id_servico;
-        $values->total_item = $total_item;
-        $values->tempo_item = $tempo_item;
-        $values->qtd_item = $qtd_item;
+        $servico = servicoModel::get($values->id_servico = $id_servico);
 
-        if ($values)
-            $retorno = $db->store($values);
+        if(!$servico->id){
+            mensagem::setErro("Serviço não existe");
+            return false;
+        }
+
+        if($values->qtd_item = $qtd_item <= 0){
+            $mensagens[] = "Quantidade invalida";
+        }
+
+        if(!$values->total_item = ($servico->valor * $values->qtd_item)){
+            $mensagens[] = "Total do item do agendamento invalido";
+        }
+
+        if(!$values->tempo_item = functions::multiplicarTempo($servico->tempo,$values->qtd_item)){
+            $mensagens[] = "Tempo do item do agendamento invalido";
+        }
+
+        if(!$values->id_agendamento = $id_agendamento || !agendamentoModel::get($values->id_agendamento)->id){
+            $mensagens[] = "Agendamento não existe";
+        }
+
+        if($values->id = $id && !self::get($values->id)){
+            $mensagens[] = "Serviço não existe";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
+        }
+
+        $retorno = $db->store($values);
 
         if ($retorno == true){
-            return true;
+            return $db->getLastID();
         }
         else {
             return false;
@@ -95,67 +134,12 @@ class agendamentoItemModel{
     }
 
     /**
-     * Insere múltiplos itens de agendamento de uma vez.
-     * 
-     * @param array $array_items Um array contendo os itens de agendamento.
-     * @param string $id_agendamento O ID do agendamento.
-     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
-     */
-    public static function setMultiple(array $array_items,int $id_agendamento){
-
-        try{
-            $db = new agendamentoItem;
-            
-            $db->transaction();
-
-            if(!$id_agendamento = agendamentoModel::get($id_agendamento)->id){
-                mensagem::setErro("Agendamento não existe");
-                return false;
-            }
-        
-            foreach($array_items as $item){
-                $servico = servicoModel::get($item->id_servico);
-                $qtd = intval($item->qtd_item);
-                $total = floatval($item->total_item);
-                $id = intval($item->id);
-                if ($servico && ($servico->valor*$qtd) == $total){
-
-                    $values = $db->getObject();
-
-                    if ($id){
-                        $values->id = $id;
-                    }
-
-                    $values->id_servico = $servico->id;
-                    $values->id_agendamento = $id_agendamento;
-                    $values->qtd_item = $qtd;
-                    $values->total_item = $total;
-                    $values->tempo_item = $item->tempo_item; 
-                    $retorno = $db->store($values);
-                    if ($retorno == false){
-                        mensagem::setErro("Erro ao salvar o serviço {$servico->nome}, tente novamente");
-                        $db->rollback();
-                        return $retorno;
-                    }
-                }
-            }
-
-            $db->commit();
-
-            return true;
-        }catch(exception $e){
-            mensagem::setErro("Erro ao salvar os serviços do agendamento, tente novamente");
-            return false;
-        }
-    }
-
-    /**
      * Exclui um item de agendamento pelo ID.
      * 
-     * @param string $id O ID do item de agendamento a ser excluído.
+     * @param int $id O ID do item de agendamento a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete($id){
+    public static function delete(int $id){
         return (new agendamentoItem)->delete($id);
     }
 

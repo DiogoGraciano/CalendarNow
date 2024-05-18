@@ -18,9 +18,10 @@ class clienteModel{
      * Obtém um cliente pelo ID.
      * 
      * @param string $id O ID do cliente a ser buscado.
-     * @return array|object Retorna os dados do cliente ou objeto se não encontrado.
+     * @return object Retorna os dados do cliente ou objeto se não encontrado.
      */
-    public static function get(int $id){
+    public static function get(int $id):object
+    {
         return (new cliente)->get($id);
     }
 
@@ -30,7 +31,8 @@ class clienteModel{
      * @param int $id_funcionario O ID do funcionário associado aos clientes.
      * @return array Retorna um array de clientes ou um array vazio se não encontrado.
      */
-    public static function getByFuncionario(int $id_funcionario){
+    public static function getByFuncionario(int $id_funcionario):array
+    {
         $db = new cliente;
         $cliente = $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
 
@@ -50,7 +52,8 @@ class clienteModel{
      * @param int $id O ID do cliente (opcional).
      * @return int|bool Retorna o ID do cliente inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,int $id_funcionario,int $id = null){
+    public static function set(string $nome,int $id_funcionario,int $id = null):int|bool
+    {
         $db = new cliente;
     
         $values = $db->getObject();
@@ -75,7 +78,8 @@ class clienteModel{
      * @param int $id O ID do cliente a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id){
+    public static function delete(int $id):bool
+    {
         return (new cliente)->delete($id);
     }
 

@@ -23,19 +23,23 @@ class agendaModel{
      * @param string $value O valor para buscar.
      * @param string $column A coluna onde buscar o valor.
      * @param int $limit O número máximo de registros a serem retornados.
-     * @return object|null Retorna os dados da agenda ou null se não encontrado.
-     */
-    public static function get($value = "",string $column = "id",int $limit = 1){
+     * @return object|array Retorna os dados da agenda ou null se não encontrado.
+    */
+    public static function get($value = "",string $column = "id",int $limit = 1):array|object
+    {
         return (new agenda)->get($value,$column,$limit);
     }
 
     /**
      * Obtém agendas por empresa.
      * 
-     * @param int|null $id_empresa O ID da empresa para buscar agendas.
+     * @param int $id_empresa O ID da empresa para buscar agendas.
+     * @param string $nome O Nome para buscar agendas.
+     * @param string $codigo O Codigo para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa,string $nome = null,string $codigo = null){
+    public static function getByEmpresa(int $id_empresa,string $nome = null,string $codigo = null):array|bool
+    {
         $db = new agenda;
         
         $db->addFilter("agenda.id_empresa","=",$id_empresa);
@@ -62,7 +66,8 @@ class agendaModel{
      * @param string $codigo O código da agenda para buscar.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByCodigo(string $codigo = ""){
+    public static function getByCodigo(string $codigo = ""):array|bool
+    {
         $db = new agenda;
         
         $values = $db->addFilter("agenda.codigo","=",$codigo)
@@ -80,7 +85,8 @@ class agendaModel{
      * @param int|null $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUser(int $id_usuario = null){
+    public static function getByUser(int $id_usuario = null):array|bool 
+    {
         $db = new agendaUsuario;
         
         $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
@@ -102,7 +108,8 @@ class agendaModel{
      * @param int $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUserServico(int $id_servico,int $id_usuario){
+    public static function getByUserServico(int $id_servico,int $id_usuario):array|bool 
+    {
         $db = new agendaUsuario;
         
         $values = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
@@ -126,7 +133,8 @@ class agendaModel{
      * @param int $id_agenda O ID da agenda.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function setAgendaUsuario(int $id_usuario,int $id_agenda){
+    public static function setAgendaUsuario(int $id_usuario,int $id_agenda):bool
+    {
         $db = new agendaUsuario;
 
         $retorno = $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
@@ -154,7 +162,8 @@ class agendaModel{
      * @param int $id_agenda O ID da agenda.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda){
+    public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda):bool
+    {
         $db = new agendaFuncionario;
 
         $retorno = $db->addFilter("agenda_funcionario.id_funcionario","=",$id_funcionario)
@@ -184,9 +193,10 @@ class agendaModel{
      * @param int $id_empresa O ID da empresa associada.
      * @param string $codigo O código da agenda (opcional).
      * @param string $id O ID da agenda (opcional).
-     * @return string|bool Retorna o ID da agenda inserida ou atualizada se a operação for bem-sucedida, caso contrário retorna false.
+     * @return int|bool Retorna o ID da agenda inserida ou atualizada se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function set(string $nome,int $id_empresa,string $codigo="",string $id=""){
+    public static function set(string $nome,int $id_empresa,string $codigo="",string $id=""):int|bool
+    {
 
         $db = new agenda;
         
@@ -219,7 +229,8 @@ class agendaModel{
      * @param int $id O ID da agenda a ser excluída.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete(int $id){
+    public static function delete(int $id):bool
+    {
         return (new agenda)->delete($id);
     }
 
@@ -229,17 +240,11 @@ class agendaModel{
      * @param int $id_agenda O ID da agenda para excluir as relações.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function deleteAgendaUsuario(int $id_agenda){
+    public static function deleteAgendaUsuario(int $id_agenda):bool
+    {
         $db = new agendaUsuario;
 
-        $retorno =  $db->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();
-
-        if ($retorno == true){
-            return True;
-        }
-        else {
-            return False;
-        }
+        return $db->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();  
     }
 
     /**
@@ -248,17 +253,11 @@ class agendaModel{
      * @param int $id_agenda O ID da agenda para excluir as relações.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function deleteAgendaFuncionario(int $id_agenda){
+    public static function deleteAgendaFuncionario(int $id_agenda):bool
+    {
         $db = new agendaFuncionario;
 
-        $retorno =  $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)->deleteByFilter();
-
-        if ($retorno == true){
-            return True;
-        }
-        else {
-            return False;
-        }
+        return $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)->deleteByFilter();
     }
 
 }
