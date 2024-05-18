@@ -121,11 +121,11 @@ class servicoModel{
 
         $values = $db->getObject();
 
-        if(!grupoServicoModel::get($values->id_grupo_servico = $id_grupo_servico)){
+        if(!grupoServicoModel::get($values->id_grupo_servico = $id_grupo_servico)->id){
             mensagem::setErro("Grupo de serviço não existe");
             return false;
         }
-        if(self::get($values->id_servico = $id_servico)){
+        if(self::get($values->id_servico = $id_servico)->id){
             mensagem::setErro("Serviço não existe");
             return false;
         }
