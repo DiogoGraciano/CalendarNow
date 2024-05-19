@@ -6,7 +6,7 @@ use Exception;
 /**
  * Classe base para criação do banco de dados.
  */
-class columnDb extends connectionDB
+class columnDb
 {
     /**
      * Colunas.
@@ -56,9 +56,13 @@ class columnDb extends connectionDB
         
         if(in_array($type,self::types)){
 
-            if($size){
-                $this->validateSize($type,$size);
+            $this->column = new StdClass;
+
+            if($size && $this->validateSize($type,$size)){
+                $this->column->type = $type."({$size})";
             }
+            else 
+                $this->column->type = $type;
 
             $name = strtolower(trim($name));
 
@@ -66,15 +70,18 @@ class columnDb extends connectionDB
                 throw new Exception("Nome é invalido");
             }
 
-            $this->column = new StdClass;
+            
             $this->column->name = $name;
-            $this->column->type = $type;
             $this->column->size = $size;
             $this->column->primary = "";
             $this->column->unique = "";
             $this->column->null = "";
             $this->column->defaut = "";
             $this->column->comment = "";
+            $this->column->defautValue = null;
+            $this->column->commentValue = "";
+            $this->column->foreingTable = null;
+            $this->column->foreingColumn = null;
             $this->column->foreingKey = "";
         }
         else 
@@ -83,33 +90,37 @@ class columnDb extends connectionDB
     }
 
     public function isNotNull(){
-        $this->column->null = " NOT NULL";
+        $this->column->null = "NOT NULL";
         return $this;
     }
 
     public function isPrimary(){
-        $this->column->primary = " PRIMARY KEY ({$this->column->name})";
+        $this->column->primary = "PRIMARY KEY ({$this->column->name})";
         return $this;
     }
 
     public function isUnique(){
-        $this->column->unique = " UNIQUE ({$this->column->name})";
+        $this->column->unique = "UNIQUE ({$this->column->name})";
         return $this;
     }
 
     public function isForeingKey(tableDb $foreingTable,string $foreingColumn = "id"){
-        $this->column->foreingKey = " FOREIGN KEY ({$this->column->name}) REFERENCES {$foreingTable->getTable()}({$foreingColumn})";
+        $this->column->foreingKey = "FOREIGN KEY ({$this->column->name}) REFERENCES {$foreingTable->getTable()}({$foreingColumn})";
+        $this->column->foreingTable = $foreingTable->getTable();
+        $this->column->foreingColumn = $foreingColumn;
         return $this;
     }
 
     public function setDefaut(string|int|float|null $value = null){
 
         if(is_string($value))
-            $this->column->defaut = " DEFAULT '".$value."'";
-        elseif(isNull($value) && !$this->column->null) 
-            $this->column->defaut = " DEFAULT NULL";
-        elseif(!isNull($value)) 
-            $this->column->defaut = " DEFAULT ".$value;
+            $this->column->defaut = "DEFAULT '".$value."'";
+        elseif(is_null($value) && !$this->column->null) 
+            $this->column->defaut = "DEFAULT NULL";
+        elseif(!is_null($value)) 
+            $this->column->defaut = "DEFAULT ".$value;
+
+        $this->column->defautValue = $value;
 
         return $this;
     }
@@ -120,6 +131,8 @@ class columnDb extends connectionDB
 
     public function setComment($comment){
         $this->column->comment = "COMMENT '{$comment}'";
+
+        $this->column->commentValue = $comment;
         return $this;
     }
 

@@ -55,3 +55,29 @@
 2024-05-10T22:44:56+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-05-11T00:25:49+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'total' cannot be null
 2024-05-11T00:28:00+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'total' cannot be null
+2024-05-18T20:22:36+00:00 [ERROR] : SQLSTATE[HY000] [2019] Unknown character set
+2024-05-18T20:25:08+00:00 [ERROR] : SQLSTATE[HY000] [2019] Unknown character set
+2024-05-18T20:41:53+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1 '='' at line 1
+2024-05-18T20:58:26+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T20:58:31+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T20:58:39+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T20:58:50+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T20:59:01+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`agenda`.`agenda`, CONSTRAINT `fk_agenda_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`))
+2024-05-18T21:02:21+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:14:42+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:14:46+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:17:08+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:17:14+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:18:53+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:20:34+00:00 [ERROR] : Tabela: agenda Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:47:25+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:47:25+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'agenda_usuario.PRIMARY'
+2024-05-18T21:50:50+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:50:50+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'agenda_usuario.PRIMARY'
+2024-05-18T21:52:27+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:52:27+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'agenda_usuario.PRIMARY'
+2024-05-18T21:54:21+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:54:21+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'agenda_usuario.PRIMARY'
+2024-05-18T21:55:50+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-18T21:55:50+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'agenda_usuario.PRIMARY'
+2024-05-18T21:56:02+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens

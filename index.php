@@ -5,9 +5,6 @@
     use core\Method;
     use core\Parameter;
     use app\classes\functions;
-    use app\db\connectionDB;
-
-    (new connectionDb)->startConnection();
 
     $controller = new Controller;
     

@@ -54,7 +54,7 @@ class cidadeModel{
     public static function getByNomeIdUf(string $nome,string $uf):array
     {
         $db = new cidade;
-        $cidade = $db->addFilter("nome", "LIKE", "%" . $nome . "%")->addLimit(1)->selectByValues(["uf"], [$uf], true);
+        $cidade = $db->addFilter("nome", "LIKE", "%" . $nome . "%")->addFilter("uf", "=", $uf)->addLimit(1)->selectAll();
         
         if ($db->getError()){
             return [];
@@ -72,7 +72,7 @@ class cidadeModel{
     public static function getByIbge(string $ibge):array
     {
         $db = new cidade;
-        $cidade = $db->selectByValues(["ibge"], [$ibge], true);
+        $cidade = $db->addFilter("ibge", "=", $ibge)->selectAll();
 
         if ($db->getError()){
             return [];

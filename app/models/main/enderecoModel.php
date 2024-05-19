@@ -33,9 +33,10 @@ class enderecoModel{
      * @param string $id_usuario O ID do usuário para buscar endereços.
      * @return array Retorna um array de endereços.
      */
-    public static function getbyIdUsuario($id_usuario = ""){
+    public static function getbyIdUsuario($id_usuario = ""):array
+    {
         $db = new endereco;
-        $values = $db->selectByValues(["id_usuario"], [$id_usuario], true);
+        $values = $db->addFilter("id_usuario","=",$id_usuario)->selectAll();
         
         if ($db->getError()){
             return [];

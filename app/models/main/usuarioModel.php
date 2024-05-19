@@ -52,7 +52,7 @@ class usuarioModel{
 
         $db = new usuario;
 
-        $usuario = $db->selectByValues(["cpf_cnpj","email"],[$cpf_cnpj,$email],True);
+        $usuario = $db->addFilter("cpf_cnpj", "=", $cpf_cnpj)->addFilter("email", "=", $email)->selectAll();
 
         if ($db->getError()){
             return [];
@@ -72,7 +72,7 @@ class usuarioModel{
 
         $db = new usuario;
 
-        $usuario = $db->selectByValues(["cpf_cnpj"],[$cpf_cnpj]);
+        $usuario = $db->addFilter("cpf_cnpj", "=", $cpf_cnpj)->selectAll();
 
         if ($db->getError()){
             return [];
@@ -92,7 +92,7 @@ class usuarioModel{
 
         $db = new usuario;
 
-        $usuario = $db->selectByValues(["email"],[$email]);
+        $usuario = $db->addFilter("email", "=", $email)->selectAll();
 
         if ($db->getError()){
             return [];

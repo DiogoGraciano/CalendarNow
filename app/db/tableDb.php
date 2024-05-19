@@ -1,10 +1,11 @@
 <?php
 namespace app\db;
+use Exception;
 
 /**
  * Classe base para criação do banco de dados.
  */
-class tableDb extends connectionDB
+class tableDb extends connectionDb
 {
     /**
      * Nome da tabela.
@@ -14,47 +15,66 @@ class tableDb extends connectionDB
     private $table;
 
     /**
+     * pdo.
+     *
+     * @var PDO
+    */
+    private $pdo;
+
+    /**
      * Colunas.
      *
-     * @var string
+     * @var array
      */
     private $columns = [];
 
     /**
-     * Primary Keys.
+     * index.
      *
-     * @var string
-     */
-    private $primarys = [];
-
-
-    /**
-     * foreing Keys.
-     *
-     * @var string
-     */
-    private $foreingKeys = [];
-
-
-    /**
-     * uniques.
-     *
-     * @var string
+     * @var array
     */
-    private $uniques = [];
+    private $indexs = [];
+
+    /**
+     * index.
+     *
+     * @var array
+    */
+    private $isAutoIncrement = false;
 
     /**
      * outros comandos.
      *
      * @var string
     */
-    private $others = [];
+    private $engine = "";
 
-    function __construct($table)
+    /**
+     * outros comandos.
+     *
+     * @var string
+    */
+    private $collate = "";
+
+
+    /**
+     * outros comandos.
+     *
+     * @var string
+    */
+    private $comment = "";
+
+    function __construct(string $table,string $engine="InnoDB",string $collate="utf8mb4_general_ci",string $comment = "")
     {
         // Inicia a Conexão
         if (!$this->pdo)
-            $this->startConnection(); 
+            $this->pdo = connectionDb::getInstance()->startConnection();
+
+        $this->engine = $engine;
+
+        $this->collate = $collate;
+
+        $this->comment = $comment;
         
         if(!$this->validateName($this->table = strtolower(trim($table)))){
             throw new Exception("Nome é invalido");
@@ -64,10 +84,7 @@ class tableDb extends connectionDB
     public function addColumn(columnDb $column){
         $column = $column->getColumn();
 
-        if($column->size)
-            $column->columnSql = ["{$column->name} {$column->type}({$column->size}) {$column->null} {$column->defaut} {$column->comment}",$column->primary,$column->unique,$column->foreingKey];
-        else 
-            $column->columnSql = ["{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment}",$column->primary,$column->unique,$column->foreingKey];
+        $column->columnSql = ["{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment}",$column->primary,$column->unique,$column->foreingKey," "];
 
         $this->columns[$column->name] = $column;
 
@@ -75,17 +92,14 @@ class tableDb extends connectionDB
     }
 
     public function isAutoIncrement(){
-        if($this->primarys){
-            $this->other[] = "ALTER TABLE {$this->table} AUTO_INCREMENT = 1";
-        }
-        else{
-            throw new Exception("é preciso ter pelo menos uma primary key para adicionar o Auto Increment");
-        }
-
+        $this->isAutoIncrement = true;
         return $this;
     }
 
     public function addIndex(string $name,array $columns){
+        if(count($columns) < 2){
+            throw new Exception("Numero de colunas tem que ser maior que 1"); 
+        }
         if($this->columns){
             $tableColumns = array_keys($this->columns);
             $columnsFinal = [];
@@ -96,93 +110,132 @@ class tableDb extends connectionDB
                 else 
                     throw new Exception("Coluna é invalida: ".$column); 
             }
-            $this->others[] = "CREATE INDEX {$name} ON {$this->table} (".implode(",",$columnsFinal).";";
+            $this->indexs[$name] = "CREATE INDEX {$name} ON {$this->table} (".implode(",",$columnsFinal).";";
         }
         else{
             throw new Exception("É preciso ter pelo menos uma coluna para adicionar o um index");
         }
     }
 
-    private function create($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci"){
-        $sql = "DROP TABLE IF EXISTS {$this->table};
-                CREATE TABLE IF NOT EXISTS {$this->table} ( ";
-
+    private function create(){
+        $sql = "DROP TABLE IF EXISTS {$this->table};CREATE TABLE IF NOT EXISTS {$this->table}(";
         foreach ($this->columns as $column) {            
-            $sql .= implode(",",array_filter($column->columnSql));
+            $sql .= str_replace(" , ","",implode(",",array_filter($column->columnSql)));
         }
 
-        $sql .= ") ENGINE={$engine} DEFAULT CHARSET={$charset} COLLATE={$collate};";
+        $sql .= ")ENGINE={$this->engine} COLLATE={$this->collate}; COMMENT='{$this->comment}'";
 
-        foreach ($this->others as $other) {
-            $sql .= $other;
+        if($this->isAutoIncrement){
+            $sql .= "ALTER TABLE {$this->table} AUTO_INCREMENT = 1";
+        }
+        
+        foreach ($this->indexs as $index) {
+            $sql .= $index;
         }
 
-        var_dump($sql);
-        die;
+        $sql = $this->pdo->prepare($sql);
 
-        $this->pdo->prepare($sql);
-
-        $this->pdo->execute();
+        $sql->execute();
     }
 
-    public function execute($engine="InnoDB",$charset="utf8mb4",$collate="utf8mb4_general_ci",$recreate = false){
+    public function execute($recreate = false){
 
         if($recreate){
-            $this->create($engine,$charset,$collate);
+            $this->create();
         }
 
-        $table = $this->getObjectTable();
+        $table = $this->getColumnsTable();
 
         if(!$table){
-            return $this->create($engine,$charset,$collate);
+            return $this->create();
         }
 
-        foreach ($table->column_name as $column_db){
-            if(!in_array($column_db,$this->columns)){
-                $sql .= "ALTER TABLE {$this->table} DROP COLUMN $column_db;";
+        $sql = "";
+
+        foreach ($table as $columnDb){
+            if(!in_array($columnDb,array_keys($this->columns))){
+                $sql .= "ALTER TABLE {$this->table} DROP COLUMN {$columnDb};";
+                break;
             }  
         }
         
         foreach ($this->columns as $column) {
 
             $inDb = false;
-            foreach ($table->column_name as $column_db){
-                if($column_db == $column->name){
+            foreach ($table as $columnDb){
+                if($columnDb == $column->name){
                     $inDb = true;
+                    break;
                 }
             }
 
-            if($inDb){
-                $sql .= "ALTER TABLE {$this->table} MODIFY COLUMN {$column->columnSql};";
-            }
-            else{
-                $sql .= "ALTER TABLE {$this->table} ADD {$column->columnSql};";
-            }
+            $columnInformation = $this->getColumnInformation($column->name);
 
-            foreach ($this->primarys as $primary) {
-                $sql .= $primary;
+            if(!$inDb || isset($columnInformation[0])){
+                
+                !$inDb?$operation = "ADD":$operation = "MODIFY";
+               
+                if(!$inDb || strtolower($column->type) != $columnInformation[0]->COLUMN_TYPE || 
+                    ($columnInformation[0]->IS_NULLABLE == "YES" && $column->null) || 
+                    $columnInformation[0]->COLUMN_DEFAULT != $column->defautValue || 
+                    $columnInformation[0]->COLUMN_COMMENT != $column->commentValue){
+                    $sql .= "ALTER TABLE {$this->table} {$operation} COLUMN {$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment};";
+                }
+
+                if($column->primary && $columnInformation[0]->COLUMN_KEY != "PRI"){
+                    $sql .= "ALTER TABLE {$this->table} ADD PRIMARY KEY ({$column->name});";
+                }
+
+                if($column->unique && $columnInformation[0]->COLUMN_KEY != "UNI"){
+                    $sql .= "ALTER TABLE {$this->table} ADD UNIQUE ({$column->name});";
+                }
+
+                if($column->foreingKey && $columnInformation[0]->COLUMN_KEY != "MUL"){
+                    $sql .= "ALTER TABLE {$this->table} ADD FOREIGN KEY ({$column->foreingTable}) REFERENCES {$column->foreingColumn}({$column->foreingTable});";
+                }
             }
         }
 
-        if($engine)
-            $sql .= "ALTER TABLE {$this->table} ENGINE = {$engine};";
+        $tableInformation = $this->getTableInformation();
 
-        if($charset)
-            $sql .= "ALTER TABLE {$this->table} ENGINE = {$charset};";
+        if(isset($tableInformation[0])){
 
-        if($collate)
-            $sql .= "ALTER TABLE {$this->table} ENGINE = {$collate};";
+            if($this->engine && $tableInformation[0]->ENGINE != $this->engine)
+                $sql .= "ALTER TABLE {$this->table} ENGINE = {$this->engine};";
 
-        foreach ($this->others as $other) {
-            $sql .= $other;
+            if($this->collate && $tableInformation[0]->TABLE_COLLATION != $this->collate)
+                $sql .= "ALTER TABLE {$this->table} COLLATE = {$this->collate};";
+
+            if($this->comment && $tableInformation[0]->TABLE_COMMENT != $this->comment)
+                $sql .= "ALTER TABLE {$this->table} COMMENT = {$this->comment};";
+
+            if($this->isAutoIncrement && $tableInformation[0]->AUTO_INCREMENT == null){
+                $sql .= "ALTER TABLE {$this->table} AUTO_INCREMENT = 1";
+            }
+
         }
 
-        var_dump($sql);
-        die;
+        if($this->indexs){
+            $indexInformation = $this->getIndexInformation();
+            if($indexInformation){
+                foreach ($indexInformation as $indexDb){
+                    if(!in_array($indexDb,array_keys($this->indexs))){
+                        $sql .= "ALTER TABLE {$this->table} DROP INDEX {$indexDb};";
+                    }
+                }
 
-        $this->pdo->prepare($sql);
+                foreach (array_keys($this->indexs) as $index) {
+                    if(!in_array($index,$indexInformation))
+                        $sql .= $this->indexs[$index];
+                }
+            }
+        }
 
-        $this->pdo->execute();
+        if($sql){
+            $sql = $this->pdo->prepare($sql);
+
+            $sql->execute();
+        }
     }
 
     public function getTable(){
@@ -190,24 +243,64 @@ class tableDb extends connectionDB
     }
 
     //Pega as colunas da tabela e tranforma em Objeto
-    private function getObjectTable()
+    private function getColumnsTable()
     {
-        $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM information_schema.columns
-        WHERE table_schema = "'.self::dbname.'" AND table_name = "'.$this->table.'"');
+        $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM information_schema.columns WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'"');
        
         $sql->execute();
 
         $rows = [];
 
         if ($sql->rowCount() > 0) {
-            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN|\PDO::FETCH_GROUP);
+            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN);
         }
 
         return $rows;   
+    }
 
-        $this->error[] = "Erro: Tabela não encontrada";
-        Logger::error("Erro: Tabela não encontrada");
-        return new \StdClass;
+    private function getColumnInformation($column)
+    {
+        $sql = $this->pdo->prepare('SELECT TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,COLUMN_KEY,IS_NULLABLE,COLUMN_DEFAULT,COLUMN_COMMENT FROM information_schema.columns WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'" AND COLUMN_NAME = "'.$column.'" LIMIT 1');
+       
+        $sql->execute();
+
+        $rows = [];
+
+        if ($sql->rowCount() > 0) {
+            $rows = $sql->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+        }
+
+        return $rows;   
+    }
+
+    private function getTableInformation()
+    {
+        $sql = $this->pdo->prepare('SELECT ENGINE,TABLE_COLLATION,AUTO_INCREMENT,TABLE_COMMENT FROM information_schema.tables WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'" LIMIT 1');
+       
+        $sql->execute();
+
+        $rows = [];
+
+        if ($sql->rowCount() > 0) {
+            $rows = $sql->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+        }
+
+        return $rows;   
+    }
+
+    private function getIndexInformation()
+    {
+        $sql = $this->pdo->prepare('SELECT INDEX_NAME FROM information_schema.statistics  WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'" GROUP BY INDEX_NAME HAVING COUNT(INDEX_NAME) > 1');
+       
+        $sql->execute();
+
+        $rows = [];
+
+        if ($sql->rowCount() > 0) {
+            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN);
+        }
+
+        return $rows;   
     }
     
     private function validateName($name) {

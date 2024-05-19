@@ -25,7 +25,7 @@ class loginModel{
     public static function login($cpf_cnpj, $senha):bool
     {
         $db = new usuario;
-        $login = $db->selectByValues(["cpf_cnpj"], [functions::onlynumber($cpf_cnpj)], true);
+        $login =  $db->addFilter("cpf_cnpj", "=", functions::onlynumber($cpf_cnpj))->selectAll();
 
         if ($login){
             if (password_verify($senha, $login[0]->senha)){
