@@ -8,12 +8,12 @@
 
     $controller = new Controller;
     
-    if (isset($_SESSION["user"]) || functions::getUri() == "/ajax")
+    if (isset($_SESSION["user"]) || functions::getUri() == "/ajax"){
         $controller = $controller->load();
-    else 
+        session_regenerate_id(true);
+    }else 
         $controller = $controller->load("login");
         
-
     $method = new Method();
     $method = $method->load($controller);
 

@@ -1,5 +1,9 @@
 <?php
 
+session_set_cookie_params([
+    'httponly' => true
+]);
+
 if (!isset($_SESSION))
     session_start();
 
