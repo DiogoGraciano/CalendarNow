@@ -6,7 +6,7 @@ use Exception;
 /**
  * Classe base para interação com o banco de dados.
  */
-class Db extends connectionDb
+class db extends connectionDb
 {
     /**
      * Tabela atual.

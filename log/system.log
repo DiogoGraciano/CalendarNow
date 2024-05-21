@@ -81,3 +81,5 @@
 2024-05-18T21:55:50+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
 2024-05-18T21:55:50+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'agenda_usuario.PRIMARY'
 2024-05-18T21:56:02+00:00 [ERROR] : Tabela: agenda_usuario Erro: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+2024-05-20T22:30:10+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+2024-05-20T22:30:23+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'

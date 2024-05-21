@@ -10,7 +10,7 @@
     
     if (isset($_SESSION["user"]) || functions::getUri() == "/ajax"){
         $controller = $controller->load();
-        session_regenerate_id(true);
+        //session_regenerate_id(true);
     }else 
         $controller = $controller->load("login");
         
