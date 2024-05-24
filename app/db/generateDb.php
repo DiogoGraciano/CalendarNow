@@ -33,9 +33,9 @@ $usuarioTb = new tableDb("usuario", comment: "Tabela de usuários");
 $usuarioTb->beginTransaction();
 $usuarioTb->addColumn((new columnDb("id", "INT"))->isPrimary()->isNotNull()->setComment("ID do usuário"))
           ->addColumn((new columnDb("nome", "VARCHAR", 500))->isNotNull()->setComment("Nome do usuário"))
-          ->addColumn((new columnDb("cpf_cnpj", "VARCHAR", 14))->setComment("CPF ou CNPJ do usuário"))
-          ->addColumn((new columnDb("telefone", "VARCHAR", 11))->setComment("Telefone do usuário"))
-          ->addColumn((new columnDb("senha", "VARCHAR", 150))->setComment("Senha do usuário"))
+          ->addColumn((new columnDb("cpf_cnpj", "VARCHAR", 14))->isUnique()->isNotNull()->setComment("CPF ou CNPJ do usuário"))
+          ->addColumn((new columnDb("telefone", "VARCHAR", 11))->isNotNull()->setComment("Telefone do usuário"))
+          ->addColumn((new columnDb("senha", "VARCHAR", 150))->isNotNull()->setComment("Senha do usuário"))
           ->addColumn((new columnDb("email", "VARCHAR", 200))->isUnique()->setComment("Email do usuário"))
           ->addColumn((new columnDb("tipo_usuario", "INT"))->isNotNull()->setComment("Tipo de usuário: 0 -> ADM, 1 -> empresa, 2 -> funcionario, 3 -> usuário, 4 -> cliente cadastrado"))
           ->addColumn((new columnDb("id_empresa", "INT"))->isForeingKey($empresaTb)->setComment("ID da empresa"));

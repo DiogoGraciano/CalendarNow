@@ -60,11 +60,11 @@ class enderecoModel{
      * @param int $id_empresa O ID da empresa associada (opcional).
      * @return string|bool Retorna o ID do endereço inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $cep,int $id_estado,int $id_cidade,string $bairro,string $rua,string $numero,string $complemento = null,int $id = null,int $id_usuario = null,int $id_empresa = null){
+    public static function set(string $cep,int $id_estado,int $id_cidade,string $bairro,string $rua,string $numero,string|null $complemento = null,null|int $id = null,null|int $id_usuario = null,null|int $id_empresa = null){
         $db = new endereco;
         $mensagens = [];
 
-        if(!functions::validaCep($cep)){
+        if(!functions::validaCep(functions::onlynumber($cep))){
             $mensagens[] = "CEP é invalido";
         }
 
@@ -103,12 +103,12 @@ class enderecoModel{
 
         $values = $db->getObject();
 
-        $values->id = intval($id);
-        $values->id_usuario = intval($id_usuario);
-        $values->id_empresa = intval($id_empresa);
-        $values->cep = (int)functions::onlynumber($cep);
-        $values->id_estado = intval($id_estado);
-        $values->id_cidade = intval($id_cidade);
+        $values->id = $id;
+        $values->id_usuario = $id_usuario;
+        $values->id_empresa = $id_empresa;
+        $values->cep = $cep;
+        $values->id_estado = $id_estado;
+        $values->id_cidade = $id_cidade;
         $values->bairro = trim($bairro);
         $values->rua = trim($rua);
         $values->numero = trim($numero);

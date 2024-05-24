@@ -144,6 +144,8 @@ function getOptionCidade(option){
 
 $(document).ready(function(){		
 
+    alertTimeout();
+
     var url_base = window.location.href.split("/");
     url_base = url_base[0]+"//"+url_base[2]+"/";
     let url_login = url_base+"login";
@@ -154,18 +156,6 @@ $(document).ready(function(){
     // Chame a função no início e, em seguida, defina um intervalo para verificar periodicamente
     verificarEDesabilitarBotao();
     setInterval(verificarEDesabilitarBotao, 500);
-
-    setTimeout(function() {
-      $(".alert-success").fadeOut("fast", function(){
-        $(this).alert('close');
-      });				
-    }, 6000);			
-
-    setTimeout(function() {
-      $(".alert-danger").fadeOut("fast", function(){
-        $(this).alert('close');
-      });				
-    }, 6000);	
 
     $("#pesquisa").on("keyup", function() {
       var value = $(this).val().toLowerCase();

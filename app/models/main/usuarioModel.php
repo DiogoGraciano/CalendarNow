@@ -151,23 +151,23 @@ class usuarioModel{
             $mensagens[] = "Nome é invalido";
         }
 
-        if(!$values->cpf_cnpj = functions::onlynumber($cpf_cnpj) || functions::validaCpfCnpj($cpf_cnpj)){
+        if(!($values->cpf_cnpj = functions::onlynumber($cpf_cnpj)) || !functions::validaCpfCnpj($cpf_cnpj)){
             $mensagens[] = "CPF/CNPJ invalido";
         }
 
-        if(!$values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL)){
+        if(!($values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL))){
             $mensagens[] = "E-mail Invalido";
         }
 
-        if(!$values->telefone = functions::onlynumber($cpf_cnpj) || !functions::validaTelefone($telefone)){
+        if(!($values->telefone = functions::onlynumber($cpf_cnpj)) || !functions::validaTelefone($telefone)){
             $mensagens[] = "Telefone Invalido";
         }
 
-        if(!$values->tipo_usuario = $tipo_usuario || $values->tipo_usuario  < 0 || $values->tipo_usuario  > 3){
+        if(!($values->tipo_usuario = $tipo_usuario) || $values->tipo_usuario  < 0 || $values->tipo_usuario  > 3){
             $mensagens[] = "Tipo de Usuario Invalido";
         }
 
-        if(($values->tipo_usuario  == 2 || $values->tipo_usuario == 1) && !$id_empresa){
+        if(($values->tipo_usuario == 2 || $values->tipo_usuario == 1) && !$id_empresa){
             $mensagens[] = "Informar a empresa é obrigatorio para esse tipo de usuario";
         }
 

@@ -23,9 +23,9 @@ class empresaModel{
      * @param string $coluna A coluna pela qual buscar a empresa (opcional, padrão é "id").
      * @return object Retorna os dados da empresa ou null se não encontrado.
      */
-    public static function get(int $id,string $coluna = "id"):object
+    public static function get(string|null|int $value = null,string $coluna = "id"):object
     {
-        return (new empresa)->get($id, $coluna);
+        return (new empresa)->get($value, $coluna);
     }
 
     /**
@@ -40,7 +40,7 @@ class empresaModel{
      * @param string $id O ID da empresa (opcional).
      * @return int|bool Retorna o ID da empresa inserida ou atualizada se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $razao,string $fantasia,int $id = null):int|bool
+    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $razao,string $fantasia,null|int $id = null):int|bool
     {
         $db = new empresa;
 
@@ -52,15 +52,15 @@ class empresaModel{
             $mensagens[] = "Empresa não existe";
         }
 
-        if(!$values->nome = filter_var(trim($nome))){
+        if(!($values->nome = filter_var(trim($nome)))){
             $mensagens[] = "Nome da Empresa é obrigatorio";
         }
 
-        if(!$values->razao = filter_var(trim($razao))){
+        if(!($values->razao = filter_var(trim($razao)))){
             $mensagens[] = "Razão Social é obrigatorio";
         }
 
-        if(!$values->fantasia = filter_var(trim($fantasia))){
+        if(!($values->fantasia = filter_var(trim($fantasia)))){
             $mensagens[] = "Nome da Fantasia é obrigatorio";
         }
 
@@ -72,7 +72,7 @@ class empresaModel{
             $mensagens[] = "CPF/CNPJ já cadastrado";
         }
   
-        if(!$values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL)){
+        if(!($values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL))){
             $mensagens[] = "E-mail Invalido";
         }
 
@@ -80,7 +80,7 @@ class empresaModel{
             $mensagens[] = "Email já cadastrado";
         }
 
-        if(!$values->telefone = functions::onlynumber($telefone) || !functions::validaTelefone($telefone)){
+        if(!($values->telefone = functions::onlynumber($telefone)) || !functions::validaTelefone($telefone)){
             $mensagens[] = "Telefone Invalido";
         }
 
@@ -91,13 +91,16 @@ class empresaModel{
 
         $retorno = $db->store($values);
 
-        if ($retorno == false){
-            mensagem::setErro("Erro ao cadastrar a empresa");
-            return $retorno;
+        var_dump($retorno);
+        die;
+
+        if ($retorno == true){
+            mensagem::setSucesso("Empresa salva com sucesso");
+            return $db->getLastID();
         }
 
-        mensagem::setSucesso("Empresa salva com sucesso");
-        return $db->getLastID();
+        mensagem::setErro("Erro ao cadastrar a empresa");
+        return false;
     }
 
     /**
