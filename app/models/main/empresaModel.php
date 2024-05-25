@@ -91,9 +91,6 @@ class empresaModel{
 
         $retorno = $db->store($values);
 
-        var_dump($retorno);
-        die;
-
         if ($retorno == true){
             mensagem::setSucesso("Empresa salva com sucesso");
             return $db->getLastID();
@@ -101,6 +98,46 @@ class empresaModel{
 
         mensagem::setErro("Erro ao cadastrar a empresa");
         return false;
+    }
+
+    /**
+     * Converte uma empresa para um usuario.
+     * 
+     * @param int $id_empresa O ID da empresa.
+     * @param string $senha O senha do usuario da empresa (opcional).
+     * @param bool $remove_empresa_on_error Remove empresa caso não consiga cadastrar o usuario.
+     * @return int|bool Retorna o ID da empresa inserida ou atualizada se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function convertEmpresaToUsuario(int $id_empresa,string $senha = "", bool $remove_empresa_on_error = false):int|bool
+    {
+
+        $empresa = self::get($id_empresa);
+
+        if($empresa->id){
+            try{
+                $senha?:$senha = $empresa->cnpj;
+
+                if($id_usuario = usuarioModel::set($empresa->nome,$empresa->cnpj,$empresa->email,$empresa->telefone,$senha,null,1,$empresa->id)){
+                    mensagem::setSucesso("Usuario convertido com sucesso");
+                    return $id_usuario; 
+                
+                }
+                else{
+                    if($remove_empresa_on_error)
+                        self::delete($empresa->id);
+
+                    mensagem::setErro("Erro ao converter usuario");
+                    return false;
+                }
+            }
+            catch(Exception $e){
+                if($remove_empresa_on_error)
+                    self::delete($empresa->id);
+
+                mensagem::setErro("Erro ao converter usuario");
+                return false;
+            }
+        }
     }
 
     /**

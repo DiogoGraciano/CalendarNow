@@ -7,8 +7,6 @@ use app\models\main\cidadeModel;
 use app\models\main\estadoModel;
 use app\models\main\usuarioModel;
 
-header('Content-Type: application/json; charset=utf-8');
-
 class ajaxController extends controllerAbstract{
 
     public function index(){
@@ -86,7 +84,7 @@ class ajaxController extends controllerAbstract{
 
         $retorno = ["sucesso" => True,
                     "retorno" => $retorno];
-                    
+            
         echo json_encode($retorno); 
     }
 
@@ -100,7 +98,7 @@ class ajaxController extends controllerAbstract{
 
         $retorno = ["sucesso" => True,
                     "retorno" => $retorno];
-                    
+                 
         echo json_encode($retorno); 
     }
 }

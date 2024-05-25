@@ -165,8 +165,9 @@ class cadastroController extends controllerAbstract{
         if ($tipo_usuario == 1){
             $dado = usuarioModel::get($id);
             $form->setHidden("cd",$id);
-            $dadoEndereco = enderecoModel::get(intVal($dado->id));
-            $dadoEmpresa = empresaModel::get(intVal($dado->id_empresa));
+            $dadoEndereco = enderecoModel::get($dado->id,"id_usuario");
+            $dadoEmpresa = empresaModel::get($dado->id_empresa);
+            $form->setHidden("id_empresa",$dado->id_empresa);
         }
 
         if ($tipo_usuario == 2){
@@ -176,11 +177,12 @@ class cadastroController extends controllerAbstract{
             $form->setHidden("id_funcionario",$dadoFuncionario->id);
             $form->setHidden("id_empresa",$user->id_empresa);
         }
-
+        
         if ($tipo_usuario == 3){
             $dado = usuarioModel::get($id);
             $form->setHidden("cd",$id);
-            $dadoEndereco = enderecoModel::get($dado->id);
+            $dadoEndereco = enderecoModel::get($dado->id,"id_usuario");
+            $form->setHidden("id_endereco",$dadoEndereco->id);
         }
 
         $elements = new elements;
@@ -310,6 +312,7 @@ class cadastroController extends controllerAbstract{
         $email = $this->getValue('email');
         $telefone = $this->getValue('telefone');
         if ($tipo_usuario != 2){
+            $id_endereco = $this->getValue('id_endereco');
             $cep = $this->getValue('cep');
             $id_estado = $this->getValue('id_estado');
             $id_cidade = $this->getValue('id_cidade');
@@ -319,17 +322,14 @@ class cadastroController extends controllerAbstract{
             $complemento = $this->getValue('complemento');
         }
         if ($tipo_usuario == 1){
+            $_id_empresa = $this->getValue('id_empresa');
             $nome_empresa = $this->getValue('nome_empresa');
             $razao = $this->getValue('razao');
             $fantasia = $this->getValue('fantasia');
-            $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia);
-            var_dump($id_empresa);
-            die;
-            if ($id_empresa){
-                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario,$id_empresa);
-                
-                if ($id_usuario){
-                    $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,"",$id_usuario,$id_empresa);
+            try{
+                $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$_id_empresa);
+                if ($id_empresa && $id_usuario = empresaModel::convertEmpresaToUsuario($id_empresa,$senha,true)){
+                    $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario,$id_empresa);
                     if ($id_endereco){
                         mensagem::setSucesso("Usuario empresarial salvo com sucesso");
                         if ($login)
@@ -337,14 +337,24 @@ class cadastroController extends controllerAbstract{
                         else 
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
                     }else{
-                        mensagem::setSucesso(false);
                         usuarioModel::delete($id_usuario);
                         empresaModel::delete($id_empresa);
+                        mensagem::setSucesso(false);
                     }
                 }else{
                     mensagem::setSucesso(false);
-                    empresaModel::delete($id_empresa);
                 }
+            }catch(Exception $e){
+                if(!$_id_empresa){
+                    if($id_usuario)
+                        usuarioModel::delete($id_usuario);
+                    if($id_endereco)
+                        empresaModel::delete($id_endereco);
+                    if($id_empresa)
+                        empresaModel::delete($id_empresa);
+                }
+               
+                mensagem::setSucesso(false);
             }
         }
         elseif ($tipo_usuario == 2){
@@ -378,7 +388,7 @@ class cadastroController extends controllerAbstract{
         elseif ($tipo_usuario == 3){ 
             $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario);
             if ($id_usuario){
-                $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,null,$id_usuario);
+                $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario);
                 if($id_endereco){
                     mensagem::setSucesso("Usuario salvo com sucesso");
                     if ($login)

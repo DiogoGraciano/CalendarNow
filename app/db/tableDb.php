@@ -68,7 +68,7 @@ class tableDb extends connectionDb
     {
         // Inicia a Conexão
         if (!$this->pdo)
-            $this->pdo = connectionDb::getInstance()->startConnection();
+            $this->pdo = ConnectionDb::getConnection();
 
         $this->engine = $engine;
 

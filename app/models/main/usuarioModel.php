@@ -138,7 +138,7 @@ class usuarioModel{
      * @param int $id_empresa O ID da empresa associada (opcional, padrão é "null").
      * @return int|bool Retorna o ID do usuário inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int $id,int $tipo_usuario = 3,int $id_empresa = null):int|bool
+    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int|null $id = null,int $tipo_usuario = 3,int|null $id_empresa = null):int|bool
     {
 
         $db = new usuario;

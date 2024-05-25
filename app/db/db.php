@@ -6,7 +6,7 @@ use Exception;
 /**
  * Classe base para interação com o banco de dados.
  */
-class db extends connectionDb
+class db
 {
     /**
      * Tabela atual.
@@ -108,7 +108,7 @@ class db extends connectionDb
     {
         // Inicia a Conexão
         if (!$this->pdo)
-            $this->pdo = connectionDb::getInstance()->startConnection();
+            $this->pdo = ConnectionDb::getConnection();
 
         // Seta Tabela
         $this->table = $table;

@@ -419,13 +419,14 @@ $(document).ready(function(){
       url: url_base+"ajax",
       data: {"method":"existsCpfCnpj","parameters":$("#cpf_cnpj").val()},
       success: function (response) {
+        response = JSON.parse(response);
         if (response.sucesso) {
             if (response.retorno){
               $("#cpf_cnpj").removeClass('is-valid').addClass('is-invalid');
-              if(!$("div#\\#cpf_cnpj.invalid-feedback").length)
+              if(!$("div#\\#cpf_cnpj.invalid-feedback").length);
                 $(".cpf_cnpj").append(getInvalid("CPF Já cadastrado","cpf_cnpj"));
             }else{
-              $("#cpf_cnpj").removeClass('is-invalid')
+              $("#cpf_cnpj").removeClass('is-invalid');
               $(".invalid-feedback").remove();
             }
         }else{
@@ -452,6 +453,7 @@ $(document).ready(function(){
         url: url_base+"ajax",
         data: {"method":"getEndereco","parameters":cep},
         success: function (response) {
+          response = JSON.parse(response)
           if (response.sucesso) {
               removeLoader();
               if ($("#id_estado").val() != response.retorno.uf){
@@ -487,6 +489,7 @@ $(document).ready(function(){
         url: url_base+"ajax",
         data: {"method":"getCidadeOption","parameters":$("#id_estado").val()},
         success: function (response) {
+          response = JSON.parse(response)
           if (response.sucesso) {
               removeLoader();
               var retorno = response.retorno;
@@ -516,6 +519,7 @@ $(document).ready(function(){
         url: url_base+"ajax",
         data: {"method":"existsEmail","parameters":email},
         success: function (response) {
+          response = JSON.parse(response)
           if (response.sucesso) {
               if (response.retorno){
                 $("#email").removeClass('is-valid').addClass('is-invalid');

@@ -23,8 +23,9 @@ class enderecoModel{
      * @param string $id O ID do endereço a ser buscado.
      * @return array|null Retorna os dados do endereço ou null se não encontrado.
      */
-    public static function get($id = ""){
-        return (new endereco)->get($id);
+    public static function get(string|null|int $value = null,string $column = "id"):object
+    {
+        return (new endereco)->get($value,$column);
     }
 
     /**
