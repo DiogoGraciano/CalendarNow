@@ -1,9 +1,10 @@
 <?php
+namespace app\db;
 
-use app\db\ConnectionDb;
+use app\db\connectionDb;
 use Exception;
 
-class TransactionManager
+class transactionManeger
 {
     /**
      * @var PDO Conexão única com o banco de dados.
@@ -16,7 +17,7 @@ class TransactionManager
     public static function init(): void
     {
         if (self::$pdo === null) {
-            self::$pdo = ConnectionDb::getConnection();
+            self::$pdo = connectionDb::getConnection();
         }
     }
 
@@ -28,7 +29,9 @@ class TransactionManager
     public static function beginTransaction(): void
     {
         try {
-            self::$pdo->beginTransaction();
+            if (!self::$pdo->inTransaction()) {
+                self::$pdo->beginTransaction();
+            }
         } catch (PDOException $e) {
             throw new Exception("Erro ao iniciar a transação: " . $e->getMessage());
         }
@@ -42,7 +45,9 @@ class TransactionManager
     public static function commit(): void
     {
         try {
-            self::$pdo->commit();
+            if (self::$pdo->inTransaction()) {
+                self::$pdo->commit();
+            }
         } catch (PDOException $e) {
             throw new Exception("Erro ao confirmar a transação: " . $e->getMessage());
         }
@@ -56,10 +61,22 @@ class TransactionManager
     public static function rollBack(): void
     {
         try {
-            self::$pdo->rollBack();
+            if (self::$pdo->inTransaction()) {
+                self::$pdo->rollBack();
+            }
         } catch (PDOException $e) {
             throw new Exception("Erro ao desfazer a transação: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Verifica se uma transação está ativa.
+     *
+     * @return bool Retorna true se uma transação estiver ativa, false caso contrário.
+     */
+    public static function inTransaction(): bool
+    {
+        return self::$pdo->inTransaction();
     }
 }
 ?>

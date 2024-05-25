@@ -5,8 +5,14 @@ require str_replace("\app\db","",__DIR__.DIRECTORY_SEPARATOR."vendor".DIRECTORY_
 use app\db\tableDb;
 use app\db\columnDb;
 use app\db\db;
+use app\db\transactionManeger;
 
 $recreate = false;
+
+try{
+
+transactionManeger::init();
+transactionManeger::beginTransaction();
 
 $empresaTb = new tableDb("empresa",comment:"Tabela de empresas");
 $empresaTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID do cliente"))
@@ -98,8 +104,7 @@ $statusTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID age
         ->execute($recreate);
 
 $status = new db("status");
-if($status->addLimit(1)->selectColumns("id")){
-        $status;
+if(!$status->addLimit(1)->selectColumns("id")){
         $object = $status->getObject();
         $object->nome = "Agendado";
         $status->store($object);
@@ -109,10 +114,7 @@ if($status->addLimit(1)->selectColumns("id")){
         $status->store($object);
         $object->nome = "Cancelado";
         $status->store($object);
-        $status;
 }
-
-
 
 $agendamentoTb = new tableDb("agendamento",comment:"Tabela de agendamentos");
 $agendamentoTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID agendamento"))
@@ -146,58 +148,34 @@ $agendamentoFuncionarioTb->addColumn((new columnDb("id_agenda","INT"))->isPrimar
 
 
 $agendamentoUsuarioTb = new tableDb("agenda_usuario",comment:"Tabela de vinculo entre agendamentos e usuarios");
-$agendamentoUsuarioTb;
 $agendamentoUsuarioTb->addColumn((new columnDb("id_agenda","INT"))->isPrimary()->isForeingKey($agendaTb)->setComment("ID agenda"))
-                         ->addColumn((new columnDb("id_usuario","INT"))->isPrimary()->isForeingKey($usuarioTb)->setComment("ID Usuario"));
-$agendamentoUsuarioTb->execute($recreate);
-$agendamentoUsuarioTb;
-}catch(Exception $e) {
-        $agendamentoUsuarioTb->rollBack();
-        echo $e->getMessage()."<br>";
-}
+                         ->addColumn((new columnDb("id_usuario","INT"))->isPrimary()->isForeingKey($usuarioTb)->setComment("ID Usuario"))
+                         ->execute($recreate);
 
 $paisTb = new tableDb("pais",comment:"Tabela de paises");
-$paisTb;
 $paisTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID da pais"))
         ->addColumn((new columnDb("nome","VARCHAR",250))->isNotNull()->setComment("Nome do pais"))
-        ->addColumn((new columnDb("nome_internacial","VARCHAR",250))->isNotNull()->setComment("nome internacial do pais"));
-$paisTb->execute($recreate);
-$paisTb;
-}catch(Exception $e) {
-        $paisTb->rollBack();
-        echo $e->getMessage()."<br>";
-}
+        ->addColumn((new columnDb("nome_internacial","VARCHAR",250))->isNotNull()->setComment("nome internacial do pais"))
+        ->execute($recreate);
+
 
 $estadoTb = new tableDb("estado",comment:"Tabela de estados");
-$estadoTb;
 $estadoTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID da cidade"))
         ->addColumn((new columnDb("nome","VARCHAR",120))->isNotNull()->setComment("Nome da cidade"))
         ->addColumn((new columnDb("uf","VARCHAR",2))->isNotNull()->setComment("nome da Uf"))
         ->addColumn((new columnDb("pais","INT"))->isNotNull()->isForeingKey($paisTb)->setComment("id da pais do estado"))
         ->addColumn((new columnDb("ibge","INT"))->isUnique()->setComment("id do IBJE do estado"))
-        ->addColumn((new columnDb("ddd","VARCHAR",50))->setComment("DDDs separado por , da Uf"));
-$estadoTb->execute($recreate);
-$estadoTb;
-}catch(Exception $e) {
-        $estadoTb->rollBack();
-        echo $e->getMessage()."<br>";
-}
+        ->addColumn((new columnDb("ddd","VARCHAR",50))->setComment("DDDs separado por , da Uf"))
+        ->execute($recreate);
 
 $cidadeTb = new tableDb("cidade",comment:"Tabela de cidades");
-$cidadeTb;
 $cidadeTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID da cidade"))
         ->addColumn((new columnDb("nome","VARCHAR",120))->isNotNull()->setComment("Nome da cidade"))
         ->addColumn((new columnDb("uf","INT"))->isNotNull()->isForeingKey($estadoTb)->setComment("id da Uf da cidade"))
-        ->addColumn((new columnDb("ibge","INT"))->setComment("id do IBJE da cidade"));
-$cidadeTb->execute($recreate);
-$cidadeTb;
-}catch(Exception $e) {
-        $cidadeTb->rollBack();
-        echo $e->getMessage()."<br>";
-}
+        ->addColumn((new columnDb("ibge","INT"))->setComment("id do IBJE da cidade"))
+        ->execute($recreate);
 
 $enderecoTb = new tableDb("endereco",comment:"Tabela de endereços");
-$enderecoTb;
 $enderecoTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID do estado"))
         ->addColumn((new columnDb("id_usuario","INT"))->isForeingKey($usuarioTb)->setComment("ID da tabela usuario"))
         ->addColumn((new columnDb("id_empresa","INT"))->isForeingKey($empresaTb)->setComment("ID da tabela empresa"))
@@ -207,26 +185,22 @@ $enderecoTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID d
         ->addColumn((new columnDb("bairro","VARCHAR",300))->isNotNull()->setComment("Bairro"))
         ->addColumn((new columnDb("rua","VARCHAR",300))->isNotNull()->setComment("Rua"))
         ->addColumn((new columnDb("numero","INT"))->isNotNull()->setComment("Numero"))
-        ->addColumn((new columnDb("complemento","VARCHAR",300))->setComment("Complemento do endereço"));
-$enderecoTb->execute($recreate);
-$enderecoTb;
-}catch(Exception $e) {
-        $enderecoTb->rollBack();
-        echo $e->getMessage()."<br>";
-}
+        ->addColumn((new columnDb("complemento","VARCHAR",300))->setComment("Complemento do endereço"))
+        ->execute($recreate);
 
 $configTb = new tableDb("config",comment:"Tabela de configurações");
-$configTb;
 $configTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID agenda"))
         ->addColumn((new columnDb("id_empresa","INT"))->isNotNull()->isForeingKey($empresaTb,"id")->setComment("ID da tabela empresa"))
         ->addColumn((new columnDb("identificador","VARCHAR",30))->isNotNull()->isUnique()->setComment("Identificador da configuração"))
         ->addColumn((new columnDb("configuracao","BLOB"))->isNotNull()->setComment("Configuração"))
         ->execute($recreate);
-$configTb;
-}catch(Exception $e) {
-        $configTb->rollBack();
-        echo $e->getMessage()."<br>";
-}
 
+transactionManeger::commit();
+
+}
+catch(Exception $e){
+        echo $e->getMessage();
+        transactionManeger::rollBack();
+}
 
 ?>
