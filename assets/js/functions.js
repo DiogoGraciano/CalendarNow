@@ -453,13 +453,14 @@ $(document).ready(function(){
         url: url_base+"ajax",
         data: {"method":"getEndereco","parameters":cep},
         success: function (response) {
-          response = JSON.parse(response)
+          response = JSON.parse(response);
+          console.log(response);
           if (response.sucesso) {
               removeLoader();
               if ($("#id_estado").val() != response.retorno.uf){
                 $("#id_estado").val(response.retorno.uf).trigger('change');
-                getCidades()
-                validaCep()
+                getCidades();
+                validaCep();
               }
               $("#id_cidade").val(response.retorno.localidade).trigger('change');
               $("#bairro").val(response.retorno.bairro);

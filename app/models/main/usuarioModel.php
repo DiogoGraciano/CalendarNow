@@ -171,6 +171,8 @@ class usuarioModel{
             $mensagens[] = "Informar a empresa é obrigatorio para esse tipo de usuario";
         }
 
+        var_dump($id_empresa);
+        die;
         if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)->id){
             $mensagens[] = "Empresa não existe";
         }

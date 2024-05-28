@@ -97,6 +97,14 @@ class enderecoModel{
             $mensagens[] = "Usuario ou Empresa precisa ser informado para cadastro";
         }
 
+        if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)->id){
+            $mensagens[] = "Empresa não existe";
+        }
+
+        if($values->id = $id && !UsuarioModel::get($values->id)->id){
+            $mensagens[] = "Usuario não existe";
+        }
+
         if($mensagens){
             mensagem::setErro(...$mensagens);
             return false;

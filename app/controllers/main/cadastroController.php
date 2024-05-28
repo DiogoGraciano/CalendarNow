@@ -11,6 +11,7 @@ use app\classes\filter;
 use app\classes\mensagem;
 use app\classes\modal;
 use app\db\estado;
+use app\db\transactionManeger;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
@@ -187,11 +188,13 @@ class cadastroController extends controllerAbstract{
 
         $elements = new elements;
 
-        $form->setDoisInputs(
-            $elements->input("nome","Nome",$dado->nome,true),
-            $elements->input("cpf_cnpj","CPF/CNPJ:",$dado->cpf_cnpj?functions::formatCnpjCpf($dado->cpf_cnpj):"",true),
-            array("nome","cpf_cnpj")
-        );
+        if($tipo_usuario == 1){
+            $form->setDoisInputs(
+                $elements->input("nome","Nome",$dado->nome,true),
+                $elements->input("cpf_cnpj","CPF/CNPJ:",$dado->cpf_cnpj?functions::formatCnpjCpf($dado->cpf_cnpj):"",true),
+                array("nome","cpf_cnpj")
+            );
+        }
 
         $form->setTresInputs(
             $elements->input("email","Email",$dado->email,true,false,"","email"),
@@ -312,94 +315,88 @@ class cadastroController extends controllerAbstract{
         $email = $this->getValue('email');
         $telefone = $this->getValue('telefone');
         if ($tipo_usuario != 2){
-            $id_endereco = $this->getValue('id_endereco');
+            $id_endereco = intval($this->getValue('id_endereco'));
             $cep = $this->getValue('cep');
-            $id_estado = $this->getValue('id_estado');
-            $id_cidade = $this->getValue('id_cidade');
+            $id_estado = intval($this->getValue('id_estado'));
+            $id_cidade = intval($this->getValue('id_cidade'));
             $bairro = $this->getValue('bairro');
             $rua = $this->getValue('rua');
             $numero = $this->getValue('numero');
             $complemento = $this->getValue('complemento');
         }
-        if ($tipo_usuario == 1){
-            $_id_empresa = $this->getValue('id_empresa');
-            $nome_empresa = $this->getValue('nome_empresa');
-            $razao = $this->getValue('razao');
-            $fantasia = $this->getValue('fantasia');
-            try{
-                $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$_id_empresa);
-                if ($id_empresa && $id_usuario = empresaModel::convertEmpresaToUsuario($id_empresa,$senha,true)){
-                    $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario,$id_empresa);
-                    if ($id_endereco){
-                        mensagem::setSucesso("Usuario empresarial salvo com sucesso");
-                        if ($login)
-                            $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
-                        else 
-                            $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
-                    }else{
-                        usuarioModel::delete($id_usuario);
-                        empresaModel::delete($id_empresa);
-                        mensagem::setSucesso(false);
-                    }
-                }else{
-                    mensagem::setSucesso(false);
-                }
-            }catch(Exception $e){
-                if(!$_id_empresa){
-                    if($id_usuario)
-                        usuarioModel::delete($id_usuario);
-                    if($id_endereco)
-                        empresaModel::delete($id_endereco);
-                    if($id_empresa)
-                        empresaModel::delete($id_empresa);
-                }
-               
-                mensagem::setSucesso(false);
-            }
-        }
-        elseif ($tipo_usuario == 2){
-            $id_grupo_funcionario = $this->getValue('id_grupo_funcionario');
-            $hora_ini = $this->getValue('hora_ini');
-            $hora_fim = $this->getValue('hora_fim');
-            $hora_almoco_ini = $this->getValue('hora_almoco_ini');
-            $hora_almoco_fim = $this->getValue('hora_almoco_fim');
-               
-            $dias = implode(",",[$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")]);
+        transactionManeger::init();
 
-            if ($id_empresa = $this->getValue("id_empresa")){  
-                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario,$id_empresa);
+        transactionManeger::beginTransaction();
+        try{
+            if ($tipo_usuario == 1){
+                $_id_empresa = intVal($this->getValue('id_empresa'));
+                $nome_empresa = $this->getValue('nome_empresa');
+                $razao = $this->getValue('razao');
+                $fantasia = $this->getValue('fantasia');
+                    $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$_id_empresa);
+                    if ($id_empresa && $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,1,$id_empresa)){
+                        $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario,$id_empresa);
+                        if ($id_endereco){
+                            mensagem::setSucesso("Usuario empresarial salvo com sucesso");
+                            transactionManeger::commit();
+                            if ($login)
+                                $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
+                            else 
+                                $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
+                        }
+                    }
+            }
+            elseif ($tipo_usuario == 2){
+                $id_grupo_funcionario = $this->getValue('id_grupo_funcionario');
+                $hora_ini = $this->getValue('hora_ini');
+                $hora_fim = $this->getValue('hora_fim');
+                $hora_almoco_ini = $this->getValue('hora_almoco_ini');
+                $hora_almoco_fim = $this->getValue('hora_almoco_fim');
+                
+                $dias = implode(",",[$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")]);
+
+                if ($id_empresa = $this->getValue("id_empresa")){  
+                    $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario,$id_empresa);
+                    if ($id_usuario){
+                        $id_funcionario = intval($this->getValue("id_funcionario"));
+                        $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
+                        if($id_funcionario){
+                            if ($id_grupo_funcionario && $id_funcionario)
+                                funcionarioModel::setFuncionarioGrupoFuncionario($id_grupo_funcionario,$id_funcionario);
+                            
+                            mensagem::setSucesso("Funcionario salvo com sucesso");    
+                            transactionManeger::commit();
+
+                            if ($login)
+                                $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
+                            else 
+                                $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
+                        }
+                    }
+                }
+            }
+            elseif ($tipo_usuario == 3){ 
+                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario);
                 if ($id_usuario){
-                    $id_funcionario = intval($this->getValue("id_funcionario"));
-                    $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
-                    if($id_funcionario){
-                        mensagem::setSucesso("Funcionario salvo com sucesso");
-                        if ($id_grupo_funcionario && $id_funcionario)
-                            funcionarioModel::setFuncionarioGrupoFuncionario($id_grupo_funcionario,$id_funcionario);
+                    $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario);
+                    if($id_endereco){
+                        mensagem::setSucesso("Usuario salvo com sucesso");
+                        transactionManeger::commit();
                         if ($login)
                             $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                         else 
                             $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
                     }
-                    mensagem::setSucesso(false);
-                    usuarioModel::delete($id_usuario);
                 }
             }
+        }catch(Exception $e){
+            mensagem::setSucesso(false);
+            transactionManeger::rollback();
         }
-        elseif ($tipo_usuario == 3){ 
-            $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario);
-            if ($id_usuario){
-                $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario);
-                if($id_endereco){
-                    mensagem::setSucesso("Usuario salvo com sucesso");
-                    if ($login)
-                        $this->go("login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
-                    else 
-                        $this->go("cadastro/index/".functions::encrypt($tipo_usuario));
-                }
-                mensagem::setSucesso(false);
-                usuarioModel::delete($id_usuario);
-            }
-        }
+
+        mensagem::setSucesso(false);
+        transactionManeger::rollback();
+
         if ($login)
             $this->go("login/cadastro/".functions::encrypt($tipo_usuario));
         else 
