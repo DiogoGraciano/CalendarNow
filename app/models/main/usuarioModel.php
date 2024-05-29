@@ -136,9 +136,10 @@ class usuarioModel{
      * @param string $id O ID do usuário (opcional).
      * @param int $tipo_usuario O tipo de usuário (padrão é 3).
      * @param int $id_empresa O ID da empresa associada (opcional, padrão é "null").
+     * @param bool $valid_fk valida outras tabelas vinculadas.
      * @return int|bool Retorna o ID do usuário inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int|null $id = null,int $tipo_usuario = 3,int|null $id_empresa = null):int|bool
+    public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int|null $id = null,int $tipo_usuario = 3,int|null $id_empresa = null,bool $valid_fk = true):int|bool
     {
 
         $db = new usuario;
@@ -147,7 +148,7 @@ class usuarioModel{
 
         $values = $db->getObject();
 
-        if(!$values->nome = filter_var(trim($nome))){
+        if(!($values->nome = filter_var(trim($nome)))){
             $mensagens[] = "Nome é invalido";
         }
 
@@ -171,13 +172,11 @@ class usuarioModel{
             $mensagens[] = "Informar a empresa é obrigatorio para esse tipo de usuario";
         }
 
-        var_dump($id_empresa);
-        die;
-        if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)->id){
+        if(($values->id_empresa = $id_empresa) && $valid_fk && !empresaModel::get($values->id_empresa)->id){
             $mensagens[] = "Empresa não existe";
         }
 
-        if($values->id = $id && !self::get($values->id)->id){
+        if(($values->id = $id) && !self::get($values->id)->id){
             $mensagens[] = "Usuario não existe";
         }
 

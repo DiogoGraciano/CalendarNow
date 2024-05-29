@@ -59,13 +59,16 @@ class enderecoModel{
      * @param int $id O ID do endereço (opcional).
      * @param int $id_usuario O ID do usuário associado (opcional).
      * @param int $id_empresa O ID da empresa associada (opcional).
+     * @param bool $valid_fk valida outras tabelas vinculadas.
      * @return string|bool Retorna o ID do endereço inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(string $cep,int $id_estado,int $id_cidade,string $bairro,string $rua,string $numero,string|null $complemento = null,null|int $id = null,null|int $id_usuario = null,null|int $id_empresa = null){
+    public static function set(string $cep,int $id_estado,int $id_cidade,string $bairro,string $rua,string $numero,string|null $complemento = null,null|int $id = null,null|int $id_usuario = null,null|int $id_empresa = null,$valid_fk = true){
         $db = new endereco;
         $mensagens = [];
 
-        if(!functions::validaCep(functions::onlynumber($cep))){
+        $values = $db->getObject();
+
+        if(!functions::validaCep($cep = functions::onlynumber($cep))){
             $mensagens[] = "CEP é invalido";
         }
 
@@ -97,12 +100,16 @@ class enderecoModel{
             $mensagens[] = "Usuario ou Empresa precisa ser informado para cadastro";
         }
 
-        if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)->id){
+        if($values->id_empresa = $id_empresa && $valid_fk && !empresaModel::get($values->id_empresa)->id){
             $mensagens[] = "Empresa não existe";
         }
 
-        if($values->id = $id && !UsuarioModel::get($values->id)->id){
+        if($values->id_usuario = $id_usuario && $valid_fk && !usuarioModel::get($values->id_usuario)->id){
             $mensagens[] = "Usuario não existe";
+        }
+
+        if($values->id = $id && !self::get($values->id)->id){
+            $mensagens[] = "Endereço não existe";
         }
 
         if($mensagens){
@@ -110,11 +117,6 @@ class enderecoModel{
             return false;
         }
 
-        $values = $db->getObject();
-
-        $values->id = $id;
-        $values->id_usuario = $id_usuario;
-        $values->id_empresa = $id_empresa;
         $values->cep = $cep;
         $values->id_estado = $id_estado;
         $values->id_cidade = $id_cidade;

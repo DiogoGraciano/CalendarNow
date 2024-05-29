@@ -188,13 +188,13 @@ class cadastroController extends controllerAbstract{
 
         $elements = new elements;
 
-        if($tipo_usuario == 1){
-            $form->setDoisInputs(
-                $elements->input("nome","Nome",$dado->nome,true),
-                $elements->input("cpf_cnpj","CPF/CNPJ:",$dado->cpf_cnpj?functions::formatCnpjCpf($dado->cpf_cnpj):"",true),
-                array("nome","cpf_cnpj")
-            );
-        }
+        
+        $form->setDoisInputs(
+            $elements->input("nome","Nome",$dado->nome,true),
+            $elements->input("cpf_cnpj","CPF/CNPJ:",$dado->cpf_cnpj?functions::formatCnpjCpf($dado->cpf_cnpj):"",true),
+            array("nome","cpf_cnpj")
+        );
+        
 
         $form->setTresInputs(
             $elements->input("email","Email",$dado->email,true,false,"","email"),
@@ -334,8 +334,8 @@ class cadastroController extends controllerAbstract{
                 $razao = $this->getValue('razao');
                 $fantasia = $this->getValue('fantasia');
                     $id_empresa = empresaModel::set($nome_empresa,$cpf_cnpj,$email,$telefone,$razao,$fantasia,$_id_empresa);
-                    if ($id_empresa && $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,1,$id_empresa)){
-                        $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario,$id_empresa);
+                    if ($id_empresa && $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,1,$id_empresa,false)){
+                        $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario,$id_empresa,false);
                         if ($id_endereco){
                             mensagem::setSucesso("Usuario empresarial salvo com sucesso");
                             transactionManeger::commit();
@@ -378,7 +378,7 @@ class cadastroController extends controllerAbstract{
             elseif ($tipo_usuario == 3){ 
                 $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,$tipo_usuario);
                 if ($id_usuario){
-                    $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario);
+                    $id_endereco = enderecoModel::set($cep,$id_estado,$id_cidade,$bairro,$rua,$numero,$complemento,$id_endereco,$id_usuario,false);
                     if($id_endereco){
                         mensagem::setSucesso("Usuario salvo com sucesso");
                         transactionManeger::commit();

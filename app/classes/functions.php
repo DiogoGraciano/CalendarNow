@@ -255,17 +255,15 @@ class functions{
      * @return bool se é valido
     */
     public static function validarDiasSemana($dias_semana) {
-        // Expressão regular para validar o formato geral
-        $padrao_formato = '/^(dom|seg|ter|qua|qui|sex|sab)(,(dom|seg|ter|qua|qui|sex|sab))*$/';
         
-        // Verificar se o formato geral está correto
-        if (preg_match($padrao_formato, $dias_semana)) {
-            // Dividir a lista em dias individuais
-            $dias = explode(",", $dias_semana);
-            
+        // Dividir a lista em dias individuais
+        $dias = explode(",", $dias_semana);
+        
+        if(count($dias) < 7){
             // Verificar cada dia individualmente
             foreach ($dias as $dia) {
                 $dia = trim($dia);
+                var_dump(!in_array($dia, ["dom", "seg", "ter", "qua", "qui", "sex", "sab"]));
                 if (!in_array($dia, ["dom", "seg", "ter", "qua", "qui", "sex", "sab"])) {
                     return false; // Dia inválido encontrado
                 }
@@ -273,8 +271,8 @@ class functions{
             
             return true; // Todos os dias são válidos
         }
-        
-        return false; // Formato geral inválido
+
+        return false;
     }
 
     /**

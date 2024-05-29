@@ -156,19 +156,19 @@ class funcionarioModel{
             $mensagens[] = "Usuario não encontrada";
         }
 
-        if(!$values->nome = ucwords(strtolower(trim($nome)))){
+        if(!($values->nome = ucwords(strtolower(trim($nome))))){
             $mensagens[] = "Nome deve ser informado";
         }
 
-        if(!$values->cpf_cnpj = functions::onlynumber($cpf_cnpj)){
+        if(!($values->cpf_cnpj = functions::onlynumber($cpf_cnpj))){
             $mensagens[] = "CPF/CNPJ deve ser informado";
         }
 
-        if(!functions::validaCpfCnpj($cpf_cnpj)){
+        if(!(functions::validaCpfCnpj($cpf_cnpj))){
             $mensagens[] = "CPF/CNPJ invalido";
         }
 
-        if(!$values->email = $email && !functions::validaEmail($email)){
+        if(!($values->email = $email)){
             $mensagens[] = "Email não informado";
         }
 
@@ -224,6 +224,10 @@ class funcionarioModel{
         if(!functions::validarDiasSemana($values->dias)){
             $mensagens[] = "Um ou mais dias estão no formato invalido";
         }
+
+        var_dump($mensagens);
+        var_dump($values);
+        die;
 
         if($mensagens){
             mensagem::setErro(...$mensagens);

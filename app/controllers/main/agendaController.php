@@ -104,7 +104,8 @@ class agendaController extends controllerAbstract{
 
         if ($id_agenda = agendaModel::set($nome,$id_empresa,$codigo,$id)){ 
             agendaModel::setAgendaUsuario($user->id,$id_agenda);
-            agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
+            if($id_funcionario)
+                agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
         }
        
         mensagem::setSucesso("Agenda salva com sucesso");
