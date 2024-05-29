@@ -148,6 +148,8 @@ class funcionarioModel{
 
         $values = $db->getObject();
 
+        $mensagens = [];
+
         if($id && !$values->id = self::get($id)->id){
             $mensagens[] = "Funcionario não encontrada";
         }
@@ -225,10 +227,6 @@ class funcionarioModel{
             $mensagens[] = "Um ou mais dias estão no formato invalido";
         }
 
-        var_dump($mensagens);
-        var_dump($values);
-        die;
-
         if($mensagens){
             mensagem::setErro(...$mensagens);
             return false;
@@ -251,7 +249,7 @@ class funcionarioModel{
      * @param int $id_agenda O ID da agenda.
      * @return int|bool Retorna o ID da associação se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda):int|bool
+    public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda):bool
     {
         $db = new agendaFuncionario;
 
@@ -269,7 +267,7 @@ class funcionarioModel{
                 $retorno = $db->storeMutiPrimary($values);
 
             if ($retorno == true)
-                return $db->getLastID();
+                return true;
             else 
                 return False;
             
@@ -284,7 +282,7 @@ class funcionarioModel{
      * @param int $id_grupo_funcionario O ID do grupo de funcionários.
      * @return int|bool Retorna o ID da associação se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function setFuncionarioGrupoFuncionario(int $id_funcionario,int $id_grupo_funcionario):int|bool
+    public static function setFuncionarioGrupoFuncionario(int $id_funcionario,int $id_grupo_funcionario):bool
     {
         $db = new funcionarioGrupoFuncionario;
 
@@ -302,7 +300,7 @@ class funcionarioModel{
                 $retorno = $db->storeMutiPrimary($values);
 
             if ($retorno == true){
-                return $db->getLastID();
+                return true;
             }
             else {
                 return False;

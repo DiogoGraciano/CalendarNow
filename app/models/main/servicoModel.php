@@ -24,9 +24,9 @@ class servicoModel{
      * @param int $id O ID do serviço.
      * @return object Retorna o objeto do serviço ou null se não encontrado.
     */
-    public static function get(int $id):object
+    public static function get(null|int|string $value = null,string $column = "id"):object
     {
-        return (new servico)->get($id);
+        return (new servico)->get($value,$column);
     }
 
     /**
@@ -78,6 +78,8 @@ class servicoModel{
 
             return $values;
         }
+
+        return [];
     }
 
     /**

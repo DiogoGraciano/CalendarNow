@@ -259,12 +259,11 @@ class functions{
         // Dividir a lista em dias individuais
         $dias = explode(",", $dias_semana);
         
-        if(count($dias) < 7){
+        if(count($dias) <= 7){
             // Verificar cada dia individualmente
             foreach ($dias as $dia) {
                 $dia = trim($dia);
-                var_dump(!in_array($dia, ["dom", "seg", "ter", "qua", "qui", "sex", "sab"]));
-                if (!in_array($dia, ["dom", "seg", "ter", "qua", "qui", "sex", "sab"])) {
+                if (!in_array($dia, ["","dom", "seg", "ter", "qua", "qui", "sex", "sab"])) {
                     return false; // Dia inválido encontrado
                 }
             }

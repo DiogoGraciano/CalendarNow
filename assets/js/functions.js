@@ -101,7 +101,12 @@ function mensagem(mensagem,type="alert-danger"){
 
 function alertTimeout(){
   setTimeout(function(){
-    $(".alert").fadeOut("fast", function(){
+    $(".alert .alert-danger").fadeOut("fast", function(){
+      $(this).alert('close');
+    });	
+  }, 4000);
+  setTimeout(function(){
+    $(".alert .alert-success").fadeOut("fast", function(){
       $(this).alert('close');
     });	
   }, 4000);

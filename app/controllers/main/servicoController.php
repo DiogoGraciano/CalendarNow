@@ -127,6 +127,7 @@ class servicoController extends controllerAbstract{
         $dado = servicoModel::get($id);
 
         $grupo_servicos = GrupoServicoModel::getByEmpresa($user->id_empresa);
+        $elements->addOption("","Nenhum");
         foreach ($grupo_servicos as $grupo_servico){
             $elements->addOption($grupo_servico->id,$grupo_servico->nome);
         }

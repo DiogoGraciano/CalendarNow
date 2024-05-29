@@ -108,7 +108,7 @@ class cadastroController extends controllerAbstract{
                     $elements->addOption($grupo_funcionario->id,$grupo_funcionario->nome);
                 }
 
-                $grupo_funcionario = $elements->select("Grupo Funcionario","grupo_funcionario");
+                $grupo_funcionario = $elements->select("Grupo Funcionario","grupo_funcionario",$id_grupo_funcionarios);
 
                 $modal = new modal($this->url."servico/massActionGrupoFuncionario/","massActionGrupoFuncionario");
 
@@ -118,7 +118,7 @@ class cadastroController extends controllerAbstract{
 
                 $modal->show();
 
-                $filter->addFilter(3,$id_grupo_funcionarios);
+                $filter->addFilter(3,$grupo_funcionario);
 
                 $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo","openModelGrupoFuncionario","button","btn btn-primary","openModal('massActionGrupoFuncionario')"));
             }
