@@ -24,9 +24,9 @@ class funcionarioModel{
      * @param string $id O ID do funcionário.
      * @return object Retorna o objeto do funcionário ou null se não encontrado.
     */
-    public static function get(int $id = null):object
+    public static function get(string|int|null $value = null,string $column = "id"):object
     {
-        return (new funcionario)->get($id);
+        return (new funcionario)->get($value,$column);
     }
 
     /**
@@ -235,6 +235,7 @@ class funcionarioModel{
         $retorno = $db->store($values);
         
         if ($retorno == true){
+            mensagem::setSucesso("Funcionario salvo com sucesso");
             return $db->getLastID();
         }
         else {

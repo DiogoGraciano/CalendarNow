@@ -18,12 +18,13 @@ class usuarioModel{
     /**
      * Obtém um usuário pelo ID.
      * 
-     * @param string $id O ID do usuário a ser buscado.
+     * @param int|null|string $value O Valor do usuário a ser buscado.
+     * @param int|null|string $column A Coluna do usuário a ser buscado.
      * @return object Retorna os dados do usuário ou objeto se não encontrado.
     */
-    public static function get(int $id=null):object
+    public static function get(int|null|string $value = null,string $column = "id"):object
     {
-        return (new usuario)->get($id);
+        return (new usuario)->get($value,$column);
     }
 
     /**
@@ -191,7 +192,10 @@ class usuarioModel{
         
         if ($retorno == true){
             mensagem::setSucesso("Usuario salvo com sucesso");
-            return $db->getLastID();
+               if($values->id)
+                mensagem::setSucesso("Atualizado com sucesso");
+            else 
+                mensagem::setSucesso("Criado com sucesso");
         }
 
         mensagem::setErro("Erro ao cadastrar usuario");

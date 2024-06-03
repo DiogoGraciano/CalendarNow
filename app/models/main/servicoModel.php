@@ -140,8 +140,13 @@ class servicoModel{
            
             $retorno = $db->storeMutiPrimary($values);
 
+            mensagem::setSucesso("Serviço Adicionado com Sucesso");
+
             return $retorno;
         }
+
+        mensagem::setSucesso("Serviço já Adicionado");
+
         return True;
     }
 
@@ -175,8 +180,12 @@ class servicoModel{
 
             $retorno = $db->storeMutiPrimary($values);
 
+            mensagem::setSucesso("Serviço Adicionado com Sucesso");
+
             return $retorno;
         }
+
+        mensagem::setSucesso("Serviço já Adicionado");
 
         return True;
     }
@@ -204,7 +213,7 @@ class servicoModel{
             $mensagens[] = "Nome é invalido";
         }
 
-        if($values->valor = $valor <= 0){
+        if(($values->valor = $valor) <= 0){
             $mensagens[] = "Valor do serviço invalido";
         }
 
@@ -212,7 +221,7 @@ class servicoModel{
             $mensagens[] = "Tempo do serviço invalido";
         }
 
-        if($values->id_empresa = $id_empresa && !empresaModel::get($values->id_empresa)){
+        if(($values->id_empresa = $id_empresa) && !empresaModel::get($values->id_empresa)){
             $mensagens[] = "Empresa não existe";
         }
 
@@ -229,6 +238,7 @@ class servicoModel{
             $retorno = $db->store($values);
 
         if ($retorno == true){
+            mensagem::setSucesso("Serviço salvo com sucesso");
             return $db->getLastID();
         }
 

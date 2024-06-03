@@ -66,6 +66,7 @@ class clienteModel{
         }
 
         if ($retorno == true){
+            mensagem::setSucesso("Cliente salvo com sucesso");
             return $db->getLastID();
         } else {
             return false;

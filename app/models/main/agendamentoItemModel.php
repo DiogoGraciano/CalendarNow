@@ -126,6 +126,7 @@ class agendamentoItemModel{
         $retorno = $db->store($values);
 
         if ($retorno == true){
+            mensagem::setSucesso("Item salvo com sucesso");
             return $db->getLastID();
         }
         else {

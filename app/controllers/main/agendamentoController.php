@@ -18,6 +18,7 @@ use app\models\main\funcionarioModel;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\clienteModel;
+use app\models\main\statusModel;
 use stdClass;
 
 class agendamentoController extends controllerAbstract{
@@ -60,7 +61,7 @@ class agendamentoController extends controllerAbstract{
         $agenda = new agenda();
         $agenda->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."home'"));
         $agenda->show(
-            $this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt($id_funcionario==""?$firstFuncionario:$id_funcionario)."/",
+            $this->url."agendamento/manutencao/".$parameters[0]."/".functions::encrypt(!$id_funcionario?$firstFuncionario:$id_funcionario)."/",
             agendamentoModel::getEventsbyFuncionario(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year")),$id_agenda,$Dadofuncionario->id),
             $Dadofuncionario->dias?:"seg,ter,qua,qui,sex",
             $Dadofuncionario->hora_ini?:"08:00",
@@ -109,11 +110,12 @@ class agendamentoController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
-        $elements->addOption(1,"Agendado");
-        $elements->addOption(2,"Concluido");
-        $elements->addOption(98,"Não Atendido");
-        $elements->addOption(99,"Cancelado");
-        $status = $elements->select("Status","status",$dado->status);
+        $statuses = statusModel::getAll();
+        
+        foreach ($statuses as $status){
+            $elements->addOption($status->id,$status->nome);
+        }
+        $status = $elements->select("Status","status",$dado->id_status);
 
         if ($user->tipo_usuario != 3){
 

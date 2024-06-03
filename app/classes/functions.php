@@ -416,7 +416,7 @@ class functions{
      * @return string|bool A string descriptografada ou false se falhar
      */
     public static function decrypt($input)
-    {
+    {  
         if($input){
             $input = str_replace("@","/",$input);
             

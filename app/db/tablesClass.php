@@ -26,9 +26,7 @@ class agenda extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class agendaServico extends db{
     public function __construct(){
@@ -55,9 +53,7 @@ class agendaServico extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class agendamento extends db{
     public function __construct(){
@@ -84,9 +80,7 @@ class agendamento extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class agendamentoItem extends db{
     public function __construct(){
@@ -113,9 +107,7 @@ class agendamentoItem extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class agendaFuncionario extends db{
     public function __construct(){
@@ -142,9 +134,7 @@ class agendaFuncionario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class agendaUsuario extends db{
     public function __construct(){
@@ -171,9 +161,7 @@ class agendaUsuario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class cidade extends db{
     public function __construct(){
@@ -200,9 +188,7 @@ class cidade extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class cliente extends db{
     public function __construct(){
@@ -229,9 +215,7 @@ class cliente extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class empresa extends db{
     public function __construct(){
@@ -258,9 +242,7 @@ class empresa extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class endereco extends db{
     public function __construct(){
@@ -287,9 +269,7 @@ class endereco extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class estado extends db{
     public function __construct(){
@@ -316,9 +296,7 @@ class estado extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class funcionario extends db{
     public function __construct(){
@@ -345,9 +323,7 @@ class funcionario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class funcionarioGrupoFuncionario extends db{
     public function __construct(){
@@ -374,9 +350,7 @@ class funcionarioGrupoFuncionario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class grupoFuncionario extends db{
     public function __construct(){
@@ -403,9 +377,7 @@ class grupoFuncionario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class grupoServico extends db{
     public function __construct(){
@@ -432,9 +404,7 @@ class grupoServico extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class servico extends db{
     public function __construct(){
@@ -461,9 +431,34 @@ class servico extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
+   
+}
+class status extends db{
+    public function __construct(){
+        parent::__construct("status");
     }
+
+    public function get($value="",string $column="id",int $limit = 1){
+        $retorno = false;
+
+        if($limit){
+            $this->addLimit($limit);
+        }
+
+        if ($value && in_array($column,$this->getColumns()))
+            $retorno = $this->addFilter($column,"=",$value)->selectAll();
+        
+        if (is_array($retorno) && count($retorno) == 1)
+            return $retorno[0];
+
+        return $retorno?:$this->getObject();
+    }
+
+    public function getAll(){
+        return $this->selectAll();
+    }
+
+   
 }
 class servicoFuncionario extends db{
     public function __construct(){
@@ -490,9 +485,7 @@ class servicoFuncionario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class servicoGrupoServico extends db{
     public function __construct(){
@@ -519,9 +512,7 @@ class servicoGrupoServico extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }
 class usuario extends db{
     public function __construct(){
@@ -536,7 +527,7 @@ class usuario extends db{
         }
 
         if ($value && in_array($column,$this->getColumns()))
-            $retorno = $this->addFilter($column,"=",$value)->selectAll();
+            $retorno = $this->addFilter($column,"=",$value)->setDebug()->selectAll();
         
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
@@ -548,7 +539,5 @@ class usuario extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="id"){
-        return $this->addFilter($column,"=",$value)->deleteByFilter();
-    }
+   
 }

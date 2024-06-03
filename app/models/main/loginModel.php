@@ -3,7 +3,7 @@ namespace app\models\main;
 
 use app\classes\mensagem;
 use app\classes\functions;
-use app\db\usuario;
+use app\models\main\usuarioModel;
 
 /**
  * Classe loginModel
@@ -24,13 +24,13 @@ class loginModel{
      */
     public static function login($cpf_cnpj, $senha):bool
     {
-        $db = new usuario;
-        $login =  $db->addFilter("cpf_cnpj", "=", functions::onlynumber($cpf_cnpj))->selectAll();
-
-        if ($login){
-            if (password_verify($senha, $login[0]->senha)){
-                $login[0]->senha = $senha;
-                $_SESSION["user"] = $login[0];
+        
+        $login = usuarioModel::get(functions::onlynumber($cpf_cnpj),"cpf_cnpj");
+        
+        if ($login->id){
+            if (password_verify($senha, $login->senha)){
+                $login->senha = $senha;
+                $_SESSION["user"] = $login;
                 return true;
             }
         }

@@ -251,9 +251,10 @@ class agendamentoModel{
         if ($values)
             $retorno = $db->store($values);
 
-        if ($retorno == true)
+        if ($retorno == true){
+            mensagem::setSucesso("Agendamento salvo com sucesso");
             return $db->getLastID();
-        else 
+        }else 
             return False;
         
     }

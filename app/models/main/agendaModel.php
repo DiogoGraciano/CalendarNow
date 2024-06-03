@@ -85,16 +85,15 @@ class agendaModel{
      * @param int|null $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUser(int $id_usuario = null):array|bool 
+    public static function getByUser(int $id_usuario):array|bool 
     {
         $db = new agendaUsuario;
         
-        $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")->addJoin("INNER","empresa","agenda.id_empresa","empresa.id");
-                    
-        if($id_usuario){
-            $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario);  
-        }
-        
+        $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
+        ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
+        ->addJoin("INNER","agenda_funcionario","agenda_funcionario.id_agenda","agenda.id")
+        ->addFilter("agenda_usuario.id_usuario","=",$id_usuario);
+
         if($values = $db->selectColumns("agenda.id","agenda.nome","empresa.nome as emp_nome"))
             return $values;
         
@@ -216,6 +215,7 @@ class agendaModel{
         }
 
         if ($retorno == true){
+            mensagem::setSucesso("Agenda salvo com sucesso");
             return $db->getLastID();
         }
         else {
