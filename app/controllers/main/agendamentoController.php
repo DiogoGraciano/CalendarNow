@@ -247,36 +247,7 @@ class agendamentoController extends controllerAbstract{
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
         $array_itens = []; 
         $total = 0;
-        if ($qtd_servico){
-            for ($i = 0; $i <= $qtd_servico; $i++) {
-                $objeto_item = false;
-                $id_servico = $this->getValue('servico_index_'.$i);
-                $qtd_item = $this->getValue('qtd_item_'.$i);
-                $tempo_item = $this->getValue('tempo_item_'.$i);
-                $total_item = $this->getValue('total_item_'.$i);
-                $id_agendamento_item = $this->getValue('id_item_'.$i);
-                if($id_servico && $qtd_item && $tempo_item && $total_item){
-                    $objeto_item = new stdClass;
-                    $objeto_item->id = $id_agendamento_item;
-                    $objeto_item->id_servico = $id_servico;
-                    $objeto_item->qtd_item = $qtd_item;
-                    $objeto_item->tempo_item = $tempo_item;
-                    $objeto_item->total_item = functions::removeCurrency($total_item);
-                    $total = $total + $objeto_item->total_item;
-                }
-                elseif ($id_agendamento_item && !$id_servico){
-                    agendamentoItemModel::delete($id_agendamento_item);
-                }
-                if ($objeto_item)
-                    $array_itens[] = $objeto_item;
-                $id_servico = $qtd_item = $tempo_item = $total_item = $id_agendamento_item = null;
-            }
-        }
-
-        if (!$array_itens){
-            mensagem::setErro("Selecione ao menos um serviço");
-            $this->go("agendamento/manutencao/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario)."/".functions::encrypt($id));
-        }
+        $exists = false;
 
         $cor = $this->getValue('cor');
         $obs = $this->getValue('obs');
@@ -305,8 +276,29 @@ class agendamentoController extends controllerAbstract{
         }
 
         if ($id_agendamento){
-            if(!agendamentoItemModel::setMultiple($array_itens,$id_agendamento))
-                agendamentoModel::delete($id_agendamento);
+            if ($qtd_servico){
+                for ($i = 0; $i <= $qtd_servico; $i++) {
+                    $objeto_item = false;
+                    $id_servico = $this->getValue('servico_index_'.$i);
+                    $qtd_item = $this->getValue('qtd_item_'.$i);
+                    $tempo_item = $this->getValue('tempo_item_'.$i);
+                    $total_item = $this->getValue('total_item_'.$i);
+                    $id_agendamento_item = $this->getValue('id_item_'.$i);
+                    if($id_servico && $qtd_item && $tempo_item && $total_item){
+                        $exists = true;
+                        agendamentoItem::set($qtd_item,$id_agendamento,$id_servico,$id_agendamento_item);
+                    }
+                    elseif ($id_agendamento_item && !$id_servico){
+                        agendamentoItemModel::delete($id_agendamento_item);
+                    }
+                    $id_servico = $qtd_item = $tempo_item = $total_item = $id_agendamento_item = null;
+                }
+            }
+    
+            if (!$exists){
+                mensagem::setErro("Selecione ao menos um serviço");
+                $this->go("agendamento/manutencao/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario)."/".functions::encrypt($id));
+            }
         }
 
         if(!mensagem::getErro())
