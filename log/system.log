@@ -33,3 +33,7 @@
 2024-05-29T22:28:47+00:00 [ERROR] : Erro: Tabela não encontrada
 2024-05-29T22:28:47+00:00 [ERROR] : Tabela: servico Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'id_empresa' cannot be null
 2024-05-29T22:51:11+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+2024-06-04T22:16:36+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+2024-06-04T22:16:36+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+2024-06-04T22:16:50+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+2024-06-04T22:16:50+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'

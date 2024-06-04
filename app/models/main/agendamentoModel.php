@@ -182,7 +182,7 @@ class agendamentoModel{
      * @param int $id O ID do agendamento (opcional).
      * @return string|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,int $status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null):int|bool
+    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,int $id_status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null):int|bool
     {
 
         $db = new agendamento;
@@ -236,8 +236,7 @@ class agendamentoModel{
             $mensagens[] = "Total deve ser maior que 0";
         }
 
-        $values->status = $status;
-        if($values->status != 1 && $values->status != 2 && $values->status != 98 && $values->status != 99){
+        if(!($values->id_status = $id_status) && !StatusModel::get($values->id_status)){
             $mensagens[] = "Status informado invalido";
         }
 
