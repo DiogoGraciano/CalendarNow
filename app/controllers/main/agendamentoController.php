@@ -245,7 +245,6 @@ class agendamentoController extends controllerAbstract{
         $status = intval($this->getValue("status"));
         $id_agenda = $this->getValue("id_agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
-        $array_itens = []; 
         $total = 0;
         $exists = false;
 
@@ -265,14 +264,14 @@ class agendamentoController extends controllerAbstract{
             $cliente = clienteModel::get($id_cliente);
 
             if (isset($cliente->id))
-                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,$total,$status,$obs,null,$cliente->id,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,1,$status,$obs,null,$cliente->id,$id);
         }
         elseif($user->tipo_usuario == 3) 
-            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,$total,$status,$obs,$user->id,null,$id);
+            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,1,$status,$obs,$user->id,null,$id);
         elseif($usuario = $this->getValue('usuario')){
             $usuario = usuarioModel::get($usuario);
             if ($usuario)
-                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,$total,$status,$obs,$usuario->id,null,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,1,$status,$obs,$usuario->id,null,$id);
         }
 
         if ($id_agendamento){
@@ -286,11 +285,12 @@ class agendamentoController extends controllerAbstract{
                     $id_agendamento_item = $this->getValue('id_item_'.$i);
                     if($id_servico && $qtd_item && $tempo_item && $total_item){
                         $exists = true;
-                        agendamentoItem::set($qtd_item,$id_agendamento,$id_servico,$id_agendamento_item);
+                        agendamentoItemModel::set($qtd_item,$id_agendamento,$id_servico,$id_agendamento_item);
                     }
                     elseif ($id_agendamento_item && !$id_servico){
                         agendamentoItemModel::delete($id_agendamento_item);
                     }
+                    $total += floatval($total_item);
                     $id_servico = $qtd_item = $tempo_item = $total_item = $id_agendamento_item = null;
                 }
             }

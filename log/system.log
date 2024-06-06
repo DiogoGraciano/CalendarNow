@@ -38,3 +38,13 @@
 2024-06-04T22:16:50+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
 2024-06-04T22:16:50+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
 2024-06-04T22:54:31+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+2024-06-05T22:32:03+00:00 [ERROR] : Tabela: agendamento Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+2024-06-05T22:56:08+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-05T22:57:21+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-05T22:57:46+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-05T22:59:00+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-05T23:03:45+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-05T23:05:07+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-05T23:06:50+00:00 [ERROR] : Erro: Tabela não encontrada
+2024-06-06T00:00:35+00:00 [ERROR] : Tabela: estado Erro: Creation of dynamic property app\db\estado::$id is deprecated
+2024-06-06T00:03:44+00:00 [ERROR] : Tabela: estado Erro: Creation of dynamic property app\db\estado::$id is deprecated

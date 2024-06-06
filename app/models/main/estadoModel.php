@@ -19,9 +19,9 @@ class estadoModel{
      * @param string $id O ID do estado a ser buscado.
      * @return object Retorna os dados do estado ou null se não encontrado.
      */
-    public static function get(int $id):object
+    public static function get(null|string|int $value,string $column = "id",int $limit = 1):object|array
     {
-        return (new estado)->get($id);
+        return (new estado)->get($value,$column,$limit);
     }
 
     /**

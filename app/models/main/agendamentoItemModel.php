@@ -22,9 +22,9 @@ class agendamentoItemModel{
      * @param int $id O ID do serviço.
      * @return object Retorna o objeto do Agendamento Item.
     */
-    public static function get(int $id):object
+    public static function get(string|null $value = null,string $columns = "id",int $limit = 1):object
     {
-        return (new agendamentoItem)->get($id);
+        return (new agendamentoItem)->get($value,$columns,$limit);
     }
     /**
      * Obtém os itens de um agendamento pelo ID do agendamento.

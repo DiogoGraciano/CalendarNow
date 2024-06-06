@@ -2,6 +2,8 @@
 namespace app\db;
 use app\classes\logger;
 use Exception;
+use stdClass;
+
 
 /**
  * Classe base para interação com o banco de dados.
@@ -20,7 +22,7 @@ class db
      *
      * @var object
     */
-    private $object;
+    private $object = [];
 
     /**
      * array de colunas da tabela.
@@ -121,10 +123,40 @@ class db
         $this->table = $table;
 
         // Gera Objeto da tabela
-        $this->object = $this->getObjectTable();
+        $this->getObjectTable();
 
         // Transforma as colunas da tabela em uma array
-        $this->columns = array_keys(get_object_vars($this->object));      
+        $this->columns = array_keys($this->object);      
+    }
+
+    public function __set($name,$value)
+    {
+        return $this->object[$name] = $value;
+    }
+
+    public function __get($name)
+    {
+        if (array_key_exists($name, $this->object)) {
+            return $this->object[$name];
+        }
+
+        $trace = debug_backtrace();
+        trigger_error(
+            'Column not found: ' . $name .
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE);
+        return null;
+    }
+
+    public function __isset($name)
+    {
+        return isset($this->object[$name]);
+    }
+
+    public function __unset($name)
+    {
+        unset($this->object[$name]);
     }
 
     /**
@@ -187,7 +219,7 @@ class db
      * 
      * @return object Retorna o objeto da tabela.
      */
-    public function getObject():object
+    public function getArrayData():array
     {
         return $this->object;
     }
@@ -203,7 +235,7 @@ class db
     }
 
     //Pega as colunas da tabela e tranforma em Objeto
-    private function getObjectTable():object
+    private function getObjectTable():void
     {
         $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "' . $this->table . '" ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
        
@@ -213,16 +245,13 @@ class db
 
         if ($sql->rowCount() > 0) {
             $rows = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
-            $object = new \stdClass;
             foreach ($rows as $row) {
-                $object->$row = null;
+                $this->object[$row] = null;
             }
-            return $object;
+        }else{
+            $this->error[] = "Erro: Tabela não encontrada";
+            Logger::error("Erro: Tabela não encontrada");
         }
-
-        $this->error[] = "Erro: Tabela não encontrada";
-        Logger::error("Erro: Tabela não encontrada");
-        return new \StdClass;
     }
 
     /**
@@ -247,8 +276,8 @@ class db
             $rows = [];
 
             if ($sql->rowCount() > 0) {
-                $rows = $sql->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
-            }     
+                $rows = $sql->fetchAll(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE,get_class($this));
+            }    
 
             return $rows;
 
@@ -311,18 +340,17 @@ class db
      * @param object $values Objeto contendo os valores a serem salvos.
      * @return bool|int Retorna id do ultimo registro inserido se a operação foi bem-sucedida, caso contrário, retorna false.
     */
-    public function store(\stdClass $values):bool
+    public function store():bool
     {
         try {
-            if ($values) {
-                $values = (array)$values;
+            if ($this->object) {
                 if (!isset($values[$this->columns[0]]) || !$values[$this->columns[0]]) {
                     // Incrementando o ID
-                    $values[$this->columns[0]] = $this->getlastIdBd() + 1;
+                    $this->object[$this->columns[0]] = $this->getlastIdBd() + 1;
 
                     // Montando a instrução SQL
                     $sql_instruction = "INSERT INTO {$this->table} (";
-                    $keysBD = implode(",", array_keys($values));
+                    $keysBD = implode(",", array_keys($this->object));
                     $valuesBD = "";
 
                     // Preparando os valores para bind e montando a parte dos valores na instrução SQL
@@ -338,9 +366,9 @@ class db
                     $sql_instruction .= $keysBD . ") VALUES (";
                     $valuesBD = rtrim($valuesBD, ",");
                     $sql_instruction .= $valuesBD . ");";
-                } elseif (isset($values[$this->columns[0]]) && $values[$this->columns[0]]) {
+                } elseif (isset($this->object[$this->columns[0]]) && $this->object[$this->columns[0]]) {
                     $sql_instruction = "UPDATE {$this->table} SET ";
-                    foreach ($values as $key => $data) {
+                    foreach ($this->object as $key => $data) {
                         if ($key === $this->columns[0]) // Ignorando a primeira coluna (geralmente a chave primária)
                             continue;
 
@@ -359,7 +387,7 @@ class db
                     } else {
                         $sql_instruction .= "{$this->columns[0]}=?";
                         $this->valuesBind[$this->counterBind] = [
-                            $values[$this->columns[0]],
+                            $this->object[$this->columns[0]],
                             \PDO::PARAM_INT
                         ];
                         $this->counterBind++;
@@ -376,7 +404,7 @@ class db
                 if ($this->debug)
                     $sql->debugDumpParams();
 
-                $this->lastid = $values[$this->columns[0]];
+                $this->lastid = $this->object[$this->columns[0]];
                 $this->clean();
                 return true;
             }
@@ -395,14 +423,13 @@ class db
     */
     public function storeMutiPrimary(\stdClass $values):bool{
         try {
-            if ($values) {
-                $values = (array)$values;
+            if ($this->object) {
                 $sql_instruction = "INSERT INTO {$this->table} (";
-                $keysBD = implode(",", array_keys($values));
+                $keysBD = implode(",", array_keys($this->object));
                 $valuesBD = "";
 
                 // Preparando os valores para bind e montando a parte dos valores na instrução SQL
-                foreach ($values as $key => $data) {
+                foreach ($this->object as $key => $data) {
                     $valuesBD .= "?,";
                     $this->valuesBind[$this->counterBind] = [
                         $data,
@@ -439,12 +466,12 @@ class db
      * @param int $id O ID do registro a ser deletado.
      * @return bool Retorna true se a operação foi bem-sucedida, caso contrário, retorna false.
     */
-    public function delete(int $id):bool
+    public function delete():bool
     {
         try {
-            if ($id){
+            if ($this->object[$this->columns[0]]){
                 $sql = $this->pdo->prepare("DELETE FROM " . $this->table . " WHERE " . $this->columns[0] . "=?");
-                $sql->bindParam(1,$id,\PDO::PARAM_INT);
+                $sql->bindParam(1,$this->object[$this->columns[0]],\PDO::PARAM_INT);
                 $sql->execute();
 
                 if ($this->debug)
