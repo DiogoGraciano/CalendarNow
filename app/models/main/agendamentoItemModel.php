@@ -34,7 +34,7 @@ class agendamentoItemModel{
      */
     public static function getItens(int $id_agendamento):array
     {
-        $db = new agendamentoItem;
+        $values = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
@@ -56,7 +56,7 @@ class agendamentoItemModel{
      */
     public static function getItemByServico(int $id_agendamento,int $id_servico):object|bool
     {
-        $db = new agendamentoItem;
+        $values = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
@@ -87,9 +87,9 @@ class agendamentoItemModel{
      */
     public static function set(int $qtd_item,int $id_agendamento,int $id_servico,int $id):int|bool
     {
-        $db = new agendamentoItem;
+        $values = new agendamentoItem;
         
-        $values = $db->getObject();
+        
 
         $servico = servicoModel::get($values->id_servico = $id_servico);
 
@@ -123,11 +123,11 @@ class agendamentoItemModel{
             return false;
         }
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Item salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }
         else {
             return false;

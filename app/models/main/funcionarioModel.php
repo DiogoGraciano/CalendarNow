@@ -144,9 +144,9 @@ class funcionarioModel{
     public static function set(int $id_usuario,string $nome,string $cpf_cnpj,string $email,string $telefone,string $hora_ini,string $hora_fim,string $hora_almoco_ini,string $hora_almoco_fim,string $dias,int $id = null):int|bool
     {
 
-        $db = new funcionario;
+        $values = new funcionario;
 
-        $values = $db->getObject();
+        
 
         $mensagens = [];
 
@@ -232,11 +232,11 @@ class funcionarioModel{
             return false;
         }
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
         
         if ($retorno == true){
             mensagem::setSucesso("Funcionario salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }
         else {
             return False;
@@ -252,20 +252,19 @@ class funcionarioModel{
     */
     public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda):bool
     {
-        $db = new agendaFuncionario;
+        $values = new agendaFuncionario;
 
-        $result = $db->addFilter("id_agenda","=",$id_agenda)
+        $result = $values->addFilter("id_agenda","=",$id_agenda)
                     ->addFilter("id_funcionario","=",$id_funcionario)
                     ->selectAll();
 
         if (!$result){
-            $values = $db->getObject();
-
+        
             $values->id_agenda = $id_agenda;
             $values->id_funcionario = $id_funcionario;
 
             if ($values)
-                $retorno = $db->storeMutiPrimary($values);
+                $retorno = $values->storeMutiPrimary($values);
 
             if ($retorno == true)
                 return true;
@@ -285,20 +284,20 @@ class funcionarioModel{
      */
     public static function setFuncionarioGrupoFuncionario(int $id_funcionario,int $id_grupo_funcionario):bool
     {
-        $db = new funcionarioGrupoFuncionario;
+        $values = new funcionarioGrupoFuncionario;
 
-        $result = $db->addFilter("id_grupo_funcionario","=",$id_grupo_funcionario)
+        $result = $values->addFilter("id_grupo_funcionario","=",$id_grupo_funcionario)
                     ->addFilter("id_funcionario","=",$id_funcionario)
                     ->selectAll();
 
         if (!$result){
-            $values = $db->getObject();
+            
 
             $values->id_grupo_funcionario = $id_grupo_funcionario;
             $values->id_funcionario = $id_funcionario;
 
             if ($values)
-                $retorno = $db->storeMutiPrimary($values);
+                $retorno = $values->storeMutiPrimary($values);
 
             if ($retorno == true){
                 return true;

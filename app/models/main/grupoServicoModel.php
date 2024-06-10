@@ -34,9 +34,7 @@ class grupoServicoModel{
      */
     public static function set(string $nome,int $id_empresa,int $id = null):bool
     {
-        $db = new grupoServico;
-        
-        $values = $db->getObject();
+        $values = new grupoServico;
 
         if($values->id = $id && !self::get($values->id)->id){
             $mensagens[] = "Grupo de Serviço não encontrada";
@@ -50,7 +48,7 @@ class grupoServicoModel{
             $mensagens[] = "Nome invalido";
         }
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Grupo de serviços salvo com sucesso");

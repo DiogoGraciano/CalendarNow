@@ -38,7 +38,7 @@ class agendamentoModel{
     */
     public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$isnotstatus=99):array
     {
-        $db = new agendamento;
+        $values = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
@@ -73,7 +73,7 @@ class agendamentoModel{
     */
     public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$status=99):array
     {
-        $db = new agendamento;
+        $values = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
@@ -126,7 +126,7 @@ class agendamentoModel{
     */
     public static function getAgendamentosByEmpresa($id_empresa):array
     {
-        $db = new agendamento;
+        $values = new agendamento;
 
         $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
@@ -150,7 +150,7 @@ class agendamentoModel{
     */
     public static function getAgendamentosByUsuario($id_usuario):array
     {
-        $db = new agendamento;
+        $values = new agendamento;
 
         $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
@@ -185,7 +185,7 @@ class agendamentoModel{
     public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,int $id_status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null):int|bool
     {
 
-        $db = new agendamento;
+        $values = new agendamento;
         
         $values = new stdClass;
 
@@ -248,11 +248,11 @@ class agendamentoModel{
         $values->obs = trim($obs);
 
         if ($values)
-            $retorno = $db->store($values);
+            $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Agendamento salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }else 
             return False;
         

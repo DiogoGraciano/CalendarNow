@@ -23,9 +23,9 @@ class enderecoModel{
      * @param string $id O ID do endereço a ser buscado.
      * @return array|null Retorna os dados do endereço ou null se não encontrado.
      */
-    public static function get(string|null|int $value = null,string $column = "id"):object
+    public static function get(string|null|int $value = null,string $column = "id",$limit = 1):array|object
     {
-        return (new endereco)->get($value,$column);
+        return (new endereco)->get($value,$column,$limit);
     }
 
     /**
@@ -63,10 +63,10 @@ class enderecoModel{
      * @return string|bool Retorna o ID do endereço inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
      */
     public static function set(string $cep,int $id_estado,int $id_cidade,string $bairro,string $rua,string $numero,string|null $complemento = null,null|int $id = null,null|int $id_usuario = null,null|int $id_empresa = null,$valid_fk = true){
-        $db = new endereco;
+        $values = new endereco;
         $mensagens = [];
 
-        $values = $db->getObject();
+        
 
         if(!functions::validaCep($cep = functions::onlynumber($cep))){
             $mensagens[] = "CEP é invalido";
@@ -124,11 +124,11 @@ class enderecoModel{
         $values->rua = trim($rua);
         $values->numero = trim($numero);
         $values->complemento = trim($complemento);
-        $retorno = $db->store($values);
+        $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Endereço salva com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }else{
             mensagem::setErro("Erro ao cadastrar a endereço");
             return False;

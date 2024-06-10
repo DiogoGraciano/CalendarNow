@@ -112,7 +112,7 @@ class tabelaController extends controllerAbstract{
 
             $form = new form("Selecione as Colunas Desejadas",$this->url."tabela/action/exportar/".$tabela[0]);
             
-            $db = new db($this->tabela);
+            $values = new db($this->tabela);
             $colunas = $db->getColumns();
 
             $customs = [];
@@ -177,7 +177,7 @@ class tabelaController extends controllerAbstract{
             if (array_key_exists(0,$tabela)){
                 if ($tabela[0] == "exportar"){
                     if (array_key_exists(1,$tabela)){
-                        $db = new db($tabela[1]);
+                        $values = new db($tabela[1]);
                         $colunas = $db->getColumns();
 
                         $colunas_selecionada = [];
@@ -237,7 +237,7 @@ class tabelaController extends controllerAbstract{
                         while (($data = fgetcsv($arquivo, 1000, ";")) !== FALSE) {
                             $rows[] = $data;
                         } 
-                            $db = new db($tabela[1]);
+                            $values = new db($tabela[1]);
                             $colunas_db = $db->getColumns();
                             $colunas = [];
                             $tb = $db->getObject();

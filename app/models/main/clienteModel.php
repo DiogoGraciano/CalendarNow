@@ -33,7 +33,7 @@ class clienteModel{
      */
     public static function getByFuncionario(int $id_funcionario):array
     {
-        $db = new cliente;
+        $values = new cliente;
         $cliente = $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
 
         if ($db->getError()){
@@ -54,20 +54,20 @@ class clienteModel{
      */
     public static function set(string $nome,int $id_funcionario,int $id = null):int|bool
     {
-        $db = new cliente;
+        $values = new cliente;
     
-        $values = $db->getObject();
+        
 
         if ($values){
             $values->id = intval($id);
             $values->id_funcionario = intval($id_funcionario);
             $values->nome = trim($nome);
-            $retorno = $db->store($values);
+            $retorno = $values->store();
         }
 
         if ($retorno == true){
             mensagem::setSucesso("Cliente salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         } else {
             return false;
         }

@@ -119,9 +119,7 @@ class servicoModel{
     */
     public static function setServicoGrupoServico(int $id_servico,int $id_grupo_servico):bool
     {
-        $db = new servicoGrupoServico;
-
-        $values = $db->getObject();
+        $values = new servicoGrupoServico;
 
         if(!grupoServicoModel::get($values->id_grupo_servico = $id_grupo_servico)->id){
             mensagem::setErro("Grupo de serviço não existe");
@@ -132,13 +130,13 @@ class servicoModel{
             return false;
         }
 
-        $result = $db->addFilter("id_grupo_servico","=",$id_grupo_servico)
-                    ->addFilter("id_servico","=",$id_servico)
-                    ->selectAll();
+        $result = $values->addFilter("id_grupo_servico","=",$id_grupo_servico)
+                        ->addFilter("id_servico","=",$id_servico)
+                        ->selectAll();
 
         if (!$result){
            
-            $retorno = $db->storeMutiPrimary($values);
+            $retorno = $values->storeMutiPrimary();
 
             mensagem::setSucesso("Serviço Adicionado com Sucesso");
 
@@ -159,9 +157,7 @@ class servicoModel{
     */
     public static function setServicoFuncionario(int $id_servico,int $id_funcionario):bool
     {
-        $db = new servicoFuncionario;
-
-        $values = $db->getObject();
+        $values = new servicoFuncionario;
 
         if(!funcionarioModel::get($values->id_funcionario = $id_funcionario)){
             mensagem::setErro("Funcionario não existe");
@@ -172,13 +168,13 @@ class servicoModel{
             return false;
         }
 
-        $result = $db->addFilter("id_funcionario","=",$id_funcionario)
+        $result = $values->addFilter("id_funcionario","=",$id_funcionario)
                     ->addFilter("id_servico","=",$id_servico)
                     ->selectAll();
 
         if (!$result){
 
-            $retorno = $db->storeMutiPrimary($values);
+            $retorno = $values->storeMutiPrimary($values);
 
             mensagem::setSucesso("Serviço Adicionado com Sucesso");
 
@@ -203,10 +199,8 @@ class servicoModel{
     public static function set(string $nome,float $valor,string $tempo,int|null $id_empresa = null,int|null $id = null):int|bool
     {
 
-        $db = new servico;
+        $values = new servico;
         
-        $values = $db->getObject();
-
         $mensagens = [];
 
         if(!$values->nome = filter_var(trim($nome))){
@@ -235,11 +229,11 @@ class servicoModel{
         }
 
         if ($values)
-            $retorno = $db->store($values);
+            $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Serviço salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }
 
         return False;

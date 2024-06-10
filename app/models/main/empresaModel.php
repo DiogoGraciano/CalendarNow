@@ -42,11 +42,11 @@ class empresaModel{
      */
     public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $razao,string $fantasia,null|int $id = null):int|bool
     {
-        $db = new empresa;
+        $values = new empresa;
 
         $mensagens = [];
 
-        $values = $db->getObject();
+        
 
         if($id && !self::get($values->id = $id)->id){
             $mensagens[] = "Empresa não existe";
@@ -89,11 +89,11 @@ class empresaModel{
             return false;
         }
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Empresa salva com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }
 
         mensagem::setErro("Erro ao cadastrar a empresa");

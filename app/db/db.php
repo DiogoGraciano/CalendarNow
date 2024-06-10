@@ -20,7 +20,7 @@ class db
     /**
      * Objeto da tabela.
      *
-     * @var object
+     * @var array
     */
     private $object = [];
 
@@ -354,7 +354,7 @@ class db
                     $valuesBD = "";
 
                     // Preparando os valores para bind e montando a parte dos valores na instrução SQL
-                    foreach ($values as $key => $data) {
+                    foreach ($this->object as $key => $data) {
                         $valuesBD .= "?,";
                         $this->valuesBind[$this->counterBind] = [
                             $data,
@@ -421,7 +421,7 @@ class db
      * @param object $values Objeto contendo os valores a serem salvos.
      * @return bool Retorna true se a operação foi bem-sucedida, caso contrário, retorna false.
     */
-    public function storeMutiPrimary(\stdClass $values):bool{
+    public function storeMutiPrimary():bool{
         try {
             if ($this->object) {
                 $sql_instruction = "INSERT INTO {$this->table} (";
@@ -512,7 +512,7 @@ class db
             $stmt->execute();
 
             if ($this->debug)
-                $sql->debugDumpParams();
+                $stmt->debugDumpParams();
 
             $this->clean();
             return true;

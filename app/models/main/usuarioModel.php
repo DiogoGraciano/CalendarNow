@@ -143,11 +143,9 @@ class usuarioModel{
     public static function set(string $nome,string $cpf_cnpj,string $email,string $telefone,string $senha,int|null $id = null,int $tipo_usuario = 3,int|null $id_empresa = null,bool $valid_fk = true):int|bool
     {
 
-        $db = new usuario;
+        $values = new usuario;
 
         $mensagens = [];
-
-        $values = $db->getObject();
 
         if(!($values->nome = filter_var(trim($nome)))){
             $mensagens[] = "Nome é invalido";
@@ -188,11 +186,11 @@ class usuarioModel{
 
         $values->senha = password_hash(trim($senha),PASSWORD_DEFAULT);
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
         
         if ($retorno == true){
             mensagem::setSucesso("Usuario salvo com sucesso");
-               if($values->id)
+            if($values->id)
                 mensagem::setSucesso("Atualizado com sucesso");
             else 
                 mensagem::setSucesso("Criado com sucesso");

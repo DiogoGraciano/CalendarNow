@@ -57,9 +57,9 @@ class grupoFuncionarioModel{
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
     public static function set(string $nome,int $id_empresa,int $id = null):bool{
-        $db = new grupoFuncionario;
+        $values = new grupoFuncionario;
         
-        $values = $db->getObject();
+        
 
         $mensagens = [];
 
@@ -75,7 +75,7 @@ class grupoFuncionarioModel{
             $mensagens[] = "Nome invalido";
         }
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
 
         if ($retorno == true){
             mensagem::setSucesso("Grupo de funcionarios salvo com sucesso");

@@ -40,7 +40,7 @@ class agendaModel{
     */
     public static function getByEmpresa(int $id_empresa,string $nome = null,string $codigo = null):array|bool
     {
-        $db = new agenda;
+        $values = new agenda;
         
         $db->addFilter("agenda.id_empresa","=",$id_empresa);
 
@@ -68,7 +68,7 @@ class agendaModel{
     */
     public static function getByCodigo(string $codigo = ""):array|bool
     {
-        $db = new agenda;
+        $values = new agenda;
         
         $values = $db->addFilter("agenda.codigo","=",$codigo)
                      ->selectColumns("id","agenda.nome","agenda.codigo");
@@ -87,7 +87,7 @@ class agendaModel{
     */
     public static function getByUser(int $id_usuario):array|bool 
     {
-        $db = new agendaUsuario;
+        $values = new agendaUsuario;
         
         $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
         ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
@@ -109,7 +109,7 @@ class agendaModel{
     */
     public static function getByUserServico(int $id_servico,int $id_usuario):array|bool 
     {
-        $db = new agendaUsuario;
+        $values = new agendaUsuario;
         
         $values = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
                      ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
@@ -134,14 +134,14 @@ class agendaModel{
     */
     public static function setAgendaUsuario(int $id_usuario,int $id_agenda):bool
     {
-        $db = new agendaUsuario;
+        $values = new agendaUsuario;
 
         $retorno = $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
                 ->addFilter("agenda_usuario.id_agenda","=",$id_agenda)
                 ->selectAll();
 
         if (!$retorno){
-            $values = $db->getObject();
+            
 
             $values->id_usuario = $id_usuario;
             $values->id_agenda = $id_agenda;
@@ -163,14 +163,14 @@ class agendaModel{
     */
     public static function setAgendaFuncionario(int $id_funcionario,int $id_agenda):bool
     {
-        $db = new agendaFuncionario;
+        $values = new agendaFuncionario;
 
         $retorno = $db->addFilter("agenda_funcionario.id_funcionario","=",$id_funcionario)
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
                 ->selectAll();
 
         if (!$retorno){
-            $values = $db->getObject();
+            
 
             $values->id_funcionario = $id_funcionario;
             $values->id_agenda = $id_agenda;
@@ -197,9 +197,9 @@ class agendaModel{
     public static function set(string $nome,int $id_empresa,string $codigo="",string $id=""):int|bool
     {
 
-        $db = new agenda;
+        $values = new agenda;
         
-        $values = $db->getObject();
+        
 
         $values->id = $id;
         $values->id_empresa = $id_empresa;
@@ -211,12 +211,12 @@ class agendaModel{
             $values->codigo = functions::genereteCode(7);
 
         if ($values){
-            $retorno = $db->store($values);
+            $retorno = $values->store();
         }
 
         if ($retorno == true){
             mensagem::setSucesso("Agenda salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }
         else {
             return False;
@@ -242,7 +242,7 @@ class agendaModel{
     */
     public static function deleteAgendaUsuario(int $id_agenda):bool
     {
-        $db = new agendaUsuario;
+        $values = new agendaUsuario;
 
         return $db->addFilter("agenda_usuario.id_agenda","=",$id_agenda)->deleteByFilter();  
     }
@@ -255,7 +255,7 @@ class agendaModel{
     */
     public static function deleteAgendaFuncionario(int $id_agenda):bool
     {
-        $db = new agendaFuncionario;
+        $values = new agendaFuncionario;
 
         return $db->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)->deleteByFilter();
     }

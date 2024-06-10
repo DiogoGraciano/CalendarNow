@@ -2,13 +2,11 @@
 namespace app\models\main;
 use app\db\status;
 use app\classes\mensagem;
-use app\classes\functions;
 
 /**
- * Classe agendaModel
+ * Classe statusModel
  * 
- * Esta classe fornece métodos para interagir com os dados da agenda e suas relações.
- * Ela utiliza as classes agenda, agendaUsuario e agendaFuncionario para realizar operações de consulta, inserção e exclusão no banco de dados.
+ * Esta classe fornece métodos para interagir com os dados de status
  * 
  * @package app\models\main
  */
@@ -48,18 +46,16 @@ class statusModel{
     public static function set(string $nome,int|null $id = null):int|bool
     {
 
-        $db = new status;
+        $values = new status;
         
-        $values = $db->getObject();
-
         $values->id = $id;
         $values->nome = trim($nome);
 
-        $retorno = $db->store($values);
+        $retorno = $values->store();
         
         if ($retorno == true){
             mensagem::setSucesso("Status salvo com sucesso");
-            return $db->getLastID();
+            return $values->getLastID();
         }
         else {
             return False;
