@@ -38,10 +38,6 @@ class enderecoModel{
     {
         $db = new endereco;
         $values = $db->addFilter("id_usuario","=",$id_usuario)->selectAll();
-        
-        if ($db->getError()){
-            return [];
-        }
 
         return $values;
     }
@@ -65,8 +61,6 @@ class enderecoModel{
     public static function set(string $cep,int $id_estado,int $id_cidade,string $bairro,string $rua,string $numero,string|null $complemento = null,null|int $id = null,null|int $id_usuario = null,null|int $id_empresa = null,$valid_fk = true){
         $values = new endereco;
         $mensagens = [];
-
-        
 
         if(!functions::validaCep($cep = functions::onlynumber($cep))){
             $mensagens[] = "CEP é invalido";

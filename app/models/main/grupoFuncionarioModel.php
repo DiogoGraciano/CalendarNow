@@ -42,10 +42,6 @@ class grupoFuncionarioModel{
 
         $values = $db->selectColumns("id","nome");
 
-        if ($db->getError()){
-            return [];
-        }
-
         return $values;
     }
 
@@ -92,8 +88,8 @@ class grupoFuncionarioModel{
      * @param string $id O ID do grupo de funcionário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete($id):bool{
-        return (new grupoFuncionario)->delete($id);
+    public static function delete():bool{
+        return (new grupoFuncionario)->delete();
     }
 
 }

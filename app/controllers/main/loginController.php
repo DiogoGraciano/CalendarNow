@@ -36,6 +36,7 @@ class loginController extends controllerAbstract{
 
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
+        
         $login =loginModel::login($cpf_cnpj,$senha);
     
         if ($login){

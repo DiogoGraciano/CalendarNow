@@ -7,8 +7,5 @@
         "files": [
             "app\\db\\tablesClass.php" 
         ]
-    },
-    "require": {
-        "filp/whoops": "^2.15"
     }
 }

@@ -74,10 +74,6 @@ class funcionarioModel{
                 $funcionarioFinal[] = $funcionario;
             }
         }
-
-        if ($db->getError()){
-            return [];
-        }
         
         return $funcionarioFinal;
     }
@@ -96,11 +92,7 @@ class funcionarioModel{
                 ->addJoin("INNER","funcionario","funcionario.id","agenda_funcionario.id_funcionario")
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
                 ->selectColumns("funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
-
-       if ($db->getError()){
-            return [];
-        }
-
+                
         return $values;
     }
 
@@ -117,10 +109,6 @@ class funcionarioModel{
         $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
                 ->addFilter("usuario.id_empresa","=",$id_empresa)
                 ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
-
-        if ($db->getError()){
-            return [];
-        }
 
         return $values;
     }
@@ -143,10 +131,7 @@ class funcionarioModel{
      */
     public static function set(int $id_usuario,string $nome,string $cpf_cnpj,string $email,string $telefone,string $hora_ini,string $hora_fim,string $hora_almoco_ini,string $hora_almoco_fim,string $dias,int $id = null):int|bool
     {
-
         $values = new funcionario;
-
-        
 
         $mensagens = [];
 
@@ -315,9 +300,9 @@ class funcionarioModel{
      * @param int $id O ID do funcionário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-        return (new funcionario)->delete($id);
+        return (new funcionario)->delete();
     }
 
 }

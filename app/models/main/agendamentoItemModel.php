@@ -34,15 +34,11 @@ class agendamentoItemModel{
      */
     public static function getItens(int $id_agendamento):array
     {
-        $values = new agendamentoItem;
+        $db = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->selectAll();
-
-        if ($db->getError()){
-            return [];
-        }
         
         return $result;
     }
@@ -56,7 +52,7 @@ class agendamentoItemModel{
      */
     public static function getItemByServico(int $id_agendamento,int $id_servico):object|bool
     {
-        $values = new agendamentoItem;
+        $db = new agendamentoItem;
 
         $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
@@ -64,10 +60,6 @@ class agendamentoItemModel{
                     ->addLimit(1)
                     ->selectColumns("agendamento_item.id","id_agendamento","id_servico","qtd_item","tempo_item","total_item","nome","valor","tempo","id_empresa");
 
-        if ($db->getError()){
-            return false;
-        }
-        
         if ($result)
             return $result[0];
         
@@ -89,8 +81,6 @@ class agendamentoItemModel{
     {
         $values = new agendamentoItem;
         
-        
-
         $servico = servicoModel::get($values->id_servico = $id_servico);
 
         if(!$servico->id){
@@ -140,8 +130,8 @@ class agendamentoItemModel{
      * @param int $id O ID do item de agendamento a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id){
-        return (new agendamentoItem)->delete($id);
+    public static function delete(){
+        return (new agendamentoItem)->delete();
     }
 
 }

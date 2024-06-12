@@ -38,7 +38,7 @@ class agendamentoModel{
     */
     public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$isnotstatus=99):array
     {
-        $values = new agendamento;
+        $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
@@ -73,7 +73,7 @@ class agendamentoModel{
     */
     public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$status=99):array
     {
-        $values = new agendamento;
+        $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
@@ -126,7 +126,7 @@ class agendamentoModel{
     */
     public static function getAgendamentosByEmpresa($id_empresa):array
     {
-        $values = new agendamento;
+        $db = new agendamento;
 
         $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
@@ -135,10 +135,6 @@ class agendamentoModel{
                     ->addFilter("agenda.id_empresa","=",$id_empresa)
                     ->selectColumns("agendamento.id","usuario.cpf_cnpj","cliente.nome as cli_nome","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
 
-        if ($db->getError()){
-            return [];
-        }
-        
         return $result;
     }
 
@@ -150,18 +146,14 @@ class agendamentoModel{
     */
     public static function getAgendamentosByUsuario($id_usuario):array
     {
-        $values = new agendamento;
+        $db = new agendamento;
 
         $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
                     ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
                     ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
                     ->addFilter("usuario.id","=",$id_usuario)
                     ->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
-
-        if ($db->getError()){
-            return [];
-        }
-        
+                    
         return $result;
     }
 
@@ -186,8 +178,6 @@ class agendamentoModel{
     {
 
         $values = new agendamento;
-        
-        $values = new stdClass;
 
         $mensagens = [];
 
@@ -264,9 +254,9 @@ class agendamentoModel{
      * @param int $id O ID do agendamento a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-        return (new agendamento)->delete($id);
+        return (new agendamento)->delete();
     }
 
 }

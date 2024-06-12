@@ -36,10 +36,6 @@ class clienteModel{
         $values = new cliente;
         $cliente = $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
 
-        if ($db->getError()){
-            return [];
-        }
-
         return $cliente;
     }
 
@@ -56,8 +52,6 @@ class clienteModel{
     {
         $values = new cliente;
     
-        
-
         if ($values){
             $values->id = intval($id);
             $values->id_funcionario = intval($id_funcionario);
@@ -79,9 +73,9 @@ class clienteModel{
      * @param int $id O ID do cliente a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-        return (new cliente)->delete($id);
+        return (new cliente)->delete();
     }
 
 }

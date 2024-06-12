@@ -64,10 +64,6 @@ class servicoModel{
 
         $valuesFinal = [];
 
-        if ($db->getError()){
-            return [];
-        }
-
         if ($values){
             foreach ($values as $value){
                 if ($value->valor){
@@ -76,7 +72,7 @@ class servicoModel{
                 $valuesFinal[] = $value;
             }
 
-            return $values;
+            return $valuesFinal;
         }
 
         return [];
@@ -99,15 +95,7 @@ class servicoModel{
         
         $values = $db->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
 
-        if ($db->getError()){
-            return [];
-        }
-
-        if ($values){
-            return $values;
-        }
-
-        return [];
+        return $values;
     }
 
     /**
@@ -245,8 +233,8 @@ class servicoModel{
      * @param int $id O ID do serviço a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete(int $id):bool{
-        return (new servico)->delete($id);
+    public static function delete():bool{
+        return (new servico)->delete();
     }
 
     /**

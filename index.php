@@ -22,6 +22,4 @@
 
     $controller->$method($parameters);
 
-    $whoops = new \Whoops\Run;
-
 ?>

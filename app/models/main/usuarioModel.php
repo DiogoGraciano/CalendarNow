@@ -55,10 +55,6 @@ class usuarioModel{
 
         $usuario = $db->addFilter("cpf_cnpj", "=", $cpf_cnpj)->addFilter("email", "=", $email)->selectAll();
 
-        if ($db->getError()){
-            return [];
-        }
-
         return $usuario;
     }
 
@@ -75,10 +71,6 @@ class usuarioModel{
 
         $usuario = $db->addFilter("cpf_cnpj", "=", $cpf_cnpj)->selectAll();
 
-        if ($db->getError()){
-            return [];
-        }
-
         return $usuario;
     }
 
@@ -94,10 +86,6 @@ class usuarioModel{
         $db = new usuario;
 
         $usuario = $db->addFilter("email", "=", $email)->selectAll();
-
-        if ($db->getError()){
-            return [];
-        }
 
         return $usuario;
     }
@@ -118,11 +106,7 @@ class usuarioModel{
                         ->addFilter("usuario.tipo_usuario","=",$tipo_usuario)
                         ->addGroup("usuario.id")
                         ->selectColumns('usuario.id','usuario.nome','usuario.cpf_cnpj','usuario.telefone','usuario.senha','usuario.email','usuario.tipo_usuario','usuario.id_empresa');
-
-        if ($db->getError()){
-            return [];
-        }
-
+                        
         return $usuarios;
     }
 
@@ -206,9 +190,9 @@ class usuarioModel{
      * @param int $id O ID do usuário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-        return (new usuario)->delete($id);
+        return (new usuario)->delete();
     }
 
 }

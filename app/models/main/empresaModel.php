@@ -46,8 +46,6 @@ class empresaModel{
 
         $mensagens = [];
 
-        
-
         if($id && !self::get($values->id = $id)->id){
             $mensagens[] = "Empresa não existe";
         }
@@ -146,8 +144,8 @@ class empresaModel{
      * @param string $id O ID da empresa a ser excluída.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-       return (new empresa)->delete($id);
+       return (new empresa)->delete();
     }
 }

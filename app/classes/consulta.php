@@ -64,6 +64,9 @@ class consulta extends pagina
         if ($dados) {
             $i = 0;
             foreach ($dados as $data) {
+                if(is_subclass_of($data,"app\db\db")){
+                    $data = $data->getArrayData();
+                }
                 $row = [];
                 $b = 1;
                 $row_action = "";

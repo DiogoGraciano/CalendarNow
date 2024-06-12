@@ -20,7 +20,7 @@ abstract class tableClassAbstract extends db{
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno?:$this;
+        return $retorno?:$this->setObjectNull();
     }
 
     public function getAll():array{

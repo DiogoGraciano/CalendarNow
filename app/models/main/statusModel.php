@@ -45,7 +45,6 @@ class statusModel{
     */
     public static function set(string $nome,int|null $id = null):int|bool
     {
-
         $values = new status;
         
         $values->id = $id;
@@ -68,9 +67,9 @@ class statusModel{
      * @param int $id O ID da status a ser excluída.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-        return (new status)->delete($id);
+        return (new status)->delete();
     }
 
 }

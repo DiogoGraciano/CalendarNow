@@ -35,10 +35,6 @@ class estadoModel{
         $db = new estado;
         
         $estado = $db->addFilter("uf", "=", $uf)->selectAll();
-        
-        if ($db->getError()){
-            return [];
-        }
 
         return $estado;
     }

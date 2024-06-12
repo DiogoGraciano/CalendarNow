@@ -24,13 +24,12 @@ class loginModel{
      */
     public static function login($cpf_cnpj, $senha):bool
     {
-        
         $login = usuarioModel::get(functions::onlynumber($cpf_cnpj),"cpf_cnpj");
         
         if ($login->id){
             if (password_verify($senha, $login->senha)){
                 $login->senha = $senha;
-                $_SESSION["user"] = $login;
+                $_SESSION["user"] = (object)$login->getArrayData();
                 return true;
             }
         }

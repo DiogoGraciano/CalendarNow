@@ -79,10 +79,6 @@ class grupoServicoModel{
 
         $values = $db->selectColumns("id","nome");
 
-        if ($db->getError()){
-            return [];
-        }
-
         return $values;
     }
 
@@ -92,9 +88,9 @@ class grupoServicoModel{
      * @param string $id O ID do grupo de serviço a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(int $id):bool
+    public static function delete():bool
     {
-        return (new grupoServico)->delete($id);
+        return (new grupoServico)->delete();
     }
 
 }

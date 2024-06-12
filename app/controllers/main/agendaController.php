@@ -9,6 +9,7 @@ use app\classes\footer;
 use app\classes\functions;
 use app\classes\mensagem;
 use app\classes\filter;
+use app\db\transactionManeger;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
@@ -89,9 +90,16 @@ class agendaController extends controllerAbstract{
 
         if ($parameters){
             $id = functions::decrypt($parameters[0]);
-            agendaModel::deleteAgendaUsuario($id);
-            agendaModel::deleteAgendaFuncionario($id);
-            agendaModel::delete($id);
+            try{
+                transactionManeger::init();
+                transactionManeger::beginTransaction();
+                agendaModel::deleteAgendaUsuario($id);
+                agendaModel::deleteAgendaFuncionario($id);
+                agendaModel::delete($id);
+                transactionManeger::commit();
+            }catch (exception $e){
+                transactionManeger::rollBack();
+            }
             mensagem::setSucesso("Agenda deletada com sucesso");
             $this->go("agenda");
         }
@@ -102,10 +110,17 @@ class agendaController extends controllerAbstract{
         $codigo  = $this->getValue('codigo');
         $id_empresa = $user->id_empresa;
 
-        if ($id_agenda = agendaModel::set($nome,$id_empresa,$codigo,$id)){ 
-            agendaModel::setAgendaUsuario($user->id,$id_agenda);
-            if($id_funcionario)
-                agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
+        try{
+            transactionManeger::init();
+            transactionManeger::beginTransaction();
+            if ($id_agenda = agendaModel::set($nome,$id_empresa,$codigo,$id)){ 
+                agendaModel::setAgendaUsuario($user->id,$id_agenda)?:transactionManeger::rollBack();
+                if($id_funcionario)
+                    agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda)?:transactionManeger::rollBack();;
+            }
+            transactionManeger::commit();
+        }catch (exception $e){
+            transactionManeger::rollBack();
         }
        
         mensagem::setSucesso("Agenda salva com sucesso");
