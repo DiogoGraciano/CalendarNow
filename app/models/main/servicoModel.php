@@ -233,22 +233,36 @@ class servicoModel{
      * @param int $id O ID do serviço a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete():bool{
-        return (new servico)->delete();
+    public static function delete(int $id):bool{
+        return (new servico)->delete($id);
     }
 
     /**
-     * Exclui a associação de um serviço com uma agenda.
+     * Exclui a associação de um serviço com uma funcionario.
      * 
      * @param int $id_servico O ID do serviço.
-     * @param int $id_agenda O ID da agenda.
+     * @param int $id_funcionario O ID do funcionario.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function deleteAgendaServico(int $id_servico,int $id_agenda):bool
+    public static function deleteServicoFuncionario(int $id_servico,int $id_funcionario):bool
     {
-        $db = new agendaServico;
+        $db = new servicoFuncionario;
 
-        return $db->addFilter("agenda_servico.id_servico","=",$id_servico)->addFilter("agenda_servico.id_agenda","=",$id_agenda)->deleteByFilter();
+        return $db->addFilter("servico_funcionario.id_servico","=",$id_servico)->addFilter("servico_funcionario.id_funcionario","=",$id_funcionario)->deleteByFilter();
+    }
+
+    /**
+     * Exclui todas as associações de um serviço com uma funcionarios.
+     * 
+     * @param int $id_servico O ID do serviço.
+     * @param int $id_funcionario O ID do funcionario.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function deleteAllServicoFuncionario(int $id_servico):bool
+    {
+        $db = new servicoFuncionario;
+
+        return $db->addFilter("servico_funcionario.id_servico","=",$id_servico)->deleteByFilter();
     }
 
 }

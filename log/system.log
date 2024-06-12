@@ -55,3 +55,5 @@
 2024-06-10T17:49:49+00:00 [ERROR] : Tabela: agenda Erro: ID Invalido
 2024-06-10T17:49:52+00:00 [ERROR] : Tabela: agenda Erro: ID Invalido
 2024-06-10T17:49:56+00:00 [ERROR] : Tabela: agenda Erro: ID Invalido
+2024-06-12T02:04:48+00:00 [ERROR] : SQLSTATE[HY000] [1049] Unknown database 'agendadb'
+2024-06-12T02:04:49+00:00 [ERROR] : SQLSTATE[HY000] [1049] Unknown database 'agendadb'

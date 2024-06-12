@@ -130,8 +130,8 @@ class agendamentoItemModel{
      * @param int $id O ID do item de agendamento a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete(){
-        return (new agendamentoItem)->delete();
+    public static function delete(int $id){
+        return (new agendamentoItem)->delete($id);
     }
 
 }

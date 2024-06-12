@@ -88,9 +88,9 @@ class grupoServicoModel{
      * @param string $id O ID do grupo de serviço a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete():bool
+    public static function delete(int $id):bool
     {
-        return (new grupoServico)->delete();
+        return (new grupoServico)->delete($id);
     }
 
 }

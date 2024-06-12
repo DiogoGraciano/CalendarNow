@@ -159,11 +159,7 @@ class servicoController extends controllerAbstract{
 
         if ($parameters){
             $id = functions::decrypt($parameters[0]);
-            $agendas = agendaModel::getByUserServico($id,$user->id);
-            if ($agendas && isset($agendas[0])){
-                $agenda = $agendas[0];
-                servicoModel::deleteAgendaServico($agenda->id,$id);
-            }
+            servicoModel::deleteAllServicoFuncionario($id);
             servicoModel::delete($id);
             $this->go("servico");
         }

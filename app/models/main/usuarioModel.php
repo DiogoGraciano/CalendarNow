@@ -46,16 +46,15 @@ class usuarioModel{
      * 
      * @param string $cpf_cnpj O CPF ou CNPJ do usuário.
      * @param string $email O e-mail do usuário.
-     * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
+     * @return object|bool Retorna um array com os dados do usuário ou um array vazio se não encontrado.
     */
-    public static function getByCpfEmail(string $cpf_cnpj,string $email):array
+    public static function getByCpfEmail(string $cpf_cnpj,string $email):object|bool
     {
-
         $db = new usuario;
 
-        $usuario = $db->addFilter("cpf_cnpj", "=", $cpf_cnpj)->addFilter("email", "=", $email)->selectAll();
+        $usuario = $db->addFilter("cpf_cnpj", "=", functions::onlynumber($cpf_cnpj))->addFilter("email", "=", $email)->addLimit(1)->selectAll();
 
-        return $usuario;
+        return $usuario[0] ?? false;
     }
 
     /**
@@ -86,6 +85,21 @@ class usuarioModel{
         $db = new usuario;
 
         $usuario = $db->addFilter("email", "=", $email)->selectAll();
+
+        return $usuario;
+    }
+
+     /**
+     * Obtém um usuário pelo id da empresa.
+     * 
+     * @param string $id_empresa O id da empresa.
+     * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
+    */
+    public static function getByEmpresa(int $id_empresa):array
+    {
+        $db = new usuario;
+
+        $usuario = $db->addFilter("id_empresa", "=", $id_empresa)->selectAll();
 
         return $usuario;
     }
@@ -190,9 +204,9 @@ class usuarioModel{
      * @param int $id O ID do usuário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete():bool
+    public static function delete(int $id):bool
     {
-        return (new usuario)->delete();
+        return (new usuario)->delete($id);
     }
 
 }

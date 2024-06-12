@@ -67,9 +67,9 @@ class statusModel{
      * @param int $id O ID da status a ser excluída.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete():bool
+    public static function delete(int $id):bool
     {
-        return (new status)->delete();
+        return (new status)->delete($id);
     }
 
 }

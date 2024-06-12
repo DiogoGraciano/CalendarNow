@@ -300,9 +300,9 @@ class funcionarioModel{
      * @param int $id O ID do funcionário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete():bool
+    public static function delete(int $id):bool
     {
-        return (new funcionario)->delete();
+        return (new funcionario)->delete($id);
     }
 
 }

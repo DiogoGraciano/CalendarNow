@@ -29,6 +29,16 @@ class empresaModel{
     }
 
     /**
+     * Obtém uma todas as empresas.
+     * 
+     * @return array Retorna os dados da empresa ou null se não encontrado.
+     */
+    public static function getAll():array
+    {
+        return (new empresa)->getAll();
+    }
+
+    /**
      * Insere ou atualiza uma empresa.
      * 
      * @param string $nome O nome da empresa.
@@ -144,8 +154,8 @@ class empresaModel{
      * @param string $id O ID da empresa a ser excluída.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete():bool
+    public static function delete(int $id):bool
     {
-       return (new empresa)->delete();
+       return (new empresa)->delete($id);
     }
 }

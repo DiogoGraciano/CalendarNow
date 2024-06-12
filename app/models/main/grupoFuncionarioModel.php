@@ -88,8 +88,8 @@ class grupoFuncionarioModel{
      * @param string $id O ID do grupo de funcionário a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function delete():bool{
-        return (new grupoFuncionario)->delete();
+    public static function delete(int $id):bool{
+        return (new grupoFuncionario)->delete($id);
     }
 
 }

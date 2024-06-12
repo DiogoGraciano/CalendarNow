@@ -23,8 +23,8 @@ class login extends pagina{
         $this->tpl->usuario = $usuario;
         $this->tpl->senha = $senha;
         $this->tpl->action_esqueci = "login/esqueci";
-        $this->tpl->action_cadastro_empresa = "login/cadastro/".functions::encrypt(1);
-        $this->tpl->action_cadastro_usuario = "login/cadastro/".functions::encrypt(3);
+        $this->tpl->action_cadastro_empresa = "empresa/manutencao/";
+        $this->tpl->action_cadastro_usuario = "usuario/manutencao/";
         $this->tpl->show();
     }
 }

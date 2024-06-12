@@ -71,14 +71,14 @@ class agendamentoModel{
      * @param string $status O status do agendamento (opcional, padrão é 99).
      * @return array Retorna um array com os eventos de agendamento dentro do intervalo de datas especificado para o funcionário.
     */
-    public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$status=99):array
+    public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$id_status=99):array
     {
         $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
                       ->addFilter("dt_fim","<=",$dt_fim)
                       ->addFilter("id_agenda","=",intval($id_agenda))
                       ->addFilter("id_funcionario ","=",intval($id_funcionario))
-                      ->addFilter("status","!=",$status)
+                      ->addFilter("id_status","!=",$id_status)
                       ->selectAll();
 
         $retorn = [];
@@ -254,9 +254,9 @@ class agendamentoModel{
      * @param int $id O ID do agendamento a ser excluído.
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
-    public static function delete():bool
+    public static function delete(int $id):bool
     {
-        return (new agendamento)->delete();
+        return (new agendamento)->delete($id);
     }
 
 }
