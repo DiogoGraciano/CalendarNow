@@ -200,7 +200,7 @@ class functions{
      * @param string $value O valor do CNPJ ou CPF
      * @return string O valor formatado
      */
-    public static function formatCnpjCpf(string $value)
+    public static function formatCnpjCpf(?string $value)
     {
         if(!$value){
             return false;

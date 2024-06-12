@@ -16,7 +16,7 @@ use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
 
-class UsuarioController extends controllerAbstract {
+class usuarioController extends controllerAbstract {
 
     public function index(){
         $head = new head();
@@ -62,8 +62,8 @@ class UsuarioController extends controllerAbstract {
 
         $form->setDoisInputs(
             $elements->input("nome", "Nome", $dado->nome, true),
-            $elements->input("cpf", "CPF", functions::formatCnpjCpf($dado->cpf), true),
-            array("nome", "cpf")
+            $elements->input("cpf_cnpj", "CPF/CNPJ", functions::formatCnpjCpf($dado->cpf_cnpj), true),
+            array("nome", "cpf_cnpj")
         );
 
         $form->setTresInputs(

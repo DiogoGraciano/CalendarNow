@@ -18,7 +18,7 @@ use app\models\main\cidadeModel;
 use app\models\main\empresaModel;
 
 
-class EmpresaController extends controllerAbstract {
+class empresaController extends controllerAbstract {
 
     public function index($parameters = []){
     
