@@ -97,7 +97,7 @@ class agendaController extends controllerAbstract{
                 agendaModel::deleteAgendaFuncionario($id);
                 agendaModel::delete($id);
                 transactionManeger::commit();
-            }catch (exception $e){
+            }catch (\exception $e){
                 transactionManeger::rollBack();
             }
             mensagem::setSucesso("Agenda deletada com sucesso");
@@ -119,7 +119,7 @@ class agendaController extends controllerAbstract{
                     agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda)?:transactionManeger::rollBack();;
             }
             transactionManeger::commit();
-        }catch (exception $e){
+        }catch (\exception $e){
             transactionManeger::rollBack();
         }
        

@@ -1,6 +1,6 @@
 <?php
 require __DIR__.DIRECTORY_SEPARATOR."configDb.php";
-require str_replace("\app\db","",__DIR__.DIRECTORY_SEPARATOR."vendor".DIRECTORY_SEPARATOR."autoload.php");
+require str_replace(DIRECTORY_SEPARATOR."app".DIRECTORY_SEPARATOR."db","",__DIR__.DIRECTORY_SEPARATOR."vendor".DIRECTORY_SEPARATOR."autoload.php");
 
 use app\db\tableDb;
 use app\db\columnDb;
@@ -103,18 +103,6 @@ $statusTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID age
         ->addColumn((new columnDb("nome","VARCHAR",250))->isNotNull()->setComment("Status do agendamento"))
         ->execute($recreate);
 
-$object = new db("status");
-if(!$object->addLimit(1)->selectColumns("id")){
-        $object->nome = "Agendado";
-        $status->store($object);
-        $object->nome = "Finalizado";
-        $status->store($object);
-        $object->nome = "Não atendido";
-        $status->store($object);
-        $object->nome = "Cancelado";
-        $status->store($object);
-}
-
 $agendamentoTb = new tableDb("agendamento",comment:"Tabela de agendamentos");
 $agendamentoTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID agendamento"))
             ->addColumn((new columnDb("id_agenda","INT"))->isNotNull()->isForeingKey($agendaTb)->setComment("ID da tabela agenda"))
@@ -200,6 +188,18 @@ transactionManeger::commit();
 catch(Exception $e){
         echo $e->getMessage();
         transactionManeger::rollBack();
+}
+
+$object = new db("status");
+if(!$object->addLimit(1)->selectColumns("id")){
+$object->nome = "Agendado";
+$object->store();
+$object->nome = "Finalizado";
+$object->store();
+$object->nome = "Não atendido";
+$object->store();
+$object->nome = "Cancelado";
+$object->store();
 }
 
 ?>

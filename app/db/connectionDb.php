@@ -2,7 +2,7 @@
 
 namespace app\db;
 
-use app\classes\Logger;
+use app\classes\logger;
 use Exception;
 use PDO;
 use PDOException;

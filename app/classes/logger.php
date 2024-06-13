@@ -11,7 +11,7 @@ namespace app\classes;
  *
  * See README.md for examples and configuration.
  */
-class Logger {
+class logger {
 
     /**
      * Incremental log, where each entry is an array with the following elements:

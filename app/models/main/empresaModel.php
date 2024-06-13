@@ -3,7 +3,6 @@ namespace app\models\main;
 
 use app\classes\functions;
 use app\db\empresa;
-use app\classes\modelAbstract;
 use app\classes\mensagem;
 
 /**
@@ -138,7 +137,7 @@ class empresaModel{
                     return false;
                 }
             }
-            catch(Exception $e){
+            catch(\Exception $e){
                 if($remove_empresa_on_error)
                     self::delete($empresa->id);
 
