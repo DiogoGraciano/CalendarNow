@@ -1,8 +1,8 @@
 <?php
-    define("DBHOST","localhost");
+    define("DBHOST","mysql");
     define("DBPORT","3306");
-    define("DBNAME","agenda");
+    define("DBNAME","basenox_bd");
     define("DBCHARSET","utf8mb4");
     define("DBUSER","root");
-    define("DBPASSWORD","");
+    define("DBPASSWORD","rootpass");
 ?>

@@ -157,7 +157,7 @@ class usuarioModel{
             $mensagens[] = "E-mail Invalido";
         }
 
-        if(!($values->telefone = functions::onlynumber($cpf_cnpj)) || !functions::validaTelefone($telefone)){
+        if(!($values->telefone = functions::onlynumber($telefone)) || !functions::validaTelefone($telefone)){
             $mensagens[] = "Telefone Invalido";
         }
 
@@ -187,11 +187,8 @@ class usuarioModel{
         $retorno = $values->store();
         
         if ($retorno == true){
-            mensagem::setSucesso("Usuario salvo com sucesso");
-            if($values->id)
-                mensagem::setSucesso("Atualizado com sucesso");
-            else 
-                mensagem::setSucesso("Criado com sucesso");
+            mensagem::setSucesso("Salvo com sucesso");
+            return $values->getLastID();
         }
 
         mensagem::setErro("Erro ao cadastrar usuario");

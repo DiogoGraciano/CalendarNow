@@ -41,7 +41,7 @@ class agendaController extends controllerAbstract{
         $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $agenda->addColumns("1","Id","id")->addColumns("70","Nome","nome")->addColumns("8","Codigo","codigo")->addColumns("11","Ações","acoes")
-        ->show($this->url."agenda/manutencao/",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo));
+        ->show($this->url."agenda/manutencao",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo));
       
         $footer = new footer;
         $footer->show();
@@ -57,7 +57,7 @@ class agendaController extends controllerAbstract{
 
         $elements = new elements;
 
-        if (array_key_exists(0,$parameters)){
+        if ($parameters && array_key_exists(0,$parameters)){
             $id = functions::decrypt($parameters[0]);
             $form->setHidden("cd",$parameters[0]);
         }
@@ -117,13 +117,17 @@ class agendaController extends controllerAbstract{
                 agendaModel::setAgendaUsuario($user->id,$id_agenda)?:transactionManeger::rollBack();
                 if($id_funcionario)
                     agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda)?:transactionManeger::rollBack();;
+
+                mensagem::setSucesso("Agenda salva com sucesso");
+                $this->go("agenda");
             }
             transactionManeger::commit();
         }catch (\exception $e){
             transactionManeger::rollBack();
+            mensagem::setErro("Erro ao cadastrar agenda");
         }
-       
-        mensagem::setSucesso("Agenda salva com sucesso");
-        $this->go("agenda");
+
+        mensagem::setSucesso(false);
+        $this->go("agenda/manutencao");
     }
 }

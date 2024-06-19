@@ -3,6 +3,7 @@ namespace app\models\main;
 use app\db\agenda;
 use app\db\agendaUsuario;
 use app\db\agendaFuncionario;
+use app\models\main\empresaModel;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use app\classes\functions;

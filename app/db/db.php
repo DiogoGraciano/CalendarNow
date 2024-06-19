@@ -109,7 +109,7 @@ class db
     {
         // Inicia a Conexão
         if (!$this->pdo)
-            $this->pdo = ConnectionDb::getConnection();
+            $this->pdo = connectionDb::getConnection();
 
         // Seta Tabela
         $this->table = $table;
@@ -152,16 +152,22 @@ class db
      */
     private function getlastIdBd():int
     {
-        $sql = $this->pdo->prepare('SELECT ' . $this->columns[0] . ' FROM ' . $this->table . ' ORDER BY ' . $this->columns[0] . ' DESC LIMIT 1');
-       
-        $sql->execute();
+        try{
+            $sql = $this->pdo->prepare('SELECT ' . $this->columns[0] . ' FROM ' . $this->table . ' ORDER BY ' . $this->columns[0] . ' DESC LIMIT 1');
+        
+            $sql->execute();
 
-        if ($sql->rowCount() > 0) {
-            $rows = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
-            return $rows[0];
+            if ($sql->rowCount() > 0) {
+                $rows = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
+                return $rows[0];
+            }
+            else{
+                return 0;
+            }
+
+        }catch(Exception $e){
+            throw new Exception("Tabela: status ".$e->getMessage());
         }
-
-        throw new Exception('Tabela: '.$this->table.' tabela não encontrada');
     }
 
     /**
@@ -235,8 +241,6 @@ class db
         
             $sql->execute();
 
-            $rows = [];
-
             if ($sql->rowCount() > 0) {
                 $this->columns = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
             }else{
@@ -267,7 +271,7 @@ class db
             $rows = [];
 
             if ($sql->rowCount() > 0) {
-                $rows = $sql->fetchAll(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE,get_class($this));
+                $rows = $sql->fetchAll(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE,get_class($this),[$this->table]);
             }    
 
             return $rows;

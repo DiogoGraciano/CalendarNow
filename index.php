@@ -7,8 +7,10 @@
     use app\classes\functions;
 
     $controller = new Controller;
+
+    $urlPermitidas = ["/ajax","/usuario/manutencao","/usuario/action","/empresa/manutencao","/empresa/action"];
     
-    if (isset($_SESSION["user"]) || functions::getUri() == "/ajax" || functions::getUri() == "/usuario/manutencao/" || functions::getUri() == "/empresa/manutencao/"){
+    if (isset($_SESSION["user"]) || in_array(functions::getUri(),$urlPermitidas)){
         $controller = $controller->load();
         //session_regenerate_id(true);
     }else 

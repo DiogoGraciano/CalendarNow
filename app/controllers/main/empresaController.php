@@ -55,17 +55,16 @@ class empresaController extends controllerAbstract {
         $id = null;
         $tipo_usuario = null;
 
-        if (array_key_exists(1, $parameters)){
+        if ($parameters && array_key_exists(1, $parameters)){
             $id = intval(functions::decrypt($parameters[1])); 
         }
 
-        if ($tipo_usuario == 1){
-            $dado = usuarioModel::get($id);
-            $form->setHidden("cd", $id);
-            $dadoEndereco = enderecoModel::get($dado->id, "id_usuario");
-            $dadoEmpresa = empresaModel::get($dado->id_empresa);
-            $form->setHidden("id_empresa", $dado->id_empresa);
-        }
+        
+        $dado = usuarioModel::get($id);
+        $form->setHidden("cd", $id);
+        $dadoEndereco = enderecoModel::get($dado->id, "id_usuario");
+        $dadoEmpresa = empresaModel::get($dado->id_empresa);
+        $form->setHidden("id_empresa", $dado->id_empresa);
 
         $elements = new elements();
 
@@ -127,7 +126,7 @@ class empresaController extends controllerAbstract {
         $footer->show();
     }
 
-    public function action($parameters = []){
+    public function action(){
        
         $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');

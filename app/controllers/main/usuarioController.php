@@ -51,7 +51,7 @@ class usuarioController extends controllerAbstract {
 
         $id = null;
 
-        if (array_key_exists(0, $parameters)){
+        if ($parameters && array_key_exists(0, $parameters)){
             $id = intval(functions::decrypt($parameters[0])); 
         }
 
@@ -114,7 +114,7 @@ class usuarioController extends controllerAbstract {
     public function action(){
         $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');
-        $cpf = $this->getValue('cpf');
+        $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
         $email = $this->getValue('email');
         $telefone = $this->getValue('telefone');
@@ -131,9 +131,9 @@ class usuarioController extends controllerAbstract {
         transactionManeger::beginTransaction();
 
         try {
-            $id_usuario = usuarioModel::set($nome, $cpf, $email, $telefone, $senha, $id, 1);
+            $id_usuario = usuarioModel::set($nome, $cpf_cnpj, $email, $telefone, $senha, $id, 3);
             if ($id_usuario){
-                $id_endereco = enderecoModel::set($cep, $id_estado, $id_cidade, $bairro, $rua, $numero, $complemento, $id_endereco, $id_usuario, null);
+                $id_endereco = enderecoModel::set($cep, $id_estado, $id_cidade, $bairro, $rua, $numero, $complemento, $id_endereco, $id_usuario, null, false);
                 if ($id_endereco){
                     mensagem::setSucesso("Usuário salvo com sucesso");
                     transactionManeger::commit();
@@ -143,12 +143,12 @@ class usuarioController extends controllerAbstract {
         } catch (\Exception $e) {
             mensagem::setErro("Erro ao salvar usuário");
             transactionManeger::rollback();
+            $this->go("usuario/manutencao");
         }
 
-        mensagem::setErro("Erro ao salvar usuário");
+        mensagem::setSucesso(false);
         transactionManeger::rollback();
-
-        $this->go("usuario/index");
+        $this->go("usuario/manutencao");
     }
 }
 
