@@ -53,11 +53,11 @@ class consulta extends pagina
 
         // Adiciona colunas à tabela
         if ($checkbox) {
-            $table->addColumns("1", $this->isMobile() ? "Selecionar" : "");
+            $table->addColumns("1", $this->isMobile() ? "Selecionar" : "","massaction");
         }
 
         foreach ($this->columns as $column) {
-            $table->addColumns($column->width, $column->nome);
+            $table->addColumns($column['width'],$column['nome'],$column['coluna']);
         }
 
         // Popula a tabela com os dados fornecidos
@@ -67,34 +67,21 @@ class consulta extends pagina
                 if(is_subclass_of($data,"app\db\db")){
                     $data = $data->getArrayData();
                 }
-                $row = [];
-                $b = 1;
-                $row_action = "";
 
-                foreach ($data as $key => $value) {
-                    if ($checkbox && $b == 1) {
-                        $row[] = (new elements)->checkbox("id_check_" . ($i + 1), false, false, false, false, $value);
-                        $b++;
-                    }
-                    $row[] = $value;
+                if(array_key_exists($coluna_action,$data)){
 
-                    if ($key == $coluna_action) {
-                        $row[] = '<button type="button" class="btn btn btn-primary">
-                                    <a href="' . $pagina_manutencao . '/' . functions::encrypt($value) . '">Editar</a>
-                                </button>
-                                <button class="btn btn btn-primary" onclick="confirmaExcluir()" type="button">
-                                    <a href="' . $pagina_action . '/' . functions::encrypt($value) . '">Excluir</a>
-                                </button>';
-                        $row_action = array_key_last($row);
-                    }
+                    if($checkbox)
+                        $data["massaction"] = (new elements)->checkbox("id_check_" . ($i + 1), false, false, false, false, $data[$coluna_action]);
+
+                    $data["acoes"]  = '<button type="button" class="btn btn btn-primary">
+                                                <a href="' . $pagina_manutencao . '/' . functions::encrypt($data[$coluna_action]) . '">Editar</a>
+                                                </button>
+                                                <button class="btn btn btn-primary" onclick="confirmaExcluir()" type="button">
+                                                    <a href="' . $pagina_action . '/' . functions::encrypt($data[$coluna_action]) . '">Excluir</a>
+                                                </button>';
                 }
 
-                $row_buttons = $row[$row_action];
-                unset($row[$row_action]);
-                $row[] = $row_buttons;
-
-                $i++;
-                $table->addRow(array_values($row));
+                $table->addRow($data);
             }
 
             $this->tpl->qtd_list = $i;
@@ -117,7 +104,7 @@ class consulta extends pagina
      */
     public function addColumns(string|int $width,string $nome,string $coluna)
     {
-        $this->columns[] = json_decode('{"nome":"' . $nome . '","width":"' . $width . '%","coluna":"' . $coluna . '"}');
+        $this->columns[] = ["nome" => $nome ,"width" => $width.'%',"coluna" => $coluna];
         return $this;
     }
 

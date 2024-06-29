@@ -9,13 +9,6 @@ use app\classes\pagina;
 class tabelaMobile extends pagina{
 
     /**
-     * Array para armazenar os títulos e as linhas da tabela.
-     *
-     * @var array
-     */
-    private $columnsrows = [];
-
-    /**
      * Array para armazenar os nomes das colunas.
      *
      * @var array
@@ -40,17 +33,14 @@ class tabelaMobile extends pagina{
 
         if($this->rows){
             foreach ($this->rows as $row){
-                foreach ($row as $key => $data){
-                    if(array_key_exists($key,$this->columns))
-                        $this->addColumnsRows($data,$this->columns[$key]);
+                foreach ($this->columns as $column){
+                    if(array_key_exists($column["coluna"],$row)){
+                        $this->tpl->columns_name = $column["nome"];
+                        $this->tpl->data = base64_decode(base64_encode($row[$column["coluna"]]));
+                    }
+                    $this->tpl->block("BLOCK_ROW");
                 }
             }
-        }
-
-        foreach ($this->columnsrows as $columnrow){
-            $this->tpl->titulo = $columnrow->titulo;
-            $this->tpl->row = base64_decode($columnrow->row) ;
-            $this->tpl->block("BLOCK_ROW");   
         }
 
         return $this->tpl->parse();
@@ -59,14 +49,15 @@ class tabelaMobile extends pagina{
     /**
      * Adiciona uma nova coluna à tabela.
      *
-     * @param string|int $width   Nome da coluna.
-     * @param string $nome    Largura da coluna.
+     * @param string|int $width Nome da coluna.
+     * @param string $nome      Largura da coluna.
+     * @param string $coluna    Nome da coluna DB.
      *
      * @return tabelaMobile   Retorna a instância atual da tabela para permitir encadeamento de métodos.
      */
-    public function addColumns(string|int $width,string $nome){
+    public function addColumns(string|int $width,string $nome,string $coluna){
 
-        $this->columns[] = $nome;
+        $this->columns[] = ["nome" => $nome,"width" => $width.'%',"coluna" => $coluna];
 
         return $this;
     }
@@ -81,21 +72,6 @@ class tabelaMobile extends pagina{
     public function addRow(array $row = []){
 
         $this->rows[] = $row;
-
-        return $this;
-    }
-
-    /**
-     * Adiciona uma nova linha e título à tabela.
-     *
-     * @param string $row     Base 64 do Dado da linha a ser adicionado.
-     * @param string $titulo  Título da coluna correspondente ao dado da linha.
-     *
-     * @return tabelaMobile  Retorna a instância atual da tabela para permitir encadeamento de métodos.
-     */
-    private function addColumnsRows(string $row,string $titulo){
-
-        $this->columnsrows[] = json_decode('{"row":"'.base64_encode($row).'","titulo":"'.$titulo.'"}');
 
         return $this;
     }

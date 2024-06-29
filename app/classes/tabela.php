@@ -31,18 +31,19 @@ class tabela extends pagina{
 
         $this->tpl = $this->getTemplate("table_template.html");
         
-        foreach ($this->columns as $columns){
-            $this->tpl->columns_width = $columns->width;
-            $this->tpl->columns_name = $columns->nome;
-            $this->tpl->block("BLOCK_COLUMNS");   
-        }
-        
-        foreach ($this->rows as $rows){
-            foreach ($rows as $data){
-                $this->tpl->data = $data;
-                $this->tpl->block("BLOCK_DATA"); 
+        if($this->rows){
+            foreach ($this->rows as $row){
+                foreach ($this->columns as $column){
+                    if(array_key_exists($column["coluna"],$row)){
+                        $this->tpl->columns_name = $column["nome"];
+                        $this->tpl->columns_width = $column["width"];
+                        $this->tpl->data = base64_decode(base64_encode($row[$column["coluna"]]));
+                        $this->tpl->block("BLOCK_DATA");
+                        $this->tpl->block("BLOCK_COLUMNS");
+                    }
+                }
+                $this->tpl->block("BLOCK_ROW");
             }
-            $this->tpl->block("BLOCK_ROW"); 
         }
 
         return $this->tpl->parse();
@@ -53,12 +54,13 @@ class tabela extends pagina{
      *
      * @param string|int $width   Largura da coluna em porcentagem.
      * @param string $nome    Nome da coluna.
+     * @param string $coluna    Nome da coluna DB.
      *
      * @return tabela         Retorna a instância atual da tabela para permitir encadeamento de métodos.
      */
-    public function addColumns(string|int $width,string $nome){
+    public function addColumns(string|int $width,string $nome, string $coluna){
 
-        $this->columns[] = json_decode('{"nome":"'.$nome.'","width":"'.$width.'%"}');
+        $this->columns[] = ["nome" => $nome,"width" => $width.'%',"coluna" => $coluna];
 
         return $this;
     }
