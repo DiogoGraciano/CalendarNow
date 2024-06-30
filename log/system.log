@@ -57,3 +57,6 @@
 2024-06-10T17:49:56+00:00 [ERROR] : Tabela: agenda Erro: ID Invalido
 2024-06-12T02:04:48+00:00 [ERROR] : SQLSTATE[HY000] [1049] Unknown database 'agendadb'
 2024-06-12T02:04:49+00:00 [ERROR] : SQLSTATE[HY000] [1049] Unknown database 'agendadb'
+2024-06-27T01:51:46+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 
+2024-06-27T01:51:49+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 
+2024-06-27T01:54:02+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 

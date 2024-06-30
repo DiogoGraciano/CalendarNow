@@ -171,15 +171,15 @@ class agendamentoController extends controllerAbstract{
         $servicos = servicoModel::getByFuncionario($Dadofuncionario->id);
         if ($this->isMobile()){
             $table = new tabelaMobile();
-            $table->addColumns("1","Selecionar");
+            $table->addColumns("1","Selecionar","massaction");
         }else {
             $table = new tabela();
-            $table->addColumns("1","");
+            $table->addColumns("1","","massaction");
         }
-        $table->addColumns("68","Nome");
-        $table->addColumns("10","Quantidade");
-        $table->addColumns("10","Tempo");
-        $table->addColumns("12","Total");
+        $table->addColumns("68","Nome","nome");
+        $table->addColumns("10","Quantidade","qtd_item");
+        $table->addColumns("10","Tempo","tempo_item");
+        $table->addColumns("12","Total","total_item");
 
         if($servicos){
             foreach ($servicos as $servico){
@@ -190,22 +190,18 @@ class agendamentoController extends controllerAbstract{
 
                 if (isset($agendaItem->id_servico) && $agendaItem->id_servico == $servico->id){
                     $form->setHidden("id_item_".$i,$agendaItem->id);
-                    $table->addRow([
-                        $elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
-                        $servico->nome,
-                        $elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
-                        $elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
-                        $elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"')
-                    ]);
+                    $servico->massaction =  $elements->checkbox("servico_index_".$i,"",false,$agendaItem->id_servico?true:false,false,$agendaItem->id_servico,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"');
+                    $servico->qtd_item = $elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"');
+                    $servico->tempo_item =  $elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"');
+                    $servico->total_item =   $elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"');
+                    $table->addRow($servico);
                 }
                 else{
-                    $table->addRow([
-                        $elements->checkbox("servico_index_".$i,"",false,false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"'),
-                        $servico->nome,
-                        $elements->input("qtd_item_".$i,"",1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"'),
-                        $elements->input("tempo_item_".$i,"",$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"'),
-                        $elements->input("total_item_".$i,"",functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"')
-                    ]); 
+                    $servico->massaction = $elements->checkbox("servico_index_".$i,"",false,false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"');
+                    $servico->qtd_item = $elements->input("qtd_item_".$i,"",1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"');
+                    $servico->tempo_item = $elements->input("tempo_item_".$i,"",$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"');
+                    $servico->total_item = $elements->input("total_item_".$i,"",functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"');
+                    $table->addRow($servico); 
                 }
                 $i++;
             }

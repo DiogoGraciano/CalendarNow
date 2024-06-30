@@ -3,6 +3,7 @@ namespace app\models\main;
 
 use app\db\cliente;
 use app\classes\modelAbstract;
+use app\classes\mensagem;
 
 /**
  * Classe clienteModel
@@ -33,7 +34,7 @@ class clienteModel{
      */
     public static function getByFuncionario(int $id_funcionario):array
     {
-        $values = new cliente;
+        $db = new cliente;
         $cliente = $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
 
         return $cliente;
