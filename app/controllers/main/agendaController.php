@@ -40,8 +40,11 @@ class agendaController extends controllerAbstract{
 
         $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
-        $agenda->addColumns("1","Id","id")->addColumns("70","Nome","nome")->addColumns("8","Codigo","codigo")->addColumns("11","Ações","acoes")
-        ->show($this->url."agenda/manutencao",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo));
+        $agenda->addColumns("1","Id","id")
+            ->addColumns("70","Nome","nome")
+            ->addColumns("8","Codigo","codigo")
+            ->addColumns("11","Ações","acoes")
+            ->show($this->url."agenda/manutencao",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo));
       
         $footer = new footer;
         $footer->show();
@@ -104,7 +107,7 @@ class agendaController extends controllerAbstract{
             $this->go("agenda");
         }
 
-        $id = functions::decrypt($this->getValue('cd'));
+        $id = intval(functions::decrypt($this->getValue('cd')));
         $nome  = $this->getValue('nome');
         $id_funcionario  = $this->getValue('funcionario');
         $codigo  = $this->getValue('codigo');
@@ -114,20 +117,20 @@ class agendaController extends controllerAbstract{
             transactionManeger::init();
             transactionManeger::beginTransaction();
             if ($id_agenda = agendaModel::set($nome,$id_empresa,$codigo,$id)){ 
-                agendaModel::setAgendaUsuario($user->id,$id_agenda)?:transactionManeger::rollBack();
+                agendaModel::setAgendaUsuario($user->id,$id_agenda);
                 if($id_funcionario)
-                    agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda)?:transactionManeger::rollBack();;
-
+                    agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
                 mensagem::setSucesso("Agenda salva com sucesso");
+                transactionManeger::commit();
                 $this->go("agenda");
             }
-            transactionManeger::commit();
         }catch (\exception $e){
+            mensagem::setSucesso(false);
             transactionManeger::rollBack();
-            mensagem::setErro("Erro ao cadastrar agenda");
+            mensagem::setErro("Erro ao cadastrar agenda, tente novamente");
         }
 
         mensagem::setSucesso(false);
-        $this->go("agenda/manutencao");
+        $this->go("agenda/manutencao/".$this->getValue('cd'));
     }
 }

@@ -60,7 +60,6 @@ $funcionarioGrupoFuncionarioTb->addColumn((new columnDb("id_funcionario", "INT")
                               ->addColumn((new columnDb("id_grupo_funcionario", "INT"))->isNotNull()->setComment("ID do grupo de funcionarios")->isForeingKey($grupoFuncionarioTb))
                               ->execute($recreate);
 
-
 $clienteTb = new tableDb("cliente",comment:"Tabela de clientes");
 $clienteTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID do cliente"))
         ->addColumn((new columnDb("nome","VARCHAR",300))->isNotNull()->setComment("Nome do cliente"))

@@ -93,7 +93,7 @@ class FuncionarioController extends controllerAbstract {
         $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa, $nome, intval($id_agenda), intval($id_grupo_funcionarios));
 
         $cadastro->addColumns("14", "Ações", "acoes");
-        $cadastro->show($this->url."funcionario/manutencao/", $this->url."funcionario/action/", $dados, "id", true);
+        $cadastro->show($this->url."funcionario/manutencao", $this->url."funcionario/action", $dados, "id", true);
 
         $footer = new footer();
         $footer->show();
@@ -153,12 +153,12 @@ class FuncionarioController extends controllerAbstract {
         $diasSemana = ["dom" => "Domingo", "seg" => "Segunda", "ter" => "Terça", "qua" => "Quarta", "qui" => "Quinta", "sex" => "Sexta", "sab" => "Sábado"];
 
         foreach ($diasSemana as $key => $value) {
-            $form->addCustomInput(2, $elements->checkbox($key, $value, false, in_array($key, $checkDias)), $key);
+            $form->addCustomInput(2, $elements->checkbox($key, $value, false, in_array($key, $checkDias),value:$key),$key);
         }
 
         $form->setCustomInputs();
         $form->setButton($elements->button("Salvar", "submit"));
-        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='".$this->url."funcionario/index/".functions::encrypt($tipo_usuario)."'"));
+        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/index/'"));
         $form->show();
     }
 

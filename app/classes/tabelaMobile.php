@@ -36,7 +36,7 @@ class tabelaMobile extends pagina{
                 foreach ($this->columns as $column){
                     if(array_key_exists($column["coluna"],$row)){
                         $this->tpl->columns_name = $column["nome"];
-                        $this->tpl->data = base64_decode(base64_encode($row[$column["coluna"]]));
+                        $this->tpl->data = $row[$column["coluna"]];
                     }
                     $this->tpl->block("BLOCK_ROW");
                 }

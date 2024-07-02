@@ -347,7 +347,7 @@ class db
             if ($this->object && !isset($this->object[0])) {
                 $objectFilter = array_intersect_key($this->object, $columnsDb);
 
-                if (!isset($values[$this->columns[0]]) || !$values[$this->columns[0]]) {
+                if (!isset($objectFilter[$this->columns[0]]) || !$objectFilter[$this->columns[0]]) {
                     // Incrementando o ID
                     $objectFilter[$this->columns[0]] = $this->getlastIdBd() + 1;
 
@@ -424,6 +424,7 @@ class db
     */
     public function storeMutiPrimary():bool{
         try {
+
             // Gera Objeto da tabela
             $this->getColumnTable();
 
@@ -431,10 +432,10 @@ class db
                 $columnsDb[$columns] = true;
             }
 
-            if ($this->object && !isset($this->object[0])) {
+            if ($this->object) {
+                
                 $objectFilter = array_intersect_key($this->object, $columnsDb);
 
-                $objectFilter = array_intersect_key($this->object, $this->columns);
                 $sql_instruction = "INSERT INTO {$this->table} (";
                 $keysBD = implode(",", array_keys($this->object));
                 $valuesBD = "";
@@ -456,6 +457,7 @@ class db
                 foreach ($this->valuesBind as $key => $data) {
                     $sql->bindParam($key,$data[0],$data[1]);
                 }
+
                 $sql->execute();
 
                 if ($this->debug)
@@ -548,7 +550,6 @@ class db
         $operatorCondition = strtoupper(trim($operatorCondition));
         if (!in_array($operatorCondition, [self::AND, self::OR])) {
             $this->error[] = "Filtro inválido";
-            Logger::error("Filtro inválido");
             return $this;
         }
 
@@ -623,7 +624,6 @@ class db
         $typeJoin = strtoupper(trim($typeJoin));
         if (!in_array($typeJoin, ["LEFT", "RIGHT", "INNER", "OUTER", "FULL OUTER", "LEFT OUTER", "RIGHT OUTER"])) {
             $this->error[] = "JOIN inválido";
-            Logger::error("JOIN inválido");
             return $this;
         }
 

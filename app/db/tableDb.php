@@ -137,7 +137,8 @@ class tableDb extends connectionDb
 
         $sql = trim($sql);
 
-        $sql .= "PRIMARY KEY (".implode(",",$this->primary).")";
+        if($this->primary)
+            $sql .= "PRIMARY KEY (".implode(",",$this->primary).")";
 
         $sql .= ")ENGINE={$this->engine} COLLATE={$this->collate} COMMENT='{$this->comment}';";
 
@@ -149,11 +150,15 @@ class tableDb extends connectionDb
             $sql .= $index["sql"];
         }
 
+        $sql = str_replace(",)",")",$sql);
+
         $sql = $this->pdo->prepare($sql);
         if (!$sql) {
             throw new \Exception("Erro ao preparar a consulta: " . implode(", ", $this->pdo->errorInfo()));
         }
-        $sql->execute();
+        if (!$sql->execute()){
+            throw new \Exception("Erro ao executar o sql: " . implode(", ", $sql->errorInfo()));
+        }
     }
 
     public function execute($recreate = false){
@@ -320,7 +325,7 @@ class tableDb extends connectionDb
                 throw new \Exception("Erro ao preparar a sql: " . implode(", ", $this->pdo->errorInfo()));
             }
             if (!$sql->execute()){
-                throw new \Exception("Erro ao executar o sql: " . implode(", ", $stmt->errorInfo()));
+                throw new \Exception("Erro ao executar o sql: " . implode(", ", $sql->errorInfo()));
             }
         }
     }

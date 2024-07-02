@@ -32,16 +32,20 @@ class tabela extends pagina{
         $this->tpl = $this->getTemplate("table_template.html");
         
         if($this->rows){
+            $i = 1;
             foreach ($this->rows as $row){
                 foreach ($this->columns as $column){
                     if(array_key_exists($column["coluna"],$row)){
-                        $this->tpl->columns_name = $column["nome"];
-                        $this->tpl->columns_width = $column["width"];
-                        $this->tpl->data = base64_decode(base64_encode($row[$column["coluna"]]));
+                        $this->tpl->data = $row[$column["coluna"]];
                         $this->tpl->block("BLOCK_DATA");
-                        $this->tpl->block("BLOCK_COLUMNS");
+                        if($i == 1){
+                            $this->tpl->columns_name = $column["nome"];
+                            $this->tpl->columns_width = $column["width"];
+                            $this->tpl->block("BLOCK_COLUMNS");
+                        }
                     }
                 }
+                $i++;
                 $this->tpl->block("BLOCK_ROW");
             }
         }

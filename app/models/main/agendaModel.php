@@ -26,7 +26,7 @@ class agendaModel{
      * @param int $limit O número máximo de registros a serem retornados.
      * @return object|array Retorna os dados da agenda ou null se não encontrado.
     */
-    public static function get($value = "",string $column = "id",int $limit = 1):array|object
+    public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
     {
         return (new agenda)->get($value,$column,$limit);
     }
@@ -143,7 +143,6 @@ class agendaModel{
 
         if (!$result){
 
-            $db = new agendaUsuario;
             $db->id_usuario = $id_usuario;
             $db->id_agenda = $id_agenda;
 
@@ -193,9 +192,11 @@ class agendaModel{
         $values = new agenda;
 
         $mensagens = [];
-        
-        if($values->id = $id && self::get($values->id)->id)
+
+        if($id && !self::get($id)->id)
             $mensagens[] = "Agenda não encontrada";
+
+        $values->id = $id;
         
         if(!($values->id_empresa = EmpresaModel::get($id_empresa)->id))
             $mensagens[] = "Empresa não encontrada"; 
