@@ -10,6 +10,8 @@ use app\classes\consulta;
 use app\classes\footer;
 use app\classes\filter;
 use app\classes\mensagem;
+use app\classes\tabela;
+use app\classes\tabelaMobile;
 use app\classes\modal;
 use app\db\transactionManeger;
 use app\models\main\usuarioModel;
@@ -26,7 +28,7 @@ class FuncionarioController extends controllerAbstract {
         $head->show("Cadastro de Funcionários", "consulta");
 
         $elements = new elements();
-        $cadastro = new consulta();
+        $cadastro = new consulta(true);
         $cadastro->addButtons($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='".$this->url."opcoes'"));
 
         $cadastro->addColumns("1", "Id", "id")
@@ -67,7 +69,7 @@ class FuncionarioController extends controllerAbstract {
                 ->addColumns("5", "Fim Almoço", "hora_almoco_fim")
                 ->addColumns("14", "Dias", "dia");
 
-        $cadastro->addButtons($elements->button("Adicionar Agenda ao Funcionario", "openModel", "button", "btn btn-primary", "openModal('massActionAgenda')"));
+        $cadastro->addButtons($elements->button("Vincular Agenda ao Funcionario", "openModel", "button", "btn btn-primary", "openModal('massActionAgenda')"));
 
         $grupo_funcionarios = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
 
@@ -86,14 +88,14 @@ class FuncionarioController extends controllerAbstract {
             $modal->show();
 
             $filter->addFilter(3, $grupo_funcionario);
-            $cadastro->addButtons($elements->button("Adicionar Funcionario ao Grupo", "openModelGrupoFuncionario", "button", "btn btn-primary", "openModal('massActionGrupoFuncionario')"));
+            $cadastro->addButtons($elements->button("Vincular Funcionario ao Grupo", "openModelGrupoFuncionario", "button", "btn btn-primary", "openModal('massActionGrupoFuncionario')"));
         }
 
         $filter->show();
         $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa, $nome, intval($id_agenda), intval($id_grupo_funcionarios));
 
         $cadastro->addColumns("14", "Ações", "acoes");
-        $cadastro->show($this->url."funcionario/manutencao", $this->url."funcionario/action", $dados, "id", true);
+        $cadastro->show($this->url."funcionario/manutencao", $this->url."funcionario/action", $dados);
 
         $footer = new footer();
         $footer->show();
@@ -104,7 +106,7 @@ class FuncionarioController extends controllerAbstract {
         $head = new head();
         $head->show("Cadastro de Funcionário");
 
-        $id = functions::decrypt($parameters[1] ?? '');
+        $id = functions::decrypt($parameters[0] ?? '');
         $user = usuarioModel::getLogged();
 
         $dadoFuncionario = funcionarioModel::get($id);
@@ -127,7 +129,54 @@ class FuncionarioController extends controllerAbstract {
             ["email", "senha", "telefone"]
         );
 
+        $this->isMobile() ? $table = new tabelaMobile() : $table = new tabela();
+
+        if($dadoFuncionario->id && $agendas = funcionarioModel::getAgendaByFuncionario($dadoFuncionario->id)){
+
+            $form->setInputs($elements->label("Agendas Vinculadas"));
+
+            $table->addColumns("1","ID","id");
+            $table->addColumns("90","Nome","nome");
+            $table->addColumns("10","Ações","acoes");
+
+            foreach ($agendas as $agenda){
+                $agenda->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularAgenda/".functions::encrypt($agenda->id)."/".functions::encrypt($dadoFuncionario->id)."'");
+                $table->addRow($agenda->getArrayData());
+            }
+
+            $form->setInputs($table->parse());
+        }
+
+        $agendas = agendaModel::getByEmpresa($user->id_empresa);
+
+        $elements->addOption("", "Nenhum");
+        foreach ($agendas as $agenda) {
+            $elements->addOption($agenda->id, $agenda->nome);
+        }
+
+        $select_agenda = $elements->select("Agenda", "id_agenda");
+
+        $form->setInputs($select_agenda);
+
+        if($dadoFuncionario->id && $grupos_funcionarios = grupoFuncionarioModel::getByFuncionario($dadoFuncionario->id)){
+
+            $form->setInputs($elements->label("Grupos de Funcionario Vinculados"));
+
+            $table->addColumns("1","ID","id");
+            $table->addColumns("90","Nome","nome");
+            $table->addColumns("10","Ações","acoes");
+
+            foreach ($grupos_funcionarios as $grupo_funcionario){
+                $grupo_funcionario->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularGrupo/".functions::encrypt($grupo_funcionario->id)."/".functions::encrypt($dadoFuncionario->id)."'");
+                $table->addRow($grupo_funcionario->getArrayData());
+            }
+
+            $form->setInputs($table->parse());
+        }
+
         $grupos_funcionarios = grupoFuncionarioModel::getByEmpresa($user->id_empresa);
+
+        $elements->addOption("", "Nenhum");
         foreach ($grupos_funcionarios as $grupo_funcionario) {
             $elements->addOption($grupo_funcionario->id, $grupo_funcionario->nome);
         }
@@ -162,8 +211,37 @@ class FuncionarioController extends controllerAbstract {
         $form->show();
     }
 
+    public function desvincularGrupo($parameters = []){
+
+        $id_grupo = functions::decrypt($parameters[0] ?? '');
+        $id_funcionario = functions::decrypt($parameters[1] ?? '');
+
+        if($id_grupo && $id_funcionario){
+            grupoFuncionarioModel::detachFuncionario($id_grupo,$id_funcionario);
+            $this->go("funcionario/manutencao/".$parameters[1]);
+        }
+
+        mensagem::setErro("Grupo ou Funcionario não informados");
+        $this->go("funcionario");
+    }
+
+    public function desvincularAgenda($parameters = []){
+
+        $id_agenda = functions::decrypt($parameters[0] ?? '');
+        $id_funcionario = functions::decrypt($parameters[1] ?? '');
+
+        if($id_agenda && $id_funcionario){
+            FuncionarioModel::detachAgendaFuncionario($id_agenda,$id_funcionario);
+            $this->go("funcionario/manutencao/".$parameters[1]);
+        }
+
+        mensagem::setErro("Agenda ou Funcionario não informados");
+        $this->go("funcionario");
+    }
+
     public function action(){
         $id_grupo_funcionario = $this->getValue('id_grupo_funcionario');
+        $id_agenda = $this->getValue('id_agenda');
         $hora_ini = $this->getValue('hora_ini');
         $hora_fim = $this->getValue('hora_fim');
         $hora_almoco_ini = $this->getValue('hora_almoco_ini');
@@ -188,8 +266,12 @@ class FuncionarioController extends controllerAbstract {
                     $id_funcionario = intval($this->getValue("id_funcionario"));
                     $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
                     if($id_funcionario){
-                        if ($id_grupo_funcionario && $id_funcionario)
+                        
+                        if ($id_grupo_funcionario)
                             funcionarioModel::setFuncionarioGrupoFuncionario($id_grupo_funcionario,$id_funcionario);
+
+                        if ($id_agenda)
+                            funcionarioModel::setAgendaFuncionario($id_agenda,$id_funcionario);
                         
                         mensagem::setSucesso("Funcionario salvo com sucesso");    
                         transactionManeger::commit();
@@ -220,13 +302,27 @@ class FuncionarioController extends controllerAbstract {
             $qtd_list = $this->getValue("qtd_list");
             $id_agenda = $this->getValue("agenda");
 
+            $mensagem = "Funcionario vinculados com sucesso: ";
+            $mensagem_erro = "Funcionario não vinculados: ";
+
             if ($qtd_list && $id_agenda){
                 for ($i = 1; $i <= $qtd_list; $i++) {
-                    if($id_servico = $this->getValue("id_check_".$i)){
-                        funcionarioModel::setAgendaFuncionario($id_servico,$id_agenda);
+                    if($id_funcionario = $this->getValue("id_check_".$i)){
+                        if(funcionarioModel::setAgendaFuncionario($id_funcionario,$id_agenda))
+                            $mensagem .= $id_funcionario." - ";
+                        else
+                            $mensagem_erro .= $id_funcionario." - ";
                     }
                 }
+                if($mensagem != "Funcionario vinculados com sucesso: ")
+                    mensagem::setSucesso($mensagem);
+                if($mensagem_erro != "Funcionario não vinculados: ")
+                    mensagem::setErro($mensagem_erro);
+
                 transactionManeger::commit();
+            }
+            else{
+                mensagem::setErro("Não foi informado a agenda");
             }
 
         }catch(\Exception $e){
@@ -249,12 +345,25 @@ class FuncionarioController extends controllerAbstract {
             $qtd_list = $this->getValue("qtd_list");
             $id_grupo_funcionario = $this->getValue("grupo_funcionario");
 
+            $mensagem = "Funcionario vinculados com sucesso: ";
+            $mensagem_erro = "Funcionario não vinculados: ";
+
             if ($qtd_list && $id_grupo_funcionario){
                 for ($i = 1; $i <= $qtd_list; $i++) {
                     if($id_funcionario = $this->getValue("id_check_".$i)){
-                        funcionarioModel::setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario);
+                        if(funcionarioModel::setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario))
+                            $mensagem .= $id_funcionario." - ";
+                        else
+                            $mensagem_erro .= $id_funcionario." - ";
                     }
                 }
+                if($mensagem != "Funcionario vinculados com sucesso: ")
+                    mensagem::setSucesso($mensagem);
+                if($mensagem_erro != "Funcionario não vinculados: ")
+                    mensagem::setErro($mensagem_erro);
+            }
+            else{
+                mensagem::setErro("Não foi informado o grupo do funcionario");
             }
 
         }catch(\Exception $e){

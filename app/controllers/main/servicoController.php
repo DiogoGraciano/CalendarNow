@@ -9,7 +9,9 @@ use app\classes\elements;
 use app\classes\footer;
 use app\classes\functions;
 use app\classes\filter;
-use app\models\main\agendaModel;
+use app\classes\tabela;
+use app\classes\tabelaMobile;
+use app\classes\mensagem;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
@@ -38,14 +40,8 @@ class servicoController extends controllerAbstract{
         $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
 
         if ($funcionarios){
-            $i = 1;
-            $firstFuncionario = "";
             $elements->addOption("","Selecione/Todos");
             foreach ($funcionarios as $funcionario){
-                if ($i == 1){
-                    $firstFuncionario = $funcionario->id;
-                    $i++;
-                }
                 $elements->addOption($funcionario->id,$funcionario->nome);
             }
 
@@ -101,7 +97,7 @@ class servicoController extends controllerAbstract{
                 ->addColumns("5","Tempo","tempo")
                 ->addColumns("10","Valor","valor")
                 ->addColumns("11","Ações","acoes")
-                ->show($this->url."servico/manutencao/",$this->url."servico/action/",$data,"id",true);
+                ->show($this->url."servico/manutencao",$this->url."servico/action",$data,"id",true);
       
         $footer = new footer;
         $footer->show();
@@ -146,6 +142,24 @@ class servicoController extends controllerAbstract{
             array("tempo","valor")
         );
 
+        if($dado->id && $grupos_servicos = grupoServicoModel::getByServico($dado->id)){
+
+            $this->isMobile() ? $table = new tabelaMobile() : $table = new tabela();
+
+            $form->setInputs($elements->label("Grupos de Funcionario Vinculados"));
+
+            $table->addColumns("1","ID","id");
+            $table->addColumns("90","Nome","nome");
+            $table->addColumns("10","Ações","acoes");
+
+            foreach ($grupos_servicos as $grupos_servico){
+                $grupos_servico->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularGrupo/".functions::encrypt($grupo_funcionario->id)."/".functions::encrypt($dadoFuncionario->id)."'");
+                $table->addRow($grupos_servico->getArrayData());
+            }
+
+            $form->setInputs($table->parse());
+        }
+
         $form->setButton($elements->button("Salvar","submit"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."servico'"));
         $form->show();
@@ -164,17 +178,31 @@ class servicoController extends controllerAbstract{
             $this->go("servico");
         }
 
-        $id = functions::decrypt($this->getValue('cd'));
+        $id = intval(functions::decrypt($this->getValue('cd')));
         $nome  = $this->getValue('nome');
-        $id_grupo_servico  = $this->getValue('id_grupo_servico');
+        $id_grupo_servico  = $this->getValue('grupo_servico');
         $tempo  = $this->getValue('tempo');
         $valor  = $this->getValue('valor');
 
-        if ($id_servico = servicoModel::set($nome,$valor,$tempo,$user->id_empresa,$id) && $id_grupo_servico && !$id){ 
-            servicoModel::setServicoGrupoServico($id_grupo_servico,$id_servico);
+        if ($id_servico = servicoModel::set($nome,$valor,$tempo,$user->id_empresa,$id) && $id_grupo_servico){ 
+            servicoModel::setServicoGrupoServico($id_servico,$id_grupo_servico);
         }
 
         $this->go("servico");
+    }
+
+    public function desvincularGrupo($parameters = []){
+
+        $id_grupo = functions::decrypt($parameters[0] ?? '');
+        $id_funcionario = functions::decrypt($parameters[1] ?? '');
+
+        if($id_grupo && $id_funcionario){
+            grupoServicoModel::detachServico($id_grupo,$id_funcionario);
+            $this->go("funcionario/manutencao/".$parameters[1]);
+        }
+
+        mensagem::setErro("Grupo ou Funcionario não informados");
+        $this->go("funcionario");
     }
 
     public function massActionFuncionario(){

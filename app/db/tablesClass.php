@@ -1,103 +1,163 @@
 <?php
 namespace app\db;
 
-class agenda extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("agenda");
+class agenda extends tableClassAbstract {
+    public const table = "agenda";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class agendaServico extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("agenda_servico");
+
+class agendaServico extends tableClassAbstract {
+    public const table = "agenda_servico";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class agendamento extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("agendamento");
+
+class agendamento extends tableClassAbstract {
+    public const table = "agendamento";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class agendamentoItem extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("agendamento_item");
+
+class agendamentoItem extends tableClassAbstract {
+    public const table = "agendamento_item";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class agendaFuncionario extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("agenda_funcionario");
+
+class agendaFuncionario extends tableClassAbstract {
+    public const table = "agenda_funcionario";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class agendaUsuario extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("agenda_usuario");
+
+class agendaUsuario extends tableClassAbstract {
+    public const table = "agenda_usuario";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class cidade extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("cidade");
+
+class cidade extends tableClassAbstract {
+    public const table = "cidade";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class cliente extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("cliente");
+
+class cliente extends tableClassAbstract {
+    public const table = "cliente";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class empresa extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("empresa");
+
+class empresa extends tableClassAbstract {
+    public const table = "empresa";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class endereco extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("endereco");
+
+class endereco extends tableClassAbstract {
+    public const table = "endereco";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class estado extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("estado");
+
+class estado extends tableClassAbstract {
+    public const table = "estado";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class funcionario extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("funcionario");
+
+class funcionario extends tableClassAbstract {
+    public const table = "funcionario";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
+
 class funcionarioGrupoFuncionario extends tableClassAbstract{
+    public const table = "funcionario_grupo_funcionario";
+
     public function __construct(){
-        parent::__construct("funcionario_grupo_funcionario");
+        parent::__construct(self::table);
     }
 }
-class grupoFuncionario extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("grupo_funcionario");
+
+class grupoFuncionario extends tableClassAbstract {
+    public const table = "grupo_funcionario";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class grupoServico extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("grupo_servico");
+
+class grupoServico extends tableClassAbstract {
+    public const table = "grupo_servico";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class servico extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("servico");
+
+class servico extends tableClassAbstract {
+    public const table = "servico";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class status extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("status");
+
+class status extends tableClassAbstract {
+    public const table = "status";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class servicoFuncionario extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("servico_funcionario");
+
+class servicoFuncionario extends tableClassAbstract {
+    public const table = "servico_funcionario";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class servicoGrupoServico extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("servico_grupo_servico");
+
+class servicoGrupoServico extends tableClassAbstract {
+    public const table = "servico_grupo_servico";
+
+    public function __construct() {
+        parent::__construct(self::table);
     }
 }
-class usuario extends tableClassAbstract{
-    public function __construct(){
-        parent::__construct("usuario");
-    } 
+
+class usuario extends tableClassAbstract {
+    public const table = "usuario";
+
+    public function __construct() {
+        parent::__construct(self::table);
+    }
 }
+?>

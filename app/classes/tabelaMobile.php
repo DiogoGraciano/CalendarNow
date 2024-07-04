@@ -33,6 +33,9 @@ class tabelaMobile extends pagina{
 
         if($this->rows){
             foreach ($this->rows as $row){
+                if(is_subclass_of($row,"app\db\db")){
+                    $row = $row->getArrayData();
+                }
                 foreach ($this->columns as $column){
                     if(array_key_exists($column["coluna"],$row)){
                         $this->tpl->columns_name = $column["nome"];
@@ -43,6 +46,7 @@ class tabelaMobile extends pagina{
             }
         }
 
+        $this->columns = $this->rows = [];
         return $this->tpl->parse();
     }
 
@@ -72,6 +76,20 @@ class tabelaMobile extends pagina{
     public function addRow(array $row = []){
 
         $this->rows[] = $row;
+
+        return $this;
+    }
+
+    /**
+     * Adiciona todas as linhas à tabelas.
+     *
+     * @param array $rows     Dados das linhas como um array associativo.
+     *
+     * @return tabela        Retorna a instância atual da tabela para permitir encadeamento de métodos.
+     */
+    public function addRows(array $rows = []){
+
+        $this->rows = $rows;
 
         return $this;
     }

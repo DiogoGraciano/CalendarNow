@@ -2,7 +2,9 @@
 namespace app\models\main;
 
 use app\db\grupoFuncionario;
+use app\db\funcionario;
 use app\classes\mensagem;
+use app\db\funcionarioGrupoFuncionario;
 
 /**
  * Classe grupoFuncionarioModel
@@ -46,6 +48,59 @@ class grupoFuncionarioModel{
     }
 
     /**
+     * Busca todos os grupos vinculados a um funcionario
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getByFuncionario(int $id_funcionario):array
+    {
+
+        $db = new funcionarioGrupoFuncionario;
+
+        $db->addJoin(grupoFuncionario::table,"id","id_grupo_funcionario")
+        ->addFilter("id_funcionario","=",$id_funcionario);
+
+        return $db->selectAll();
+    }
+
+    /**
+     * Busca todos os funcionarios vinculados a um grupo
+     * 
+     * @param int $id_grupo_funcionario O ID do grupo de funcionario.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getVinculados(int $id_grupo_funcionario):array
+    {
+        $db = new funcionarioGrupoFuncionario;
+
+        $db->addJoin(funcionario::table,"id","id_funcionario")
+        ->addFilter("id_grupo_funcionario","=",$id_grupo_funcionario);
+
+        return $db->selectColumns("funcionario.id","funcionario.nome");
+    }
+
+    /**
+     * Desvincula um funcionario de um grupo de funcionarios
+     * 
+     * @param int $id_grupo O ID do grupo de funcionário.
+     * @param int $id_funcionario O ID do funcionário.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachFuncionario(int $id_grupo,int $id_funcionario):bool
+    {
+        $db = new funcionarioGrupoFuncionario;
+
+        if($db->addFilter("id_grupo_funcionario","=",$id_grupo)->addFilter("id_funcionario","=",$id_funcionario)->deleteByFilter()){
+            mensagem::setSucesso("Funcionario Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Funcionario");
+        return false;
+    }
+
+    /**
      * Insere ou atualiza um grupo de funcionário.
      * 
      * @param string $nome O nome do grupo de funcionário.
@@ -55,8 +110,6 @@ class grupoFuncionarioModel{
     public static function set(string $nome,int $id_empresa,int $id = null):bool{
         $values = new grupoFuncionario;
         
-        
-
         $mensagens = [];
 
         if($values->id = $id && !self::get($values->id)->id){

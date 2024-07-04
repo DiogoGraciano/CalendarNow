@@ -8,6 +8,8 @@ use app\classes\consulta;
 use app\classes\footer;
 use app\classes\functions;
 use app\classes\filter;
+use app\classes\tabela;
+use app\classes\tabelaMobile;
 use app\models\main\grupoFuncionarioModel;
 use app\models\main\grupoServicoModel;
 use app\models\main\usuarioModel;
@@ -38,7 +40,6 @@ class gruposController extends controllerAbstract{
 
         $elements = new elements;
 
-        
         $filter = new filter($this->url."agenda/index/");
 
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
@@ -80,18 +81,38 @@ class gruposController extends controllerAbstract{
         }
 
         if ($tipo_grupo == "grupo_funcionario")
-            $dado = grupoFuncionarioModel::get($id);
+            $model = new grupoFuncionarioModel;
         elseif ($tipo_grupo == "grupo_servico")
-            $dado = grupoServicoModel::get($id);
+            $model = new grupoServicoModel;
         else    
             $this->go("home");
+
+        $dado = $model::get($id);
 
         $elements = new elements;
 
         $form->setInputs(
             $elements->input("nome","Nome",$dado->nome,true)
         );
-      
+
+        if($dado->id && $vinculos = $model::getVinculados($dado->id)){
+
+            $form->setInputs($elements->label("Funcionarios Vinculados"));
+
+            $this->isMobile() ? $table = new tabelaMobile() : $table = new tabela();
+            
+            $table->addColumns("1","ID","id");
+            $table->addColumns("90","Nome","nome");
+            $table->addColumns("10","Ações","acoes");
+
+            foreach ($vinculos as $vinculo){
+                $vinculo->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularGrupo/".functions::encrypt($dado->id)."/".functions::encrypt($vinculo->id)."'");
+                $table->addRow($vinculo->getArrayData());
+            }
+
+            $form->setInputs($table->parse());
+        }
+
         $form->setButton($elements->button("Salvar","submit"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."grupos/index/".$parameters[0]."'"));
 

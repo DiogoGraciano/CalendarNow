@@ -14,14 +14,34 @@ use app\classes\elements;
 class consulta extends pagina
 {
     /**
-     * @var array $columns Array que armazena as colunas da tabela.
-     */
-    private $columns = [];
-
-    /**
      * @var array $buttons Array que armazena os botões a serem exibidos na consulta.
      */
-    private $buttons = [];
+    private array $buttons = [];
+
+
+    /**
+     * @var object $table irá conter a classe tabela || tabelaMobile.
+    */
+    private tabelaMobile|tabela $table;
+
+    /**
+     * @var bool $massaction verifica se tem massation.
+    */
+    private bool $massaction = false;
+
+
+    public function __construct(bool $massaction = false)
+    {
+        // Cria uma instância da tabela com base no dispositivo
+        $this->table = $this->isMobile() ? new tabelaMobile : new tabela;
+
+        $this->massaction = $massaction;
+
+        // Adiciona colunas à tabela
+        if ($this->massaction) 
+            $this->table->addColumns("1", $this->isMobile() ? "Selecionar" : "","massaction");
+        
+    }
 
     /**
      * Exibe a consulta de dados em uma tabela.
@@ -32,7 +52,7 @@ class consulta extends pagina
      * @param string $coluna_action Nome da coluna que contém a ação (Editar/Excluir).
      * @param bool $checkbox Indica se a coluna de checkbox deve ser exibida.
      */
-    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id",bool $checkbox = false)
+    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id")
     {
         // Carrega o template de consulta
         $this->tpl = $this->getTemplate("consulta_template.html");
@@ -48,18 +68,6 @@ class consulta extends pagina
             $this->tpl->block("BLOCK_BUTTONS");
         }
 
-        // Cria uma instância da tabela com base no dispositivo
-        $table = $this->isMobile() ? new tabelaMobile : new tabela;
-
-        // Adiciona colunas à tabela
-        if ($checkbox) {
-            $table->addColumns("1", $this->isMobile() ? "Selecionar" : "","massaction");
-        }
-
-        foreach ($this->columns as $column) {
-            $table->addColumns($column['width'],$column['nome'],$column['coluna']);
-        }
-
         // Popula a tabela com os dados fornecidos
         if ($dados) {
             $i = 0;
@@ -70,7 +78,7 @@ class consulta extends pagina
 
                 if(array_key_exists($coluna_action,$data)){
 
-                    if($checkbox)
+                    if($this->massaction)
                         $data["massaction"] = (new elements)->checkbox("id_check_" . ($i + 1), false, false, false, false, $data[$coluna_action]);
 
                     $data["acoes"]  = '<button type="button" class="btn btn btn-primary">
@@ -81,11 +89,12 @@ class consulta extends pagina
                                                 </button>';
                 }
 
-                $table->addRow($data);
+                $this->table->addRow($data);
+                $i++;
             }
 
             $this->tpl->qtd_list = $i;
-            $this->tpl->table = $table->parse();
+            $this->tpl->table = $this->table->parse();
         } else {
             $this->tpl->block('BLOCK_SEMDADOS');
         }
@@ -104,7 +113,7 @@ class consulta extends pagina
      */
     public function addColumns(string|int $width,string $nome,string $coluna)
     {
-        $this->columns[] = ["nome" => $nome ,"width" => $width.'%',"coluna" => $coluna];
+        $this->table->addColumns($width,$nome,$coluna);
         return $this;
     }
 

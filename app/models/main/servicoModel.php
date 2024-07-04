@@ -5,7 +5,6 @@ use app\classes\functions;
 use app\db\servico;
 use app\db\servicoFuncionario;
 use app\db\servicoGrupoServico;
-use app\db\agendaServico;
 use app\classes\mensagem;
 
 /**
@@ -207,7 +206,7 @@ class servicoModel{
             $mensagens[] = "Empresa não existe";
         }
 
-        if($values->id = $id && !self::get($values->id)){
+        if($id && !self::get($id)){
             $mensagens[] = "Serviço não existe";
         }
 
@@ -215,6 +214,8 @@ class servicoModel{
             mensagem::setErro(...$mensagens);
             return false;
         }
+
+        $values->id = $id;
 
         if ($values)
             $retorno = $values->store();

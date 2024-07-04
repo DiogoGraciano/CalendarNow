@@ -1,6 +1,7 @@
 <?php 
 namespace app\models\main;
 use app\db\agenda;
+use app\db\funcionario;
 use app\db\agendaUsuario;
 use app\db\agendaFuncionario;
 use app\models\main\empresaModel;
@@ -90,9 +91,9 @@ class agendaModel{
     {
         $db = new agendaUsuario;
         
-        $result = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
-                    ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
-                    ->addJoin("INNER","agenda_funcionario","agenda_funcionario.id_agenda","agenda.id")
+        $result = $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
+                    ->addJoin("empresa","agenda.id_empresa","empresa.id")
+                    ->addJoin("agenda_funcionario","agenda_funcionario.id_agenda","agenda.id")
                     ->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
                     ->selectColumns("agenda.id","agenda.nome","empresa.nome as emp_nome");
 
@@ -100,6 +101,22 @@ class agendaModel{
             return $result;
         
         return false;
+    }
+
+    /**
+     * Busca todos os grupos vinculados a um funcionario
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getFuncionarioByAgenda(int $id_agenda):array
+    {
+        $db = new agendaFuncionario;
+
+        $db->addJoin(funcionario::table,"id","id_funcionario")
+           ->addFilter("id_agenda","=",$id_agenda);
+
+        return $db->selectColumns(funcionario::table.".id",funcionario::table.".nome");
     }
 
     /**
@@ -113,9 +130,9 @@ class agendaModel{
     {
         $db = new agendaUsuario;
         
-        $result = $db->addJoin("INNER","agenda","agenda_usuario.id_agenda","agenda.id")
-                    ->addJoin("INNER","empresa","agenda.id_empresa","empresa.id")
-                    ->addJoin("INNER","agenda_servico","agenda_servico.id_agenda","agenda.id")
+        $result = $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
+                    ->addJoin("empresa","agenda.id_empresa","empresa.id")
+                    ->addJoin("agenda_servico","agenda_servico.id_agenda","agenda.id")
                     ->addFilter("agenda_servico.id_servico","=",$id_servico)
                     ->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
                     ->selectColumns("id","agenda.nome","empresa.nome as emp_nome");

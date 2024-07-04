@@ -6,6 +6,8 @@ use app\classes\consulta;
 use app\classes\controllerAbstract;
 use app\classes\elements;
 use app\classes\footer;
+use app\classes\tabela;
+use app\classes\tabelaMobile;
 use app\classes\functions;
 use app\classes\mensagem;
 use app\classes\filter;
@@ -71,8 +73,32 @@ class agendaController extends controllerAbstract{
 
         $user = usuarioModel::getLogged();
 
+        $funcionarios = agendaModel::getFuncionarioByAgenda($dado->id);
+
+        if($funcionarios){
+
+            $form->setInputs($elements->label("Funcionarios Vinculados"));
+
+            if ($this->isMobile()){
+                $table = new tabelaMobile();
+            }else {
+                $table = new tabela();
+            }
+            $table->addColumns("1","ID","id");
+            $table->addColumns("90","Nome","nome");
+            $table->addColumns("10","Ações","acoes");
+
+            foreach ($funcionarios as $funcionario){
+                $funcionario->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularFuncionario/".functions::encrypt($dado->id)."/".functions::encrypt($funcionario->id)."'");
+                $table->addRow($funcionario->getArrayData());
+            }
+
+            $form->setInputs($table->parse());
+        }
+
         $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
 
+        $elements->addOption("","Nenhum");
         foreach ($funcionarios as $funcionario){
             $elements->addOption($funcionario->id,$funcionario->nome);
         }
@@ -87,6 +113,21 @@ class agendaController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
+
+    public function desvincularFuncionario($parameters = []){
+
+        $id_agenda = functions::decrypt($parameters[0] ?? '');
+        $id_funcionario = functions::decrypt($parameters[1] ?? '');
+
+        if($id_agenda && $id_funcionario){
+            FuncionarioModel::detachAgendaFuncionario($id_agenda,$id_funcionario);
+            $this->go("funcionario/manutencao/".$parameters[1]);
+        }
+
+        mensagem::setErro("Agenda ou Funcionario não informados");
+        $this->go("funcionario");
+    }
+
     public function action($parameters){
 
         $user = usuarioModel::getLogged();

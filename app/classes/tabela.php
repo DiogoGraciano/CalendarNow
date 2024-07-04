@@ -34,6 +34,9 @@ class tabela extends pagina{
         if($this->rows){
             $i = 1;
             foreach ($this->rows as $row){
+                if(is_subclass_of($row,"app\db\db")){
+                    $row = $row->getArrayData();
+                }
                 foreach ($this->columns as $column){
                     if(array_key_exists($column["coluna"],$row)){
                         $this->tpl->data = $row[$column["coluna"]];
@@ -50,6 +53,7 @@ class tabela extends pagina{
             }
         }
 
+        $this->columns = $this->rows = [];
         return $this->tpl->parse();
     }
 
@@ -79,6 +83,20 @@ class tabela extends pagina{
     public function addRow(array $row = array()){
 
         $this->rows[] = $row;
+
+        return $this;
+    }
+
+     /**
+     * Adiciona todas as linhas à tabelas.
+     *
+     * @param array $rows     Dados das linhas como um array associativo.
+     *
+     * @return tabela        Retorna a instância atual da tabela para permitir encadeamento de métodos.
+     */
+    public function addRows(array $rows = []){
+
+        $this->rows = $rows;
 
         return $this;
     }

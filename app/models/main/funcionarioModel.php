@@ -4,6 +4,7 @@ namespace app\models\main;
 use app\classes\functions;
 use app\classes\mensagem;
 use app\db\funcionario;
+use app\db\agenda;
 use app\db\funcionarioGrupoFuncionario;
 use app\db\agendaFuncionario;
 
@@ -43,9 +44,9 @@ class funcionarioModel{
 
         $db = new funcionario;
 
-        $db->addJoin("LEFT","funcionario_grupo_funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario")
-            ->addJoin("LEFT","agenda_funcionario","agenda_funcionario.id_funcionario","funcionario.id")  
-            ->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
+        $db->addJoin("funcionario_grupo_funcionario","funcionario.id","funcionario_grupo_funcionario.id_funcionario","LEFT")
+            ->addJoin("agenda_funcionario","agenda_funcionario.id_funcionario","funcionario.id","LEFT")  
+            ->addJoin("usuario","usuario.id","funcionario.id_usuario")
            ->addFilter("usuario.id_empresa","=",$id_empresa);
 
         if($id_grupo_funcionarios)
@@ -106,11 +107,47 @@ class funcionarioModel{
     {
         $db = new funcionario;
 
-        $values = $db->addJoin("INNER","usuario","usuario.id","funcionario.id_usuario")
+        $values = $db->addJoin("usuario","usuario.id","funcionario.id_usuario")
                 ->addFilter("usuario.id_empresa","=",$id_empresa)
                 ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
 
         return $values;
+    }
+
+    /**
+     * Busca todos os grupos vinculados a um funcionario
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getAgendaByFuncionario(int $id_funcionario):array
+    {
+        $db = new agendaFuncionario;
+
+        $db->addJoin(agenda::table,"id","id_agenda")
+           ->addFilter("id_funcionario","=",$id_funcionario);
+
+        return $db->selectColumns(agenda::table.".id",agenda::table.".nome");
+    }
+
+    /**
+     * Desvincula um funcionario de um grupo de funcionarios
+     * 
+     * @param int $id_agenda O ID da agenda.
+     * @param int $id_funcionario O ID do funcionário.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachAgendaFuncionario(int $id_agenda,int $id_funcionario):bool
+    {
+        $db = new agendaFuncionario;
+
+        if($db->addFilter("id_agenda","=",$id_agenda)->addFilter("id_funcionario","=",$id_funcionario)->deleteByFilter()){
+            mensagem::setSucesso("Funcionario Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Funcionario");
+        return false;
     }
 
     /**

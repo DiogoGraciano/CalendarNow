@@ -2,6 +2,8 @@
 namespace app\models\main;
 
 use app\db\grupoServico;
+use app\db\servicoGrupoServico;
+use app\db\servico;
 use app\classes\mensagem;
 
 /**
@@ -23,6 +25,59 @@ class grupoServicoModel{
     public static function get(int $id = null):object
     {
         return (new grupoServico)->get($id);
+    }
+
+    /**
+     * Busca todos os serviços vinculados a um grupo
+     * 
+     * @param int $id_grupo_servico O ID do grupo de servico.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getVinculados(int $id_grupo_servico):array
+    {
+
+        $db = new servicoGrupoServico;
+
+        $db->addJoin(servico::table,"id","id_servico")
+            ->addFilter("id_grupo_servico","=",$id_grupo_servico);
+
+        return $db->selectColumns("servico.id","servico.nome");
+    }
+
+    /**
+     * Busca todos os grupos vinculados a um serviço
+     * 
+     * @param int $id_servico O ID do serviço.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getByServico(int $id_servico):array
+    {
+        $db = new servicoGrupoServico;
+
+        $db->addJoin(grupoServico::table,"id","id_grupo_servico")
+        ->addFilter("id_servico","=",$id_servico);
+
+        return $db->selectAll();
+    }
+
+    /**
+     * Desvincula um serviço de um grupo de serviços
+     * 
+     * @param int $id_grupo O ID do grupo de serviço.
+     * @param int $id_servico O ID do serviço.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachServico(int $id_grupo,int $id_servico):bool
+    {
+        $db = new servicoGrupoServico;
+
+        if($db->addFilter("id_grupo_servico","=",$id_grupo)->addFilter("id_servico","=",$id_servico)->deleteByFilter()){
+            mensagem::setSucesso("Serviço Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Serviço");
+        return false;
     }
 
     /**
