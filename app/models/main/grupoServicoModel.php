@@ -55,9 +55,9 @@ class grupoServicoModel{
         $db = new servicoGrupoServico;
 
         $db->addJoin(grupoServico::table,"id","id_grupo_servico")
-        ->addFilter("id_servico","=",$id_servico);
+            ->addFilter("id_servico","=",$id_servico);
 
-        return $db->selectAll();
+        return $db->selectColumns(grupoServico::table.".id",grupoServico::table.".nome");
     }
 
     /**

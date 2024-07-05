@@ -89,8 +89,8 @@ class funcionarioModel{
     {
         $db = new agendaFuncionario;
 
-        $values = $db->addJoin("INNER","agenda","agenda.id","agenda_funcionario.id_agenda")
-                ->addJoin("INNER","funcionario","funcionario.id","agenda_funcionario.id_funcionario")
+        $values = $db->addJoin("agenda","agenda.id","agenda_funcionario.id_agenda")
+                ->addJoin("funcionario","funcionario.id","agenda_funcionario.id_funcionario")
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
                 ->selectColumns("funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
                 

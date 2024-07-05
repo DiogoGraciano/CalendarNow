@@ -114,7 +114,7 @@ class usuarioModel{
     public static function getByTipoUsuarioAgenda(int $tipo_usuario,string $id_agenda):array
     {
         $db = new usuario;
-        $usuarios = $db->addJoin("INNER","agendamento","usuario.id","agendamento.id_usuario")
+        $usuarios = $db->addJoin("agendamento","usuario.id","agendamento.id_usuario")
                         ->addFilter("tipo_usuario","=",$tipo_usuario)
                         ->addFilter("agendamento.id_agenda","=",$id_agenda)
                         ->addFilter("usuario.tipo_usuario","=",$tipo_usuario)

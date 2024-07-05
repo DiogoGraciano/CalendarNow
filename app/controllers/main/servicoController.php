@@ -122,18 +122,28 @@ class servicoController extends controllerAbstract{
         
         $dado = servicoModel::get($id);
 
+        $form->setinputs($elements->input("nome","Nome:",$dado->nome,true),"nome");
+
+        $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
+        $elements->addOption("","Nenhum");
+        foreach ($funcionarios as $funcionario){
+            $elements->addOption($funcionario->id,$funcionario->nome);
+        }
+
+        $select_funcionarios = $elements->select("Funcionario","funcionario");
+
         $grupo_servicos = GrupoServicoModel::getByEmpresa($user->id_empresa);
         $elements->addOption("","Nenhum");
         foreach ($grupo_servicos as $grupo_servico){
             $elements->addOption($grupo_servico->id,$grupo_servico->nome);
         }
 
-        $id_grupo_servico = $elements->select("Grupo Serviço","grupo_servico");
+        $select_grupo_servico = $elements->select("Grupo Serviço","grupo_servico");
 
         $form->setDoisInputs(
-            $elements->input("nome","Nome:",$dado->nome,true),
-            $id_grupo_servico,
-            array("nome","id_grupo_servico")
+            $select_funcionarios,
+            $select_grupo_servico,
+            array("funcionario","grupo_servico")
         );
 
         $form->setDoisInputs(
@@ -146,15 +156,33 @@ class servicoController extends controllerAbstract{
 
             $this->isMobile() ? $table = new tabelaMobile() : $table = new tabela();
 
-            $form->setInputs($elements->label("Grupos de Funcionario Vinculados"));
+            $form->setInputs($elements->label("Grupos de Serviços Vinculados"));
 
             $table->addColumns("1","ID","id");
             $table->addColumns("90","Nome","nome");
             $table->addColumns("10","Ações","acoes");
 
             foreach ($grupos_servicos as $grupos_servico){
-                $grupos_servico->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularGrupo/".functions::encrypt($grupo_funcionario->id)."/".functions::encrypt($dadoFuncionario->id)."'");
+                $grupos_servico->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."servico/desvincularGrupo/".functions::encrypt($grupos_servico->id)."/".functions::encrypt($dado->id)."'");
                 $table->addRow($grupos_servico->getArrayData());
+            }
+
+            $form->setInputs($table->parse());
+        }
+
+        if($dado->id && $funcionarios = servicoModel::getVinculados($dado->id)){
+
+            $this->isMobile() ? $table = new tabelaMobile() : $table = new tabela();
+
+            $form->setInputs($elements->label("Funcionarios Vinculados"));
+
+            $table->addColumns("1","ID","id");
+            $table->addColumns("90","Nome","nome");
+            $table->addColumns("10","Ações","acoes");
+
+            foreach ($funcionarios as $funcionario){
+                $funcionario->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."servico/desvincularFuncionario/".functions::encrypt($funcionario->id)."/".functions::encrypt($dado->id)."'");
+                $table->addRow($funcionario->getArrayData());
             }
 
             $form->setInputs($table->parse());
@@ -179,30 +207,48 @@ class servicoController extends controllerAbstract{
         }
 
         $id = intval(functions::decrypt($this->getValue('cd')));
+        $id_grupo_servico  = intval($this->getValue('grupo_servico'));
+        $id_funcionario = intval($this->getValue('funcionario'));
         $nome  = $this->getValue('nome');
-        $id_grupo_servico  = $this->getValue('grupo_servico');
         $tempo  = $this->getValue('tempo');
         $valor  = $this->getValue('valor');
 
-        if ($id_servico = servicoModel::set($nome,$valor,$tempo,$user->id_empresa,$id) && $id_grupo_servico){ 
-            servicoModel::setServicoGrupoServico($id_servico,$id_grupo_servico);
+        if ($id_servico = servicoModel::set($nome,$valor,$tempo,$user->id_empresa,$id)){ 
+            if($id_grupo_servico)
+                servicoModel::setServicoGrupoServico($id_servico,$id_grupo_servico);
+            if($id_funcionario)
+                servicoModel::setServicoFuncionario($id_servico,$id_funcionario);
         }
 
-        $this->go("servico");
+        $id?$this->go("servico/manutencao/".$this->getValue('cd')):$this->go("servico");
     }
 
     public function desvincularGrupo($parameters = []){
 
         $id_grupo = functions::decrypt($parameters[0] ?? '');
-        $id_funcionario = functions::decrypt($parameters[1] ?? '');
+        $id_servico = functions::decrypt($parameters[1] ?? '');
 
-        if($id_grupo && $id_funcionario){
-            grupoServicoModel::detachServico($id_grupo,$id_funcionario);
-            $this->go("funcionario/manutencao/".$parameters[1]);
+        if($id_grupo && $id_servico){
+            grupoServicoModel::detachServico($id_grupo,$id_servico);
+            $this->go("servico/manutencao/".$parameters[1]);
         }
 
-        mensagem::setErro("Grupo ou Funcionario não informados");
-        $this->go("funcionario");
+        mensagem::setErro("Grupo ou Servico não informados");
+        $this->go("servico");
+    }
+
+    public function desvincularFuncionario($parameters = []){
+
+        $id_funcionario = functions::decrypt($parameters[0] ?? '');
+        $id_servico = functions::decrypt($parameters[1] ?? '');
+
+        if($id_funcionario && $id_servico){
+            servicoModel::detachFuncionario($id_funcionario,$id_servico);
+            $this->go("servico/manutencao/".$parameters[1]);
+        }
+
+        mensagem::setErro("Grupo ou Servico não informados");
+        $this->go("servico");
     }
 
     public function massActionFuncionario(){

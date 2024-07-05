@@ -19,7 +19,6 @@ use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\clienteModel;
 use app\models\main\statusModel;
-use stdClass;
 
 class agendamentoController extends controllerAbstract{
   

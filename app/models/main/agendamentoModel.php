@@ -128,10 +128,10 @@ class agendamentoModel{
     {
         $db = new agendamento;
 
-        $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
-                    ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
-                    ->addJoin("LEFT","cliente","cliente.id","agendamento.id_cliente")
-                    ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
+        $result = $db->addJoin("usuario","usuario.id","agendamento.id_usuario","LEFT")
+                    ->addJoin("agenda","agenda.id","agendamento.id_agenda")
+                    ->addJoin("cliente","cliente.id","agendamento.id_cliente","LEFT")
+                    ->addJoin("funcionario","funcionario.id","agendamento.id_funcionario")
                     ->addFilter("agenda.id_empresa","=",$id_empresa)
                     ->selectColumns("agendamento.id","usuario.cpf_cnpj","cliente.nome as cli_nome","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
 
@@ -148,9 +148,10 @@ class agendamentoModel{
     {
         $db = new agendamento;
 
-        $result = $db->addJoin("LEFT","usuario","usuario.id","agendamento.id_usuario")
-                    ->addJoin("INNER","agenda","agenda.id","agendamento.id_agenda")
-                    ->addJoin("INNER","funcionario","funcionario.id","agendamento.id_funcionario")
+        $result = $db->addJoin("usuario","usuario.id","agendamento.id_usuario","LEFT")
+                    ->addJoin("cliente","cliente.id","agendamento.id_cliente","LEFT")
+                    ->addJoin("agenda","agenda.id","agendamento.id_agenda")
+                    ->addJoin("funcionario","funcionario.id","agendamento.id_funcionario")
                     ->addFilter("usuario.id","=",$id_usuario)
                     ->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
                     

@@ -65,6 +65,14 @@ class cliente extends tableClassAbstract {
     }
 }
 
+class config extends tableClassAbstract {
+    public const table = "config";
+
+    public function __construct() {
+        parent::__construct(self::table);
+    }
+}
+
 class empresa extends tableClassAbstract {
     public const table = "empresa";
 

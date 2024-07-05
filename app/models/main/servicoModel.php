@@ -6,6 +6,7 @@ use app\db\servico;
 use app\db\servicoFuncionario;
 use app\db\servicoGrupoServico;
 use app\classes\mensagem;
+use app\db\funcionario;
 
 /**
  * Classe servicoModel
@@ -112,7 +113,8 @@ class servicoModel{
             mensagem::setErro("Grupo de serviço não existe");
             return false;
         }
-        if(self::get($values->id_servico = $id_servico)->id){
+
+        if(!self::get($values->id_servico = $id_servico)->id){
             mensagem::setErro("Serviço não existe");
             return false;
         }
@@ -123,16 +125,50 @@ class servicoModel{
 
         if (!$result){
            
-            $retorno = $values->storeMutiPrimary();
-
             mensagem::setSucesso("Serviço Adicionado com Sucesso");
 
-            return $retorno;
+            return $values->storeMutiPrimary();
         }
 
         mensagem::setSucesso("Serviço já Adicionado");
 
         return True;
+    }
+
+    /**
+     * Busca todos os serviços vinculados a um grupo
+     * 
+     * @param int $id_servico O ID do grupo de servico.
+     * @return array Retorna array com os registros encontrados.
+    */
+    public static function getVinculados(int $id_servico):array
+    {
+        $db = new servicoFuncionario;
+
+        $db->addJoin(funcionario::table,"id","id_funcionario")
+            ->addFilter("id_servico","=",$id_servico);
+
+        return $db->selectColumns("funcionario.id","funcionario.nome");
+    }
+
+    /**
+     * Desvincula um funcionario de um serviço
+     * 
+     * @param int $id_funcionario O ID do funcionário.
+     * @param int $id_servico O ID do servico.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachFuncionario(int $id_funcionario,int $id_servico):bool
+    {
+        $db = new servicoFuncionario;
+
+        if($db->addFilter("id_servico","=",$id_servico)->addFilter("id_funcionario","=",$id_funcionario)->deleteByFilter()){
+            mensagem::setSucesso("Funcionario Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Funcionario");
+        return false;
     }
 
     /**
@@ -150,7 +186,7 @@ class servicoModel{
             mensagem::setErro("Funcionario não existe");
             return false;
         }
-        if(self::get($values->id_servico = $id_servico)){
+        if(!self::get($values->id_servico = $id_servico)){
             mensagem::setErro("Serviço não existe");
             return false;
         }
@@ -161,11 +197,9 @@ class servicoModel{
 
         if (!$result){
 
-            $retorno = $values->storeMutiPrimary($values);
-
             mensagem::setSucesso("Serviço Adicionado com Sucesso");
 
-            return $retorno;
+            return $values->storeMutiPrimary($values);
         }
 
         mensagem::setSucesso("Serviço já Adicionado");
