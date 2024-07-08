@@ -11,6 +11,7 @@ use app\classes\functions;
 use app\classes\filter;
 use app\classes\tabela;
 use app\classes\tabelaMobile;
+use app\db\transactionManeger;
 use app\classes\mensagem;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
@@ -82,7 +83,7 @@ class servicoController extends controllerAbstract{
 
         $filter->show();
 
-        $servico = new consulta();
+        $servico = new consulta(true);
 
         $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
         $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModelFuncionario","button","btn btn-primary","openModal('massActionFuncionario')")); 
@@ -252,32 +253,72 @@ class servicoController extends controllerAbstract{
     }
 
     public function massActionFuncionario(){
+        try{
 
-        $qtd_list = $this->getValue("qtd_list");
-        $id_funcionario = $this->getValue("funcionario");
+            transactionManeger::init();
 
-        if ($qtd_list && $id_funcionario){
-            for ($i = 1; $i <= $qtd_list; $i++) {
-                if($id_servico = $this->getValue("id_check_".$i)){
-                    servicoModel::setServicoFuncionario($id_servico,$id_funcionario);
+            transactionManeger::beginTransaction();
+
+            $qtd_list = $this->getValue("qtd_list");
+            $id_funcionario = $this->getValue("funcionario");
+
+            $mensagem = "Funcionario vinculados com sucesso: ";
+            $mensagem_erro = "Funcionario não vinculados: ";
+
+            if ($qtd_list && $id_funcionario){
+                for ($i = 1; $i <= $qtd_list; $i++) {
+                    if($id_servico = $this->getValue("id_check_".$i)){
+                        if(servicoModel::setServicoFuncionario($id_servico,$id_funcionario))
+                            $mensagem .= $id_funcionario." - ";
+                        else
+                            $mensagem_erro .= $id_funcionario." - ";
+                    }
                 }
             }
+            else{
+                mensagem::setErro("Não foi informado o funcionario");
+            }
+
+        }catch(\Exception $e){
+            mensagem::setSucesso(false);
+            mensagem::setErro("Erro inesperado ocorreu, tente novamente");
+            transactionManeger::rollback();
         }
 
         $this->go("servico");
     }
 
     public function massActionGrupoServico(){
+        try{
 
-        $qtd_list = $this->getValue("qtd_list");
-        $id_grupo_servico = $this->getValue("grupo_servico");
+            transactionManeger::init();
 
-        if ($qtd_list && $id_grupo_servico){
-            for ($i = 1; $i <= $qtd_list; $i++) {
-                if($id_servico = $this->getValue("id_check_".$i)){
-                    ServicoModel::setServicoGrupoServico($id_servico,$id_grupo_servico);
+            transactionManeger::beginTransaction();
+
+            $qtd_list = $this->getValue("qtd_list");
+            $id_grupo_servico = $this->getValue("grupo_servico");
+
+            $mensagem = "Grupos vinculados com sucesso: ";
+            $mensagem_erro = "Grupos não vinculados: ";
+
+            if ($qtd_list && $id_grupo_servico){
+                for ($i = 1; $i <= $qtd_list; $i++) {
+                    if($id_servico = $this->getValue("id_check_".$i)){
+                        if(ServicoModel::setServicoGrupoServico($id_servico,$id_grupo_servico))
+                            $mensagem .= $id_grupo_servico." - ";
+                        else
+                            $mensagem_erro .= $id_grupo_servico." - ";
+                    }
                 }
             }
+            else{
+                mensagem::setErro("Não foi informado o Grupos");
+            }
+
+        }catch(\Exception $e){
+            mensagem::setSucesso(false);
+            mensagem::setErro("Erro inesperado ocorreu, tente novamente");
+            transactionManeger::rollback();
         }
 
         $this->go("servico");

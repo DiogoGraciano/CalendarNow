@@ -7,7 +7,7 @@ use app\classes\functions;
 use app\classes\footer;
 use app\classes\controllerAbstract;
 use app\classes\form;
-use app\models\main\loginModel;
+use app\models\main\configuracoesModel;
 use app\models\main\usuarioModel;
 
 class configuracoesController extends controllerAbstract{
@@ -32,8 +32,8 @@ class configuracoesController extends controllerAbstract{
                     );
 
         $form->setDoisInputs(
-            $elements->input("hora_ini", "Hora Inicial de Trabalho", functions::removeSecondsTime(configuracoesModel::getConfig("hora_ini",$user->id_empresa)?:"08:00"), true, true, "", "time2"),
-            $elements->input("hora_fim", "Hora Final de Trabalho", functions::removeSecondsTime(configuracoesModel::getConfig("hora_fim",$user->id_empresa)?:"18:00"), true, true, "", "time2"),
+            $elements->input("hora_ini", "Hora Inicial de Abertura", functions::removeSecondsTime(configuracoesModel::getConfig("hora_ini",$user->id_empresa)?:"08:00"), true, true, "", "time2"),
+            $elements->input("hora_fim", "Hora Final de Abertura", functions::removeSecondsTime(configuracoesModel::getConfig("hora_fim",$user->id_empresa)?:"18:00"), true, true, "", "time2"),
             ["hora_ini", "hora_fim"]
         );
 
@@ -42,12 +42,10 @@ class configuracoesController extends controllerAbstract{
             $elements->input("hora_almoco_fim", "Hora Final de Almoço", functions::removeSecondsTime(configuracoesModel::getConfig("hora_almoco_fim",$user->id_empresa)?:"14:00"), true, true, "", "time2"),
             ["hora_almoco_ini", "hora_almoco_fim"]
         );
+
+        $form->show();
         
         $footer = new footer;
         $footer->show();
-    }
-    public function deslogar(){
-        loginModel::deslogar();
-        $this->go("login");
     }
 }

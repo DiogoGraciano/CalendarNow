@@ -43,8 +43,6 @@ class modal extends pagina{
     {
         $this->submit_this_form = $submit_this_form;
         $this->tplform = $this->getTemplate("modal_template.html");
-        $mensagem = new mensagem;
-        $this->tplform->mensagem = $mensagem->show(false);
         $this->tplform->nome_modal = $nome;
         if ($this->submit_this_form){
             $this->tplform->action = $action;
