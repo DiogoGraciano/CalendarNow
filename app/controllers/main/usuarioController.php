@@ -103,7 +103,7 @@ class usuarioController extends controllerAbstract {
         $form->setInputs($elements->textarea("complemento", "Complemento", $dadoEndereco->complemento, true), "complemento");
 
         $form->setButton($elements->button("Salvar", "submit"));
-        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."usuario/index'"));
+        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."usuario/manutencao'"));
 
         $form->show();
 

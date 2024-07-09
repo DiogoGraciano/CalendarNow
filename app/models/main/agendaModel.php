@@ -215,10 +215,10 @@ class agendaModel{
 
         $values->id = $id;
         
-        if(!($values->id_empresa = EmpresaModel::get($id_empresa)->id))
+        if(!($values->id_empresa = empresaModel::get($id_empresa)->id))
             $mensagens[] = "Empresa não encontrada"; 
 
-        if(!($values->nome = filter_var(trim($nome))))
+        if(!($values->nome = htmlspecialchars(trim($nome))))
             $mensagens[] = "Nome é obrigatorio";
 
         if($mensagens){
@@ -227,7 +227,7 @@ class agendaModel{
         }
 
         if ($codigo)
-            $values->codigo = $codigo;
+            $values->codigo = htmlspecialchars($codigo);
         else 
             $values->codigo = functions::genereteCode(7);
 

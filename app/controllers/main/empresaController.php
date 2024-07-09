@@ -118,7 +118,7 @@ class empresaController extends controllerAbstract {
         $form->setInputs($elements->textarea("complemento", "Complemento", $dadoEndereco->complemento, true), "complemento");
 
         $form->setButton($elements->button("Salvar", "submit"));
-        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."empresa/index/".functions::encrypt($tipo_usuario)."'"));
+        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."empresa/manutencao/".functions::encrypt($tipo_usuario)."'"));
 
         $form->show();
 

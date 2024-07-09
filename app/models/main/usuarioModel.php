@@ -145,7 +145,7 @@ class usuarioModel{
 
         $mensagens = [];
 
-        if(!($values->nome = filter_var(trim($nome)))){
+        if(!($values->nome = htmlspecialchars((trim($nome))))){
             $mensagens[] = "Nome é invalido";
         }
 
@@ -153,7 +153,7 @@ class usuarioModel{
             $mensagens[] = "CPF/CNPJ invalido";
         }
 
-        if(!($values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL))){
+        if(!($values->email = htmlspecialchars(filter_var(trim($email), FILTER_VALIDATE_EMAIL)))){
             $mensagens[] = "E-mail Invalido";
         }
 

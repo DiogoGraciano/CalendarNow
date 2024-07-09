@@ -40,12 +40,12 @@ class opcoesController extends controllerAbstract{
             ->addButton($elements->button("Agendamentos","agendamentos","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."massAgendamento'"))
             //->addButton($elements->button("Relatorios","relatorio","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."relatorio'"))
             ->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."funcionario/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
-            ->addButton($elements->button("Configurações","config","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."configuracoes'"))
+            // ->addButton($elements->button("Configurações","config","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."configuracoes'"))
             ->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'"));
         }
         elseif ($user->tipo_usuario == 3){
             $menu->addButton($elements->button("Cadastro","cadastro","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."usuario/manutencao/".functions::encrypt($user->tipo_usuario)."/".functions::encrypt($user->id)."'"))
-            ->addButton($elements->button("Configurações","config","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."configuracoes'"))
+            // ->addButton($elements->button("Configurações","config","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."configuracoes'"))
             ->addButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 pt-2 btn-block","location.href='".$this->url."home'"));
         }
         

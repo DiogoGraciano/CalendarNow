@@ -50,9 +50,9 @@ abstract class controllerAbstract
      * Obtém o valor de uma variável.
      *
      * @param string $var Nome da variável.
-     * @return mixed Valor da variável ou uma string vazia se não existir.
+     * @return mixed Valor da variável ou uma null se não existir.
      */
-    public function getValue(string $var)
+    public function getValue(string $var):mixed
     {
         if (isset($_POST[$var]))
             return $_POST[$var];

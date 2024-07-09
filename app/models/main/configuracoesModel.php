@@ -14,15 +14,17 @@ use app\classes\mensagem;
  */
 class configuracoesModel{
 
-    /**
-     * Obtém um cliente pelo ID.
+   /**
+     * Obtém um registro da agenda com base em um valor e coluna especificados.
      * 
-     * @param string $id O ID do cliente a ser buscado.
-     * @return object Retorna os dados do cliente ou objeto se não encontrado.
-     */
-    public static function get(int $id):object
+     * @param string $value O valor para buscar.
+     * @param string $column A coluna onde buscar o valor.
+     * @param int $limit O número máximo de registros a serem retornados.
+     * @return object|array Retorna os dados da agenda caso limit seja 1 ira retornar um objeto caso não um array.
+    */
+    public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
     {
-        return (new config)->get($id);
+        return (new config)->get($value,$column,$limit);
     }
 
     /**
@@ -50,41 +52,50 @@ class configuracoesModel{
         $db = new config;
         $config = $db->addFilter(config::table.".identificador", "=", $identificador)
                       ->addFilter(config::table.".id_empresa", "=", $id_empresa)
-                      ->addLimit(1)->selectColumns("identificador");
+                      ->addLimit(1)->selectColumns("configuracao");
 
         if($config)
-            return $config[0];
+            return $config[0]->configuracao;
         else 
             return false;
     }
 
     /**
-     * Insere ou atualiza uma configuração.
+     * salva uma config.
      * 
-     * @param string $identificador O nome da configuração.
-     * @param string|int|float $configuracao valor da configuração.
-     * @param int $id_empresa O ID da empresa associada.
-     * @param int $id O ID da configuração (opcional).
-     * @return int|bool Retorna o ID do configuração inserido ou atualizado se a operação for bem-sucedida, caso contrário retorna false.
+     * @param string $identificador da config.
+     * @param int $id_empresa associado aos clientes.
+     * @param string|int|float $configuracao valor da config.
+     * @return bool|int false se não salvo id se for salvo.
      */
-    public static function set(string $identificador,string|int|float $configuracao,int $id_empresa,int $id = null):int|bool
+    public static function set(string $identificador, int $id_empresa,string|int|float $configuracao):bool|int
     {
-        $values = new config;
-    
-        if ($values){
-            $values->id = intval($id);
-            $values->id_empresa = intval($id_empresa);
-            $values->identificador = trim(strtolower($identificador));
-            $values->configuracao = $configuracao;
-            $retorno = $values->store();
+        $mensagens = [];
+
+        if(!($db = configuracoesModel::get($identificador,"identificador"))){
+            $db = new config;
+
+            if(!($db->identificador = htmlspecialchars($identificador)))
+                $mensagens[] = "Identificador é obrigatorio";
+
+            if(!($db->id_empresa = empresaModel::get($id_empresa)->id))
+                $mensagens[] = "Empresa não encontrada"; 
         }
 
-        if ($retorno == true){
-            mensagem::setSucesso("Cliente salvo com sucesso");
-            return $values->getLastID();
-        } else {
+        if(!($db->configuracao = htmlspecialchars($configuracao)))
+            $mensagens[] = "Valor é obrigatorio";
+        
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
             return false;
         }
+
+        if ($db->store()){
+            mensagem::setSucesso("Agenda salvo com sucesso");
+            return $db->getLastID();
+        }
+        
+        return False;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace app\models\main;
 use app\classes\functions;
 use app\db\agendamento;
 use app\classes\mensagem;
-use stdClass;
 
 /**
  * Classe agendamentoModel
@@ -158,6 +157,43 @@ class agendamentoModel{
         return $result;
     }
 
+    /**
+     * Insere ou atualiza um agendamento.
+     * 
+     * @param float $total O total do agendamento.
+     * @param int $id O ID do agendamento (opcional).
+     * @return string|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function setTotal(float $total,int $id):int|bool
+    {
+        $values = new agendamento;
+
+        $mensagens = [];
+
+        if(!($values->id = self::get($id)->id)){
+            $mensagens[] = "Agendamento não encontrada";
+        }
+
+        if(($values->total = $total) <= 0){
+            $mensagens[] = "Total deve ser maior que 0";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
+        }
+
+        if ($values)
+            $retorno = $values->store();
+
+        if ($retorno == true){
+            mensagem::setSucesso("Agendamento salvo com sucesso");
+            return $values->getLastID();
+        }
+        else 
+            return False;
+    }
+
      /**
      * Insere ou atualiza um agendamento.
      * 
@@ -207,7 +243,7 @@ class agendamentoModel{
             $mensagens[] = "Funcionario não cadastrado";
         }
 
-        if(!$values->titulo = ucwords(strtolower(trim($titulo)))){
+        if(!$values->titulo = htmlspecialchars(ucwords(strtolower(trim($titulo))))){
             $mensagens[] = "Titulo deve ser informado";
         }
 
@@ -236,7 +272,7 @@ class agendamentoModel{
             return false;
         }
 
-        $values->obs = trim($obs);
+        $values->obs = htmlspecialchars(trim($obs));
 
         if ($values)
             $retorno = $values->store();
@@ -246,7 +282,6 @@ class agendamentoModel{
             return $values->getLastID();
         }else 
             return False;
-        
     }
 
     /**

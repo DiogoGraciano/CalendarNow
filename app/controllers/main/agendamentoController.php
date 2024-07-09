@@ -193,14 +193,14 @@ class agendamentoController extends controllerAbstract{
                     $servico->qtd_item = $elements->input("qtd_item_".$i,"",$agendaItem->qtd_item,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"');
                     $servico->tempo_item =  $elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"');
                     $servico->total_item =   $elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"');
-                    $table->addRow($servico);
+                    $table->addRow($servico->getArrayData());
                 }
                 else{
                     $servico->massaction = $elements->checkbox("servico_index_".$i,"",false,false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"');
                     $servico->qtd_item = $elements->input("qtd_item_".$i,"",1,false,false,"","number","form-control qtd_item",'min="1" data-index-servico="'.$i.'"');
                     $servico->tempo_item = $elements->input("tempo_item_".$i,"",$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"');
                     $servico->total_item = $elements->input("total_item_".$i,"",functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"');
-                    $table->addRow($servico); 
+                    $table->addRow($servico->getArrayData()); 
                 }
                 $i++;
             }
@@ -272,7 +272,6 @@ class agendamentoController extends controllerAbstract{
         if ($id_agendamento){
             if ($qtd_servico){
                 for ($i = 0; $i <= $qtd_servico; $i++) {
-                    $objeto_item = false;
                     $id_servico = $this->getValue('servico_index_'.$i);
                     $qtd_item = $this->getValue('qtd_item_'.$i);
                     $tempo_item = $this->getValue('tempo_item_'.$i);
@@ -288,6 +287,8 @@ class agendamentoController extends controllerAbstract{
                     $total += floatval($total_item);
                     $id_servico = $qtd_item = $tempo_item = $total_item = $id_agendamento_item = null;
                 }
+
+                agendamentoModel::setTotal($total,$id_agendamento);
             }
     
             if (!$exists){

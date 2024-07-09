@@ -56,7 +56,7 @@ class clienteModel{
         if ($values){
             $values->id = intval($id);
             $values->id_funcionario = intval($id_funcionario);
-            $values->nome = trim($nome);
+            $values->nome = htmlspecialchars(trim($nome));
             $retorno = $values->store();
         }
 

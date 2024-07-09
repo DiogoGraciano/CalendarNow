@@ -36,7 +36,7 @@ class agendamentoItemModel{
     {
         $db = new agendamentoItem;
 
-        $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
+        $result = $db->addJoin("servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->selectAll();
         
@@ -54,7 +54,7 @@ class agendamentoItemModel{
     {
         $db = new agendamentoItem;
 
-        $result = $db->addJoin("INNER","servico","servico.id","agendamento_item.id_servico")
+        $result = $db->addJoin("servico","servico.id","agendamento_item.id_servico")
                     ->addFilter("id_agendamento","=",$id_agendamento)
                     ->addFilter("id_servico","=",$id_servico)
                     ->addLimit(1)
@@ -77,9 +77,11 @@ class agendamentoItemModel{
      * @param string $id O ID do item de agendamento (opcional).
      * @return int|bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(int $qtd_item,int $id_agendamento,int $id_servico,int $id):int|bool
+    public static function set(int $qtd_item,int $id_agendamento,int $id_servico,NULL|int $id):int|bool
     {
         $values = new agendamentoItem;
+
+        $mensagens = [];
         
         $servico = servicoModel::get($values->id_servico = $id_servico);
 
@@ -88,19 +90,19 @@ class agendamentoItemModel{
             return false;
         }
 
-        if($values->qtd_item = $qtd_item <= 0){
+        if(!($values->qtd_item = $qtd_item) || $qtd_item <= 0){
             $mensagens[] = "Quantidade invalida";
         }
 
-        if(!$values->total_item = ($servico->valor * $values->qtd_item)){
+        if(!($values->total_item = ($servico->valor * $values->qtd_item))){
             $mensagens[] = "Total do item do agendamento invalido";
         }
 
-        if(!$values->tempo_item = functions::multiplicarTempo($servico->tempo,$values->qtd_item)){
+        if(!($values->tempo_item = functions::multiplicarTempo($servico->tempo,$values->qtd_item))){
             $mensagens[] = "Tempo do item do agendamento invalido";
         }
 
-        if(!$values->id_agendamento = $id_agendamento || !agendamentoModel::get($values->id_agendamento)->id){
+        if(!($values->id_agendamento = $id_agendamento) || !agendamentoModel::get($values->id_agendamento)->id){
             $mensagens[] = "Agendamento não existe";
         }
 

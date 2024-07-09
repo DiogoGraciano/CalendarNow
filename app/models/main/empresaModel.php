@@ -59,15 +59,15 @@ class empresaModel{
             $mensagens[] = "Empresa não existe";
         }
 
-        if(!($values->nome = filter_var(trim($nome)))){
+        if(!($values->nome = htmlspecialchars(trim($nome)))){
             $mensagens[] = "Nome da Empresa é obrigatorio";
         }
 
-        if(!($values->razao = filter_var(trim($razao)))){
+        if(!($values->razao = htmlspecialchars(trim($razao)))){
             $mensagens[] = "Razão Social é obrigatorio";
         }
 
-        if(!($values->fantasia = filter_var(trim($fantasia)))){
+        if(!($values->fantasia = htmlspecialchars(trim($fantasia)))){
             $mensagens[] = "Nome da Fantasia é obrigatorio";
         }
 
@@ -79,7 +79,7 @@ class empresaModel{
             $mensagens[] = "CPF/CNPJ já cadastrado";
         }
   
-        if(!($values->email = filter_var(trim($email), FILTER_VALIDATE_EMAIL))){
+        if(!($values->email = htmlspecialchars(filter_var(trim($email), FILTER_VALIDATE_EMAIL)))){
             $mensagens[] = "E-mail Invalido";
         }
 

@@ -49,12 +49,12 @@ class servicoModel{
         }
 
         if($id_funcionario){
-            $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id");
+            $db->addJoin("servico_funcionario","servico_funcionario.id_servico","servico.id");
             $db->addFilter("servico_funcionario.id_funcionario","=",$id_funcionario);
         }
 
         if($id_grupo_servico){
-            $db->addJoin("INNER","servico_grupo_servico","servico_grupo_servico.id_servico","servico.id");
+            $db->addJoin("servico_grupo_servico","servico_grupo_servico.id_servico","servico.id");
             $db->addFilter("servico_grupo_servico.id_grupo_servico","=",$id_grupo_servico);
         }
 
@@ -88,7 +88,7 @@ class servicoModel{
     {
         $db = new servico;
 
-        $db->addJoin("INNER","servico_funcionario","servico_funcionario.id_servico","servico.id");
+        $db->addJoin("servico_funcionario","servico_funcionario.id_servico","servico.id");
         $db->addFilter("servico_funcionario.id_funcionario","=",$id_funcionario);
         
         $db->addGroup("servico.id");
@@ -224,7 +224,7 @@ class servicoModel{
         
         $mensagens = [];
 
-        if(!$values->nome = filter_var(trim($nome))){
+        if(!$values->nome = htmlspecialchars((trim($nome)))){
             $mensagens[] = "Nome é invalido";
         }
 

@@ -66,27 +66,27 @@ class enderecoModel{
             $mensagens[] = "CEP é invalido";
         }
 
-        if(!estadoModel::get($id_estado)->id){
+        if(!($values->id_estado = estadoModel::get($id_estado)->id)){
             $mensagens[] = "Estado é invalido";
         }
 
-        if(!cidadeModel::get($id_cidade)->id){
+        if(!($values->id_cidade = cidadeModel::get($id_cidade)->id)){
             $mensagens[] = "Cidade é invalida";
         }
 
-        if(!filter_var($bairro)){
+        if(!($values->bairro = htmlspecialchars(trim($bairro)))){
             $mensagens[] = "Bairro é Invalido";
         }
 
-        if(!filter_var($rua)){
+        if(!($values->rua = htmlspecialchars(trim($rua)))){
             $mensagens[] = "Rua é Invalido";
         }
 
-        if(!filter_var($numero)){
+        if(!($values->numero = htmlspecialchars(trim($numero)))){
             $mensagens[] = "Numero é Invalido";
         }
 
-        if(!filter_var($complemento)){
+        if(!($values->complemento = htmlspecialchars(trim($complemento)))){
             $mensagens[] = "Complemento é Invalido";
         }
 
@@ -111,13 +111,6 @@ class enderecoModel{
             return false;
         }
 
-        $values->cep = $cep;
-        $values->id_estado = $id_estado;
-        $values->id_cidade = $id_cidade;
-        $values->bairro = trim($bairro);
-        $values->rua = trim($rua);
-        $values->numero = trim($numero);
-        $values->complemento = trim($complemento);
         $retorno = $values->store();
 
         if ($retorno == true){

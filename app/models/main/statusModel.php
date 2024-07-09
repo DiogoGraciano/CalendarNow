@@ -48,7 +48,7 @@ class statusModel{
         $values = new status;
         
         $values->id = $id;
-        $values->nome = trim($nome);
+        $values->nome = htmlspecialchars(trim($nome));
 
         $retorno = $values->store();
         

@@ -99,7 +99,7 @@ class grupoServicoModel{
             $mensagens[] = "Empresa não encontrada";
         }
 
-        if(!$values->nome = filter_var(trim($nome))){
+        if(!$values->nome = htmlspecialchars((trim($nome)))){
             $mensagens[] = "Nome invalido";
         }
 
