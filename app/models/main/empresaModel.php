@@ -4,6 +4,7 @@ namespace app\models\main;
 use app\classes\functions;
 use app\db\empresa;
 use app\classes\mensagem;
+use stdClass;
 
 /**
  * Classe empresaModel
@@ -35,6 +36,35 @@ class empresaModel{
     public static function getAll():array
     {
         return (new empresa)->getAll();
+    }
+
+    /**
+     * Obtém empresa por agenda.
+     * 
+     * @return object|bool Retorna os dados da empresa e caso não exista retorna false.
+    */
+    public static function getByAgenda($id_agenda):object|bool
+    {
+        $empresa = new empresa;
+
+        $empresa = $empresa->addJoin("agenda","agenda.id",$id_agenda)->addLimit(1)->selectColumns("empresa.id,empresa.nome,empresa.email,empresa.telefone,empresa.cnpj,empresa.razao,empresa.fantasia");
+
+        if(isset($empresa[0]) && $empresa[0]){
+            $empresa = $empresa[0];
+
+            $configuracoes = configuracoesModel::getByEmpresa($empresa->id);
+
+            $empresa->configuracoes = new \stdClass;
+
+            foreach ($configuracoes as $configuracao){
+                $identificador = $configuracao->identificador;
+                $empresa->configuracoes->$identificador = $configuracao->configuracao;
+            }
+
+            return $empresa;
+        }
+        
+        return false;
     }
 
     /**
@@ -105,46 +135,6 @@ class empresaModel{
 
         mensagem::setErro("Erro ao cadastrar a empresa");
         return false;
-    }
-
-    /**
-     * Converte uma empresa para um usuario.
-     * 
-     * @param int $id_empresa O ID da empresa.
-     * @param string $senha O senha do usuario da empresa (opcional).
-     * @param bool $remove_empresa_on_error Remove empresa caso não consiga cadastrar o usuario.
-     * @return int|bool Retorna o ID da empresa inserida ou atualizada se a operação for bem-sucedida, caso contrário retorna false.
-    */
-    public static function convertEmpresaToUsuario(int $id_empresa,string $senha = "", bool $remove_empresa_on_error = false):int|bool
-    {
-
-        $empresa = self::get($id_empresa);
-
-        if($empresa->id){
-            try{
-                $senha?:$senha = $empresa->cnpj;
-
-                if($id_usuario = usuarioModel::set($empresa->nome,$empresa->cnpj,$empresa->email,$empresa->telefone,$senha,null,1,$empresa->id)){
-                    mensagem::setSucesso("Usuario convertido com sucesso");
-                    return $id_usuario; 
-                
-                }
-                else{
-                    if($remove_empresa_on_error)
-                        self::delete($empresa->id);
-
-                    mensagem::setErro("Erro ao converter usuario");
-                    return false;
-                }
-            }
-            catch(\Exception $e){
-                if($remove_empresa_on_error)
-                    self::delete($empresa->id);
-
-                mensagem::setErro("Erro ao converter usuario");
-                return false;
-            }
-        }
     }
 
     /**

@@ -10,15 +10,22 @@ use app\classes\controllerAbstract;
 use app\classes\footer;
 use app\classes\consulta;
 use app\classes\mensagem;
+use app\classes\filter;
+use app\classes\modal;
 use app\db\transactionManeger;
 use app\db\estado;
 use app\models\main\usuarioModel;
+use app\models\main\funcionarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
+use stdClass;
 
 class usuarioController extends controllerAbstract {
 
     public function index(){
+        $id_funcionario = $this->getValue("funcionario");
+        $nome = $this->getValue("nome");
+
         $head = new head();
         $head->show("Cadastro de Usuários");
 
@@ -26,7 +33,27 @@ class usuarioController extends controllerAbstract {
 
         $user = usuarioModel::getLogged();
 
-        $cadastro = new consulta();
+        $filter = new filter($this->url."servico/");
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+
+        $filter->addFilter(4,$elements->input("nome","Nome:",$nome));
+
+        $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
+
+        if ($funcionarios){
+            $elements->addOption("","Selecione/Todos");
+            foreach ($funcionarios as $funcionario){
+                $elements->addOption($funcionario->id,$funcionario->nome);
+            }
+
+            $funcionarios = $elements->select("Funcionario","funcionario",$id_funcionario);
+
+            $filter->addFilter(4,$funcionarios);
+        }
+
+        $cadastro = new consulta(true);
+        $cadastro->addButtons($elements->button("Bloquear Usuario","usuarioblock","submit","btn btn-primary","location.href='".$this->url."usuario/bloquear'")); 
+
         $cadastro->addButtons($elements->button("Adicionar Usuário", "adicionar", "button", "btn btn-primary", "location.href='".$this->url."usuario/manutencao'"));
         $cadastro->addColumns("1", "Id", "id")
                  ->addColumns("10", "CPF", "cpf")
@@ -37,28 +64,73 @@ class usuarioController extends controllerAbstract {
 
         $dados = usuarioModel::getByEmpresa($user->id_empresa);
 
-        $cadastro->show($this->url."usuario/manutencao/", $this->url."usuario/action/", $dados, "id", true);
+        $cadastro->show($this->url."usuario/manutencao/opcoes/", $this->url."usuario/action/opcoes/", $dados, "id");
 
         $footer = new footer();
         $footer->show();
     }
 
+    public function bloquear($parameters = []){
+        try{
+
+            transactionManeger::init();
+
+            transactionManeger::beginTransaction();
+
+            $qtd_list = $this->getValue("qtd_list");
+
+            $user = usuarioModel::getLogged();
+
+            $mensagem = "Usuarios bloqueados com sucesso: ";
+            $mensagem_erro = "Usuarios não bloqueados: ";
+
+            if ($qtd_list){
+                for ($i = 1; $i <= $qtd_list; $i++) {
+                    if($id_usuario = $this->getValue("id_check_".$i)){
+                        if(usuarioModel::setBloqueio($id_usuario,$user->id_empresa))
+                            $mensagem .= $id_usuario." - ";
+                        else
+                            $mensagem_erro .= $id_usuario." - ";
+                    }
+                }
+            }
+            else{
+                mensagem::setErro("Não foi possivel encontrar o numero total de usuarios");
+            }
+
+        }catch(\Exception $e){
+            mensagem::setSucesso(false);
+            mensagem::setErro("Erro inesperado ocorreu, tente novamente");
+            transactionManeger::rollback();
+        }
+
+        $this->go("usuario");
+    }
+
     public function manutencao($parameters = []){
-        $form = new form($this->url."usuario/action");
+
+        $id = null;
+        $location = null;
+
+        if ($parameters && array_key_exists(0, $parameters)){
+            $location = $parameters[0];
+            if (array_key_exists(1, $parameters)){
+                $id = intval(functions::decrypt($parameters[1])); 
+            }
+        }
+    
+        $form = new form($this->url."usuario/action/".$location?:"");
 
         $head = new head();
         $head->show("Cadastro de Usuário");
 
-        $id = null;
-
-        if ($parameters && array_key_exists(0, $parameters)){
-            $id = intval(functions::decrypt($parameters[0])); 
-        }
-
-        $dado = usuarioModel::get($id);
-        $dadoEndereco = enderecoModel::get($dado->id, "id_usuario");
+        $dado = $this->getSessionVar("usuarioController")?:usuarioModel::get($id);
+        $dadoEndereco = isset($this->getSessionVar("usuarioController")->endereco)?$this->getSessionVar("usuarioController")->endereco:enderecoModel::get($dado->id, "id_usuario");
 
         $elements = new elements();
+
+        $form->setHidden("cd",$dado->id);
+        $form->setHidden("id_endereco",$dadoEndereco->id);
 
         $form->setDoisInputs(
             $elements->input("nome", "Nome", $dado->nome, true),
@@ -103,7 +175,7 @@ class usuarioController extends controllerAbstract {
         $form->setInputs($elements->textarea("complemento", "Complemento", $dadoEndereco->complemento, true), "complemento");
 
         $form->setButton($elements->button("Salvar", "submit"));
-        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."usuario/manutencao'"));
+        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".($this->url.$location?:"login")."'"));
 
         $form->show();
 
@@ -111,7 +183,7 @@ class usuarioController extends controllerAbstract {
         $footer->show();
     }
 
-    public function action(){
+    public function action($parameters = []){
         $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
@@ -127,6 +199,33 @@ class usuarioController extends controllerAbstract {
         $numero = $this->getValue('numero');
         $complemento = $this->getValue('complemento');
 
+        $usuario = new stdClass;
+
+        $usuario->id          = $id;
+        $usuario->nome        = $nome;
+        $usuario->cpf_cnpj    = $cpf_cnpj;
+        $usuario->senha       = $senha;
+        $usuario->email       = $email;
+        $usuario->telefone    = functions::onlynumber($telefone);
+        $usuario->endereco              = new stdClass;
+        $usuario->endereco->id          = $id_endereco;
+        $usuario->endereco->cep         = $cep;
+        $usuario->endereco->id_estado   = $id_estado;
+        $usuario->endereco->id_cidade   = $id_cidade;
+        $usuario->endereco->bairro      = $bairro;
+        $usuario->endereco->rua         = $rua;
+        $usuario->endereco->numero      = $numero;
+        $usuario->endereco->complemento = $complemento;
+
+        $this->setSessionVar("usuarioController",$usuario);
+
+        if ($parameters && array_key_exists(0, $parameters)){
+            $location = $parameters[0];
+        }
+        if (array_key_exists(1, $parameters)){
+            $id = intval(functions::decrypt($parameters[1])); 
+        }
+
         transactionManeger::init();
         transactionManeger::beginTransaction();
 
@@ -136,8 +235,9 @@ class usuarioController extends controllerAbstract {
                 $id_endereco = enderecoModel::set($cep, $id_estado, $id_cidade, $bairro, $rua, $numero, $complemento, $id_endereco, $id_usuario, null, false);
                 if ($id_endereco){
                     mensagem::setSucesso("Usuário salvo com sucesso");
+                    $this->setSessionVar("usuarioController",false);
                     transactionManeger::commit();
-                    $this->go("usuario/index");
+                    $this->go($location?:"login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                 }
             }
         } catch (\Exception $e) {

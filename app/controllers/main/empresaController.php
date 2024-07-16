@@ -16,6 +16,7 @@ use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
 use app\models\main\empresaModel;
+use app\models\main\configuracoesModel;
 
 
 class empresaController extends controllerAbstract {
@@ -39,27 +40,29 @@ class empresaController extends controllerAbstract {
 
         $dados = empresaModel::getAll();
 
-        $cadastro->show($this->url."empresa/manutencao/", $this->url."empresa/action/", $dados, "id", true);
+        $cadastro->show($this->url."empresa/manutencao/opcoes/", $this->url."empresa/action/", $dados, "id", true);
 
         $footer = new footer();
         $footer->show();
     }
 
     public function manutencao($parameters = []){
+
+        $id = null;
+        $location = null;
+
+        if ($parameters && array_key_exists(0, $parameters)){
+            $location = $parameters[0];
+        }
+        if (array_key_exists(1, $parameters)){
+            $id = intval(functions::decrypt($parameters[1])); 
+        }
       
-        $form = new form($this->url."empresa/action");
+        $form = new form($this->url."empresa/action/".$location?:"login");
 
         $head = new head();
         $head->show("Cadastro", "");
 
-        $id = null;
-        $tipo_usuario = null;
-
-        if ($parameters && array_key_exists(1, $parameters)){
-            $id = intval(functions::decrypt($parameters[1])); 
-        }
-
-        
         $dado = usuarioModel::get($id);
         $form->setHidden("cd", $id);
         $dadoEndereco = enderecoModel::get($dado->id, "id_usuario");
@@ -118,7 +121,7 @@ class empresaController extends controllerAbstract {
         $form->setInputs($elements->textarea("complemento", "Complemento", $dadoEndereco->complemento, true), "complemento");
 
         $form->setButton($elements->button("Salvar", "submit"));
-        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."empresa/manutencao/".functions::encrypt($tipo_usuario)."'"));
+        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url.$location?:"login"."'"));
 
         $form->show();
 
@@ -126,7 +129,13 @@ class empresaController extends controllerAbstract {
         $footer->show();
     }
 
-    public function action(){
+    public function action($parameters = []){
+
+        $location = null;
+
+        if ($parameters && array_key_exists(0, $parameters)){
+            $location = $parameters[0];
+        }
        
         $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');
@@ -155,9 +164,18 @@ class empresaController extends controllerAbstract {
             if ($id_empresa && $id_usuario = usuarioModel::set($nome, $cpf_cnpj, $email, $telefone, $senha, $id, 1, $id_empresa, false)){
                 $id_endereco = enderecoModel::set($cep, $id_estado, $id_cidade, $bairro, $rua, $numero, $complemento, $id_endereco, $id_usuario, $id_empresa, false);
                 if ($id_endereco){
+
+                    configuracoesModel::set("max_agendamento_dia",$id_empresa,2);
+                    configuracoesModel::set("max_agendamento_semana",$id_empresa,3);
+                    configuracoesModel::set("max_agendamento_mes",$id_empresa,3);
+                    configuracoesModel::set("hora_ini",$id_empresa,"08:00");
+                    configuracoesModel::set("hora_fim",$id_empresa,"18:00");
+                    configuracoesModel::set("hora_almoco_ini",$id_empresa,"12:00");
+                    configuracoesModel::set("hora_almoco_fim",$id_empresa,"02:00");
+
                     mensagem::setSucesso("Usuario empresarial salvo com sucesso");
                     transactionManeger::commit();
-                    $this->go("opcoes");
+                    $this->go($location?:"login/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                 }
             }
         } catch (\Exception $e) {

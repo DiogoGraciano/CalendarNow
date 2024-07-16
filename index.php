@@ -8,7 +8,7 @@
 
     $controller = new Controller;
 
-    $urlPermitidas = ["/ajax","/usuario/manutencao","/usuario/action","/empresa/manutencao","/empresa/action"];
+    $urlPermitidas = ["/ajax","/usuario/manutencao","/usuario/action/","/empresa/manutencao","/empresa/action/"];
     
     if (isset($_SESSION["user"]) || in_array(functions::getUri(),$urlPermitidas)){
         $controller = $controller->load();

@@ -106,8 +106,8 @@ class agendamentoItemModel{
             $mensagens[] = "Agendamento não existe";
         }
 
-        if($values->id = $id && !self::get($values->id)){
-            $mensagens[] = "Serviço não existe";
+        if(($values->id = $id) && !self::get($id)->id){
+            $mensagens[] = "Item não existe";
         }
 
         if($mensagens){

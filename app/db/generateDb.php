@@ -35,6 +35,11 @@ $usuarioTb->addColumn((new columnDb("id", "INT"))->isPrimary()->isNotNull()->set
           ->addColumn((new columnDb("id_empresa", "INT"))->isForeingKey($empresaTb)->setComment("ID da empresa"))
           ->execute($recreate);
 
+$usuarioBloqueioTb = new tableDb("usuario_bloqueio", comment: "Tabela de usuários");
+$usuarioBloqueioTb->addColumn((new columnDb("id_usuario", "INT"))->isPrimary()->isForeingKey($usuarioTb)->isNotNull()->setComment("ID do usuário"))
+                ->addColumn((new columnDb("id_empresa", "INT"))->isPrimary()->isForeingKey($empresaTb)->setComment("ID da empresa"))
+                ->execute($recreate);
+
 $funcionarioTb = new tableDb("funcionario", comment: "Tabela de funcionarios");
 $funcionarioTb->addColumn((new columnDb("id", "INT"))->isPrimary()->isNotNull()->setComment("ID do funcionario"))
               ->addColumn((new columnDb("id_usuario", "INT"))->isNotNull()->isForeingKey($usuarioTb)->setComment("ID da tabela usuario"))

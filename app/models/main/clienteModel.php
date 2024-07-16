@@ -2,7 +2,6 @@
 namespace app\models\main;
 
 use app\db\cliente;
-use app\classes\modelAbstract;
 use app\classes\mensagem;
 
 /**
@@ -15,15 +14,17 @@ use app\classes\mensagem;
  */
 class clienteModel{
 
-    /**
-     * Obtém um cliente pelo ID.
+     /**
+     * Obtém um registro da cliente com base em um valor e coluna especificados.
      * 
-     * @param string $id O ID do cliente a ser buscado.
-     * @return object Retorna os dados do cliente ou objeto se não encontrado.
-     */
-    public static function get(int $id):object
+     * @param string $value O valor para buscar.
+     * @param string $column A coluna onde buscar o valor.
+     * @param int $limit O número máximo de registros a serem retornados.
+     * @return object|array Retorna os dados da cliente.
+    */
+    public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
     {
-        return (new cliente)->get($id);
+        return (new cliente)->get($value,$column,$limit);
     }
 
     /**
@@ -35,10 +36,33 @@ class clienteModel{
     public static function getByFuncionario(int $id_funcionario):array
     {
         $db = new cliente;
-        $cliente = $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
-
-        return $cliente;
+        return $db->addFilter("cliente.id_funcionario", "=", $id_funcionario)->selectAll();
     }
+
+    /**
+     * Obtém clientes pelo ID do funcionário associado.
+     * 
+     * @param int $id_usuario O ID do usuario associado aos clientes.
+     * @return array Retorna um array de clientes ou um array vazio se não encontrado.
+     */
+    public static function getByUsuario(int $id_usuario):array
+    {
+        $db = new cliente;
+        return $db->addJoin("funcionario","funcionario.id","cliente.id_funcionario")->addFilter("funcionario.id_usuario", "=", $id_usuario)->selectColumns("cliente.id","cliente.nome","cliente.id_funcionario");
+    }
+
+    /**
+     * Obtém clientes pelo ID do funcionário associado.
+     * 
+     * @param int $id_empresa O ID da empresa associada aos clientes.
+     * @return array Retorna um array de clientes ou um array vazio se não encontrado.
+     */
+    public static function getByEmpresa(int $id_empresa):array
+    {
+        $db = new cliente;
+        return $db->addJoin("funcionario","funcionario.id","cliente.id_funcionario")->addJoin("usuario","usuario.id","funcionario.id_usuario")->addFilter("usuario.id_empresa", "=", $id_empresa)->selectColumns("cliente.id","cliente.nome","cliente.id_funcionario");
+    }
+
 
     /**
      * Insere ou atualiza um cliente.
@@ -53,19 +77,28 @@ class clienteModel{
     {
         $values = new cliente;
     
-        if ($values){
-            $values->id = intval($id);
-            $values->id_funcionario = intval($id_funcionario);
-            $values->nome = htmlspecialchars(trim($nome));
-            $retorno = $values->store();
-        }
+        $mensagens = [];
 
-        if ($retorno == true){
-            mensagem::setSucesso("Cliente salvo com sucesso");
-            return $values->getLastID();
-        } else {
+        if($id && !($values->id = self::get($id)->id))
+            $mensagens[] = "Cliente não encontrado";
+
+        if(!($values->id_funcionario = funcionarioModel::get($id_funcionario)->id))
+            $mensagens[] = "Funcionario informado não encontrado";
+
+        if(!($values->nome = htmlspecialchars(trim($nome))))
+            $mensagens[] = "Nome é obrigatorio";
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
             return false;
         }
+
+        if ($values->store()){
+            mensagem::setSucesso("Cliente salvo com sucesso");
+            return $values->getLastID();
+        } 
+
+        return false;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace app\models\main;
 use app\classes\functions;
 use app\db\agendamento;
 use app\classes\mensagem;
+use app\db\agendamentoItem;
 
 /**
  * Classe agendamentoModel
@@ -140,19 +141,32 @@ class agendamentoModel{
     /**
      * Obtém os agendamentos associados a um usuário.
      * 
-     * @param string $id_usuario O ID do usuário.
+     * @param int $id_usuario O ID do usuário.
+     * @param string $dt_ini data inicial caso não informado será buscado todos.
+     * @param string $dt_fim data final caso não informado será buscado todos.
+     * @param bool $onlyActive buscara somente os pedidos que o status forem diferentes de cancelado e não atendido.
      * @return array Retorna um array com os agendamentos associados ao usuário.
     */
-    public static function getAgendamentosByUsuario($id_usuario):array
+    public static function getAgendamentosByUsuario(int $id_usuario,string $dt_ini = "",string $dt_fim = "",$onlyActive = false):array
     {
         $db = new agendamento;
 
-        $result = $db->addJoin("usuario","usuario.id","agendamento.id_usuario","LEFT")
+        $db->addJoin("usuario","usuario.id","agendamento.id_usuario","LEFT")
                     ->addJoin("cliente","cliente.id","agendamento.id_cliente","LEFT")
                     ->addJoin("agenda","agenda.id","agendamento.id_agenda")
                     ->addJoin("funcionario","funcionario.id","agendamento.id_funcionario")
-                    ->addFilter("usuario.id","=",$id_usuario)
-                    ->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
+                    ->addFilter("usuario.id","=",$id_usuario);
+
+        if($dt_ini && $dt_fim){
+            $db->addFilter("agendamento.dt_fim",">=",functions::dateBd($dt_ini));
+            $db->addFilter("agendamento.dt_fim","<=",functions::dateBd($dt_fim));
+        }
+
+        if($onlyActive){
+            $db->addFilter("agendamento.status","NOT IN","(3,4)");
+        }
+        
+        $result =  $db->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
                     
         return $result;
     }
@@ -164,7 +178,7 @@ class agendamentoModel{
      * @param int $id O ID do agendamento (opcional).
      * @return string|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function setTotal(float $total,int $id):int|bool
+    public static function setTotal(int $id):int|bool
     {
         $values = new agendamento;
 
@@ -174,7 +188,14 @@ class agendamentoModel{
             $mensagens[] = "Agendamento não encontrada";
         }
 
-        if(($values->total = $total) <= 0){
+        $agendamentosItens = agendamentoItemModel::getItens($values->id);
+
+        $total = 0;
+        foreach ($agendamentosItens as $agendamentosIten){
+            $total += $agendamentosIten->total_item;
+        }
+
+        if(($values->total = $total) < 0){
             $mensagens[] = "Total deve ser maior que 0";
         }
 
@@ -259,13 +280,53 @@ class agendamentoModel{
             $mensagens[] = "Cor invalida";
         }
 
-        if(($values->total = $total) <= 0){
+        if(($values->total = $total) < 0){
             $mensagens[] = "Total deve ser maior que 0";
         }
 
         if(!($values->id_status = $id_status) && !StatusModel::get($values->id_status)){
             $mensagens[] = "Status informado invalido";
         }
+
+        if($id_usuario){
+            if(($empresa = empresaModel::getByAgenda($id_agenda))){
+
+                $now = (new \DateTimeImmutable())->format("Y-m-d");
+                $primeiroDiaMes = (new \DateTimeImmutable("Y-m-01"))->format("Y-m-d");
+                $ultimoDiaMes = (new \DateTimeImmutable("Y-m-t"))->format("Y-m-d");
+                $primeiroDiaSemana = date("Y-m-d", strtotime('monday this week', strtotime($now)));
+                $ultimoDiaSemana = date("Y-m-d", strtotime('sunday this week', strtotime($now)));
+                
+                $agendamentos = self::getAgendamentosByUsuario($id_usuario,$primeiroDiaMes,$ultimoDiaMes,true);
+
+                $dia = 0;
+                $semana = 0;
+                $mes = 0;
+                foreach ($agendamentos as $agendamento){
+                    if($agendamento->dt_fim == $now){
+                        $dia++;
+                    }
+                    if($agendamento->dt_fim >= $primeiroDiaSemana && $agendamento->dt_fim <= $ultimoDiaSemana){
+                        $semana++;
+                    }
+                    if($agendamento->dt_fim >= $primeiroDiaMes && $agendamento->dt_fim <= $ultimoDiaMes){
+                        $mes++;
+                    }
+                }
+
+                if($empresa->configuracoes->max_agendamento_dia > $dia)
+                    $mensagens[] = "Numero maximo de agendamentos para o dia de hoje atingindo";
+
+                if($empresa->configuracoes->max_agendamento_semana > $semana)
+                    $mensagens[] = "Numero maximo de agendamentos para o essa semana atingindo";
+
+                if($empresa->configuracoes->max_agendamento_mes > $mes)
+                    $mensagens[] = "Numero maximo de agendamentos para o esse mês atingindo";
+            }
+            else 
+                $mensagens[] = "Nenhuma empresa não vinculada a agenda informada";
+           
+        }   
 
         if($mensagens){
             mensagem::setErro(...$mensagens);

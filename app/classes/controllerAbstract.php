@@ -32,7 +32,7 @@ abstract class controllerAbstract
      */
     public function setSessionVar(string $nome, $valor)
     {
-        $_SESSION[$nome] = $valor;
+        $_SESSION["_".$nome] = $valor;
     }
 
     /**
@@ -43,7 +43,7 @@ abstract class controllerAbstract
      */
     public function getSessionVar(string $nome)
     {
-        return array_key_exists($nome, $_SESSION) ? $_SESSION[$nome] : "";
+        return array_key_exists("_".$nome, $_SESSION) ? $_SESSION["_".$nome] : "";
     }
 
     /**

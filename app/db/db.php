@@ -619,7 +619,7 @@ class db
      * @param string $alias da tabeça.
      * @return $this Retorna a instância atual da classe.
      */
-    public function addJoin(string $table,string $columTable,string $columRelation,String $typeJoin = "INNER",string $logicalOperator = '='):DB
+    public function addJoin(string $table,string $columnTable,string $columnRelation,String $typeJoin = "INNER",string $logicalOperator = '='):DB
     {
         $typeJoin = strtoupper(trim($typeJoin));
         if (!in_array($typeJoin, ["LEFT", "RIGHT", "INNER", "OUTER", "FULL OUTER", "LEFT OUTER", "RIGHT OUTER"])) {
@@ -627,7 +627,7 @@ class db
             return $this;
         }
 
-        $join = " " . $typeJoin . " JOIN " . $table . " ON " . $columTable .$logicalOperator .$columRelation . " ";
+        $join = " " . $typeJoin . " JOIN " . $table . " ON " . $columnTable .$logicalOperator .$columnRelation . " ";
         $this->joins[] = $join;
         return $this;
     }

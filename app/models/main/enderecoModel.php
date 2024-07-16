@@ -62,7 +62,7 @@ class enderecoModel{
         $values = new endereco;
         $mensagens = [];
 
-        if(!functions::validaCep($cep = functions::onlynumber($cep))){
+        if(!functions::validaCep($values->cep = functions::onlynumber($cep))){
             $mensagens[] = "CEP é invalido";
         }
 
@@ -94,15 +94,15 @@ class enderecoModel{
             $mensagens[] = "Usuario ou Empresa precisa ser informado para cadastro";
         }
 
-        if($values->id_empresa = $id_empresa && $valid_fk && !empresaModel::get($values->id_empresa)->id){
+        if(($values->id_empresa = $id_empresa) && $valid_fk && !empresaModel::get($values->id_empresa)->id){
             $mensagens[] = "Empresa não existe";
         }
 
-        if($values->id_usuario = $id_usuario && $valid_fk && !usuarioModel::get($values->id_usuario)->id){
+        if(($values->id_usuario = $id_usuario) && $valid_fk && !usuarioModel::get($values->id_usuario)->id){
             $mensagens[] = "Usuario não existe";
         }
 
-        if($values->id = $id && !self::get($values->id)->id){
+        if(($values->id = $id) && !self::get($id)->id){
             $mensagens[] = "Endereço não existe";
         }
 

@@ -180,6 +180,7 @@ class agendamentoController extends controllerAbstract{
         $table->addColumns("10","Tempo","tempo_item");
         $table->addColumns("12","Total","total_item");
 
+        $exists = false;
         if($servicos){
             foreach ($servicos as $servico){
                 if($dado->id && $servico->id)
@@ -194,6 +195,7 @@ class agendamentoController extends controllerAbstract{
                     $servico->tempo_item =  $elements->input("tempo_item_".$i,"",$agendaItem->tempo_item,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"');
                     $servico->total_item =   $elements->input("total_item_".$i,"",functions::formatCurrency($agendaItem->total_item),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$agendaItem->total_item.'"');
                     $table->addRow($servico->getArrayData());
+                    $exists = true;
                 }
                 else{
                     $servico->massaction = $elements->checkbox("servico_index_".$i,"",false,false,false,$servico->id,"checkbox","form-check-input check_item",'data-index-check="'.$i.'"');
@@ -201,6 +203,7 @@ class agendamentoController extends controllerAbstract{
                     $servico->tempo_item = $elements->input("tempo_item_".$i,"",$servico->tempo,false,true,"","text","form-control",'data-vl-base="'.$servico->tempo.'"');
                     $servico->total_item = $elements->input("total_item_".$i,"",functions::formatCurrency($servico->valor),false,true,"","text","form-control",'data-vl-base="'.$servico->valor.'" data-vl-atual="'.$servico->valor.'"');
                     $table->addRow($servico->getArrayData()); 
+                    $id?$exists = false:$exists = true;
                 }
                 $i++;
             }
@@ -218,7 +221,7 @@ class agendamentoController extends controllerAbstract{
         $form->setCustomInputs();
 
         $form->setButton($elements->button("Salvar","submit"));
-        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agendamento/index/".$parameters[0]."/".$parameters[1]."'"));
+        $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agendamento/index/".$parameters[0]."/".$parameters[1]."'",!$exists?"disabled":""));
         
         $form->show();
 
@@ -240,7 +243,6 @@ class agendamentoController extends controllerAbstract{
         $status = intval($this->getValue("status"));
         $id_agenda = $this->getValue("id_agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
-        $total = 0;
         $exists = false;
 
         $cor = $this->getValue('cor');
@@ -259,14 +261,17 @@ class agendamentoController extends controllerAbstract{
             $cliente = clienteModel::get($id_cliente);
 
             if (isset($cliente->id))
-                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,1,$status,$obs,null,$cliente->id,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,0,$status,$obs,null,$cliente->id,$id);
         }
         elseif($user->tipo_usuario == 3) 
-            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,1,$status,$obs,$user->id,null,$id);
+            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,0,$status,$obs,$user->id,null,$id);
         elseif($usuario = $this->getValue('usuario')){
             $usuario = usuarioModel::get($usuario);
             if ($usuario)
-                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,1,$status,$obs,$usuario->id,null,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,0,$status,$obs,$usuario->id,null,$id);
+        }
+        else{
+            mensagem::setErro("Selecione um usuario ou cliente");
         }
 
         if ($id_agendamento){
@@ -275,25 +280,24 @@ class agendamentoController extends controllerAbstract{
                     $id_servico = $this->getValue('servico_index_'.$i);
                     $qtd_item = $this->getValue('qtd_item_'.$i);
                     $tempo_item = $this->getValue('tempo_item_'.$i);
-                    $total_item = $this->getValue('total_item_'.$i);
                     $id_agendamento_item = $this->getValue('id_item_'.$i);
-                    if($id_servico && $qtd_item && $tempo_item && $total_item){
+                    if($id_servico && $qtd_item && $tempo_item){
                         $exists = true;
                         agendamentoItemModel::set($qtd_item,$id_agendamento,$id_servico,$id_agendamento_item);
                     }
                     elseif ($id_agendamento_item && !$id_servico){
                         agendamentoItemModel::delete($id_agendamento_item);
                     }
-                    $total += floatval($total_item);
-                    $id_servico = $qtd_item = $tempo_item = $total_item = $id_agendamento_item = null;
+                    $id_servico = $qtd_item = $tempo_item = $id_agendamento_item = null;
                 }
 
-                agendamentoModel::setTotal($total,$id_agendamento);
+                agendamentoModel::setTotal($id_agendamento);
             }
     
             if (!$exists){
                 mensagem::setErro("Selecione ao menos um serviço");
-                $this->go("agendamento/manutencao/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario)."/".functions::encrypt($id));
+                mensagem::setSucesso(false);
+                $this->go("agendamento/manutencao/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario)."/".functions::encrypt($id?:$id_agendamento));
             }
         }
 
