@@ -63,10 +63,13 @@ class empresaController extends controllerAbstract {
         $head = new head();
         $head->show("Cadastro", "");
 
-        $dado = usuarioModel::get($id);
+        $dado = isset($this->getSessionVar("empresaController")->usuario)?$this->getSessionVar("empresaController")->usuario:usuarioModel::get($id);
         $form->setHidden("cd", $id);
-        $dadoEndereco = enderecoModel::get($dado->id, "id_usuario");
-        $dadoEmpresa = empresaModel::get($dado->id_empresa);
+
+        $dadoEndereco = isset($this->getSessionVar("empresaController")->endereco)?$this->getSessionVar("empresaController")->endereco:enderecoModel::get($dado->id, "id_usuario");
+        $form->setHidden("id_endereco", $dado->id_empresa);
+
+        $dadoEmpresa = isset($this->getSessionVar("empresaController")->empresa)?$this->getSessionVar("empresaController")->empresa:empresaModel::get($dado->id_empresa);
         $form->setHidden("id_empresa", $dado->id_empresa);
 
         $elements = new elements();
@@ -139,6 +142,9 @@ class empresaController extends controllerAbstract {
        
         $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');
+        $nome_empresa = $this->getValue('nome_empresa');
+        $fantasia = $this->getValue('fantasia');
+        $razao = $this->getValue('razao');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
         $email = $this->getValue('email');
@@ -151,6 +157,33 @@ class empresaController extends controllerAbstract {
         $rua = $this->getValue('rua');
         $numero = $this->getValue('numero');
         $complemento = $this->getValue('complemento');
+
+        $usuario = new \stdClass;
+        
+        $usuario->usuario = new \stdClass;
+        $usuario->usuario->id           = $id;
+        $usuario->usuario->nome         = $nome;
+        $usuario->usuario->cpf_cnpj     = $cpf_cnpj;
+        $usuario->usuario->senha        = $senha;
+        $usuario->usuario->email        = $email;
+        $usuario->usuario->telefone     = functions::onlynumber($telefone);
+
+        $usuario->empresa               = new \stdClass;
+        $usuario->empresa->nome_empresa = $nome_empresa;
+        $usuario->empresa->fantasia     = $fantasia;
+        $usuario->empresa->razao        = $razao;
+
+        $usuario->endereco              = new \stdClass;
+        $usuario->endereco->id          = $id_endereco;
+        $usuario->endereco->cep         = $cep;
+        $usuario->endereco->id_estado   = $id_estado;
+        $usuario->endereco->id_cidade   = $id_cidade;
+        $usuario->endereco->bairro      = $bairro;
+        $usuario->endereco->rua         = $rua;
+        $usuario->endereco->numero      = $numero;
+        $usuario->endereco->complemento = $complemento;
+
+        $this->setSessionVar("empresaController",$usuario);
 
         transactionManeger::init();
         transactionManeger::beginTransaction();

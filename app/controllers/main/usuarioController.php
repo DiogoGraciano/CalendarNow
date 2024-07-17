@@ -124,7 +124,7 @@ class usuarioController extends controllerAbstract {
         $head = new head();
         $head->show("Cadastro de Usuário");
 
-        $dado = $this->getSessionVar("usuarioController")?:usuarioModel::get($id);
+        $dado = isset($this->getSessionVar("usuarioController")->usuario)?$this->getSessionVar("usuarioController")->usuario:usuarioModel::get($id);
         $dadoEndereco = isset($this->getSessionVar("usuarioController")->endereco)?$this->getSessionVar("usuarioController")->endereco:enderecoModel::get($dado->id, "id_usuario");
 
         $elements = new elements();
@@ -200,13 +200,15 @@ class usuarioController extends controllerAbstract {
         $complemento = $this->getValue('complemento');
 
         $usuario = new stdClass;
+        
+        $usuario->usuario = new stdClass;
+        $usuario->usuario->id           = $id;
+        $usuario->usuario->nome         = $nome;
+        $usuario->usuario->cpf_cnpj     = $cpf_cnpj;
+        $usuario->usuario->senha        = $senha;
+        $usuario->usuario->email        = $email;
+        $usuario->usuario->telefone     = functions::onlynumber($telefone);
 
-        $usuario->id          = $id;
-        $usuario->nome        = $nome;
-        $usuario->cpf_cnpj    = $cpf_cnpj;
-        $usuario->senha       = $senha;
-        $usuario->email       = $email;
-        $usuario->telefone    = functions::onlynumber($telefone);
         $usuario->endereco              = new stdClass;
         $usuario->endereco->id          = $id_endereco;
         $usuario->endereco->cep         = $cep;
