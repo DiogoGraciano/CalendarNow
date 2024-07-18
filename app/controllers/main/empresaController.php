@@ -141,7 +141,7 @@ class empresaController extends controllerAbstract {
         }
        
         $id = intval($this->getValue('cd'));
-        $id_empresa = intval($this->getValue('id_empresa'));
+        $_id_empresa = intval($this->getValue('id_empresa'));
         $id_endereco = intval($this->getValue('id_endereco'));
         $nome = $this->getValue('nome');
         $nome_empresa = $this->getValue('nome_empresa');
@@ -171,7 +171,7 @@ class empresaController extends controllerAbstract {
         $usuario->usuario->telefone     = functions::onlynumber($telefone);
 
         $usuario->empresa               = new \stdClass;
-        $usuario->empresa->id           = $id_empresa;
+        $usuario->empresa->id           = $_id_empresa;
         $usuario->empresa->nome         = $nome_empresa;
         $usuario->empresa->fantasia     = $fantasia;
         $usuario->empresa->razao        = $razao;
@@ -193,18 +193,20 @@ class empresaController extends controllerAbstract {
             transactionManeger::init();
             transactionManeger::beginTransaction();
 
-            $id_empresa = empresaModel::set($nome_empresa, $cpf_cnpj, $email, $telefone, $razao, $fantasia, $id_empresa);
+            $id_empresa = empresaModel::set($nome_empresa, $cpf_cnpj, $email, $telefone, $razao, $fantasia, $_id_empresa);
             if ($id_empresa && $id_usuario = usuarioModel::set($nome, $cpf_cnpj, $email, $telefone, $senha, $id, 1, $id_empresa, false)){
                 $id_endereco = enderecoModel::set($cep, $id_estado, $id_cidade, $bairro, $rua, $numero, $complemento, $id_endereco, $id_usuario, $id_empresa, false);
                 if ($id_endereco){
 
-                    configuracoesModel::set("max_agendamento_dia",$id_empresa,2);
-                    configuracoesModel::set("max_agendamento_semana",$id_empresa,3);
-                    configuracoesModel::set("max_agendamento_mes",$id_empresa,3);
-                    configuracoesModel::set("hora_ini",$id_empresa,"08:00");
-                    configuracoesModel::set("hora_fim",$id_empresa,"18:00");
-                    configuracoesModel::set("hora_almoco_ini",$id_empresa,"12:00");
-                    configuracoesModel::set("hora_almoco_fim",$id_empresa,"02:00");
+                    if(!$_id_empresa){
+                        configuracoesModel::set("max_agendamento_dia",$id_empresa,2);
+                        configuracoesModel::set("max_agendamento_semana",$id_empresa,3);
+                        configuracoesModel::set("max_agendamento_mes",$id_empresa,3);
+                        configuracoesModel::set("hora_ini",$id_empresa,"08:00");
+                        configuracoesModel::set("hora_fim",$id_empresa,"18:00");
+                        configuracoesModel::set("hora_almoco_ini",$id_empresa,"12:00");
+                        configuracoesModel::set("hora_almoco_fim",$id_empresa,"02:00");
+                    }
 
                     mensagem::setSucesso("Usuario empresarial salvo com sucesso");
                     $this->setSessionVar("empresaController",false);
@@ -213,14 +215,14 @@ class empresaController extends controllerAbstract {
                 }
             }
         } catch (\Exception $e) {
-            mensagem::setErro($e->getMessage(),"Erro ao Salvar Empresa Tente Novamente");
+            mensagem::setErro("Erro ao Salvar Empresa Tente Novamente");
             mensagem::setSucesso(false);
             transactionManeger::rollback();
         }
 
         mensagem::setSucesso(false);
         transactionManeger::rollback();
-        $this->go("empresa/manutencao/");
+        $this->go("empresa/manutencao/".$location);
     }
 }
 

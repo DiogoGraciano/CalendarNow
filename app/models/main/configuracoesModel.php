@@ -56,8 +56,27 @@ class configuracoesModel{
 
         if($config)
             return $config[0]->configuracao;
-        else 
-            return false;
+         
+        return false;
+    }
+
+    /**
+     * retorna o valor de uma config.
+     * 
+     * @param int $identificador O $identificador associado aos clientes.
+     * @return array Retorna um array de clientes ou um array vazio se não encontrado.
+     */
+    public static function getConfigStore(string $identificador, int $id_empresa):config|bool
+    {
+        $db = new config;
+        $config = $db->addFilter(config::table.".identificador", "=", $identificador)
+                      ->addFilter(config::table.".id_empresa", "=", $id_empresa)
+                      ->addLimit(1)->selectAll();
+
+        if($config)
+            return $config[0];
+         
+        return false;
     }
 
     /**
@@ -68,21 +87,20 @@ class configuracoesModel{
      * @param string|int|float $configuracao valor da config.
      * @return bool|int false se não salvo id se for salvo.
      */
-    public static function set(string $identificador, int $id_empresa,string|int|float $configuracao,null|int $id = null):bool|int
+    public static function set(string $identificador, int $id_empresa,string|int|float $configuracao):bool|int
     {
         $mensagens = [];
 
-        $db = new config;
+        if(!($db = self::getConfigStore($identificador,$id_empresa))){
+            $db = new config();
 
-        if($id && !self::get($db->id = $id)->id)
-            $mensagens[] = "Empresa não existe";
+            if(!empresaModel::get($db->id_empresa = $id_empresa)->id)
+                $mensagens[] = "Empresa não existe";
 
-        if(!empresaModel::get($db->id_empresa = $id_empresa)->id)
-            $mensagens[] = "Empresa não existe";
+            if(!($db->identificador = htmlspecialchars($identificador)))
+                $mensagens[] = "Identificador é obrigatorio";
+        }
 
-        if(!($db->identificador = htmlspecialchars($identificador)))
-            $mensagens[] = "Identificador é obrigatorio";
-    
         if(!($db->configuracao = htmlspecialchars($configuracao)))
             $mensagens[] = "Valor é obrigatorio";
         

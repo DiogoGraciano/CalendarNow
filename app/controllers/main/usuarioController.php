@@ -184,6 +184,8 @@ class usuarioController extends controllerAbstract {
     }
 
     public function action($parameters = []){
+        $location = "";
+
         $id = intval($this->getValue('cd'));
         $nome = $this->getValue('nome');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
@@ -245,12 +247,12 @@ class usuarioController extends controllerAbstract {
         } catch (\Exception $e) {
             mensagem::setErro("Erro ao salvar usuário");
             transactionManeger::rollback();
-            $this->go("usuario/manutencao");
+            $this->go("usuario/manutencao/".$location);
         }
 
         mensagem::setSucesso(false);
         transactionManeger::rollback();
-        $this->go("usuario/manutencao");
+        $this->go("usuario/manutencao/".$location);
     }
 }
 
