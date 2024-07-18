@@ -105,7 +105,7 @@ class agendamentoController extends controllerAbstract{
 
         $elements = new elements;
 
-        $dado = agendamentoModel::get($id);
+        $dado = isset($this->getSessionVar("agendamentoController")->agendamento)?$this->getSessionVar("agendamentoController")->agendamento:agendamentoModel::get($id);
 
         $user = usuarioModel::getLogged();
 
@@ -183,8 +183,9 @@ class agendamentoController extends controllerAbstract{
         $exists = false;
         if($servicos){
             foreach ($servicos as $servico){
+                
                 if($dado->id && $servico->id)
-                    $agendaItem = agendamentoItemModel::getItemByServico($dado->id,$servico->id);
+                    $agendaItem = (isset($this->getSessionVar("agendamentoController")->agendaItem))?$this->getSessionVar("agendamentoController")->agendaItem:agendamentoItemModel::getItemByServico($dado->id,$servico->id);
                 else 
                     $agendaItem = null;
 
@@ -243,11 +244,23 @@ class agendamentoController extends controllerAbstract{
         $status = intval($this->getValue("status"));
         $id_agenda = $this->getValue("id_agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
-        $exists = false;
-
         $cor = $this->getValue('cor');
         $obs = $this->getValue('obs');
+        $exists = false;
 
+        $agendamento = new \stdClass;
+    
+        $agendamento->agendamento = new \stdClass;
+        $agendamento->agendamento->id                = $id;
+        $agendamento->agendamento->dt_ini            = $dt_ini;
+        $agendamento->agendamento->dt_ini            = $dt_fim;
+        $agendamento->agendamento->id_agenda         = $id_agenda;
+        $agendamento->agendamento->id_funcionario    = $id_funcionario;
+        $agendamento->agendamento->qtd_servico       = $qtd_servico;
+        $agendamento->agendamento->status            = $status;
+        $agendamento->agendamento->cor               = $cor;
+        $agendamento->agendamento->obs               = $obs;
+        
         $user = usuarioModel::getLogged();
         $id_agendamento = "";
 
@@ -276,6 +289,9 @@ class agendamentoController extends controllerAbstract{
 
         if ($id_agendamento){
             if ($qtd_servico){
+
+                $agendamento->agendaItems  = [];
+
                 for ($i = 0; $i <= $qtd_servico; $i++) {
                     $id_servico = $this->getValue('servico_index_'.$i);
                     $qtd_item = $this->getValue('qtd_item_'.$i);
@@ -289,6 +305,14 @@ class agendamentoController extends controllerAbstract{
                         agendamentoItemModel::delete($id_agendamento_item);
                     }
                     $id_servico = $qtd_item = $tempo_item = $id_agendamento_item = null;
+
+                    $agendaItem = new \stdClass;
+    
+                    $agendaItem->id               = $id_servico;
+                    $agendaItem->qtd_item         = $qtd_item;
+                    $agendaItem->tempo            = $tempo_item;
+
+                    $agendamento->agendaItems[]   = $agendaItem;
                 }
 
                 agendamentoModel::setTotal($id_agendamento);
@@ -300,6 +324,8 @@ class agendamentoController extends controllerAbstract{
                 $this->go("agendamento/manutencao/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario)."/".functions::encrypt($id?:$id_agendamento));
             }
         }
+
+        $this->setSessionVar("agendamentoController",$agendamento);
 
         if(!mensagem::getErro())
             mensagem::setSucesso("Agendamento Concluido");

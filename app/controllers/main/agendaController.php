@@ -67,7 +67,7 @@ class agendaController extends controllerAbstract{
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = agendaModel::get($id);
+        $dado = $this->getSessionVar("agendaController")?:agendaModel::get($id);
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
 
@@ -153,6 +153,15 @@ class agendaController extends controllerAbstract{
         $id_funcionario  = $this->getValue('funcionario');
         $codigo  = $this->getValue('codigo');
         $id_empresa = $user->id_empresa;
+
+        $agenda = new \stdClass;
+    
+        $agenda->id               = $id;
+        $agenda->id_funcionario   = $id_funcionario;
+        $agenda->codigo           = $codigo;
+        $agenda->nome             = $nome;
+
+        $this->setSessionVar("agendaController",$agenda);
 
         try{
             transactionManeger::init();

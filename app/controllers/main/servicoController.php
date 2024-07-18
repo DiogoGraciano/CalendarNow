@@ -121,7 +121,7 @@ class servicoController extends controllerAbstract{
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = servicoModel::get($id);
+        $dado = $this->getSessionVar("servicoController")?:servicoModel::get($id);
 
         $form->setinputs($elements->input("nome","Nome:",$dado->nome,true),"nome");
 
@@ -213,6 +213,17 @@ class servicoController extends controllerAbstract{
         $nome  = $this->getValue('nome');
         $tempo  = $this->getValue('tempo');
         $valor  = $this->getValue('valor');
+
+        $servico = new \stdClass;
+    
+        $servico->id               = $id;
+        $servico->id_grupo_servico = $id_grupo_servico;
+        $servico->id_funcionario   = $id_funcionario;
+        $servico->nome             = $nome;
+        $servico->tempo            = $tempo;
+        $servico->valor            = $valor;
+
+        $this->setSessionVar("servicoController",$servico);
 
         if ($id_servico = servicoModel::set($nome,$valor,$tempo,$user->id_empresa,$id)){ 
             if($id_grupo_servico)

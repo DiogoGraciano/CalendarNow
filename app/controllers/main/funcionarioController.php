@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers\main;
 
 use app\classes\head;
@@ -19,36 +20,38 @@ use app\models\main\agendaModel;
 use app\models\main\funcionarioModel;
 use app\models\main\grupoFuncionarioModel;
 
-class FuncionarioController extends controllerAbstract {
+class FuncionarioController extends controllerAbstract
+{
 
-    public function index($parameters = []){
+    public function index($parameters = [])
+    {
         $user = usuarioModel::getLogged();
-       
+
         $head = new head();
         $head->show("Cadastro de Funcionários", "consulta");
 
         $elements = new elements();
         $cadastro = new consulta(true);
-        $cadastro->addButtons($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='".$this->url."opcoes'"));
+        $cadastro->addButtons($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='" . $this->url . "opcoes'"));
 
         $cadastro->addColumns("1", "Id", "id")
-                ->addColumns("10", "CPF/CNPJ", "cpf_cnpj")
-                ->addColumns("15", "Nome", "nome")
-                ->addColumns("15", "Email", "email")
-                ->addColumns("11", "Telefone", "telefone");
+            ->addColumns("10", "CPF/CNPJ", "cpf_cnpj")
+            ->addColumns("15", "Nome", "nome")
+            ->addColumns("15", "Email", "email")
+            ->addColumns("11", "Telefone", "telefone");
 
         $nome = $this->getValue("nome");
         $id_agenda = $this->getValue("agenda");
         $id_grupo_funcionarios = $this->getValue("grupo_funcionarios");
 
-        $filter = new filter($this->url."funcionario/index/");
+        $filter = new filter($this->url . "funcionario/index/");
         $filter->addbutton($elements->button("Buscar", "buscar", "submit", "btn btn-primary pt-2"));
         $filter->addFilter(3, $elements->input("nome", "Nome:", $nome));
 
         $agendas = agendaModel::getByEmpresa($user->id_empresa);
 
         if ($agendas) {
-            $modal = new modal($this->url."funcionario/massActionAgenda/", "massActionAgenda");
+            $modal = new modal($this->url . "funcionario/massActionAgenda/", "massActionAgenda");
 
             $elements->addOption("", "Selecione/Todos");
             foreach ($agendas as $agenda) {
@@ -64,10 +67,10 @@ class FuncionarioController extends controllerAbstract {
         }
 
         $cadastro->addColumns("5", "Inicio Expediente", "hora_ini")
-                ->addColumns("5", "Fim Expediente", "hora_fim")
-                ->addColumns("5", "Inicio Almoço", "hora_almoco_ini")
-                ->addColumns("5", "Fim Almoço", "hora_almoco_fim")
-                ->addColumns("14", "Dias", "dia");
+            ->addColumns("5", "Fim Expediente", "hora_fim")
+            ->addColumns("5", "Inicio Almoço", "hora_almoco_ini")
+            ->addColumns("5", "Fim Almoço", "hora_almoco_fim")
+            ->addColumns("14", "Dias", "dia");
 
         $cadastro->addButtons($elements->button("Vincular Agenda ao Funcionario", "openModel", "button", "btn btn-primary", "openModal('massActionAgenda')"));
 
@@ -81,7 +84,7 @@ class FuncionarioController extends controllerAbstract {
 
             $grupo_funcionario = $elements->select("Grupo Funcionario", "grupo_funcionario", $id_grupo_funcionarios);
 
-            $modal = new modal($this->url."funcionario/massActionGrupoFuncionario/", "massActionGrupoFuncionario");
+            $modal = new modal($this->url . "funcionario/massActionGrupoFuncionario/", "massActionGrupoFuncionario");
 
             $modal->setinputs($grupo_funcionario);
             $modal->setButton($elements->button("Salvar", "submitModalConsulta", "button", "btn btn-primary w-100 pt-2 btn-block"));
@@ -95,22 +98,23 @@ class FuncionarioController extends controllerAbstract {
         $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa, $nome, intval($id_agenda), intval($id_grupo_funcionarios));
 
         $cadastro->addColumns("14", "Ações", "acoes");
-        $cadastro->show($this->url."funcionario/manutencao", $this->url."funcionario/action", $dados);
+        $cadastro->show($this->url . "funcionario/manutencao", $this->url . "funcionario/action", $dados);
 
         $footer = new footer();
         $footer->show();
     }
 
-    public function manutencao($parameters = []){
-        $form = new form($this->url."funcionario/action");
+    public function manutencao($parameters = [])
+    {
+        $form = new form($this->url . "funcionario/action");
         $head = new head();
         $head->show("Cadastro de Funcionário");
 
         $id = functions::decrypt($parameters[0] ?? '');
         $user = usuarioModel::getLogged();
 
-        $dadoFuncionario = funcionarioModel::get($id);
-        $dado = usuarioModel::get($dadoFuncionario->id_usuario);
+        $dadoFuncionario = isset($this->getSessionVar("funcionarioController")->funcionario)?$this->getSessionVar("funcionarioController")->funcionario:funcionarioModel::get($id);
+        $dado = isset($this->getSessionVar("funcionarioController")->usuario)?$this->getSessionVar("funcionarioController")->usuario:usuarioModel::get($dadoFuncionario->id_usuario);
         $form->setHidden("cd", $dado->id);
         $form->setHidden("id_funcionario", $dadoFuncionario->id);
         $form->setHidden("id_empresa", $user->id_empresa);
@@ -131,16 +135,16 @@ class FuncionarioController extends controllerAbstract {
 
         $this->isMobile() ? $table = new tabelaMobile() : $table = new tabela();
 
-        if($dadoFuncionario->id && $agendas = funcionarioModel::getAgendaByFuncionario($dadoFuncionario->id)){
+        if ($dadoFuncionario->id && $agendas = funcionarioModel::getAgendaByFuncionario($dadoFuncionario->id)) {
 
             $form->setInputs($elements->label("Agendas Vinculadas"));
 
-            $table->addColumns("1","ID","id");
-            $table->addColumns("90","Nome","nome");
-            $table->addColumns("10","Ações","acoes");
+            $table->addColumns("1", "ID", "id");
+            $table->addColumns("90", "Nome", "nome");
+            $table->addColumns("10", "Ações", "acoes");
 
-            foreach ($agendas as $agenda){
-                $agenda->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularAgenda/".functions::encrypt($agenda->id)."/".functions::encrypt($dadoFuncionario->id)."'");
+            foreach ($agendas as $agenda) {
+                $agenda->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='" . $this->url . "funcionario/desvincularAgenda/" . functions::encrypt($agenda->id) . "/" . functions::encrypt($dadoFuncionario->id) . "'");
                 $table->addRow($agenda->getArrayData());
             }
 
@@ -158,16 +162,16 @@ class FuncionarioController extends controllerAbstract {
 
         $form->setInputs($select_agenda);
 
-        if($dadoFuncionario->id && $grupos_funcionarios = grupoFuncionarioModel::getByFuncionario($dadoFuncionario->id)){
+        if ($dadoFuncionario->id && $grupos_funcionarios = grupoFuncionarioModel::getByFuncionario($dadoFuncionario->id)) {
 
             $form->setInputs($elements->label("Grupos de Funcionario Vinculados"));
 
-            $table->addColumns("1","ID","id");
-            $table->addColumns("90","Nome","nome");
-            $table->addColumns("10","Ações","acoes");
+            $table->addColumns("1", "ID", "id");
+            $table->addColumns("90", "Nome", "nome");
+            $table->addColumns("10", "Ações", "acoes");
 
-            foreach ($grupos_funcionarios as $grupo_funcionario){
-                $grupo_funcionario->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/desvincularGrupo/".functions::encrypt($grupo_funcionario->id)."/".functions::encrypt($dadoFuncionario->id)."'");
+            foreach ($grupos_funcionarios as $grupo_funcionario) {
+                $grupo_funcionario->acoes = $elements->button("Desvincular", "desvincular", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='" . $this->url . "funcionario/desvincularGrupo/" . functions::encrypt($grupo_funcionario->id) . "/" . functions::encrypt($dadoFuncionario->id) . "'");
                 $table->addRow($grupo_funcionario->getArrayData());
             }
 
@@ -202,44 +206,47 @@ class FuncionarioController extends controllerAbstract {
         $diasSemana = ["dom" => "Domingo", "seg" => "Segunda", "ter" => "Terça", "qua" => "Quarta", "qui" => "Quinta", "sex" => "Sexta", "sab" => "Sábado"];
 
         foreach ($diasSemana as $key => $value) {
-            $form->addCustomInput(2, $elements->checkbox($key, $value, false, in_array($key, $checkDias),value:$key),$key);
+            $form->addCustomInput(2, $elements->checkbox($key, $value, false, in_array($key, $checkDias), value: $key), $key);
         }
 
         $form->setCustomInputs();
         $form->setButton($elements->button("Salvar", "submit"));
-        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='".$this->url."funcionario/index/'"));
+        $form->setButton($elements->button("Voltar", "voltar", "button", "btn btn-primary w-100 pt-2 btn-block", "location.href='" . $this->url . "funcionario/index/'"));
         $form->show();
     }
 
-    public function desvincularGrupo($parameters = []){
+    public function desvincularGrupo($parameters = [])
+    {
 
         $id_grupo = functions::decrypt($parameters[0] ?? '');
         $id_funcionario = functions::decrypt($parameters[1] ?? '');
 
-        if($id_grupo && $id_funcionario){
-            grupoFuncionarioModel::detachFuncionario($id_grupo,$id_funcionario);
-            $this->go("funcionario/manutencao/".$parameters[1]);
+        if ($id_grupo && $id_funcionario) {
+            grupoFuncionarioModel::detachFuncionario($id_grupo, $id_funcionario);
+            $this->go("funcionario/manutencao/" . $parameters[1]);
         }
 
         mensagem::setErro("Grupo ou Funcionario não informados");
         $this->go("funcionario");
     }
 
-    public function desvincularAgenda($parameters = []){
+    public function desvincularAgenda($parameters = [])
+    {
 
         $id_agenda = functions::decrypt($parameters[0] ?? '');
         $id_funcionario = functions::decrypt($parameters[1] ?? '');
 
-        if($id_agenda && $id_funcionario){
-            FuncionarioModel::detachAgendaFuncionario($id_agenda,$id_funcionario);
-            $this->go("funcionario/manutencao/".$parameters[1]);
+        if ($id_agenda && $id_funcionario) {
+            FuncionarioModel::detachAgendaFuncionario($id_agenda, $id_funcionario);
+            $this->go("funcionario/manutencao/" . $parameters[1]);
         }
 
         mensagem::setErro("Agenda ou Funcionario não informados");
         $this->go("funcionario");
     }
 
-    public function action(){
+    public function action()
+    {
         $id_grupo_funcionario = $this->getValue('id_grupo_funcionario');
         $id_agenda = $this->getValue('id_agenda');
         $hora_ini = $this->getValue('hora_ini');
@@ -247,40 +254,61 @@ class FuncionarioController extends controllerAbstract {
         $hora_almoco_ini = $this->getValue('hora_almoco_ini');
         $hora_almoco_fim = $this->getValue('hora_almoco_fim');
         $id = intval($this->getValue('cd'));
+        $id_funcionario = intval($this->getValue("id_funcionario"));
         $nome = $this->getValue('nome');
         $cpf_cnpj = $this->getValue('cpf_cnpj');
         $senha = $this->getValue('senha');
         $email = $this->getValue('email');
         $telefone = $this->getValue('telefone');
-     
-        $dias = implode(",",[$this->getValue("dom"),$this->getValue("seg"),$this->getValue("ter"),$this->getValue("qua"),$this->getValue("qui"),$this->getValue("sex"),$this->getValue("sab")]);
+
+        $dias = implode(",", [$this->getValue("dom"), $this->getValue("seg"), $this->getValue("ter"), $this->getValue("qua"), $this->getValue("qui"), $this->getValue("sex"), $this->getValue("sab")]);
+
+        $usuario = new \stdClass;
+
+        $usuario->usuario = new \stdClass;
+        $usuario->usuario->id           = $id;
+        $usuario->usuario->nome         = $nome;
+        $usuario->usuario->cpf_cnpj     = $cpf_cnpj;
+        $usuario->usuario->senha        = $senha;
+        $usuario->usuario->email        = $email;
+        $usuario->usuario->telefone     = functions::onlynumber($telefone);
+        
+        $usuario->funcionario                       = new \stdClass;
+        $usuario->funcionario->id                   = $id_funcionario;
+        $usuario->funcionario->id_grupo_funcionario = $id_grupo_funcionario;
+        $usuario->funcionario->id_agenda            = $id_agenda;
+        $usuario->funcionario->hora_ini             = $hora_ini;
+        $usuario->funcionario->hora_fim             = $hora_fim;
+        $usuario->funcionario->hora_almoco_ini      = $hora_almoco_ini;
+        $usuario->funcionario->hora_almoco_fim      = $hora_almoco_fim;
+
+        $this->setSessionVar("funcionarioController",$usuario);
 
         transactionManeger::init();
 
         transactionManeger::beginTransaction();
 
-        try{
-            if ($id_empresa = $this->getValue("id_empresa")){  
-                $id_usuario = usuarioModel::set($nome,$cpf_cnpj,$email,$telefone,$senha,$id,2,$id_empresa);
-                if ($id_usuario){
-                    $id_funcionario = intval($this->getValue("id_funcionario"));
-                    $id_funcionario = funcionarioModel::set($id_usuario,$nome,$cpf_cnpj,$email,$telefone,$hora_ini,$hora_fim,$hora_almoco_ini,$hora_almoco_fim,$dias,$id_funcionario);
-                    if($id_funcionario){
-                        
+        try {
+            if ($id_empresa = $this->getValue("id_empresa")) {
+                $id_usuario = usuarioModel::set($nome, $cpf_cnpj, $email, $telefone, $senha, $id, 2, $id_empresa);
+                if ($id_usuario) {
+                    $id_funcionario = funcionarioModel::set($id_usuario, $nome, $cpf_cnpj, $email, $telefone, $hora_ini, $hora_fim, $hora_almoco_ini, $hora_almoco_fim, $dias, $id_funcionario);
+                    if ($id_funcionario) {
+
                         if ($id_grupo_funcionario)
-                            funcionarioModel::setFuncionarioGrupoFuncionario($id_grupo_funcionario,$id_funcionario);
+                            funcionarioModel::setFuncionarioGrupoFuncionario($id_grupo_funcionario, $id_funcionario);
 
                         if ($id_agenda)
-                            funcionarioModel::setAgendaFuncionario($id_agenda,$id_funcionario);
-                        
-                        mensagem::setSucesso("Funcionario salvo com sucesso");    
+                            funcionarioModel::setAgendaFuncionario($id_agenda, $id_funcionario);
+
+                        mensagem::setSucesso("Funcionario salvo com sucesso");
                         transactionManeger::commit();
-                        
+
                         $this->go("funcionario/index/");
                     }
                 }
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             mensagem::setSucesso(false);
             transactionManeger::rollback();
         }
@@ -288,12 +316,13 @@ class FuncionarioController extends controllerAbstract {
         mensagem::setSucesso(false);
         transactionManeger::rollback();
 
-        $this->go("funcionario/manutencao/"); 
+        $this->go("funcionario/manutencao/");
     }
 
-    public function massActionAgenda(){
+    public function massActionAgenda()
+    {
 
-        try{
+        try {
 
             transactionManeger::init();
 
@@ -305,27 +334,25 @@ class FuncionarioController extends controllerAbstract {
             $mensagem = "Funcionario vinculados com sucesso: ";
             $mensagem_erro = "Funcionario não vinculados: ";
 
-            if ($qtd_list && $id_agenda){
+            if ($qtd_list && $id_agenda) {
                 for ($i = 1; $i <= $qtd_list; $i++) {
-                    if($id_funcionario = $this->getValue("id_check_".$i)){
-                        if(funcionarioModel::setAgendaFuncionario($id_funcionario,$id_agenda))
-                            $mensagem .= $id_funcionario." - ";
+                    if ($id_funcionario = $this->getValue("id_check_" . $i)) {
+                        if (funcionarioModel::setAgendaFuncionario($id_funcionario, $id_agenda))
+                            $mensagem .= $id_funcionario . " - ";
                         else
-                            $mensagem_erro .= $id_funcionario." - ";
+                            $mensagem_erro .= $id_funcionario . " - ";
                     }
                 }
-                if($mensagem != "Funcionario vinculados com sucesso: ")
+                if ($mensagem != "Funcionario vinculados com sucesso: ")
                     mensagem::setSucesso($mensagem);
-                if($mensagem_erro != "Funcionario não vinculados: ")
+                if ($mensagem_erro != "Funcionario não vinculados: ")
                     mensagem::setErro($mensagem_erro);
 
                 transactionManeger::commit();
-            }
-            else{
+            } else {
                 mensagem::setErro("Não foi informado a agenda");
             }
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             mensagem::setSucesso(false);
             mensagem::setErro("Erro inesperado ocorreu, tente novamente");
             transactionManeger::rollback();
@@ -334,9 +361,10 @@ class FuncionarioController extends controllerAbstract {
         $this->go("funcionario");
     }
 
-    public function massActionGrupoFuncionario(){
+    public function massActionGrupoFuncionario()
+    {
 
-        try{
+        try {
 
             transactionManeger::init();
 
@@ -348,25 +376,23 @@ class FuncionarioController extends controllerAbstract {
             $mensagem = "Funcionario vinculados com sucesso: ";
             $mensagem_erro = "Funcionario não vinculados: ";
 
-            if ($qtd_list && $id_grupo_funcionario){
+            if ($qtd_list && $id_grupo_funcionario) {
                 for ($i = 1; $i <= $qtd_list; $i++) {
-                    if($id_funcionario = $this->getValue("id_check_".$i)){
-                        if(funcionarioModel::setFuncionarioGrupoFuncionario($id_funcionario,$id_grupo_funcionario))
-                            $mensagem .= $id_funcionario." - ";
+                    if ($id_funcionario = $this->getValue("id_check_" . $i)) {
+                        if (funcionarioModel::setFuncionarioGrupoFuncionario($id_funcionario, $id_grupo_funcionario))
+                            $mensagem .= $id_funcionario . " - ";
                         else
-                            $mensagem_erro .= $id_funcionario." - ";
+                            $mensagem_erro .= $id_funcionario . " - ";
                     }
                 }
-                if($mensagem != "Funcionario vinculados com sucesso: ")
+                if ($mensagem != "Funcionario vinculados com sucesso: ")
                     mensagem::setSucesso($mensagem);
-                if($mensagem_erro != "Funcionario não vinculados: ")
+                if ($mensagem_erro != "Funcionario não vinculados: ")
                     mensagem::setErro($mensagem_erro);
-            }
-            else{
+            } else {
                 mensagem::setErro("Não foi informado o grupo do funcionario");
             }
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             mensagem::setSucesso(false);
             mensagem::setErro("Erro inesperado ocorreu, tente novamente");
             transactionManeger::rollback();
@@ -375,5 +401,3 @@ class FuncionarioController extends controllerAbstract {
         $this->go("funcionario");
     }
 }
-
-?>

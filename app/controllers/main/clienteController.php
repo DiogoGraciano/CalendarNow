@@ -74,19 +74,9 @@ class clienteController extends controllerAbstract{
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = clienteModel::get($id);
+        $dado = $this->getSessionVar("clienteController")?:clienteModel::get($id);
         
-        $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
-
-        $user = usuarioModel::getLogged();
-
-        $funcionarios = funcionarioModel::getByEmpresa($user->id_empresa);
-
-        $elements->addOption("","Nenhum");
-        foreach ($funcionarios as $funcionario){
-            $elements->addOption($funcionario->id,$funcionario->nome);
-        }
-        $form->setInputs($elements->select("Funcionario:","funcionario",""));
+        $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));$dado = $this->getSessionVar("clienteController")?:clienteModel::get($id);
 
         $form->setButton($elements->button("Salvar","submit"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agenda'"));
@@ -129,6 +119,14 @@ class clienteController extends controllerAbstract{
         $id = intval(functions::decrypt($this->getValue('cd')));
         $nome  = $this->getValue('nome');
         $id_funcionario  = $this->getValue('funcionario');
+
+        $cliente = new \stdClass;
+    
+        $cliente->id               = $id;
+        $cliente->id_funcionario   = $id_funcionario;
+        $cliente->nome             = $nome;
+
+        $this->setSessionVar("clienteController",$cliente);
 
         try{
             transactionManeger::init();

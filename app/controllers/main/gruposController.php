@@ -87,7 +87,7 @@ class gruposController extends controllerAbstract{
         else    
             $this->go("home");
 
-        $dado = $model::get($id);
+        $dado = $this->getSessionVar("gruposController")?:$model::get($id);
 
         $elements = new elements;
 
@@ -135,6 +135,12 @@ class gruposController extends controllerAbstract{
 
         $id = intval(functions::decrypt($this->getValue("cd")));
         $nome  = $this->getValue('nome');
+
+        $grupo = new \stdClass;
+        $grupo->id   = $id;
+        $grupo->nome = $nome;
+
+        $this->setSessionVar("gruposController",$grupo);
 
         $id_empresa = UsuarioModel::getLogged()->id_empresa;
 
