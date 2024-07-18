@@ -390,7 +390,7 @@ $enderecoTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID d
         ->execute($recreate);
 
 $configTb = new tableDb("config",comment:"Tabela de configurações");
-$configTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID agenda"))
+$configTb->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID Config"))
         ->addColumn((new columnDb("id_empresa","INT"))->isNotNull()->isForeingKey($empresaTb,"id")->setComment("ID da tabela empresa"))
         ->addColumn((new columnDb("identificador","VARCHAR",30))->isNotNull()->isUnique()->setComment("Identificador da configuração"))
         ->addColumn((new columnDb("configuracao","BLOB"))->isNotNull()->setComment("Configuração"))

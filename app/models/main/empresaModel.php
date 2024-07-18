@@ -113,7 +113,7 @@ class empresaModel{
             $mensagens[] = "E-mail Invalido";
         }
 
-        if(self::get($values->email,"email")->id){
+        if(!$id && self::get($values->email,"email")->id){
             $mensagens[] = "Email já cadastrado";
         }
 
@@ -126,9 +126,7 @@ class empresaModel{
             return false;
         }
 
-        $retorno = $values->store();
-
-        if ($retorno == true){
+        if ($values->store()){
             mensagem::setSucesso("Empresa salva com sucesso");
             return $values->getLastID();
         }

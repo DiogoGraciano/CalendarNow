@@ -68,20 +68,21 @@ class configuracoesModel{
      * @param string|int|float $configuracao valor da config.
      * @return bool|int false se não salvo id se for salvo.
      */
-    public static function set(string $identificador, int $id_empresa,string|int|float $configuracao):bool|int
+    public static function set(string $identificador, int $id_empresa,string|int|float $configuracao,null|int $id = null):bool|int
     {
         $mensagens = [];
 
-        if(!($db = configuracoesModel::get($identificador,"identificador"))){
-            $db = new config;
+        $db = new config;
 
-            if(!($db->identificador = htmlspecialchars($identificador)))
-                $mensagens[] = "Identificador é obrigatorio";
+        if($id && !self::get($db->id = $id)->id)
+            $mensagens[] = "Empresa não existe";
 
-            if(!($db->id_empresa = empresaModel::get($id_empresa)->id))
-                $mensagens[] = "Empresa não encontrada"; 
-        }
+        if(!empresaModel::get($db->id_empresa = $id_empresa)->id)
+            $mensagens[] = "Empresa não existe";
 
+        if(!($db->identificador = htmlspecialchars($identificador)))
+            $mensagens[] = "Identificador é obrigatorio";
+    
         if(!($db->configuracao = htmlspecialchars($configuracao)))
             $mensagens[] = "Valor é obrigatorio";
         
@@ -91,7 +92,7 @@ class configuracoesModel{
         }
 
         if ($db->store()){
-            mensagem::setSucesso("Agenda salvo com sucesso");
+            mensagem::setSucesso("Configuração salvo com sucesso");
             return $db->getLastID();
         }
         

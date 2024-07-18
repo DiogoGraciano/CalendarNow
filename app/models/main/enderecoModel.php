@@ -86,10 +86,8 @@ class enderecoModel{
             $mensagens[] = "Numero é Invalido";
         }
 
-        if(!($values->complemento = htmlspecialchars(trim($complemento)))){
-            $mensagens[] = "Complemento é Invalido";
-        }
-
+        $values->complemento = htmlspecialchars(trim($complemento));
+       
         if(!$id_usuario && !$id_empresa){
             $mensagens[] = "Usuario ou Empresa precisa ser informado para cadastro";
         }
