@@ -22,7 +22,10 @@ use stdClass;
 
 class usuarioController extends controllerAbstract {
 
-    public function index(){
+    public function index()
+    {
+        $this->setSessionVar("usuarioController",false);
+
         $id_funcionario = $this->getValue("funcionario");
         $nome = $this->getValue("nome");
 

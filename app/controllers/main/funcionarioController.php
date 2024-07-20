@@ -25,6 +25,8 @@ class FuncionarioController extends controllerAbstract
 
     public function index($parameters = [])
     {
+        $this->setSessionVar("funcionarioController",false);
+        
         $user = usuarioModel::getLogged();
 
         $head = new head();
@@ -281,6 +283,7 @@ class FuncionarioController extends controllerAbstract
         $usuario->funcionario->hora_fim             = $hora_fim;
         $usuario->funcionario->hora_almoco_ini      = $hora_almoco_ini;
         $usuario->funcionario->hora_almoco_fim      = $hora_almoco_fim;
+        $usuario->funcionario->dias                 = $dias;
 
         $this->setSessionVar("funcionarioController",$usuario);
 
@@ -302,6 +305,7 @@ class FuncionarioController extends controllerAbstract
                             funcionarioModel::setAgendaFuncionario($id_agenda, $id_funcionario);
 
                         mensagem::setSucesso("Funcionario salvo com sucesso");
+                        $this->setSessionVar("funcionarioController",false);
                         transactionManeger::commit();
 
                         $this->go("funcionario/index/");

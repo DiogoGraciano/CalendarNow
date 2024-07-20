@@ -10,13 +10,16 @@ use app\classes\functions;
 use app\classes\filter;
 use app\classes\tabela;
 use app\classes\tabelaMobile;
+use app\classes\mensagem;
 use app\models\main\grupoFuncionarioModel;
 use app\models\main\grupoServicoModel;
 use app\models\main\usuarioModel;
 
 class gruposController extends controllerAbstract{
 
-    public function index($parameters = array()){
+    public function index($parameters = array())
+    {
+        $this->setSessionVar("gruposController",false);
 
         $nome = $this->getValue("nome");
 
@@ -157,6 +160,9 @@ class gruposController extends controllerAbstract{
                 grupoServicoModel::set($nome,$id_empresa,$id);
         }   
         
+        if(mensagem::getErro())
+            $this->setSessionVar("gruposController",false);
+
         $this->go("grupos/index/".$parameters[0]);
     }
 

@@ -20,7 +20,9 @@ use app\models\main\grupoServicoModel;
 
 class servicoController extends controllerAbstract{
 
-    public function index($parameters = []){
+    public function index($parameters = [])
+    {
+        $this->setSessionVar("servicoController",false);
 
         $id_funcionario = $this->getValue("funcionario");
         $id_grupo_servico = $this->getValue("grupo_servico");
@@ -231,6 +233,9 @@ class servicoController extends controllerAbstract{
             if($id_funcionario)
                 servicoModel::setServicoFuncionario($id_servico,$id_funcionario);
         }
+
+        if(mensagem::getErro())
+            $this->setSessionVar("servicoController",false);
 
         $id?$this->go("servico/manutencao/".$this->getValue('cd')):$this->go("servico");
     }

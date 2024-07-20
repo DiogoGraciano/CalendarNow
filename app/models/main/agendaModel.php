@@ -109,8 +109,12 @@ class agendaModel{
      * @param int $id_funcionario O ID do funcionário.
      * @return array Retorna array com os registros encontrados.
     */
-    public static function getFuncionarioByAgenda(int $id_agenda):array
+    public static function getFuncionarioByAgenda(int|null $id_agenda = null):array
     {
+        if(!$id_agenda){
+            return [];
+        }
+        
         $db = new agendaFuncionario;
 
         $db->addJoin(funcionario::table,"id","id_funcionario")

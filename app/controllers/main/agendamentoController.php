@@ -22,7 +22,10 @@ use app\models\main\statusModel;
 
 class agendamentoController extends controllerAbstract{
   
-    public function index($parameters){
+    public function index($parameters)
+    {
+        $this->setSessionVar("agendamentoController",false);
+
         $head = new head();
         $head->show("Agenda","agenda");
 
@@ -327,9 +330,10 @@ class agendamentoController extends controllerAbstract{
 
         $this->setSessionVar("agendamentoController",$agendamento);
 
-        if(!mensagem::getErro())
+        if(!mensagem::getErro()){
+            $this->setSessionVar("agendamentoController",false);
             mensagem::setSucesso("Agendamento Concluido");
-        else
+        }else
             mensagem::setSucesso(false);
 
         $this->go("agendamento/index/".functions::encrypt($id_agenda)."/".functions::encrypt($id_funcionario));

@@ -16,7 +16,9 @@ use app\models\main\funcionarioModel;
 
 class clienteController extends controllerAbstract{
 
-    public function index(){
+    public function index()
+    {
+        $this->setSessionVar("clienteController",false);
 
         $user = usuarioModel::getLogged();
 
@@ -132,6 +134,7 @@ class clienteController extends controllerAbstract{
             transactionManeger::init();
             transactionManeger::beginTransaction();
             if (clienteModel::set($nome,$id_funcionario,$id)){ 
+                $this->setSessionVar("clienteController",false);
                 transactionManeger::commit();
                 $this->go("cliente");
             }

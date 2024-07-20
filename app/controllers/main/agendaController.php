@@ -18,7 +18,9 @@ use app\models\main\funcionarioModel;
 
 class agendaController extends controllerAbstract{
 
-    public function index(){
+    public function index()
+    {
+        $this->setSessionVar("agendaController",false);
 
         $nome = $this->getValue("nome");
         $codigo = $this->getValue("codigo");
@@ -171,6 +173,7 @@ class agendaController extends controllerAbstract{
                 if($id_funcionario)
                     agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
                 mensagem::setSucesso("Agenda salva com sucesso");
+                $this->setSessionVar("agendaController",false);
                 transactionManeger::commit();
                 $this->go("agenda");
             }

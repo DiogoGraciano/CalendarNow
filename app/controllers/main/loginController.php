@@ -14,7 +14,8 @@ use app\controllers\main\cadastroController;
 class loginController extends controllerAbstract{
 
 
-    public function index($parameters){
+    public function index($parameters)
+    {
         $usuario= "";
         $senha = "";
         
@@ -73,17 +74,5 @@ class loginController extends controllerAbstract{
         $usuario = usuarioModel::getByCpfEmail($cpf_cnpj,$email);
 
         $this->go("usuario/manutencao/".functions::encrypt($usuario->id));
-    }
-
-    public function save($parameters){
-       
-        if(!$parameters)
-            $parameters = array();
-        
-        $usuarioController = new cadastroController;
-
-        $usuarioController->action($parameters,true);
-       
-    }
-    
+    } 
 }
