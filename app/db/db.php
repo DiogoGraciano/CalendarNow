@@ -1,8 +1,6 @@
 <?php
 namespace app\db;
 use Exception;
-use stdClass;
-
 
 /**
  * Classe base para interação com o banco de dados.
@@ -109,7 +107,7 @@ class db
     {
         // Inicia a Conexão
         if (!$this->pdo)
-            $this->pdo = connectionDb::getConnection();
+            $this->pdo = connection::getConnection();
 
         // Seta Tabela
         $this->table = $table;

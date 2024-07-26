@@ -11,7 +11,6 @@ use app\classes\footer;
 use app\classes\consulta;
 use app\classes\mensagem;
 use app\classes\filter;
-use app\classes\modal;
 use app\db\transactionManeger;
 use app\db\estado;
 use app\models\main\usuarioModel;

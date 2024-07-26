@@ -1,11 +1,13 @@
 <?php
-namespace app\db;
+namespace app\db\migrations;
+
+use app\db\connection;
 use Exception;
 
 /**
  * Classe base para criação do banco de dados.
  */
-class tableDb extends connectionDb
+class tableDb
 {
     /**
      * Nome da tabela.
@@ -74,7 +76,7 @@ class tableDb extends connectionDb
     function __construct(string $table,string $engine="InnoDB",string $collate="utf8mb4_general_ci",string $comment = "")
     {
         // Inicia a Conexão
-        $this->pdo = ConnectionDb::getConnection();
+        $this->pdo = connection::getConnection();
         
         $this->engine = $engine;
 

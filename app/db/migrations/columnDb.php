@@ -1,5 +1,6 @@
 <?php
-namespace app\db;
+namespace app\db\migrations;
+
 use stdClass;
 use Exception;
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace app\db;
+namespace app\db\abstract;
+
+use app\db\db;
 
 abstract class tableClassAbstract extends db{
 

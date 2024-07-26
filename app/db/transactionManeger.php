@@ -1,7 +1,7 @@
 <?php
 namespace app\db;
 
-use app\db\connectionDb;
+use app\db\connection;
 use Exception;
 
 class transactionManeger
@@ -17,7 +17,7 @@ class transactionManeger
     public static function init(): void
     {
         if (self::$pdo === null) {
-            self::$pdo = connectionDb::getConnection();
+            self::$pdo = connection::getConnection();
         }
     }
 

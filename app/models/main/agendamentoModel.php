@@ -4,7 +4,6 @@ namespace app\models\main;
 use app\classes\functions;
 use app\db\agendamento;
 use app\classes\mensagem;
-use app\db\agendamentoItem;
 
 /**
  * Classe agendamentoModel
@@ -324,7 +323,7 @@ class agendamentoModel{
                     $mensagens[] = "Numero maximo de agendamentos para o esse mês atingindo";
             }
             else 
-                $mensagens[] = "Nenhuma empresa não vinculada a agenda informada";
+                $mensagens[] = "Nenhuma empresa vinculada a agenda informada";
            
         }   
 

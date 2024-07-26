@@ -10,7 +10,7 @@ use PDOException;
 /**
  * Classe para configuração e obtenção da conexão com o banco de dados.
  */
-class ConnectionDb
+class connection
 {
     /**
      * Instância do objeto PDO para a conexão com o banco de dados.
@@ -20,7 +20,7 @@ class ConnectionDb
     private static $pdo = null;
 
     /**
-     * ConnectionDb constructor.
+     * connection constructor.
      * Privado para impedir a criação direta de instâncias (Singleton).
      */
     private function __construct() 
