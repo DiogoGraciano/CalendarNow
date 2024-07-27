@@ -66,6 +66,13 @@ class tableDb
     private $collate = "";
 
 
+   /**
+     * tabela tem foreningKey
+     *
+     * @var bool
+    */
+    private $hasForeingKey = false;
+
     /**
      * outros comandos.
      *
@@ -94,6 +101,10 @@ class tableDb
 
         if($column->primary)
             $this->primary[] = $column->name;
+
+        if($column->foreingKey){
+            $this->hasForeingKey = true;
+        }
 
         $column->columnSql = ["{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment}",$column->unique,$column->foreingKey," "];
 
@@ -330,6 +341,10 @@ class tableDb
                 throw new \Exception("Erro ao executar o sql: " . implode(", ", $sql->errorInfo()));
             }
         }
+    }
+
+    pubric function hasForeingKey(){
+        return $this->hasForeingKey;
     }
 
     public function getTable(){
