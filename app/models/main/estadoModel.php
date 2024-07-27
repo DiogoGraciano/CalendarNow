@@ -1,7 +1,7 @@
 <?php
 namespace app\models\main;
 
-use app\db\estado;
+use app\db\tables\estado;
 
 /**
  * Classe estadoModel

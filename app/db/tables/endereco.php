@@ -1,11 +1,11 @@
 <?php
-namespace app\tables;
+namespace app\db\tables;
 
-use app\db\abstract\tableClassAbstract;
+use app\db\abstract\tableAbstract;
 use app\db\migrations\tableDb;
 use app\db\migrations\columnDb;
 
-class endereco extends tableClassAbstract {
+class endereco extends tableAbstract {
     public const table = "endereco";
 
     public function __construct() {

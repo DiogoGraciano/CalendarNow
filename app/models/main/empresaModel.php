@@ -2,7 +2,7 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\empresa;
+use app\db\tables\empresa;
 use app\classes\mensagem;
 use stdClass;
 

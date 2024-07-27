@@ -1,9 +1,9 @@
 <?php
 namespace app\models\main;
 
-use app\db\grupoServico;
-use app\db\servicoGrupoServico;
-use app\db\servico;
+use app\db\tables\grupoServico;
+use app\db\tables\servicoGrupoServico;
+use app\db\tables\servico;
 use app\classes\mensagem;
 
 /**

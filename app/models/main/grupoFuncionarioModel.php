@@ -1,10 +1,10 @@
 <?php
 namespace app\models\main;
 
-use app\db\grupoFuncionario;
-use app\db\funcionario;
+use app\db\tables\grupoFuncionario;
+use app\db\tables\funcionario;
 use app\classes\mensagem;
-use app\db\funcionarioGrupoFuncionario;
+use app\db\tables\funcionarioGrupoFuncionario;
 
 /**
  * Classe grupoFuncionarioModel

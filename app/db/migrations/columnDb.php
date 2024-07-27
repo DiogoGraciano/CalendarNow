@@ -83,6 +83,7 @@ class columnDb
             $this->column->commentValue = "";
             $this->column->foreingTable = null;
             $this->column->foreingColumn = null;
+            $this->column->foreingTableClass = null;
             $this->column->foreingKey = "";
         }
         else 
@@ -109,6 +110,7 @@ class columnDb
         $this->column->foreingKey = "FOREIGN KEY ({$this->column->name}) REFERENCES {$foreingTable->getTable()}({$foreingColumn})";
         $this->column->foreingTable = $foreingTable->getTable();
         $this->column->foreingColumn = $foreingColumn;
+        $this->column->foreingTableClass = $tableDb;
         return $this;
     }
 

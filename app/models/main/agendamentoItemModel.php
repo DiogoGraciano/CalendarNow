@@ -1,7 +1,7 @@
 <?php
 namespace app\models\main;
 
-use app\db\agendamentoItem;
+use app\db\tables\agendamentoItem;
 use app\classes\mensagem;
 use app\classes\functions;
 use Exception;

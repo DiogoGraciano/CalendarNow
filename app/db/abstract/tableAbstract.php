@@ -4,7 +4,7 @@ namespace app\db\abstract;
 
 use app\db\db;
 
-abstract class tableClassAbstract extends db{
+abstract class tableAbstract extends db{
 
     public function __construct($table){
         parent::__construct($table);

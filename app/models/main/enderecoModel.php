@@ -1,7 +1,7 @@
 <?php
 namespace app\models\main;
 
-use app\db\endereco;
+use app\db\tables\endereco;
 use app\classes\mensagem;
 use app\classes\modelAbstract;
 use app\classes\functions;

@@ -1,6 +1,6 @@
 <?php 
 namespace app\models\main;
-use app\db\usuario;
+use app\db\tables\usuario;
 use app\classes\functions;
 use app\classes\mensagem;
 use app\models\main\loginModel;

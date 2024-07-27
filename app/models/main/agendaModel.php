@@ -1,9 +1,9 @@
 <?php 
 namespace app\models\main;
-use app\db\agenda;
-use app\db\funcionario;
-use app\db\agendaUsuario;
-use app\db\agendaFuncionario;
+use app\db\tables\agenda;
+use app\db\tables\funcionario;
+use app\db\tables\agendaUsuario;
+use app\db\tables\agendaFuncionario;
 use app\models\main\empresaModel;
 use app\classes\mensagem;
 use app\classes\modelAbstract;

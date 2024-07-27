@@ -1,11 +1,11 @@
 <?php
-namespace app\tables;
+namespace app\db\tables;
 
-use app\db\abstract\tableClassAbstract;
+use app\db\abstract\tableAbstract;
 use app\db\migrations\tableDb;
 use app\db\migrations\columnDb;
 
-class config extends tableClassAbstract {
+class config extends tableAbstract {
     public const table = "config";
 
     public function __construct() {

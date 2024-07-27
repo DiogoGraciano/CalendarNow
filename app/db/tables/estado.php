@@ -1,12 +1,12 @@
 <?php
-namespace app\tables;
+namespace app\db\tables;
 
-use app\db\abstract\tableClassAbstract;
+use app\db\abstract\tableAbstract;
 use app\db\migrations\tableDb;
 use app\db\migrations\columnDb;
 use app\db\db;
 
-class estado extends tableClassAbstract {
+class estado extends tableAbstract {
     public const table = "estado";
 
     public function __construct() {

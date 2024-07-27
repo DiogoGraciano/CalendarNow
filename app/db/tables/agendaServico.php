@@ -1,9 +1,9 @@
 <?php
-namespace app\tables;
+namespace app\db\tables;
 
-use app\db\abstract\tableClassAbstract;
+use app\db\abstract\tableAbstract;
 
-class agendaServico extends tableClassAbstract {
+class agendaServico extends tableAbstract {
     public const table = "agenda_servico";
 
     public function __construct() {

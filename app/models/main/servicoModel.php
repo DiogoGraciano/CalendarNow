@@ -2,11 +2,11 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\servico;
-use app\db\servicoFuncionario;
-use app\db\servicoGrupoServico;
+use app\db\tables\servico;
+use app\db\tables\servicoFuncionario;
+use app\db\tables\servicoGrupoServico;
 use app\classes\mensagem;
-use app\db\funcionario;
+use app\db\tables\funcionario;
 
 /**
  * Classe servicoModel

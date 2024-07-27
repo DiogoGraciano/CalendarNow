@@ -72,6 +72,13 @@ class tableDb
      * @var bool
     */
     private $hasForeingKey = false;
+    
+    /**
+     * array de classes das tabelas fk
+     *
+     * @var bool
+    */
+    private $foreningTablesClass = [];
 
     /**
      * outros comandos.
@@ -104,6 +111,7 @@ class tableDb
 
         if($column->foreingKey){
             $this->hasForeingKey = true;
+            $this->foreningTablesClass[] = $column->foreingTableClass;
         }
 
         $column->columnSql = ["{$column->name} {$column->type} {$column->null} {$column->defaut} {$column->comment}",$column->unique,$column->foreingKey," "];
@@ -346,9 +354,24 @@ class tableDb
     public function hasForeingKey(){
         return $this->hasForeingKey;
     }
+    
+    public function getFkTablesClass(){
+        return $this->foreningTablesClass;
+    }
 
     public function getTable(){
         return $this->table;
+    }
+    
+    public function exists()
+    {
+              $sql = $this->pdo->prepare('SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'" LIMIT 1');
+             
+              $sql->execute();
+      
+              $rows = [];
+      
+              return $sql->rowCount() > 0;   
     }
 
     //Pega as colunas da tabela e tranforma em Objeto

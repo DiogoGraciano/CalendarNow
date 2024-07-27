@@ -3,10 +3,10 @@ namespace app\models\main;
 
 use app\classes\functions;
 use app\classes\mensagem;
-use app\db\funcionario;
-use app\db\agenda;
-use app\db\funcionarioGrupoFuncionario;
-use app\db\agendaFuncionario;
+use app\db\tables\funcionario;
+use app\db\tables\agenda;
+use app\db\tables\funcionarioGrupoFuncionario;
+use app\db\tables\agendaFuncionario;
 
 /**
  * Classe funcionarioModel

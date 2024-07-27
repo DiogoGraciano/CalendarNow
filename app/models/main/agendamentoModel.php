@@ -2,7 +2,7 @@
 namespace app\models\main;
 
 use app\classes\functions;
-use app\db\agendamento;
+use app\db\tables\agendamento;
 use app\classes\mensagem;
 
 /**

@@ -1,7 +1,7 @@
 <?php
 namespace app\models\main;
 
-use app\db\cliente;
+use app\db\tables\cliente;
 use app\classes\mensagem;
 
 /**

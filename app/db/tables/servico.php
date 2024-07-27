@@ -1,13 +1,13 @@
 <?php
-namespace app\tables;
+namespace app\db\tables;
 
-use app\db\abstract\tableClassAbstract;
+use app\db\abstract\tableAbstract;
 use app\db\migrations\tableDb;
 use app\db\migrations\columnDb;
 use app\db\db;
 
 
-class servico extends tableClassAbstract {
+class servico extends tableAbstract {
     public const table = "servico";
 
     public function __construct() {

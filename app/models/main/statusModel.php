@@ -1,6 +1,6 @@
 <?php 
 namespace app\models\main;
-use app\db\status;
+use app\db\tables\status;
 use app\classes\mensagem;
 
 /**
