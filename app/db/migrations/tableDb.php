@@ -343,7 +343,7 @@ class tableDb
         }
     }
 
-    pubric function hasForeingKey(){
+    public function hasForeingKey(){
         return $this->hasForeingKey;
     }
 
