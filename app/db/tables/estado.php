@@ -1,12 +1,12 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 use app\db\db;
 
-class estado extends tableAbstract {
+class estado extends model {
     public const table = "estado";
 
     public function __construct() {
@@ -14,17 +14,17 @@ class estado extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("estado",comment:"Tabela de estados"))
-                ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID da cidade"))
-                ->addColumn((new columnDb("nome","VARCHAR",120))->isNotNull()->setComment("Nome do estado"))
-                ->addColumn((new columnDb("uf","VARCHAR",2))->isNotNull()->setComment("nome da Uf"))
-                ->addColumn((new columnDb("pais","INT"))->isNotNull()->isForeingKey(pais::table())->setComment("id da pais do estado"))
-                ->addColumn((new columnDb("ibge","INT"))->isUnique()->setComment("id do IBJE do estado"))
-                ->addColumn((new columnDb("ddd","VARCHAR",50))->setComment("DDDs separado por , da Uf"));
+        return (new table(self::table,comment:"Tabela de estados"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID da cidade"))
+                ->addColumn((new column("nome","VARCHAR",120))->isNotNull()->setComment("Nome do estado"))
+                ->addColumn((new column("uf","VARCHAR",2))->isNotNull()->setComment("nome da Uf"))
+                ->addColumn((new column("pais","INT"))->isNotNull()->isForeingKey(pais::table())->setComment("id da pais do estado"))
+                ->addColumn((new column("ibge","INT"))->isUnique()->setComment("id do IBJE do estado"))
+                ->addColumn((new column("ddd","VARCHAR",50))->setComment("DDDs separado por , da Uf"));
     }
 
     public static function seed(){
-        $object = new db("estado");
+        $object = new db(self::table);
         if(!$object->addLimit(1)->selectColumns("id")){
             $object->nome = "Acre";
             $object->uf = "AC";

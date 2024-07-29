@@ -1,11 +1,11 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-class empresa extends tableAbstract {
+class empresa extends model {
     public const table = "empresa";
 
     public function __construct() {
@@ -13,13 +13,13 @@ class empresa extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("empresa",comment:"Tabela de empresas"))
-                ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID do cliente"))
-                ->addColumn((new columnDb("nome","VARCHAR",300))->isNotNull()->isUnique()->setComment("Nome da empresa"))
-                ->addColumn((new columnDb("email","VARCHAR",300))->isNotNull()->setComment("Email da empresa"))
-                ->addColumn((new columnDb("telefone","VARCHAR",13))->isNotNull()->setComment("Telefone da empresa"))
-                ->addColumn((new columnDb("cnpj","VARCHAR",14))->isNotNull()->setComment("CNPJ da empresa"))
-                ->addColumn((new columnDb("razao","VARCHAR",300))->isNotNull()->isUnique()->setComment("Razão social da empresa"))
-                ->addColumn((new columnDb("fantasia","VARCHAR",300))->isNotNull()->setComment("Nome fantasia da empresa"));
+        return (new table(self::table,comment:"Tabela de empresas"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID do cliente"))
+                ->addColumn((new column("nome","VARCHAR",300))->isNotNull()->isUnique()->setComment("Nome da empresa"))
+                ->addColumn((new column("email","VARCHAR",300))->isNotNull()->setComment("Email da empresa"))
+                ->addColumn((new column("telefone","VARCHAR",13))->isNotNull()->setComment("Telefone da empresa"))
+                ->addColumn((new column("cnpj","VARCHAR",14))->isNotNull()->setComment("CNPJ da empresa"))
+                ->addColumn((new column("razao","VARCHAR",300))->isNotNull()->isUnique()->setComment("Razão social da empresa"))
+                ->addColumn((new column("fantasia","VARCHAR",300))->isNotNull()->setComment("Nome fantasia da empresa"));
     }
 }

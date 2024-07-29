@@ -1,21 +1,20 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-class usuarioBloqueio extends tableAbstract {
+class usuarioBloqueio extends model {
     public const table = "usuario_bloqueio";
 
     public function __construct() {
         parent::__construct(self::table);
     }
 
-    public static function table($recreate){
-        return (new tableDb("usuario_bloqueio", comment: "Tabela de usuários"))
-                ->addColumn((new columnDb("id_usuario", "INT"))->isPrimary()->isForeingKey(usuario::table())->isNotNull()->setComment("ID do usuário"))
-                ->addColumn((new columnDb("id_empresa", "INT"))->isPrimary()->isForeingKey(empresa::table())->setComment("ID da empresa"))
-                ->execute();
+    public static function table(){
+        return (new table(self::table, comment: "Tabela de usuários"))
+                ->addColumn((new column("id_usuario", "INT"))->isPrimary()->isForeingKey(usuario::table())->isNotNull()->setComment("ID do usuário"))
+                ->addColumn((new column("id_empresa", "INT"))->isPrimary()->isForeingKey(empresa::table())->setComment("ID da empresa"));
     }
 }

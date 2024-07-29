@@ -1,11 +1,11 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-class endereco extends tableAbstract {
+class endereco extends model {
     public const table = "endereco";
 
     public function __construct() {
@@ -13,16 +13,16 @@ class endereco extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("endereco",comment:"Tabela de endereços"))
-            ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID do estado"))
-            ->addColumn((new columnDb("id_usuario","INT"))->isForeingKey(usuario::table())->setComment("ID da tabela usuario"))
-            ->addColumn((new columnDb("id_empresa","INT"))->isForeingKey(empresa::table())->setComment("ID da tabela empresa"))
-            ->addColumn((new columnDb("cep","VARCHAR",8))->isNotNull()->setComment("CEP"))
-            ->addColumn((new columnDb("id_cidade","INT"))->isForeingKey(cidade::table())->setComment("ID da tabela estado"))
-            ->addColumn((new columnDb("id_estado","INT"))->isForeingKey(estado::table())->setComment("ID da tabela cidade"))
-            ->addColumn((new columnDb("bairro","VARCHAR",300))->isNotNull()->setComment("Bairro"))
-            ->addColumn((new columnDb("rua","VARCHAR",300))->isNotNull()->setComment("Rua"))
-            ->addColumn((new columnDb("numero","INT"))->isNotNull()->setComment("Numero"))
-            ->addColumn((new columnDb("complemento","VARCHAR",300))->setComment("Complemento do endereço"));
+        return (new table(self::table,comment:"Tabela de endereços"))
+            ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID do estado"))
+            ->addColumn((new column("id_usuario","INT"))->isForeingKey(usuario::table())->setComment("ID da tabela usuario"))
+            ->addColumn((new column("id_empresa","INT"))->isForeingKey(empresa::table())->setComment("ID da tabela empresa"))
+            ->addColumn((new column("cep","VARCHAR",8))->isNotNull()->setComment("CEP"))
+            ->addColumn((new column("id_cidade","INT"))->isForeingKey(cidade::table())->setComment("ID da tabela estado"))
+            ->addColumn((new column("id_estado","INT"))->isForeingKey(estado::table())->setComment("ID da tabela cidade"))
+            ->addColumn((new column("bairro","VARCHAR",300))->isNotNull()->setComment("Bairro"))
+            ->addColumn((new column("rua","VARCHAR",300))->isNotNull()->setComment("Rua"))
+            ->addColumn((new column("numero","INT"))->isNotNull()->setComment("Numero"))
+            ->addColumn((new column("complemento","VARCHAR",300))->setComment("Complemento do endereço"));
     }
 } 

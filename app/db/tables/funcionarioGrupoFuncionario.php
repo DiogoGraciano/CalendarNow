@@ -1,21 +1,20 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-class funcionarioGrupoFuncionario extends tableAbstract {
+class funcionarioGrupoFuncionario extends model {
     public const table = "funcionario_grupo_funcionario";
 
     public function __construct() {
         parent::__construct(self::table);
     }
 
-    public static function table($recreate){
-        $funcionarioGrupoFuncionarioTb = new tableDb("funcionario_grupo_funcionario", comment: "Tabela de relacionamento entre funcionarios e grupos de funcionarios");
-        $funcionarioGrupoFuncionarioTb->addColumn((new columnDb("id_funcionario", "INT"))->isNotNull()->setComment("ID do funcionario")->isForeingKey($funcionarioTb))
-                              ->addColumn((new columnDb("id_grupo_funcionario", "INT"))->isNotNull()->setComment("ID do grupo de funcionarios")->isForeingKey($grupoFuncionarioTb))
-                              ->execute($recreate);
+    public static function table(){
+        return (new table(self::table, comment: "Tabela de relacionamento entre funcionarios e grupos de funcionarios"))
+                ->addColumn((new column("id_funcionario", "INT"))->isNotNull()->setComment("ID do funcionario")->isForeingKey(funcionario::table()))
+                ->addColumn((new column("id_grupo_funcionario", "INT"))->isNotNull()->setComment("ID do grupo de funcionarios")->isForeingKey(grupoFuncionario::table()));
     }
 }

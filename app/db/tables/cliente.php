@@ -1,11 +1,11 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-class cliente extends tableAbstract {
+class cliente extends model {
     public const table = "cliente";
 
     public function __construct() {
@@ -13,9 +13,9 @@ class cliente extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("cliente",comment:"Tabela de clientes"))
-                ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID do cliente"))
-                ->addColumn((new columnDb("nome","VARCHAR",300))->isNotNull()->setComment("Nome do cliente"))
-                ->addColumn((new columnDb("id_funcionario","INT"))->isForeingKey(funcionario::table())->setComment("id funcionario"));
+        return (new table(self::table,comment:"Tabela de clientes"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID do cliente"))
+                ->addColumn((new column("nome","VARCHAR",300))->isNotNull()->setComment("Nome do cliente"))
+                ->addColumn((new column("id_funcionario","INT"))->isForeingKey(funcionario::table())->setComment("id funcionario"));
     }
 }

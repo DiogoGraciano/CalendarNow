@@ -1,11 +1,12 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
+use app\db\db;
 
-class status extends tableAbstract {
+class status extends model {
     public const table = "status";
 
     public function __construct() {
@@ -13,8 +14,22 @@ class status extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("status",comment:"Tabela de status"))
-                ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID agenda"))
-                ->addColumn((new columnDb("nome","VARCHAR",250))->isNotNull()->setComment("Status do agendamento"));
+        return (new table(self::table,comment:"Tabela de status"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID agenda"))
+                ->addColumn((new column("nome","VARCHAR",250))->isNotNull()->setComment("Status do agendamento"));
+    }
+
+    public static function seed(){
+        $object = new db(self::table);
+        if(!$object->addLimit(1)->selectColumns("id")){
+            $object->nome = "Agendado";
+            $object->store();
+            $object->nome = "Finalizado";
+            $object->store();
+            $object->nome = "Não atendido";
+            $object->store();
+            $object->nome = "Cancelado";
+            $object->store();
+        }
     }
 }

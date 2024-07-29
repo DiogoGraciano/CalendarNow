@@ -1,13 +1,11 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
-use app\db\db;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-
-class servico extends tableAbstract {
+class servico extends model {
     public const table = "servico";
 
     public function __construct() {
@@ -15,25 +13,13 @@ class servico extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("servico", comment: "Tabela de serviços"))
-                ->addColumn((new columnDb("id", "INT"))->isPrimary()->isNotNull()->setComment("ID do serviço"))
-                ->addColumn((new columnDb("nome", "VARCHAR", 250))->isNotNull()->setComment("Nome do serviço"))
-                ->addColumn((new columnDb("valor", "DECIMAL", "14,2"))->isNotNull()->setComment("Valor do serviço"))
-                ->addColumn((new columnDb("tempo", "TIME"))->isNotNull()->setComment("Tempo do serviço"))
-                ->addColumn((new columnDb("id_empresa", "INT"))->isNotNull()->setComment("ID da empresa"));
+        return (new table(self::table, comment: "Tabela de serviços"))
+                ->addColumn((new column("id", "INT"))->isPrimary()->isNotNull()->setComment("ID do serviço"))
+                ->addColumn((new column("nome", "VARCHAR", 250))->isNotNull()->setComment("Nome do serviço"))
+                ->addColumn((new column("valor", "DECIMAL", "14,2"))->isNotNull()->setComment("Valor do serviço"))
+                ->addColumn((new column("tempo", "TIME"))->isNotNull()->setComment("Tempo do serviço"))
+                ->addColumn((new column("id_empresa", "INT"))->isNotNull()->setComment("ID da empresa"));
     }
 
-    public static function seed(){
-        $object = new db("status");
-        if(!$object->addLimit(1)->selectColumns("id")){
-                $object->nome = "Agendado";
-                $object->store();
-                $object->nome = "Finalizado";
-                $object->store();
-                $object->nome = "Não atendido";
-                $object->store();
-                $object->nome = "Cancelado";
-                $object->store();
-        }
-    }
+   
 }

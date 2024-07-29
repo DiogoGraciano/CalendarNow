@@ -7,7 +7,7 @@ use Exception;
 /**
  * Classe base para criação do banco de dados.
  */
-class tableDb
+class table
 {
     /**
      * Nome da tabela.
@@ -103,7 +103,7 @@ class tableDb
         }
     }
 
-    public function addColumn(columnDb $column){
+    public function addColumn(column $column){
         $column = $column->getColumn();
 
         if($column->primary)
@@ -151,7 +151,7 @@ class tableDb
     }
 
     private function create(){
-        $sql = "DROP TABLE IF EXISTS {$this->table};CREATE TABLE IF NOT EXISTS {$this->table}(";
+        $sql = "SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS {$this->table};CREATE TABLE IF NOT EXISTS {$this->table}(";
         foreach ($this->columns as $column) {            
             $sql .= str_replace(" , ","",implode(",",array_filter($column->columnSql)));
         }
@@ -171,7 +171,7 @@ class tableDb
             $sql .= $index["sql"];
         }
 
-        $sql = str_replace(",)",")",$sql);
+        $sql = str_replace(",)",")",$sql)." SET FOREIGN_KEY_CHECKS = 1;";
 
         $sql = $this->pdo->prepare($sql);
         if (!$sql) {
@@ -196,18 +196,19 @@ class tableDb
             return $this->create();
         }
 
-        foreach ($table as $columnDb){
-            if(!in_array($columnDb["COLUMN_NAME"],array_keys($this->columns))){
-                $sql .= "ALTER TABLE {$this->table} DROP COLUMN {$columnDb};";
+        foreach ($table as $column){
+            if(!in_array($column["COLUMN_NAME"],array_keys($this->columns))){
+                $coluna = $column["COLUMN_NAME"];
+                $sql .= "ALTER TABLE {$this->table} DROP COLUMN {$coluna};";
                 break;
             }  
         }
-        
+
         foreach ($this->columns as $column) {
 
             $inDb = false;
-            foreach ($table as $columnDb){
-                if($columnDb["COLUMN_NAME"] == $column->name){
+            foreach ($table as $tablecolumn){
+                if($tablecolumn["COLUMN_NAME"] == $column->name){
                     $inDb = true;
                     break;
                 }
@@ -351,11 +352,11 @@ class tableDb
         }
     }
 
-    public function hasForeingKey(){
+    public function hasForeignKey(){
         return $this->hasForeingKey;
     }
     
-    public function getFkTablesClass(){
+    public function getForeignKeyTablesClasses(){
         return $this->foreningTablesClass;
     }
 
@@ -365,13 +366,11 @@ class tableDb
     
     public function exists()
     {
-              $sql = $this->pdo->prepare('SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'" LIMIT 1');
-             
-              $sql->execute();
-      
-              $rows = [];
-      
-              return $sql->rowCount() > 0;   
+        $sql = $this->pdo->prepare('SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "'.$this->table.'" LIMIT 1');
+        
+        $sql->execute();
+
+        return $sql->rowCount() > 0;   
     }
 
     //Pega as colunas da tabela e tranforma em Objeto

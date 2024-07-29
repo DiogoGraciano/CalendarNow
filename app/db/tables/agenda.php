@@ -1,12 +1,11 @@
 <?php
-namespace app\tables;
+namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 
-
-class agenda extends tableAbstract {
+class agenda extends model {
     public const table = "agenda";
 
     public function __construct() {
@@ -14,10 +13,10 @@ class agenda extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("agenda",comment:"Tabela de agendas"))
-                ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID agenda"))
-                ->addColumn((new columnDb("id_empresa","INT"))->isNotNull()->isForeingKey(empresa::table())->setComment("ID da tabela empresa"))
-                ->addColumn((new columnDb("nome","VARCHAR",250))->isNotNull()->setComment("Nome da agenda"))
-                ->addColumn((new columnDb("codigo","VARCHAR",7))->isNotNull()->setComment("Codigo da agenda"));
+        return (new table(self::table,comment:"Tabela de agendas"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID agenda"))
+                ->addColumn((new column("id_empresa","INT"))->isNotNull()->isForeingKey(empresa::table())->setComment("ID da tabela empresa"))
+                ->addColumn((new column("nome","VARCHAR",250))->isNotNull()->setComment("Nome da agenda"))
+                ->addColumn((new column("codigo","VARCHAR",7))->isNotNull()->setComment("Codigo da agenda"));
     }
 }

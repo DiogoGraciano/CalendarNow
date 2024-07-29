@@ -1,12 +1,12 @@
 <?php
 namespace app\db\tables;
 
-use app\db\abstract\tableAbstract;
-use app\db\migrations\tableDb;
-use app\db\migrations\columnDb;
+use app\db\abstract\model;
+use app\db\migrations\table;
+use app\db\migrations\column;
 use app\db\db;
 
-class pais extends tableAbstract {
+class pais extends model {
     public const table = "pais";
 
     public function __construct() {
@@ -14,14 +14,14 @@ class pais extends tableAbstract {
     }
 
     public static function table(){
-        return (new tableDb("pais",comment:"Tabela de paises"))
-                ->addColumn((new columnDb("id","INT"))->isPrimary()->setComment("ID da pais"))
-                ->addColumn((new columnDb("nome","VARCHAR",250))->isNotNull()->setComment("Nome do pais"))
-                ->addColumn((new columnDb("nome_internacial","VARCHAR",250))->isNotNull()->setComment("nome internacial do pais"));
+        return (new table(self::table,comment:"Tabela de paises"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID da pais"))
+                ->addColumn((new column("nome","VARCHAR",250))->isNotNull()->setComment("Nome do pais"))
+                ->addColumn((new column("nome_internacial","VARCHAR",250))->isNotNull()->setComment("nome internacial do pais"));
     }
 
     public static function seed(){
-        $object = new db("pais");
+        $object = new db(self::table);
         if(!$object->addLimit(1)->selectColumns("id")){
             $object->nome = "Brasil";
             $object->nome_internacial = "Brazil";
