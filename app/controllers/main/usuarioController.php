@@ -12,7 +12,7 @@ use app\classes\consulta;
 use app\classes\mensagem;
 use app\classes\filter;
 use app\db\transactionManeger;
-use app\db\estado;
+use app\db\tables\estado;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
 use app\models\main\enderecoModel;

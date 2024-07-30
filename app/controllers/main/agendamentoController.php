@@ -158,9 +158,11 @@ class agendamentoController extends controllerAbstract{
                 ->addCustomInput(6,$usuario)
                 ->addCustomInput(6,$agenda)
                 ->setCustomInputs();
+
+            $form->addCustomInput(12,$status);
         }
 
-        $form->addCustomInput(12,$status)
+        $form
         ->addCustomInput("6",$elements->input("dt_ini","Data Inicial:",$dado->dt_ini?:$dt_ini,true,true,"","datetime-local","form-control form-control-date"),"dt_ini")
         ->addCustomInput("6",$elements->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,true,"","datetime-local","form-control form-control-date"),"dt_fim")
         ->setCustomInputs();
@@ -244,7 +246,7 @@ class agendamentoController extends controllerAbstract{
         $dt_ini = $this->getValue('dt_ini');
         $dt_fim = $this->getValue('dt_fim');
         $qtd_servico = intval($this->getValue("qtd_servico"));
-        $status = intval($this->getValue("status"));
+        $status = intval($this->getValue("status"))?:1;
         $id_agenda = $this->getValue("id_agenda"); 
         $id_funcionario = functions::decrypt($this->getValue("id_funcionario"));
         $cor = $this->getValue('cor');
@@ -277,14 +279,14 @@ class agendamentoController extends controllerAbstract{
             $cliente = clienteModel::get($id_cliente);
 
             if (isset($cliente->id))
-                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,$cor,0,$status,$obs,null,$cliente->id,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$cliente->nome,$dt_ini,$dt_fim,0,$status,$cor,$obs,null,$cliente->id,$id);
         }
         elseif($user->tipo_usuario == 3) 
-            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,$cor,0,$status,$obs,$user->id,null,$id);
+            $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$user->nome,$dt_ini,$dt_fim,0,$status,$cor,$obs,$user->id,null,$id);
         elseif($usuario = $this->getValue('usuario')){
             $usuario = usuarioModel::get($usuario);
             if ($usuario)
-                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,$cor,0,$status,$obs,$usuario->id,null,$id);
+                $id_agendamento = agendamentoModel::set($id_agenda,$id_funcionario,$usuario->nome,$dt_ini,$dt_fim,0,$status,$cor,$obs,$usuario->id,null,$id);
         }
         else{
             mensagem::setErro("Selecione um usuario ou cliente");

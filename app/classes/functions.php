@@ -63,6 +63,7 @@ class functions{
      * @return string|bool A string formatada ou false se falhar
      */
     public static function dateTimeBd(string $string){
+        var_dump($string);
         $datetime = new \DateTimeImmutable($string);
         if ($datetime !== false)
             return $datetime->format('Y-m-d H:i:s');

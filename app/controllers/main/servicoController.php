@@ -118,7 +118,7 @@ class servicoController extends controllerAbstract{
 
         $elements = new elements;
 
-        if (array_key_exists(0,$parameters)){
+        if ($parameters && array_key_exists(0,$parameters)){
             $id = functions::decrypt($parameters[0]);
             $form->setHidden("cd",$parameters[0]);
         }

@@ -231,7 +231,7 @@ class agendamentoModel{
      * @param int $id O ID do agendamento (opcional).
      * @return string|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,string $cor,float $total,int $id_status,string $obs = null,int $id_usuario = null,int $id_cliente = null,int $id=null):int|bool
+    public static function set(int $id_agenda,int $id_funcionario,string $titulo,string $dt_ini,string $dt_fim,float $total,int $id_status,string|null $cor = null,string|null $obs = null,int|null $id_usuario = null,int|null $id_cliente = null,int|null $id=null):int|bool
     {
 
         $values = new agendamento;
@@ -275,7 +275,7 @@ class agendamentoModel{
             $mensagens[] = "Data final invalida";
         }
 
-        if(!$values->cor = functions::validaCor($cor)){
+        if(!$values->cor = functions::validaCor($cor?:"#4267b2")){
             $mensagens[] = "Cor invalida";
         }
 

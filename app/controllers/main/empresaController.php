@@ -10,7 +10,7 @@ use app\classes\consulta;
 use app\classes\footer;
 use app\classes\functions;
 use app\classes\mensagem;
-use app\db\estado;
+use app\db\tables\estado;
 use app\db\transactionManeger;
 use app\models\main\usuarioModel;
 use app\models\main\enderecoModel;
@@ -54,7 +54,7 @@ class empresaController extends controllerAbstract {
         if ($parameters && array_key_exists(0, $parameters)){
             $location = $parameters[0];
         }
-        if (array_key_exists(1, $parameters)){
+        if ($parameters && array_key_exists(1, $parameters)){
             $id = intval(functions::decrypt($parameters[1])); 
         }
       
@@ -211,7 +211,7 @@ class empresaController extends controllerAbstract {
                     mensagem::setSucesso("Usuario empresarial salvo com sucesso");
                     $this->setSessionVar("empresaController",false);
                     transactionManeger::commit();
-                    $this->go($location?:"login/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
+                    $this->go($location?:"login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                 }
             }
         } catch (\Exception $e) {
