@@ -162,10 +162,10 @@ class agendamentoModel{
         }
 
         if($onlyActive){
-            $db->addFilter("agendamento.status","NOT IN","(3,4)");
+            $db->addFilter("agendamento.id_status","IN",[1,2]);
         }
         
-        $result =  $db->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
+        $result =  $db->setDebug()->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
                     
         return $result;
     }
@@ -291,13 +291,14 @@ class agendamentoModel{
             if(($empresa = empresaModel::getByAgenda($id_agenda))){
 
                 $now = (new \DateTimeImmutable())->format("Y-m-d");
-                $primeiroDiaMes = (new \DateTimeImmutable("Y-m-01"))->format("Y-m-d");
-                $ultimoDiaMes = (new \DateTimeImmutable("Y-m-t"))->format("Y-m-d");
+                $primeiroDiaMes = (new \DateTimeImmutable())->format("Y-m")."-01";
+                $ultimoDiaMes = (new \DateTimeImmutable("now"))->modify('last day of this month')->format("Y-m-d");
                 $primeiroDiaSemana = date("Y-m-d", strtotime('monday this week', strtotime($now)));
                 $ultimoDiaSemana = date("Y-m-d", strtotime('sunday this week', strtotime($now)));
                 
                 $agendamentos = self::getAgendamentosByUsuario($id_usuario,$primeiroDiaMes,$ultimoDiaMes,true);
 
+                die;
                 $dia = 0;
                 $semana = 0;
                 $mes = 0;

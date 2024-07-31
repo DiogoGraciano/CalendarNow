@@ -376,7 +376,7 @@ class db
                         $sql_instruction .= "{$key}=?,";
                         $this->valuesBind[$this->counterBind] = [
                             $data,
-                            is_string($data) ? \PDO::PARAM_STR : (is_int($data) || is_float($data) ? \PDO::PARAM_INT : \PDO::PARAM_NULL)
+                            $this->getParamPdo($value)
                         ];
                         $this->counterBind++;
                     }
@@ -407,6 +407,7 @@ class db
 
                 $this->lastid = $objectFilter[$this->columns[0]];
                 $this->clean();
+                $this->executeSql($sql_instruction);
                 return true;
             }
             throw new Exception('Tabela: '.$this->table." Objeto não está setado");
@@ -443,7 +444,7 @@ class db
                     $valuesBD .= "?,";
                     $this->valuesBind[$this->counterBind] = [
                         $data,
-                        is_string($data) ? \PDO::PARAM_STR : (is_int($data) || is_float($data) ? \PDO::PARAM_INT : \PDO::PARAM_NULL)
+                        $this->getParamPdo($value)
                     ];
                     $this->counterBind++;
                 }
@@ -451,17 +452,9 @@ class db
                 $sql_instruction .= $keysBD . ") VALUES (";
                 $valuesBD = rtrim($valuesBD, ",");
                 $sql_instruction .= $valuesBD . ");";
-                $sql = $this->pdo->prepare($sql_instruction);
-                foreach ($this->valuesBind as $key => $data) {
-                    $sql->bindParam($key,$data[0],$data[1]);
-                }
+               
+                $this->executeSql($sql_instruction);
 
-                $sql->execute();
-
-                if ($this->debug)
-                    $sql->debugDumpParams();
-
-                $this->clean();
                 return true;
             }
         } catch (\Exception $e) {
@@ -516,17 +509,8 @@ class db
                 throw new Exception('Tabela: '.$this->table.' Filtros devem ser informados');
             }
 
-            $stmt = $this->pdo->prepare($sql);
-            foreach ($this->valuesBind as $key => $data) {
-                $stmt->bindParam($key, $data[0], $data[1]);
-            }
-
-            $stmt->execute();
-
-            if ($this->debug)
-                $stmt->debugDumpParams();
-
-            $this->clean();
+            $this->executeSql($sql);
+            
             return true;
         } catch (Exception $e) {
             throw new Exception('Tabela: '.$this->table.' '.$e->getMessage());
@@ -543,22 +527,45 @@ class db
      * @param string $operator Operador lógico (AND ou OR).
      * @return db Retorna a instância atual da classe.
      */
-    public function addFilter($field,$logicalOperator,$value,$operatorCondition = Db::AND):DB
+    public function addFilter(string $field,string $logicalOperator,mixed $value,string $operatorCondition = db::AND):DB
     {
         $operatorCondition = strtoupper(trim($operatorCondition));
         if (!in_array($operatorCondition, [self::AND, self::OR])) {
-            $this->error[] = "Filtro inválido";
-            return $this;
+            throw new Exception('Tabela: '.$this->table.' Filtro invalido');
         }
 
-        $this->valuesBind[$this->counterBind] = [
-            $value,
-            is_string($value) ? \PDO::PARAM_STR : (is_int($value) || is_float($value) ? \PDO::PARAM_INT : \PDO::PARAM_NULL)
-        ];
-        $this->counterBind++;
+        if(str_contains(strtolower($logicalOperator),"in")){
+            if(!is_array($value))
+                throw new Exception('Tabela: '.$this->table.' Para operadores (IN) o valor precisa ser um array'); 
 
-        $filter = " " . $operatorCondition . " " . $field . " " . $logicalOperator . " ? ";
-        $this->filters[] = $filter;
+            $inValue = "(";
+            foreach ($value as $data) {
+                $this->valuesBind[$this->counterBind] = [
+                    $data,
+                    $this->getParamPdo($data)
+                ];
+                $this->counterBind++;
+
+                $inValue .= "?,";
+            }
+
+            $inValue = rtrim($inValue,",");
+            $inValue .= ")";
+
+            $filter = " " . $operatorCondition . " " . $field . " " . $logicalOperator . " " .$inValue;
+            $this->filters[] = $filter;
+        }
+        else{
+            $this->valuesBind[$this->counterBind] = [
+                $value,
+                $this->getParamPdo($value)
+            ];
+            $this->counterBind++;
+
+            $filter = " " . $operatorCondition . " " . $field . " " . $logicalOperator . " ? ";
+            $this->filters[] = $filter;
+        }
+
         return $this;
     }
 
@@ -621,13 +628,33 @@ class db
     {
         $typeJoin = strtoupper(trim($typeJoin));
         if (!in_array($typeJoin, ["LEFT", "RIGHT", "INNER", "OUTER", "FULL OUTER", "LEFT OUTER", "RIGHT OUTER"])) {
-            $this->error[] = "JOIN inválido";
-            return $this;
+            throw new Exception('Tabela: '.$this->table.' Filtro invalido');
         }
 
         $join = " " . $typeJoin . " JOIN " . $table . " ON " . $columnTable .$logicalOperator .$columnRelation . " ";
         $this->joins[] = $join;
         return $this;
+    }
+
+    private function executeSql($sql_instruction){
+
+        if ($this->debug)
+            $sql->debugDumpParams();
+
+        $sql = $this->pdo->prepare($sql_instruction);
+
+        if($this->valuesBind){
+            foreach ($this->valuesBind as $key => $data) {
+                $sql->bindParam($key,$data[0],$data[1]);
+            }
+        }
+        
+        $sql->execute();
+
+        if ($this->debug)
+            $sql->debugDumpParams();
+
+        $this->clean();
     }
 
     /**
@@ -640,6 +667,21 @@ class db
         $this->filters = [];
         $this->valuesBind = [];
         $this->counterBind = 1;
+    }
+
+    /**
+     * retorna o parametro para fazer o bindValue no PDO.
+    */
+    private function getParamPdo($value)
+    {
+        if(is_int($value))
+            return \PDO::PARAM_INT;
+        elseif(is_bool($value))
+            return \PDO::PARAM_BOOL;
+        elseif(is_null($value))
+            return \PDO::PARAM_NULL;
+        else
+            return \PDO::PARAM_STR;
     }
 
 }
