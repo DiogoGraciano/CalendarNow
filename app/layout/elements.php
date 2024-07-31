@@ -1,6 +1,8 @@
 <?php
-namespace app\classes;
+
+namespace app\layout;
 use app\db\db;
+use app\layout\abstract\pagina;
 
 /**
  * Classe elements é responsável por gerar diversos elementos HTML, como botões, labels, checkboxes, inputs, textareas, selects e datalists.

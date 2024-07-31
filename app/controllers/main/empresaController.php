@@ -2,14 +2,14 @@
 
 namespace app\controllers\main;
 
-use app\classes\head;
-use app\classes\form;
-use app\classes\elements;
-use app\classes\controllerAbstract;
-use app\classes\consulta;
-use app\classes\footer;
-use app\classes\functions;
-use app\classes\mensagem;
+use app\layout\head;
+use app\layout\form;
+use app\layout\elements;
+use app\controllers\abstract\controller;
+use app\layout\consulta;
+use app\layout\footer;
+use app\helpers\functions;
+use app\helpers\mensagem;
 use app\db\tables\estado;
 use app\db\transactionManeger;
 use app\models\main\usuarioModel;
@@ -17,11 +17,13 @@ use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
 use app\models\main\empresaModel;
 use app\models\main\configuracoesModel;
+use core\session;
 
-
-class empresaController extends controllerAbstract {
+class empresaController extends controller {
 
     public function index($parameters = []){
+
+        session::set("empresaController",false);
     
         $head = new head();
         $head->show("cadastro", "consulta");
@@ -63,13 +65,13 @@ class empresaController extends controllerAbstract {
         $head = new head();
         $head->show("Cadastro", "");
 
-        $dado = isset($this->getSessionVar("empresaController")->usuario)?$this->getSessionVar("empresaController")->usuario:usuarioModel::get($id);
+        $dado = isset(session::get("empresaController")->usuario)?session::get("empresaController")->usuario:usuarioModel::get($id);
         $form->setHidden("cd", $dado->id);
 
-        $dadoEndereco = isset($this->getSessionVar("empresaController")->endereco)?$this->getSessionVar("empresaController")->endereco:enderecoModel::get($dado->id, "id_usuario");
+        $dadoEndereco = isset(session::get("empresaController")->endereco)?session::get("empresaController")->endereco:enderecoModel::get($dado->id, "id_usuario");
         $form->setHidden("id_endereco", $dadoEndereco->id);
 
-        $dadoEmpresa = isset($this->getSessionVar("empresaController")->empresa)?$this->getSessionVar("empresaController")->empresa:empresaModel::get($dado->id_empresa);
+        $dadoEmpresa = isset(session::get("empresaController")->empresa)?session::get("empresaController")->empresa:empresaModel::get($dado->id_empresa);
         $form->setHidden("id_empresa", $dadoEmpresa->id);
 
         $elements = new elements();
@@ -186,7 +188,7 @@ class empresaController extends controllerAbstract {
         $usuario->endereco->numero      = $numero;
         $usuario->endereco->complemento = $complemento;
 
-        $this->setSessionVar("empresaController",$usuario);
+        session::set("empresaController",$usuario);
 
         try {
 
@@ -209,7 +211,7 @@ class empresaController extends controllerAbstract {
                     }
 
                     mensagem::setSucesso("Usuario empresarial salvo com sucesso");
-                    $this->setSessionVar("empresaController",false);
+                    session::set("empresaController",false);
                     transactionManeger::commit();
                     $this->go($location?:"login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                 }

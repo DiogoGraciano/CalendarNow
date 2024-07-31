@@ -3,7 +3,7 @@ namespace app\models\main;
 
 use app\db\tables\grupoFuncionario;
 use app\db\tables\funcionario;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 use app\db\tables\funcionarioGrupoFuncionario;
 
 /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
-use app\classes\mensagem;
+namespace app\layout;
+use app\layout\abstract\pagina;
+use app\helpers\mensagem;
 
 /**
  * Classe agenda representa uma agenda de eventos.

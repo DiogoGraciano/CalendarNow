@@ -1,24 +1,25 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\form;
-use app\classes\consulta;
-use app\classes\controllerAbstract;
-use app\classes\elements;
-use app\classes\footer;
-use app\classes\functions;
-use app\classes\mensagem;
-use app\classes\filter;
+use app\layout\head;
+use app\layout\form;
+use app\layout\consulta;
+use app\controllers\abstract\controller;
+use app\layout\elements;
+use app\layout\footer;
+use app\helpers\functions;
+use app\helpers\mensagem;
+use app\layout\filter;
 use app\db\transactionManeger;
 use app\models\main\clienteModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
+use core\session;
 
-class clienteController extends controllerAbstract{
+class cliente extends controller{
 
     public function index()
     {
-        $this->setSessionVar("clienteController",false);
+        session::set("clienteController",false);
 
         $user = usuarioModel::getLogged();
 
@@ -76,9 +77,9 @@ class clienteController extends controllerAbstract{
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = $this->getSessionVar("clienteController")?:clienteModel::get($id);
+        $dado = session::get("clienteController")?:clienteModel::get($id);
         
-        $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));$dado = $this->getSessionVar("clienteController")?:clienteModel::get($id);
+        $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));$dado = session::get("clienteController")?:clienteModel::get($id);
 
         $form->setButton($elements->button("Salvar","submit"));
         $form->setButton($elements->button("Voltar","voltar","button","btn btn-primary w-100 btn-block","location.href='".$this->url."agenda'"));
@@ -128,13 +129,13 @@ class clienteController extends controllerAbstract{
         $cliente->id_funcionario   = $id_funcionario;
         $cliente->nome             = $nome;
 
-        $this->setSessionVar("clienteController",$cliente);
+        session::set("clienteController",$cliente);
 
         try{
             transactionManeger::init();
             transactionManeger::beginTransaction();
             if (clienteModel::set($nome,$id_funcionario,$id)){ 
-                $this->setSessionVar("clienteController",false);
+                session::set("clienteController",false);
                 transactionManeger::commit();
                 $this->go("cliente");
             }

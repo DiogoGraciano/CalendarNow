@@ -1,5 +1,5 @@
 <?php
-namespace app\classes;
+namespace app\helpers;
 
 /**
  * Classe de funções utilitárias

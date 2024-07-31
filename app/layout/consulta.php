@@ -1,10 +1,11 @@
 <?php
 
-namespace app\classes;
+namespace app\layout;
 
-use app\classes\pagina;
-use app\classes\mensagem;
-use app\classes\elements;
+use app\layout\abstract\pagina;
+use app\helpers\mensagem;
+use app\helpers\functions;
+use app\layout\elements;
 
 /**
  * Classe consulta representa uma consulta de dados.

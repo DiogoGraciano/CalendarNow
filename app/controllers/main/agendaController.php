@@ -1,26 +1,27 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\form;
-use app\classes\consulta;
-use app\classes\controllerAbstract;
-use app\classes\elements;
-use app\classes\footer;
-use app\classes\tabela;
-use app\classes\tabelaMobile;
-use app\classes\functions;
-use app\classes\mensagem;
-use app\classes\filter;
+use app\layout\head;
+use app\layout\form;
+use app\layout\consulta;
+use app\controllers\abstract\controller;
+use app\layout\elements;
+use app\layout\footer;
+use app\layout\tabela;
+use app\layout\tabelaMobile;
+use app\helpers\functions;
+use app\helpers\mensagem;
+use app\layout\filter;
 use app\db\transactionManeger;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
+use core\session;
 
-class agendaController extends controllerAbstract{
+class agendaController extends controller{
 
     public function index()
     {
-        $this->setSessionVar("agendaController",false);
+        session::set("agendaController",false);
 
         $nome = $this->getValue("nome");
         $codigo = $this->getValue("codigo");
@@ -69,7 +70,7 @@ class agendaController extends controllerAbstract{
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = $this->getSessionVar("agendaController")?:agendaModel::get($id);
+        $dado = session::get("agendaController")?:agendaModel::get($id);
         
         $form->setInputs($elements->input("nome","Nome:",$dado->nome,true));
 
@@ -163,7 +164,7 @@ class agendaController extends controllerAbstract{
         $agenda->codigo           = $codigo;
         $agenda->nome             = $nome;
 
-        $this->setSessionVar("agendaController",$agenda);
+        session::set("agendaController",$agenda);
 
         try{
             transactionManeger::init();
@@ -173,7 +174,7 @@ class agendaController extends controllerAbstract{
                 if($id_funcionario)
                     agendaModel::setAgendaFuncionario($id_funcionario,$id_agenda);
                 mensagem::setSucesso("Agenda salva com sucesso");
-                $this->setSessionVar("agendaController",false);
+                session::set("agendaController",false);
                 transactionManeger::commit();
                 $this->go("agenda");
             }

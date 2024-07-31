@@ -2,30 +2,31 @@
 
 namespace app\controllers\main;
 
-use app\classes\head;
-use app\classes\form;
-use app\classes\elements;
-use app\classes\functions;
-use app\classes\controllerAbstract;
-use app\classes\consulta;
-use app\classes\footer;
-use app\classes\filter;
-use app\classes\mensagem;
-use app\classes\tabela;
-use app\classes\tabelaMobile;
-use app\classes\modal;
+use app\layout\head;
+use app\layout\form;
+use app\layout\elements;
+use app\helpers\functions;
+use app\controllers\abstract\controller;
+use app\layout\consulta;
+use app\layout\footer;
+use app\layout\filter;
+use app\helpers\mensagem;
+use app\layout\tabela;
+use app\layout\tabelaMobile;
+use app\layout\modal;
 use app\db\transactionManeger;
 use app\models\main\usuarioModel;
 use app\models\main\agendaModel;
 use app\models\main\funcionarioModel;
 use app\models\main\grupoFuncionarioModel;
+use core\session;
 
-class FuncionarioController extends controllerAbstract
+class funcionarioController extends controller
 {
 
     public function index($parameters = [])
     {
-        $this->setSessionVar("funcionarioController",false);
+        session::set("funcionarioController",false);
         
         $user = usuarioModel::getLogged();
 
@@ -115,8 +116,8 @@ class FuncionarioController extends controllerAbstract
         $id = functions::decrypt($parameters[0] ?? '');
         $user = usuarioModel::getLogged();
 
-        $dadoFuncionario = isset($this->getSessionVar("funcionarioController")->funcionario)?$this->getSessionVar("funcionarioController")->funcionario:funcionarioModel::get($id);
-        $dado = isset($this->getSessionVar("funcionarioController")->usuario)?$this->getSessionVar("funcionarioController")->usuario:usuarioModel::get($dadoFuncionario->id_usuario);
+        $dadoFuncionario = isset(session::get("funcionarioController")->funcionario)?session::get("funcionarioController")->funcionario:funcionarioModel::get($id);
+        $dado = isset(session::get("funcionarioController")->usuario)?session::get("funcionarioController")->usuario:usuarioModel::get($dadoFuncionario->id_usuario);
         $form->setHidden("cd", $dado->id);
         $form->setHidden("id_funcionario", $dadoFuncionario->id);
         $form->setHidden("id_empresa", $user->id_empresa);
@@ -285,7 +286,7 @@ class FuncionarioController extends controllerAbstract
         $usuario->funcionario->hora_almoco_fim      = $hora_almoco_fim;
         $usuario->funcionario->dias                 = $dias;
 
-        $this->setSessionVar("funcionarioController",$usuario);
+        session::set("funcionarioController",$usuario);
 
         transactionManeger::init();
 
@@ -305,7 +306,7 @@ class FuncionarioController extends controllerAbstract
                             funcionarioModel::setAgendaFuncionario($id_agenda, $id_funcionario);
 
                         mensagem::setSucesso("Funcionario salvo com sucesso");
-                        $this->setSessionVar("funcionarioController",false);
+                        session::set("funcionarioController",false);
                         transactionManeger::commit();
 
                         $this->go("funcionario/index/");

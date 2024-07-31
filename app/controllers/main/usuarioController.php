@@ -2,28 +2,29 @@
 
 namespace app\controllers\main;
 
-use app\classes\head;
-use app\classes\form;
-use app\classes\elements;
-use app\classes\functions;
-use app\classes\controllerAbstract;
-use app\classes\footer;
-use app\classes\consulta;
-use app\classes\mensagem;
-use app\classes\filter;
+use app\layout\head;
+use app\layout\form;
+use app\layout\elements;
+use app\helpers\functions;
+use app\controllers\abstract\controller;
+use app\layout\footer;
+use app\layout\consulta;
+use app\helpers\mensagem;
+use app\layout\filter;
 use app\db\transactionManeger;
 use app\db\tables\estado;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
 use app\models\main\enderecoModel;
 use app\models\main\cidadeModel;
+use core\session;
 use stdClass;
 
-class usuarioController extends controllerAbstract {
+class usuario extends controller {
 
     public function index()
     {
-        $this->setSessionVar("usuarioController",false);
+        session::set("usuarioController",false);
 
         $id_funcionario = $this->getValue("funcionario");
         $nome = $this->getValue("nome");
@@ -126,8 +127,8 @@ class usuarioController extends controllerAbstract {
         $head = new head();
         $head->show("Cadastro de Usuário");
 
-        $dado = isset($this->getSessionVar("usuarioController")->usuario)?$this->getSessionVar("usuarioController")->usuario:usuarioModel::get($id);
-        $dadoEndereco = isset($this->getSessionVar("usuarioController")->endereco)?$this->getSessionVar("usuarioController")->endereco:enderecoModel::get($dado->id, "id_usuario");
+        $dado = isset(session::get("usuarioController")->usuario)?session::get("usuarioController")->usuario:usuarioModel::get($id);
+        $dadoEndereco = isset(session::get("usuarioController")->endereco)?session::get("usuarioController")->endereco:enderecoModel::get($dado->id, "id_usuario");
 
         $elements = new elements();
 
@@ -223,7 +224,7 @@ class usuarioController extends controllerAbstract {
         $usuario->endereco->numero      = $numero;
         $usuario->endereco->complemento = $complemento;
 
-        $this->setSessionVar("usuarioController",$usuario);
+        session::set("usuarioController",$usuario);
 
         if ($parameters && array_key_exists(0, $parameters)){
             $location = $parameters[0];
@@ -241,7 +242,7 @@ class usuarioController extends controllerAbstract {
                 $id_endereco = enderecoModel::set($cep, $id_estado, $id_cidade, $bairro, $rua, $numero, $complemento, $id_endereco, $id_usuario, null, false);
                 if ($id_endereco){
                     mensagem::setSucesso("Usuário salvo com sucesso");
-                    $this->setSessionVar("usuarioController",false);
+                    session::set("usuarioController",false);
                     transactionManeger::commit();
                     $this->go($location?:"login/index/".functions::encrypt($cpf_cnpj)."/".functions::encrypt($senha));
                 }

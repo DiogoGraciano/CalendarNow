@@ -1,11 +1,11 @@
 <?php 
 namespace app\models\main;
 
-use app\classes\functions;
+use app\helpers\functions;
 use app\db\tables\servico;
 use app\db\tables\servicoFuncionario;
 use app\db\tables\servicoGrupoServico;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 use app\db\tables\funcionario;
 
 /**
@@ -256,7 +256,7 @@ class servicoModel{
 
         if ($retorno == true){
             mensagem::setSucesso("Serviço salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
 
         return False;

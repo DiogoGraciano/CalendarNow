@@ -1,8 +1,7 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
-use app\classes\mensagem;
+namespace app\layout;
+use app\layout\abstract\pagina;
 use stdClass;
 
 /**

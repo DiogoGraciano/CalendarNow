@@ -2,7 +2,7 @@
 namespace app\models\main;
 
 use app\db\tables\cliente;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 
 /**
  * Classe clienteModel
@@ -95,7 +95,7 @@ class clienteModel{
 
         if ($values->store()){
             mensagem::setSucesso("Cliente salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         } 
 
         return false;

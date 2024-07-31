@@ -1,16 +1,16 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\form;
-use app\classes\agenda;
-use app\classes\controllerAbstract;
-use app\classes\elements;
-use app\classes\filter;
-use app\classes\footer;
-use app\classes\tabela;
-use app\classes\tabelaMobile;
-use app\classes\functions;
-use app\classes\mensagem;
+use app\layout\head;
+use app\layout\form;
+use app\layout\agenda;
+use app\controllers\abstract\controller;
+use app\layout\elements;
+use app\layout\filter;
+use app\layout\footer;
+use app\layout\tabela;
+use app\layout\tabelaMobile;
+use app\helpers\functions;
+use app\helpers\mensagem;
 use app\models\main\agendamentoItemModel;
 use app\models\main\agendamentoModel;
 use app\models\main\agendaModel;
@@ -19,12 +19,13 @@ use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\clienteModel;
 use app\models\main\statusModel;
+use core\session;
 
-class agendamentoController extends controllerAbstract{
+class agendamentoController extends controller{
   
     public function index($parameters)
     {
-        $this->setSessionVar("agendamentoController",false);
+        session::set("agendamentoController",false);
 
         $head = new head();
         $head->show("Agenda","agenda");
@@ -108,18 +109,16 @@ class agendamentoController extends controllerAbstract{
 
         $elements = new elements;
 
-        $dado = isset($this->getSessionVar("agendamentoController")->agendamento)?$this->getSessionVar("agendamentoController")->agendamento:agendamentoModel::get($id);
+        $dado = isset(session::get("agendamentoController")->agendamento)?session::get("agendamentoController")->agendamento:agendamentoModel::get($id);
 
         $user = usuarioModel::getLogged();
 
-        $statuses = statusModel::getAll();
-        
-        foreach ($statuses as $status){
-            $elements->addOption($status->id,$status->nome);
-        }
-        $status = $elements->select("Status","status",$dado->id_status);
+        if($user->tipo_usuario == 3)
+            $statuses = statusModel::getUsuarioStatus();
 
         if ($user->tipo_usuario != 3){
+
+            $statuses = statusModel::getAll();
 
             $usuarios = usuarioModel::getByTipoUsuarioAgenda(3,$id_agenda);
 
@@ -158,11 +157,15 @@ class agendamentoController extends controllerAbstract{
                 ->addCustomInput(6,$usuario)
                 ->addCustomInput(6,$agenda)
                 ->setCustomInputs();
-
-            $form->addCustomInput(12,$status);
         }
 
-        $form
+        foreach ($statuses as $status){
+            $elements->addOption($status->id,$status->nome);
+        }
+        $status = $elements->select("Status","status",$dado->id_status);
+
+
+        $form->addCustomInput(12,$status)->setCustomInputs()
         ->addCustomInput("6",$elements->input("dt_ini","Data Inicial:",$dado->dt_ini?:$dt_ini,true,true,"","datetime-local","form-control form-control-date"),"dt_ini")
         ->addCustomInput("6",$elements->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,true,"","datetime-local","form-control form-control-date"),"dt_fim")
         ->setCustomInputs();
@@ -190,7 +193,7 @@ class agendamentoController extends controllerAbstract{
             foreach ($servicos as $servico){
                 
                 if($dado->id && $servico->id)
-                    $agendaItem = (isset($this->getSessionVar("agendamentoController")->agendaItem))?$this->getSessionVar("agendamentoController")->agendaItem:agendamentoItemModel::getItemByServico($dado->id,$servico->id);
+                    $agendaItem = (isset(session::get("agendamentoController")->agendaItem))?session::get("agendamentoController")->agendaItem:agendamentoItemModel::getItemByServico($dado->id,$servico->id);
                 else 
                     $agendaItem = null;
 
@@ -330,10 +333,10 @@ class agendamentoController extends controllerAbstract{
             }
         }
 
-        $this->setSessionVar("agendamentoController",$agendamento);
+        session::set("agendamentoController",$agendamento);
 
         if(!mensagem::getErro()){
-            $this->setSessionVar("agendamentoController",false);
+            session::set("agendamentoController",false);
             mensagem::setSucesso("Agendamento Concluido");
         }else
             mensagem::setSucesso(false);

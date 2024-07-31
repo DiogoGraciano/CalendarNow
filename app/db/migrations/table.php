@@ -363,6 +363,10 @@ class table
     public function getTable(){
         return $this->table;
     }
+
+    public function getColumnsName(){
+        return array_keys($this->columns);
+    }
     
     public function exists()
     {

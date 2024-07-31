@@ -1,9 +1,10 @@
 <?php
 namespace app\models\main;
 
-use app\classes\mensagem;
-use app\classes\functions;
+use app\helpers\mensagem;
+use app\helpers\functions;
 use app\models\main\usuarioModel;
+use core\session;
 
 /**
  * Classe loginModel
@@ -29,7 +30,7 @@ class loginModel{
         if ($login->id){
             if (password_verify($senha, $login->senha)){
                 $login->senha = $senha;
-                $_SESSION["user"] = (object)$login->getArrayData();
+                session::set("user",(object)$login->getArrayData());
                 return true;
             }
         }

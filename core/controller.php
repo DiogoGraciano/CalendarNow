@@ -1,13 +1,13 @@
 <?php
 namespace core;
 
-use app\classes\functions;
+use app\helpers\functions;
 use Exception;
 
 /**
  * Classe para carregar e instanciar controladores com base na URI.
  */
-class Controller{
+class controller{
     /**
      * URI atual.
      *
@@ -150,7 +150,7 @@ class Controller{
         $exists = false;
 
         foreach ($this->folders as $folder){
-            if(class_exists($folder."\\".$controller)){
+            if(class_exists($folder."\\".$controller) && is_subclass_of($folder."\\".$controller,"app\controllers\abstract\controller")){
                 $exists = true;
                 $this->namespace = $folder;
                 $this->controller = $controller; 

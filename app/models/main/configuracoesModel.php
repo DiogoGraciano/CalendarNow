@@ -2,7 +2,7 @@
 namespace app\models\main;
 
 use app\db\tables\config;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 
 /**
  * Classe clienteModel
@@ -111,7 +111,7 @@ class configuracoesModel{
 
         if ($db->store()){
             mensagem::setSucesso("Configuração salvo com sucesso");
-            return $db->getLastID();
+            return $db->id;
         }
         
         return False;

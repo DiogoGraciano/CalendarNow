@@ -1,17 +1,17 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\elements;
-use app\classes\mensagem;
-use app\classes\functions;
-use app\classes\footer;
-use app\classes\controllerAbstract;
-use app\classes\form;
+use app\layout\head;
+use app\layout\elements;
+use app\helpers\mensagem;
+use app\helpers\functions;
+use app\layout\footer;
+use app\controllers\abstract\controller;
+use app\layout\form;
 use app\models\main\configuracoesModel;
 use app\models\main\usuarioModel;
 use app\db\transactionManeger;
 
-class configuracoesController extends controllerAbstract{
+class configuracoesController extends controller{
 
     public function index(){
 

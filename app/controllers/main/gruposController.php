@@ -1,25 +1,26 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\form;
-use app\classes\elements;
-use app\classes\controllerAbstract;
-use app\classes\consulta;
-use app\classes\footer;
-use app\classes\functions;
-use app\classes\filter;
-use app\classes\tabela;
-use app\classes\tabelaMobile;
-use app\classes\mensagem;
+use app\layout\head;
+use app\layout\form;
+use app\layout\elements;
+use app\controllers\abstract\controller;
+use app\layout\consulta;
+use app\layout\footer;
+use app\helpers\functions;
+use app\layout\filter;
+use app\layout\tabela;
+use app\layout\tabelaMobile;
+use app\helpers\mensagem;
 use app\models\main\grupoFuncionarioModel;
 use app\models\main\grupoServicoModel;
 use app\models\main\usuarioModel;
+use core\session;
 
-class gruposController extends controllerAbstract{
+class gruposController extends controller{
 
     public function index($parameters = array())
     {
-        $this->setSessionVar("gruposController",false);
+        session::set("gruposController",false);
 
         $nome = $this->getValue("nome");
 
@@ -90,7 +91,7 @@ class gruposController extends controllerAbstract{
         else    
             $this->go("home");
 
-        $dado = $this->getSessionVar("gruposController")?:$model::get($id);
+        $dado = session::get("gruposController")?:$model::get($id);
 
         $elements = new elements;
 
@@ -143,7 +144,7 @@ class gruposController extends controllerAbstract{
         $grupo->id   = $id;
         $grupo->nome = $nome;
 
-        $this->setSessionVar("gruposController",$grupo);
+        session::set("gruposController",$grupo);
 
         $id_empresa = UsuarioModel::getLogged()->id_empresa;
 
@@ -161,7 +162,7 @@ class gruposController extends controllerAbstract{
         }   
         
         if(mensagem::getErro())
-            $this->setSessionVar("gruposController",false);
+            session::set("gruposController",false);
 
         $this->go("grupos/index/".$parameters[0]);
     }

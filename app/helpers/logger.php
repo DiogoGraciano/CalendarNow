@@ -1,5 +1,5 @@
 <?php
-namespace app\classes;
+namespace app\helpers;
 /**
  * Simple logger class.
  *

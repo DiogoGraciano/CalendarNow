@@ -1,13 +1,13 @@
 <?php
 
-namespace app\classes;
-use app\classes\template;
-use app\classes\functions;
+namespace app\layout\abstract;
+use app\layout\template;
+use app\helpers\functions;
 
 /**
  * Classe base para páginas, contendo métodos comuns para a construção de páginas web.
  */
-class pagina{
+abstract class pagina{
 
     /**
      * Objeto template para manipulação de templates.

@@ -1,7 +1,7 @@
 <?php 
 namespace app\models\main;
 use app\db\tables\status;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 
 /**
  * Classe statusModel
@@ -37,6 +37,16 @@ class statusModel{
     }
 
     /**
+     * Obtém um registro da agenda com base em um valor e coluna especificados.
+     * 
+     * @return object|array Retorna os dados da agenda ou null se não encontrado.
+    */
+    public static function getUsuarioStatus():array|object
+    {
+        return (new status)->addFilter("id","IN",[1,4])->selectAll();
+    }
+
+    /**
      * Insere ou atualiza um registro na tabela de agenda.
      * 
      * @param string $nome O nome da agenda.
@@ -54,7 +64,7 @@ class statusModel{
         
         if ($retorno == true){
             mensagem::setSucesso("Status salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
         else {
             return False;

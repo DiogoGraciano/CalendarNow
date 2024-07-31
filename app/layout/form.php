@@ -1,7 +1,7 @@
 <?php
-namespace app\classes;
-use app\classes\pagina;
-use app\classes\mensagem;
+namespace app\layout;
+use app\layout\abstract\pagina;
+use app\helpers\mensagem;
 use stdClass;
 
 /**
@@ -52,7 +52,7 @@ class form extends pagina
     /**
      * Define inputs personalizados no formulário.
      */
-    public function setCustomInputs()
+    public function setCustomInputs():form
     {
         $tpl = $this->getTemplate("inputs_template.html");
         foreach ($this->inputs_custom as $custom) { 
@@ -65,6 +65,8 @@ class form extends pagina
         $this->tplform->input = $tpl->parse();
         $this->tplform->block("BLOCK_INPUT");
         $this->inputs_custom = [];
+
+        return $this;
     }
 
     /**

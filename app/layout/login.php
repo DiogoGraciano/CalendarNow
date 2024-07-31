@@ -1,9 +1,9 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
-use app\classes\functions;
-use app\classes\mensagem;
+namespace app\layout;
+use app\layout\abstract\pagina;
+use app\helpers\functions;
+use app\helpers\mensagem;
 
 /**
  * Classe para gerar a página de login.

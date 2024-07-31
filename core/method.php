@@ -1,13 +1,13 @@
 <?php
 
 namespace core;
-use app\classes\functions;
+use app\helpers\functions;
 use Exception;
 
 /**
  * Classe para manipular métodos com base na URI.
  */
-class Method{
+class method{
     /**
      * URI atual.
      *

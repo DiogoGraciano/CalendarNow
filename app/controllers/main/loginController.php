@@ -1,18 +1,16 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\login;
-use app\classes\form;
-use app\classes\elements;
-use app\classes\controllerAbstract;
-use app\classes\footer;
-use app\classes\functions;
+use app\layout\head;
+use app\layout\login as layoutLogin;
+use app\layout\form;
+use app\layout\elements;
+use app\controllers\abstract\controller;
+use app\layout\footer;
+use app\helpers\functions;
 use app\models\main\loginModel;
 use app\models\main\usuarioModel;
-use app\controllers\main\cadastroController;
 
-class loginController extends controllerAbstract{
-
+class loginController extends controller{
 
     public function index($parameters)
     {
@@ -26,7 +24,7 @@ class loginController extends controllerAbstract{
         $head = new head();
         $head->show("Login","","");
 
-        $login = new login;
+        $login = new layoutLogin;
         $login->show($usuario,$senha);
 
         $footer = new footer;

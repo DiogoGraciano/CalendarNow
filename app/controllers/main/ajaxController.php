@@ -1,13 +1,13 @@
 <?php
 namespace app\controllers\main;
-use app\classes\functions;
-use app\classes\controllerAbstract;
-use app\classes\integracaoWs;
+use app\helpers\functions;
+use app\controllers\abstract\controller;
+use app\helpers\integracaoWs;
 use app\models\main\cidadeModel;
 use app\models\main\estadoModel;
 use app\models\main\usuarioModel;
 
-class ajaxController extends controllerAbstract{
+class ajaxController extends controller{
 
     public function index(){
         $method = $this->getValue("method");

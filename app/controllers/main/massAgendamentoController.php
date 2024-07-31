@@ -1,15 +1,15 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\elements;
-use app\classes\controllerAbstract;
-use app\classes\consulta;
-use app\classes\footer;
-use app\classes\functions;
+use app\layout\head;
+use app\layout\elements;
+use app\controllers\abstract\controller;
+use app\layout\consulta;
+use app\layout\footer;
+use app\helpers\functions;
 use app\models\main\usuarioModel;
 use app\models\main\agendamentoModel;
 
-class massAgendamentoController extends controllerAbstract{
+class massAgendamentoController extends controller{
 
     public function index(){
 

@@ -1,17 +1,15 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\form;
-use app\classes\elements;
-use app\classes\footer;
-use app\classes\mensagem;
-use app\classes\controllerAbstract;
-use app\classes\functions;
-use app\models\main\loginModel;
+use app\layout\head;
+use app\layout\form;
+use app\layout\elements;
+use app\layout\footer;
+use app\helpers\mensagem;
+use app\controllers\abstract\controller;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 
-class encontrarController extends controllerAbstract{
+class encontrarController extends controller{
 
     public function index($parameters){
 

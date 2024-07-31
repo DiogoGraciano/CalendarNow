@@ -1,15 +1,15 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\menu;
-use app\classes\elements;
-use app\classes\functions;
-use app\classes\footer;
-use app\classes\controllerAbstract;
+use app\layout\head;
+use app\layout\menu;
+use app\layout\elements;
+use app\helpers\functions;
+use app\layout\footer;
+use app\controllers\abstract\controller;
 use app\models\main\loginModel;
 use app\models\main\usuarioModel;
 
-class opcoesController extends controllerAbstract{
+class opcoesController extends controller{
 
     public function index(){
 

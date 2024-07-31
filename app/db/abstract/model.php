@@ -6,8 +6,8 @@ use app\db\db;
 
 abstract class model extends db{
 
-    public function __construct($table){
-        parent::__construct($table);
+    public function __construct($table,$class){
+        parent::__construct($table,$class);
     }
 
     public function get($value="",string $column="id",int $limit = 1):array|object{

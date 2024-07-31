@@ -1,7 +1,8 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
+namespace app\helpers;
+use app\layout\abstract\pagina;
+use core\session;
 
 /**
  * Classe para gerenciar mensagens de erro, sucesso e informações para o usuário.
@@ -16,7 +17,7 @@ class mensagem extends pagina{
      * @param string $localizacao  Localização opcional para exibir uma mensagem com um botão específico.
      * @return mixed            Retorna o HTML da mensagem se $show for true ou o HTML parseado.
      */
-    public function show(bool $show=true,string $localizacao="")
+    public function show(bool $show=true,string $localizacao=""):string|null
     {
         // Obtém o template das mensagens
         $this->getTemplate("../templates/mensagem_template.html");
@@ -72,11 +73,9 @@ class mensagem extends pagina{
      *
      * @return array    Retorna um array de mensagens de erro.
      */
-    public static function getErro(){
-        if (isset($_SESSION["_Mensagens"]["Erros"]))
-            return $_SESSION["_Mensagens"]["Erros"];
-         
-        return [];
+    public static function getErro():array
+    {
+        return session::get("Erros")?:[];
     }
 
     /**
@@ -84,20 +83,9 @@ class mensagem extends pagina{
      *
      * @param mixed ...$erros   Mensagens de erro a serem definidas.
      */
-    public static function setErro(...$erros){
-        $_SESSION["_Mensagens"]["Erros"] = $erros;
-    }
-
-    /**
-     * Adiciona mensagens de erro à sessão.
-     *
-     * @param mixed ...$erro    Mensagens de erro a serem adicionadas.
-     */
-    public static function addErro(...$erro){
-        if (array_key_exists(0,$_SESSION["_Mensagens"]["Erros"]))
-            $_SESSION["_Mensagens"]["Erros"] = array_merge($_SESSION["_Mensagens"]["Erros"],$erro);
-        else 
-            self::setErro($erro);
+    public static function setErro(...$erros):void
+    {
+        session::set("Erros",$erros);
     }
 
     /**
@@ -105,11 +93,9 @@ class mensagem extends pagina{
      *
      * @return array    Retorna um array de mensagens informativas.
      */
-    public static function getMensagem(){
-        if (isset($_SESSION["_Mensagens"]["Mensagens"]))
-            return $_SESSION["_Mensagens"]["Mensagens"];
-        
-        return [];
+    public static function getMensagem():array
+    {
+        return session::get("Mensagens")?:[];
     }
 
     /**
@@ -117,20 +103,9 @@ class mensagem extends pagina{
      *
      * @param mixed ...$Mensagems   Mensagens informativas a serem definidas.
      */
-    public static function setMensagem(...$Mensagems){
-        $_SESSION["_Mensagens"]["Mensagens"] = $Mensagems;
-    }
-
-    /**
-     * Adiciona mensagens informativas à sessão.
-     *
-     * @param mixed ...$Mensagem    Mensagens informativas a serem adicionadas.
-     */
-    public static function addMensagem(...$Mensagem){
-        if (array_key_exists(0,$_SESSION["_Mensagens"]["Mensagens"]))
-            $_SESSION["_Mensagens"]["Mensagens"] = array_merge($_SESSION["_Mensagens"]["Mensagens"],$Mensagem);
-        else 
-            self::setMensagem($Mensagem);
+    public static function setMensagem(...$Mensagens):void
+    {
+        session::set("Mensagens",$Mensagens);
     }
 
     /**
@@ -138,11 +113,9 @@ class mensagem extends pagina{
      *
      * @return array    Retorna um array de mensagens de sucesso.
      */
-    public static function getSucesso(){
-        if (isset($_SESSION["_Mensagens"]["Sucessos"]))
-            return $_SESSION["_Mensagens"]["Sucessos"];
-        else 
-            return array();
+    public static function getSucesso():array
+    {
+        return session::get("Sucessos")?:[];
     }
 
     /**
@@ -150,20 +123,9 @@ class mensagem extends pagina{
      *
      * @param mixed ...$Sucessos   Mensagens de sucesso a serem definidas.
      */
-    public static function setSucesso(...$Sucessos){
-        $_SESSION["_Mensagens"]["Sucessos"] = $Sucessos;
-    }
-
-    /**
-     * Adiciona mensagens de sucesso à sessão.
-     *
-     * @param mixed ...$Sucesso    Mensagens de sucesso a serem adicionadas.
-     */
-    public static function addSucesso(...$Sucesso){
-        if (array_key_exists(0,$_SESSION["_Mensagens"]["Sucessos"]))
-            $_SESSION["_Mensagens"]["Sucessos"] = array_merge($_SESSION["_Mensagens"]["Sucessos"],$Sucesso);
-        else 
-            self::setSucesso($Sucesso);
+    public static function setSucesso(...$Sucessos):void
+    {
+        session::set("Sucessos",$Sucessos);
     }
 }
 ?>

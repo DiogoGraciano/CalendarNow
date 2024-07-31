@@ -2,9 +2,9 @@
 namespace app\models\main;
 
 use app\db\tables\endereco;
-use app\classes\mensagem;
-use app\classes\modelAbstract;
-use app\classes\functions;
+use app\helpers\mensagem;
+use app\layout\modelAbstract;
+use app\helpers\functions;
 use app\models\main\cidadeModel;
 
 /**
@@ -113,7 +113,7 @@ class enderecoModel{
 
         if ($retorno == true){
             mensagem::setSucesso("Endereço salva com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }else{
             mensagem::setErro("Erro ao cadastrar a endereço");
             return False;

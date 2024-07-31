@@ -1,9 +1,10 @@
 <?php 
 namespace app\models\main;
 use app\db\tables\usuario;
-use app\classes\functions;
-use app\classes\mensagem;
+use app\helpers\functions;
+use app\helpers\mensagem;
 use app\models\main\loginModel;
+use core\session;
 
 /**
  * Classe usuarioModel
@@ -34,8 +35,8 @@ class usuarioModel{
     */
     public static function getLogged():object|bool
     {
-        if (isset($_SESSION["user"]) && $_SESSION["user"])
-            return $_SESSION["user"];
+        if($user = session::get("user"))
+            return $user;
 
         loginModel::deslogar();
         return false;
@@ -188,7 +189,7 @@ class usuarioModel{
         
         if ($retorno == true){
             mensagem::setSucesso("Salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
 
         mensagem::setErro("Erro ao cadastrar usuario");

@@ -1,6 +1,6 @@
 <?php
-namespace app\classes;
-use app\classes\pagina;
+namespace app\layout;
+use app\layout\abstract\pagina;
 
 /**
  * Classe filter é responsável por gerar um formulário de filtro dinâmico com base em um template HTML.

@@ -1,7 +1,8 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
+namespace app\layout;
+use app\layout\abstract\pagina;
+use app\helpers\mensagem;
 
 /**
  * Classe para gerar uma lista de objetos com um título e botões opcionais.

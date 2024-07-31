@@ -1,9 +1,9 @@
 <?php
 namespace app\models\main;
 
-use app\classes\functions;
+use app\helpers\functions;
 use app\db\tables\empresa;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 use stdClass;
 
 /**
@@ -128,7 +128,7 @@ class empresaModel{
 
         if ($values->store()){
             mensagem::setSucesso("Empresa salva com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
 
         mensagem::setErro("Erro ao cadastrar a empresa");

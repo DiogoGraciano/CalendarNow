@@ -1,8 +1,8 @@
 <?php 
 namespace app\models\main;
 
-use app\classes\functions;
-use app\classes\mensagem;
+use app\helpers\functions;
+use app\helpers\mensagem;
 use app\db\tables\funcionario;
 use app\db\tables\agenda;
 use app\db\tables\funcionarioGrupoFuncionario;
@@ -257,7 +257,7 @@ class funcionarioModel{
         
         if ($retorno == true){
             mensagem::setSucesso("Funcionario salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
         else {
             return False;

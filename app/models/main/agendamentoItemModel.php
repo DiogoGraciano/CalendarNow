@@ -2,9 +2,8 @@
 namespace app\models\main;
 
 use app\db\tables\agendamentoItem;
-use app\classes\mensagem;
-use app\classes\functions;
-use Exception;
+use app\helpers\mensagem;
+use app\helpers\functions;
 
 /**
  * Classe agendamentoItemModel
@@ -119,7 +118,7 @@ class agendamentoItemModel{
 
         if ($retorno == true){
             mensagem::setSucesso("Item salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
         else {
             return false;

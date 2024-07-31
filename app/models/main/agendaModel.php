@@ -5,9 +5,8 @@ use app\db\tables\funcionario;
 use app\db\tables\agendaUsuario;
 use app\db\tables\agendaFuncionario;
 use app\models\main\empresaModel;
-use app\classes\mensagem;
-use app\classes\modelAbstract;
-use app\classes\functions;
+use app\helpers\mensagem;
+use app\helpers\functions;
 
 /**
  * Classe agendaModel
@@ -30,6 +29,26 @@ class agendaModel{
     public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
     {
         return (new agenda)->get($value,$column,$limit);
+    }
+
+
+    /**
+     * Obtém um registro da agenda com base em um valor e coluna especificados.
+     * 
+     * @param string $value O valor para buscar.
+     * @param string $column A coluna onde buscar o valor.
+     * @param int $limit O número máximo de registros a serem retornados.
+     * @return object|array Retorna os dados da agenda ou null se não encontrado.
+    */
+    public static function getbyIds(array $ids):array
+    {
+        $agenda = (new agenda); 
+        
+        foreach ($ids as $id){
+            $agenda->addFilter("id","=",$id);
+        }
+
+        return $agenda->selectColumns("id","agenda.nome","agenda.codigo");
     }
 
     /**
@@ -237,7 +256,7 @@ class agendaModel{
 
         if ($values->store()){
             mensagem::setSucesso("Agenda salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
         
         return False;

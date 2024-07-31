@@ -1,8 +1,8 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
-use app\classes\functions;
+namespace app\layout;
+use app\layout\abstract\pagina;
+use app\helpers\functions;
 
 class head extends pagina{
 

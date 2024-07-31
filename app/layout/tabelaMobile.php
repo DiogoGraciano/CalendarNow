@@ -1,15 +1,15 @@
 <?php
 
-namespace app\classes;
-use app\classes\pagina;
+namespace app\layout;
+use app\layout\abstract\pagina;
 
 /**
- * Classe para criação e manipulação de tabelas HTML.
+ * Classe para criação e manipulação de tabelas adaptadas para dispositivos móveis.
  */
-class tabela extends pagina{
+class tabelaMobile extends pagina{
 
     /**
-     * Array para armazenar as colunas da tabela.
+     * Array para armazenar os nomes das colunas.
      *
      * @var array
      */
@@ -23,33 +23,26 @@ class tabela extends pagina{
     private $rows = [];
 
     /**
-     * Gera a representação HTML da tabela com base nas colunas e linhas fornecidas.
+     * Gera a representação HTML da tabela adaptada para dispositivos móveis.
      *
      * @return string   Retorna a representação HTML da tabela.
      */
     public function parse(){
 
-        $this->tpl = $this->getTemplate("table_template.html");
-        
+        $this->tpl = $this->getTemplate("table_mobile_template.html");
+
         if($this->rows){
-            $i = 1;
             foreach ($this->rows as $row){
                 if(is_subclass_of($row,"app\db\db")){
                     $row = $row->getArrayData();
                 }
                 foreach ($this->columns as $column){
                     if(array_key_exists($column["coluna"],$row)){
+                        $this->tpl->columns_name = $column["nome"];
                         $this->tpl->data = $row[$column["coluna"]];
-                        $this->tpl->block("BLOCK_DATA");
-                        if($i == 1){
-                            $this->tpl->columns_name = $column["nome"];
-                            $this->tpl->columns_width = $column["width"];
-                            $this->tpl->block("BLOCK_COLUMNS");
-                        }
                     }
+                    $this->tpl->block("BLOCK_ROW");
                 }
-                $i++;
-                $this->tpl->block("BLOCK_ROW");
             }
         }
 
@@ -60,13 +53,13 @@ class tabela extends pagina{
     /**
      * Adiciona uma nova coluna à tabela.
      *
-     * @param string|int $width   Largura da coluna em porcentagem.
-     * @param string $nome    Nome da coluna.
+     * @param string|int $width Nome da coluna.
+     * @param string $nome      Largura da coluna.
      * @param string $coluna    Nome da coluna DB.
      *
-     * @return tabela         Retorna a instância atual da tabela para permitir encadeamento de métodos.
+     * @return tabelaMobile   Retorna a instância atual da tabela para permitir encadeamento de métodos.
      */
-    public function addColumns(string|int $width,string $nome, string $coluna){
+    public function addColumns(string|int $width,string $nome,string $coluna){
 
         $this->columns[] = ["nome" => $nome,"width" => $width.'%',"coluna" => $coluna];
 
@@ -78,16 +71,16 @@ class tabela extends pagina{
      *
      * @param array $row     Dados da linha como um array associativo.
      *
-     * @return tabela        Retorna a instância atual da tabela para permitir encadeamento de métodos.
+     * @return tabelaMobile  Retorna a instância atual da tabela para permitir encadeamento de métodos.
      */
-    public function addRow(array $row = array()){
+    public function addRow(array $row = []){
 
         $this->rows[] = $row;
 
         return $this;
     }
 
-     /**
+    /**
      * Adiciona todas as linhas à tabelas.
      *
      * @param array $rows     Dados das linhas como um array associativo.

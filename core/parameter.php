@@ -1,12 +1,12 @@
 <?php
 
 namespace core;
-use app\classes\functions;
+use app\helpers\functions;
 
 /**
  * Classe para manipular parâmetros da URI.
  */
-class Parameter{
+class parameter{
     /**
      * URI atual.
      *

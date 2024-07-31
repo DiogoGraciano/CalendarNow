@@ -1,28 +1,29 @@
 <?php 
 namespace app\controllers\main;
-use app\classes\head;
-use app\classes\form;
-use app\classes\modal;
-use app\classes\consulta;
-use app\classes\controllerAbstract;
-use app\classes\elements;
-use app\classes\footer;
-use app\classes\functions;
-use app\classes\filter;
-use app\classes\tabela;
-use app\classes\tabelaMobile;
+use app\layout\head;
+use app\layout\form;
+use app\layout\modal;
+use app\layout\consulta;
+use app\controllers\abstract\controller;
+use app\layout\elements;
+use app\layout\footer;
+use app\helpers\functions;
+use app\layout\filter;
+use app\layout\tabela;
+use app\layout\tabelaMobile;
 use app\db\transactionManeger;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 use app\models\main\servicoModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
 use app\models\main\grupoServicoModel;
+use core\session;
 
-class servicoController extends controllerAbstract{
+class servico extends controller{
 
     public function index($parameters = [])
     {
-        $this->setSessionVar("servicoController",false);
+        session::set("servicoController",false);
 
         $id_funcionario = $this->getValue("funcionario");
         $id_grupo_servico = $this->getValue("grupo_servico");
@@ -123,7 +124,7 @@ class servicoController extends controllerAbstract{
             $form->setHidden("cd",$parameters[0]);
         }
         
-        $dado = $this->getSessionVar("servicoController")?:servicoModel::get($id);
+        $dado = session::get("servicoController")?:servicoModel::get($id);
 
         $form->setinputs($elements->input("nome","Nome:",$dado->nome,true),"nome");
 
@@ -225,7 +226,7 @@ class servicoController extends controllerAbstract{
         $servico->tempo            = $tempo;
         $servico->valor            = $valor;
 
-        $this->setSessionVar("servicoController",$servico);
+        session::set("servicoController",$servico);
 
         if ($id_servico = servicoModel::set($nome,$valor,$tempo,$user->id_empresa,$id)){ 
             if($id_grupo_servico)
@@ -235,7 +236,7 @@ class servicoController extends controllerAbstract{
         }
 
         if(mensagem::getErro())
-            $this->setSessionVar("servicoController",false);
+            session::set("servicoController",false);
 
         $id?$this->go("servico/manutencao/".$this->getValue('cd')):$this->go("servico");
     }

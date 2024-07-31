@@ -1,12 +1,12 @@
 <?php
-namespace app\classes;
+namespace app\controllers\abstract;
 
 /**
- * Classe abstrata controllerAbstract é uma classe base para controladores.
+ * Classe abstrata controller é uma classe base para controladores.
  *
  * Esta classe fornece métodos utilitários comuns que podem ser usados por controladores específicos.
  */
-abstract class controllerAbstract
+abstract class controller
 {
     /**
      * @var string $url URL base do site.
@@ -22,28 +22,6 @@ abstract class controllerAbstract
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'];
         $this->url = $protocol . $domainName . "/";
-    }
-
-    /**
-     * Define uma variável de sessão.
-     *
-     * @param string $nome Nome da variável de sessão.
-     * @param mixed $valor Valor da variável de sessão.
-     */
-    public function setSessionVar(string $nome, $valor)
-    {
-        $_SESSION["_".$nome] = $valor;
-    }
-
-    /**
-     * Obtém o valor de uma variável de sessão.
-     *
-     * @param string $nome Nome da variável de sessão.
-     * @return mixed Valor da variável de sessão ou uma string vazia se não existir.
-     */
-    public function getSessionVar(string $nome)
-    {
-        return array_key_exists("_".$nome, $_SESSION) ? $_SESSION["_".$nome] : "";
     }
 
     /**
@@ -79,6 +57,25 @@ abstract class controllerAbstract
                 $return[] = $values[$column];
             }
         }
+        return $return;
+    }
+
+    /**
+     * Retorna o nome dos argumentos de um metodo de uma clase.
+     *
+     * @param string $className Nome da classe.
+     * @param string $methodName Nome do Metodo.
+     * @return array Array contendo os valores das colunas especificadas.
+     */
+    function getMethodsArgNames($className, $methodName) {
+        $r = new \ReflectionMethod($className, $methodName);
+        $parameters = $r->getParameters();
+
+        $return = [];
+        foreach ($parameters as $parameter){
+            $return[] = $parameter->getName();
+        }
+
         return $return;
     }
 

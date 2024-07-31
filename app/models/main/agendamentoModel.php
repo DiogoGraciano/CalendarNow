@@ -1,9 +1,9 @@
 <?php 
 namespace app\models\main;
 
-use app\classes\functions;
+use app\helpers\functions;
 use app\db\tables\agendamento;
-use app\classes\mensagem;
+use app\helpers\mensagem;
 
 /**
  * Classe agendamentoModel
@@ -32,10 +32,10 @@ class agendamentoModel{
      * @param string $dt_inicio A data de início do intervalo.
      * @param string $dt_fim A data de término do intervalo.
      * @param string $id_agenda O ID da agenda.
-     * @param string $status O status do agendamento (opcional, padrão é 99).
+     * @param string $status O status do agendamento (opcional, padrão é 4).
      * @return array Retorna um array com os eventos de agendamento dentro do intervalo de datas especificado.
     */
-    public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$isnotstatus=99):array
+    public static function getEvents($dt_inicio,$dt_fim,$id_agenda,$isnotstatus=4):array
     {
         $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
@@ -44,11 +44,11 @@ class agendamentoModel{
                       ->addFilter("status","!=",$isnotstatus)
                       ->selectAll();
 
-        $retorn = [];
+        $return = [];
 
         if ($results){
             foreach ($results as $result){
-                $retorn[] = [
+                $return[] = [
                     'id' => functions::encrypt($result->id),
                     'title' => $result->titulo,
                     'color' => $result->cor,
@@ -57,7 +57,7 @@ class agendamentoModel{
                 ];
             }
         }
-        return $retorn;
+        return $return;
     }
 
     /**
@@ -67,10 +67,10 @@ class agendamentoModel{
      * @param string $dt_fim A data de término do intervalo.
      * @param string $id_agenda O ID da agenda.
      * @param string $id_funcionario O ID do funcionário.
-     * @param string $status O status do agendamento (opcional, padrão é 99).
+     * @param string $status O status do agendamento (opcional, padrão é 4).
      * @return array Retorna um array com os eventos de agendamento dentro do intervalo de datas especificado para o funcionário.
     */
-    public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$id_status=99):array
+    public static function getEventsbyFuncionario($dt_inicio,$dt_fim,$id_agenda,$id_funcionario,$id_status=4):array
     {
         $db = new agendamento;
         $results = $db->addFilter("dt_ini",">=",$dt_inicio)
@@ -80,14 +80,14 @@ class agendamentoModel{
                       ->addFilter("id_status","!=",$id_status)
                       ->selectAll();
 
-        $retorn = [];
+        $return = [];
 
         $user = usuarioModel::getLogged();
 
         if ($results){
             foreach ($results as $result){
                 if ($user->tipo_usuario != 3){
-                    $retorn[] = [
+                    $return[] = [
                         'id' => functions::encrypt($result->id),
                         'title' => $result->titulo,
                         'color' => $result->cor,
@@ -96,7 +96,7 @@ class agendamentoModel{
                     ];
                 }
                 elseif ($user->id == $result->id_usuario){
-                    $retorn[] = [
+                    $return[] = [
                         'id' => functions::encrypt($result->id),
                         'title' => $result->titulo,
                         'color' => $result->cor,
@@ -105,7 +105,7 @@ class agendamentoModel{
                     ];
                 }
                 else{
-                    $retorn[] = [
+                    $return[] = [
                         'title' => "Outro agendamento",
                         'color' => "#9099ad",
                         'start' => $result->dt_ini,
@@ -114,7 +114,7 @@ class agendamentoModel{
                 }
             }
         }
-        return $retorn;
+        return $return;
     }
 
     /**
@@ -165,7 +165,7 @@ class agendamentoModel{
             $db->addFilter("agendamento.id_status","IN",[1,2]);
         }
         
-        $result =  $db->setDebug()->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
+        $result =  $db->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
                     
         return $result;
     }
@@ -208,7 +208,7 @@ class agendamentoModel{
 
         if ($retorno == true){
             mensagem::setSucesso("Agendamento salvo com sucesso");
-            return $values->getLastID();
+            return $values->id;
         }
         else 
             return False;
@@ -238,7 +238,7 @@ class agendamentoModel{
 
         $mensagens = [];
 
-        if($id && !$values->id = self::get($id)->id){
+        if($id && !($values->id = self::get($id)->id)){
             $mensagens[] = "Agendamento não encontrada";
         }
 
@@ -287,40 +287,42 @@ class agendamentoModel{
             $mensagens[] = "Status informado invalido";
         }
 
-        if($id_usuario){
+        if($id_usuario && !$values->id){
             if(($empresa = empresaModel::getByAgenda($id_agenda))){
 
-                $now = (new \DateTimeImmutable())->format("Y-m-d");
-                $primeiroDiaMes = (new \DateTimeImmutable())->format("Y-m")."-01";
-                $ultimoDiaMes = (new \DateTimeImmutable("now"))->modify('last day of this month')->format("Y-m-d");
-                $primeiroDiaSemana = date("Y-m-d", strtotime('monday this week', strtotime($now)));
-                $ultimoDiaSemana = date("Y-m-d", strtotime('sunday this week', strtotime($now)));
-                
+                $dt_ini = (new \DateTimeImmutable($dt_ini))->format("Y-m-d");
+                $primeiroDiaMes = (new \DateTimeImmutable($dt_ini))->format("Y-m")."-01";
+                $ultimoDiaMes = (new \DateTimeImmutable($dt_ini))->modify('last day of this month')->format("Y-m-d");
+                $primeiroDiaSemana = (new \DateTimeImmutable($dt_ini))->modify('monday this week')->format("Y-m-d");
+                $ultimoDiaSemana = (new \DateTimeImmutable($dt_ini))->modify('sunday this week')->format("Y-m-d");
+
                 $agendamentos = self::getAgendamentosByUsuario($id_usuario,$primeiroDiaMes,$ultimoDiaMes,true);
 
-                die;
                 $dia = 0;
                 $semana = 0;
                 $mes = 0;
                 foreach ($agendamentos as $agendamento){
-                    if($agendamento->dt_fim == $now){
+
+                    $agendamento_dt_ini = (new \DateTimeImmutable($agendamento->dt_ini))->format("Y-m-d");
+                    
+                    if($agendamento_dt_ini == $dt_ini){
                         $dia++;
                     }
-                    if($agendamento->dt_fim >= $primeiroDiaSemana && $agendamento->dt_fim <= $ultimoDiaSemana){
+                    if($agendamento_dt_ini >= $primeiroDiaSemana && $agendamento_dt_ini <= $ultimoDiaSemana){
                         $semana++;
                     }
-                    if($agendamento->dt_fim >= $primeiroDiaMes && $agendamento->dt_fim <= $ultimoDiaMes){
+                    if($agendamento_dt_ini >= $primeiroDiaMes && $agendamento_dt_ini <= $ultimoDiaMes){
                         $mes++;
                     }
                 }
 
-                if($empresa->configuracoes->max_agendamento_dia > $dia)
+                if(intval($empresa->configuracoes->max_agendamento_dia) < $dia)
                     $mensagens[] = "Numero maximo de agendamentos para o dia de hoje atingindo";
 
-                if($empresa->configuracoes->max_agendamento_semana > $semana)
+                if(intval($empresa->configuracoes->max_agendamento_semana) < $semana)
                     $mensagens[] = "Numero maximo de agendamentos para o essa semana atingindo";
 
-                if($empresa->configuracoes->max_agendamento_mes > $mes)
+                if(intval($empresa->configuracoes->max_agendamento_mes) < $mes)
                     $mensagens[] = "Numero maximo de agendamentos para o esse mês atingindo";
             }
             else 
@@ -335,14 +337,12 @@ class agendamentoModel{
 
         $values->obs = htmlspecialchars(trim($obs));
 
-        if ($values)
-            $retorno = $values->store();
-
-        if ($retorno == true){
+        if ($values->store()){
             mensagem::setSucesso("Agendamento salvo com sucesso");
-            return $values->getLastID();
-        }else 
-            return False;
+            return $values->id;
+        }
+            
+        return False;
     }
 
     /**

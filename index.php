@@ -1,18 +1,20 @@
 <?php
     require 'bootstrap.php';
 
-    use core\Controller;    
-    use core\Method;
-    use core\Parameter;
-    use app\classes\functions;
+    use core\controller;    
+    use core\method;
+    use core\parameter;
+    use core\session;
+    use app\helpers\functions;
+
+    session::start();
 
     $controller = new Controller;
 
     $urlPermitidas = ["/ajax","/usuario/manutencao","/usuario/action/","/empresa/manutencao","/empresa/action/"];
     
-    if (isset($_SESSION["user"]) || in_array(functions::getUri(),$urlPermitidas)){
+    if (session::get("user") || in_array(functions::getUri(),$urlPermitidas)){
         $controller = $controller->load();
-        //session_regenerate_id(true);
     }else 
         $controller = $controller->load("login");
         
