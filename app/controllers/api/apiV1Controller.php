@@ -2,7 +2,9 @@
 namespace app\controllers\api;
 
 use app\controllers\abstract\controller;
+use app\helpers\functions;
 use app\models\main\loginApiModel;
+use core\request;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -47,6 +49,10 @@ class apiV1Controller extends controller{
         $this->requestType = $_SERVER['REQUEST_METHOD'];
         if ($this->requestType === "PUT" || $this->requestType === "POST")
             $this->data = json_decode(file_get_contents('php://input'), true);
+        elseif($query = functions::getUriQuery() && $this->requestType === "GET" || $this->requestType === "DELETE"){
+            parse_str($query,$this->data);
+        }
+            
     }
 
     /**
@@ -65,15 +71,6 @@ class apiV1Controller extends controller{
      */
     public function funcionario($parameters){
         $this->callControllerMethod(new funcionarioController($this->requestType, $this->data), $parameters);
-    }
-
-    /**
-     * Chama o método correspondente do controlador conexaoController.
-     *
-     * @param array $parameters Parâmetros da requisição.
-     */
-    public function conexao($parameters){
-        $this->callControllerMethod(new conexaoController($this->requestType, $this->data), $parameters);
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 namespace app\controllers\abstract;
 
+use core\request;
 /**
  * Classe abstrata controller é uma classe base para controladores.
  *

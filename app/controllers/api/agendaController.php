@@ -57,7 +57,6 @@ class agendaController extends apiController{
 
             $agenda = agendaModel::getbyIds($parameters);
             foreach ($agendas as $agenda){
-
                 if ($this->requestType === 'GET' && $agenda->cd_agenda)
                     $agendas[] = $agenda;
                 if ($this->requestType === 'DELETE' && $agenda->cd_agenda && agendaModel::delete($agenda->cd_agenda))
@@ -91,13 +90,15 @@ class agendaController extends apiController{
         try {
             $errors = [];
             $result = []; 
+            $idsalvos = [];
             if($this->requestType === 'POST' && $this->data){
                 $columns = $this->getMethodsArgNames("app\models\main\agendaModel","set");
                 foreach ($this->data as $registro){
-                    if (isset($registro["cd_cliente"],$registro["cd_funcionario"],$registro["titulo"],$registro["dt_inicio"],$registro["dt_fim"])){
+                    if (isset($registro["nome"],$registro["id_empresa"],$registro["codigo"])){
                         $registro = $this->setParameters($columns,$registro);
                         if ($agenda = agendaModel::set(...$registro)){
-                            $result[] = "agenda com Id ({$agenda}) inserido com sucesso";
+                            $result[] = "agenda com Id ({$agenda}) salva com sucesso";
+                            $idsalvos[] = $agenda;
                         }
                         else{
                             $errors[] = mensagem::getErro();
@@ -106,7 +107,7 @@ class agendaController extends apiController{
                     else
                         $errors[] = "agenda não informado corretamente";
                 }
-                echo json_encode(["result" => $result, "errors" => $errors]);
+                echo json_encode(["result" => $result,"id_salvos"=> $idsalvos,"errors" => $errors]);
             }else{
                 echo json_encode(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false]); 
                 http_response_code(400);

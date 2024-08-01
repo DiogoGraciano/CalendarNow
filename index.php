@@ -13,7 +13,7 @@
 
     $urlPermitidas = ["/ajax","/usuario/manutencao","/usuario/action/","/empresa/manutencao","/empresa/action/"];
     
-    if (session::get("user") || in_array(functions::getUri(),$urlPermitidas)){
+    if (session::get("user") || in_array(functions::getUriPath(),$urlPermitidas)){
         $controller = $controller->load();
     }else 
         $controller = $controller->load("login");

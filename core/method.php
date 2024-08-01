@@ -21,7 +21,7 @@ class method{
      */
     public function __construct()
     {
-        $this->uri = functions::getUri();
+        $this->uri = functions::getUriPath();
     }
 
     /**

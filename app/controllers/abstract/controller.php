@@ -1,6 +1,9 @@
 <?php
 namespace app\controllers\abstract;
 
+use app\helpers\functions;
+use core\request;
+
 /**
  * Classe abstrata controller é uma classe base para controladores.
  *
@@ -19,9 +22,7 @@ abstract class controller
      */
     public function __construct()
     {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        $domainName = $_SERVER['HTTP_HOST'];
-        $this->url = $protocol . $domainName . "/";
+        $this->url = functions::getUrlBase();
     }
 
     /**
@@ -32,51 +33,7 @@ abstract class controller
      */
     public function getValue(string $var):mixed
     {
-        if (isset($_POST[$var]))
-            return $_POST[$var];
-        elseif (isset($_GET[$var]))
-            return $_GET[$var];
-        elseif (isset($_SESSION[$var]))
-            return $_SESSION[$var];
-        else
-            return null;
-    }
-
-    /**
-     * Define os parâmetros com base nas colunas fornecidas e nos dados retornados pela API.
-     *
-     * @param array $columns Colunas a serem retornadas.
-     * @param array $values Dados retornados pela API.
-     * @return array Array contendo os valores das colunas especificadas.
-     */
-    public function setParameters(array $columns, array $values)
-    {
-        $return = [];
-        foreach ($columns as $column) {
-            if (isset($values[$column])) {
-                $return[] = $values[$column];
-            }
-        }
-        return $return;
-    }
-
-    /**
-     * Retorna o nome dos argumentos de um metodo de uma clase.
-     *
-     * @param string $className Nome da classe.
-     * @param string $methodName Nome do Metodo.
-     * @return array Array contendo os valores das colunas especificadas.
-     */
-    function getMethodsArgNames($className, $methodName) {
-        $r = new \ReflectionMethod($className, $methodName);
-        $parameters = $r->getParameters();
-
-        $return = [];
-        foreach ($parameters as $parameter){
-            $return[] = $parameter->getName();
-        }
-
-        return $return;
+        return request::getValue($var);
     }
 
     /**
