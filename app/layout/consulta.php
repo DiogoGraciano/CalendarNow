@@ -55,7 +55,7 @@ class consulta extends pagina
      * @param int $limit limit de rows para a paginação.
      * @param bool $checkbox Indica se a coluna de checkbox deve ser exibida.
      */
-    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id",int $limit = 30)
+    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id",int $limit = 20,int $totalRegPossible = 1)
     {        
         // Instancia a classe mensagem para exibir mensagens
         $mensagem = new mensagem;
@@ -96,7 +96,7 @@ class consulta extends pagina
             $this->tpl->qtd_list = $i;
             $this->tpl->table = $this->table->parse();
 
-            $pagination = new pagination($i,$limit);
+            $pagination = new pagination($totalRegPossible,$limit);
 
             $this->tpl->pagination = $pagination->parse();
     

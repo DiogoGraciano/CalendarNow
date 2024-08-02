@@ -20,7 +20,7 @@ use app\models\main\cidadeModel;
 use core\session;
 use stdClass;
 
-class usuario extends controller {
+class usuarioController extends controller {
 
     public function index()
     {
@@ -36,7 +36,7 @@ class usuario extends controller {
 
         $user = usuarioModel::getLogged();
 
-        $filter = new filter($this->url."servico/");
+        $filter = new filter($this->url."usuario/");
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
 
         $filter->addFilter(4,$elements->input("nome","Nome:",$nome));
@@ -54,20 +54,20 @@ class usuario extends controller {
             $filter->addFilter(4,$funcionarios);
         }
 
+        $filter->show();
+
         $cadastro = new consulta(true);
         $cadastro->addButtons($elements->button("Bloquear Usuario","usuarioblock","submit","btn btn-primary","location.href='".$this->url."usuario/bloquear'")); 
 
-        $cadastro->addButtons($elements->button("Adicionar Usuário", "adicionar", "button", "btn btn-primary", "location.href='".$this->url."usuario/manutencao'"));
         $cadastro->addColumns("1", "Id", "id")
                  ->addColumns("10", "CPF", "cpf")
                  ->addColumns("15", "Nome", "nome")
                  ->addColumns("15", "Email", "email")
-                 ->addColumns("11", "Telefone", "telefone")
-                 ->addColumns("14", "Ações", "acoes");
+                 ->addColumns("11", "Telefone", "telefone");
 
-        $dados = usuarioModel::getByEmpresa($user->id_empresa);
+        $dados = usuarioModel::getByEmpresa($user->id_empresa,$nome,$id_funcionario,3,$this->getLimit(),$this->getOffset());
 
-        $cadastro->show($this->url."usuario/manutencao/opcoes/", $this->url."usuario/action/opcoes/", $dados, "id");
+        $cadastro->show($this->url."usuario/manutencao/opcoes/", $this->url."usuario/action/opcoes/", $dados,"id",$this->getLimit(),usuarioModel::getLastCount("getByEmpresa"));
 
         $footer = new footer();
         $footer->show();

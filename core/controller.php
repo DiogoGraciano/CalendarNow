@@ -1,6 +1,7 @@
 <?php
 namespace core;
 
+use app\controllers\main\errorController;
 use app\helpers\functions;
 use Exception;
 
@@ -117,12 +118,14 @@ class controller{
      * @throws Exception Lança uma exceção se o controlador inferido pela URI não existir.
      */
     private function controllerNotHome(){
-       $controller = $this->getControllerNotHome();
+        $controller = $this->getControllerNotHome();
 
-       if (!$this->controllerExist($controller))
-            throw new Exception("Essa pagina não existe");
-       
-       return $this->instatiateController();
+        if (!$this->controllerExist($controller)){
+            (new errorController)->index();
+            die;
+        }
+        
+        return $this->instatiateController();
     }
 
     /**

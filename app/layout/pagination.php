@@ -38,9 +38,9 @@ class pagination extends pagina{
             $this->tpl->block("BLOCK_ANTERIOR");
         }
 
-        $b = 0;
         $i = $this->page-3;
-        $i < 0 ?: $b = 3;
+        $b = ($i*-1)+1;
+        $i = $i<=0?1:$i;
         for ($i; $i < $this->page+3+$b; $i++)
         { 
             if($this->page == $i){
@@ -55,11 +55,15 @@ class pagination extends pagina{
             }
 
             $this->tpl->block("BLOCK_PAGINA");
+
+            if($this->getMaxPage() == $i){
+                break;
+            }
         }
         
-        if($this->page > $this->getMaxPage()){
+        if($this->page < $this->getMaxPage()){
             $this->tpl->link_proximo = $url.$this->getQuery($this->page+1);
-            $this->tpl->block("BLOCK_ANTERIOR");
+            $this->tpl->block("BLOCK_PROXIMO");
         }
 
         return $this->tpl->parse();

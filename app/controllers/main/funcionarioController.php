@@ -21,7 +21,7 @@ use app\models\main\funcionarioModel;
 use app\models\main\grupoFuncionarioModel;
 use core\session;
 
-class funcionarioController extends controller
+final class funcionarioController extends controller
 {
 
     public function index($parameters = [])
@@ -98,10 +98,16 @@ class funcionarioController extends controller
         }
 
         $filter->show();
-        $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa, $nome, intval($id_agenda), intval($id_grupo_funcionarios));
+        $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa,$nome,intval($id_agenda),intval($id_grupo_funcionarios),$this->getLimit(),$this->getOffset());
 
         $cadastro->addColumns("14", "Ações", "acoes");
-        $cadastro->show($this->url . "funcionario/manutencao", $this->url . "funcionario/action", $dados);
+        $cadastro->show($this->url . "funcionario/manutencao", 
+                        $this->url . "funcionario/action", 
+                        $dados,
+                        "id",
+                        $this->getLimit(),
+                        $this->getOffset(),
+                        funcionarioModel::getLastCount("getListFuncionariosByEmpresa"));
 
         $footer = new footer();
         $footer->show();

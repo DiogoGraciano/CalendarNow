@@ -7,6 +7,7 @@ use app\db\tables\agendaFuncionario;
 use app\models\main\empresaModel;
 use app\helpers\mensagem;
 use app\helpers\functions;
+use app\models\abstract\model;
 
 /**
  * Classe agendaModel
@@ -16,7 +17,7 @@ use app\helpers\functions;
  * 
  * @package app\models\main
  */
-final class agendaModel{
+final class agendaModel extends model{
 
     /**
      * Obtém um registro da agenda com base em um valor e coluna especificados.
@@ -57,6 +58,8 @@ final class agendaModel{
      * @param int $id_empresa O ID da empresa para buscar agendas.
      * @param string $nome O Nome para buscar agendas.
      * @param string $codigo O Codigo para buscar agendas.
+     * @param int $limit limit da query (opcional).
+     * @param int $offset offset da query(opcional).
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
     public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null):array|bool
@@ -74,9 +77,12 @@ final class agendaModel{
         }
 
         if($limit && $offset){
-            $db->addLimit($limit,$offset);
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
         }
         elseif($limit){
+            self::setLastCount($db);
             $db->addLimit($limit);
         }
 

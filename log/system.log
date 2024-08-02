@@ -70,3 +70,9 @@
 2024-07-31T12:56:19+00:00 [ERROR] : SQLSTATE[HY000] [1045] Access denied for user 'root'@'172.28.0.5' (using password: NO)
 2024-08-02T00:17:17+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 
 2024-08-02T00:17:19+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 
+2024-08-02T11:39:31+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
+2024-08-02T11:40:17+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
+2024-08-02T11:40:19+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
+2024-08-02T11:40:48+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
+2024-08-02T11:40:52+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
+2024-08-02T11:43:58+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory

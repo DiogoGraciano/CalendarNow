@@ -19,7 +19,7 @@ use app\models\main\funcionarioModel;
 use app\models\main\grupoServicoModel;
 use core\session;
 
-class servico extends controller{
+class servicoController extends controller{
 
     public function index($parameters = [])
     {
@@ -101,7 +101,7 @@ class servico extends controller{
                 ->addColumns("5","Tempo","tempo")
                 ->addColumns("10","Valor","valor")
                 ->addColumns("11","Ações","acoes")
-                ->show($this->url."servico/manutencao",$this->url."servico/action",$data,"id",true);
+                ->show($this->url."servico/manutencao",$this->url."servico/action",$data,"id",$this->getLimit(),servicoModel::getLastCount("getListByEmpresa"));
       
         $footer = new footer;
         $footer->show();

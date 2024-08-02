@@ -16,7 +16,7 @@ use app\models\main\grupoServicoModel;
 use app\models\main\usuarioModel;
 use core\session;
 
-class gruposController extends controller{
+final class gruposController extends controller{
 
     public function index($parameters = array())
     {
@@ -32,11 +32,13 @@ class gruposController extends controller{
 
         $user = usuarioModel::getLogged();
 
-        if ($tipo_grupo == "grupo_funcionario")
+        if ($tipo_grupo == "grupo_funcionario"){
             $dados = grupoFuncionarioModel::getByEmpresa($user->id_empresa,$nome);
-        elseif ($tipo_grupo == "grupo_servico")
+            $count = grupoFuncionarioModel::getLastCount("getByEmpresa");
+        }elseif ($tipo_grupo == "grupo_servico"){
             $dados = grupoServicoModel::getByEmpresa($user->id_empresa,$nome);
-        else    
+            $count = grupoServicoModel::getLastCount("getByEmpresa");
+        }else    
             $this->go("home");
 
         $head = new head();
@@ -59,7 +61,13 @@ class gruposController extends controller{
                 ->addColumns("85","Nome","nome")
                 ->addColumns("15","Ações","acoes");
 
-        $cadastro->show($this->url."grupos/manutencao/".functions::encrypt($tipo_grupo),$this->url."grupos/action/".functions::encrypt($tipo_grupo),$dados,"id");
+        $cadastro->show($this->url."grupos/manutencao/".functions::encrypt($tipo_grupo),
+                        $this->url."grupos/action/".functions::encrypt($tipo_grupo),
+                        $dados,
+                        "id",
+                        $this->getLimit(),
+                        $this->getOffset(),
+                        $count);
       
         $footer = new footer;
         $footer->show();

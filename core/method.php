@@ -1,6 +1,8 @@
 <?php
 
 namespace core;
+
+use app\controllers\main\errorController;
 use app\helpers\functions;
 use Exception;
 
@@ -37,7 +39,8 @@ class method{
         $method = $this->getMethod();
 
         if(!method_exists($controller, $method)){
-            throw new Exception('Metodo não existe no arquivo solicitado');
+            (new errorController)->index();
+            die;
         }
 
         return $method;

@@ -12,7 +12,7 @@ class footer extends pagina
      */
     public function show()
     {
-        $this->getTemplate("footer_template.html");
+        $this->getTemplate("footer.html");
         $this->tpl->ano = date("Y");
         $this->tpl->show();
     }

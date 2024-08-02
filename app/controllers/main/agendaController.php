@@ -11,14 +11,13 @@ use app\layout\tabelaMobile;
 use app\helpers\functions;
 use app\helpers\mensagem;
 use app\layout\filter;
-use app\layout\pagination;
 use app\db\transactionManeger;
 use app\models\main\agendaModel;
 use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
 use core\session;
 
-class agendaController extends controller{
+final class agendaController extends controller{
 
     public function index()
     {
@@ -40,8 +39,6 @@ class agendaController extends controller{
 
         $filter->show();
 
-        var_dump($this->page);
-
         $user = usuarioModel::getLogged();
 
         $agenda = new consulta();
@@ -52,7 +49,12 @@ class agendaController extends controller{
             ->addColumns("70","Nome","nome")
             ->addColumns("8","Codigo","codigo")
             ->addColumns("11","Ações","acoes")
-            ->show($this->url."agenda/manutencao",$this->url."agenda/action/",agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo,$this->getLimit(3),$this->getOffset(3)),limit:3);
+            ->show($this->url."agenda/manutencao",
+                    $this->url."agenda/action/",
+                    agendaModel::getByEmpresa($user->id_empresa,$nome,$codigo,$this->getLimit(),$this->getOffset()),
+                    "id",
+                    $this->getLimit(),
+                    agendaModel::getLastCount("getByEmpresa"));
       
         $footer = new footer;
         $footer->show();

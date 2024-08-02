@@ -3,6 +3,7 @@ namespace app\models\main;
 
 use app\db\tables\cliente;
 use app\helpers\mensagem;
+use app\models\abstract\model;
 
 /**
  * Classe clienteModel
@@ -12,7 +13,7 @@ use app\helpers\mensagem;
  * 
  * @package app\models\main
  */
-class clienteModel{
+final class clienteModel extends model{
 
      /**
      * Obtém um registro da cliente com base em um valor e coluna especificados.
@@ -43,24 +44,52 @@ class clienteModel{
      * Obtém clientes pelo ID do funcionário associado.
      * 
      * @param int $id_usuario O ID do usuario associado aos clientes.
+     * @param int $limit limit da query (opcional).
+     * @param int $offset offset da query(opcional).
      * @return array Retorna um array de clientes ou um array vazio se não encontrado.
      */
-    public static function getByUsuario(int $id_usuario):array
+    public static function getByUsuario(int $id_usuario,?int $limit = null,?int $offset = null):array
     {
         $db = new cliente;
-        return $db->addJoin("funcionario","funcionario.id","cliente.id_funcionario")->addFilter("funcionario.id_usuario", "=", $id_usuario)->selectColumns("cliente.id","cliente.nome","cliente.id_funcionario");
+        $db->addJoin("funcionario","funcionario.id","cliente.id_funcionario")->addFilter("funcionario.id_usuario", "=", $id_usuario);
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+        }
+
+        return $db->selectColumns("cliente.id","cliente.nome","cliente.id_funcionario");
     }
 
     /**
      * Obtém clientes pelo ID do funcionário associado.
      * 
      * @param int $id_empresa O ID da empresa associada aos clientes.
+     * @param int $limit limit da query (opcional).
+     * @param int $offset offset da query(opcional).
      * @return array Retorna um array de clientes ou um array vazio se não encontrado.
      */
-    public static function getByEmpresa(int $id_empresa):array
+    public static function getByEmpresa(int $id_empresa,?int $limit = null,?int $offset = null):array
     {
         $db = new cliente;
-        return $db->addJoin("funcionario","funcionario.id","cliente.id_funcionario")->addJoin("usuario","usuario.id","funcionario.id_usuario")->addFilter("usuario.id_empresa", "=", $id_empresa)->selectColumns("cliente.id","cliente.nome","cliente.id_funcionario");
+        $db->addJoin("funcionario","funcionario.id","cliente.id_funcionario")->addJoin("usuario","usuario.id","funcionario.id_usuario")->addFilter("usuario.id_empresa", "=", $id_empresa);
+        
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+        }
+
+        return $db->selectColumns("cliente.id","cliente.nome","cliente.id_funcionario");
     }
 
 

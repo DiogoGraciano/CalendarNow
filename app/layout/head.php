@@ -8,7 +8,7 @@ class head extends pagina{
 
     public function show($titulo="",$type="",$logo="pequena"){
 
-        $this->getTemplate("head_template.html");
+        $this->getTemplate("head.html");
         $this->tpl->caminho = Functions::getUrlBase();
         $this->tpl->title = $titulo;
 

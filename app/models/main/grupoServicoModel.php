@@ -5,6 +5,7 @@ use app\db\tables\grupoServico;
 use app\db\tables\servicoGrupoServico;
 use app\db\tables\servico;
 use app\helpers\mensagem;
+use app\models\abstract\model;
 
 /**
  * Classe grupoServicoModel
@@ -14,7 +15,7 @@ use app\helpers\mensagem;
  * 
  * @package app\models\main
  */
-class grupoServicoModel{
+final class grupoServicoModel extends model{
 
     /**
      * Obtém um grupo de serviço pelo ID.
@@ -120,9 +121,11 @@ class grupoServicoModel{
      * 
      * @param int $id_empresa O ID da empresa dos grupos de serviço a serem buscados.
      * @param string $nome para filtrar por nome.
+     * @param int $limit O ID da agenda (opcional).
+     * @param int $offset O ID do grupo de funcionários (opcional).
      * @return array Retorna um array com os grupos de serviço da empresa especificada.
      */
-    public static function getByEmpresa(int $id_empresa,string $nome = null):array
+    public static function getByEmpresa(int $id_empresa,string $nome = null,?int $limit = null,?int $offset = null):array
     {
         $db = new grupoServico;
 
@@ -130,6 +133,16 @@ class grupoServicoModel{
 
         if($nome){
             $db->addFilter("nome", "like", "%".$nome."%");
+        }
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
         }
 
         $values = $db->selectColumns("id","nome");

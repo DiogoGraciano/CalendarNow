@@ -10,7 +10,7 @@ use app\helpers\functions;
 use app\models\main\loginModel;
 use app\models\main\usuarioModel;
 
-class loginController extends controller{
+final class loginController extends controller{
 
     public function index($parameters)
     {

@@ -22,22 +22,29 @@ abstract class controller
     protected readonly int $page;
 
     /**
+     * @var string $url URL base do site.
+     */
+    protected readonly array $urlQuery;
+
+    /**
      * Construtor da classe.
      * Define a URL base do site com base no protocolo e nome do domínio.
      */
     public function __construct()
     {
         $this->url = functions::getUrlBase();
-        $this->page = intval(functions::getUriQueryArray()["page"])?:1;
+        $this->urlQuery = functions::getUriQueryArray();
+        $this->page = isset($this->urlQuery["page"])?intval($this->urlQuery["page"]):1;
     }
 
-    public function getOffset(int $limit = 30)
+    public function getOffset(int $limit = 20):int
     {
         return ($this->page-1)*$limit;
     }
 
-    public function getLimit(int $limit = 30){
-        return $this->page*$limit;
+    public function getLimit(int $limit = 20):int
+    {
+        return $limit?:20;
     }
 
     /**
@@ -56,7 +63,7 @@ abstract class controller
      *
      * @param string $caminho Caminho para redirecionamento.
      */
-    public function go(string $caminho)
+    public function go(string $caminho):void
     {
         echo '<meta http-equiv="refresh" content="0;url=' . $this->url . $caminho . '">';
         exit;
@@ -67,7 +74,7 @@ abstract class controller
      *
      * @return bool Retorna true se o dispositivo for móvel, caso contrário retorna false.
      */
-    public function isMobile()
+    public function isMobile():bool
     {
         $useragent = $_SERVER['HTTP_USER_AGENT'];
         // Expressões regulares para detectar dispositivos móveis

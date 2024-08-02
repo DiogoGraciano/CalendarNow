@@ -11,7 +11,8 @@ class functions{
      *
      * @return string O diretório raiz do servidor
      */
-    public static function getRaiz(){
+    public static function getRaiz():string
+    {
         return $_SERVER['DOCUMENT_ROOT'];
     }
 
@@ -20,7 +21,8 @@ class functions{
      *
      * @return string   Retorna a URI atual da requisição.
      */
-    public static function getUriPath(){
+    public static function getUriPath():string
+    {
         return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     }
 
@@ -29,8 +31,9 @@ class functions{
      *
      * @return string   Retorna a URI atual da requisição.
      */
-    public static function getUriQuery(){
-        return parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
+    public static function getUriQuery():string
+    {
+        return parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY)?:"";
     }
 
      /**
@@ -38,11 +41,14 @@ class functions{
      *
      * @return array Retorna a URI atual da requisição.
      */
-    public static function getUriQueryArray(){
+    public static function getUriQueryArray():array
+    {
         $result = [];
         $query = functions::getUriQuery();
 
-        return $query ? parse_str($query,$result) : $result;
+        !$query?:parse_str($query,$result);
+
+        return $result ? $result : [];
     }
     
     /**
@@ -50,7 +56,7 @@ class functions{
      *
      * @return string A URL base do site
      */
-    public static function getUrlBase()
+    public static function getUrlBase():string
     {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
         return $protocol . "://" . $_SERVER['HTTP_HOST'] . "/";
@@ -66,7 +72,8 @@ class functions{
      * @param string $str A string codificada para URL
      * @return string A string decodificada
      */
-    public static function utf8_urldecode(string $str) {
+    public static function utf8_urldecode(string $str):string
+    {
         return mb_convert_encoding(preg_replace("/%u([0-9a-f]{3,4})/i", "&#x\\1;", urldecode($str)),'UTF-8');
     }
     
@@ -76,7 +83,8 @@ class functions{
      * @param string $value A string a ser filtrada
      * @return string A string contendo apenas números
      */
-    public static function onlynumber(string $value){
+    public static function onlynumber(string $value):string
+    {
         $value = preg_replace("/[^0-9]/","", $value);
         return $value;
     }
@@ -87,7 +95,8 @@ class functions{
      * @param string $string A string contendo a data e hora
      * @return string|bool A string formatada ou false se falhar
      */
-    public static function dateTimeBd(string $string){
+    public static function dateTimeBd(string $string):string|bool
+    {
         $datetime = new \DateTimeImmutable($string);
         if ($datetime !== false)
             return $datetime->format('Y-m-d H:i:s');
@@ -101,7 +110,8 @@ class functions{
      * @param string $string A string contendo a data
      * @return string|bool A string formatada ou false se falhar
      */
-    public static function validaCor(string $cor) {
+    public static function validaCor(string $cor):string|bool
+    {
         // Expressão regular para verificar cor hexadecimal
         $padrao_hex = '/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/';
         
@@ -122,7 +132,8 @@ class functions{
      * @param string $string A string contendo a data
      * @return string|bool A string formatada ou false se falhar
      */
-    public static function dateBd(string $string){
+    public static function dateBd(string $string):string|bool
+    {
         $datetime = new \DateTimeImmutable($string);
         if ($datetime !== false)
             return $datetime->format('Y-m-d');
@@ -225,7 +236,7 @@ class functions{
      * @param string $value O valor do CNPJ ou CPF
      * @return string O valor formatado
      */
-    public static function formatCnpjCpf(?string $value)
+    public static function formatCnpjCpf(?string $value):string|bool
     {
         if(!$value){
             return false;
@@ -248,7 +259,8 @@ class functions{
      * @param string $mask A máscara a ser aplicada
      * @return string A string com a máscara aplicada
      */
-    public static function mask(string $val,string $mask) {
+    public static function mask(string $val,string $mask):string
+    {
         $maskared = '';
         $k = 0;
         for($i = 0; $i<=strlen($mask)-1; $i++) {
@@ -268,7 +280,8 @@ class functions{
      * @param string $email A string com o email
      * @return bool se é valido
     */
-    public static function validaEmail($email) {
+    public static function validaEmail($email):bool
+    {
         // Usar filter_var com FILTER_VALIDATE_EMAIL para validar o e-mail
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
@@ -279,7 +292,8 @@ class functions{
      * @param string $dias A string com os dias
      * @return bool se é valido
     */
-    public static function validarDiasSemana($dias_semana) {
+    public static function validarDiasSemana($dias_semana):bool
+    {
         
         // Dividir a lista em dias individuais
         $dias = explode(",", $dias_semana);
@@ -379,7 +393,8 @@ class functions{
      * @param string $time A string de tempo a ser modificada
      * @return string A string de tempo sem os segundos
      */
-    public static function removeSecondsTime($time){
+    public static function removeSecondsTime($time):string
+    {
         if ($tamanho = substr_count($time,":")){
             if ($tamanho == 2){
                 $time = explode(":",$time);
@@ -400,7 +415,8 @@ class functions{
      * @param string $dias A string contendo os dias
      * @return string A string formatada
      */
-    public static function formatDias($dias){
+    public static function formatDias($dias):string
+    {
         $dias = str_replace(","," ",$dias);
         $dias = trim($dias);
 
@@ -413,7 +429,7 @@ class functions{
      * @param string $data A string a ser criptografada
      * @return string A string criptografada
      */
-    public static function encrypt($data)
+    public static function encrypt($data):string
     {
         if($data){
             $first_key = base64_decode(FIRSTKEY);
@@ -438,9 +454,9 @@ class functions{
      * Descriptografa uma string criptografada usando AES-256-CBC
      *
      * @param string $input A string criptografada
-     * @return string|bool A string descriptografada ou false se falhar
+     * @return mixed|bool A string descriptografada ou false se falhar
      */
-    public static function decrypt($input)
+    public static function decrypt($input):mixed
     {  
         if($input){
             $input = str_replace("@","/",$input);
@@ -471,7 +487,7 @@ class functions{
      * @param string $input O valor monetário
      * @return string O valor monetário formatado
      */
-    public static function formatCurrency($input)
+    public static function formatCurrency($input):string
     {
         $input = preg_replace("/[^0-9.,]/", "", $input);
 
@@ -485,7 +501,7 @@ class functions{
      * @param string $input O valor monetário formatado
      * @return float O valor numérico
      */
-    public static function removeCurrency($input)
+    public static function removeCurrency($input):string
     {
         return floatval(str_replace(",",".",preg_replace("/[^0-9.,]/", "", $input)));
     }
@@ -496,7 +512,8 @@ class functions{
      * @param int $number O número de bytes para gerar o código
      * @return string O código gerado
      */
-    public static function genereteCode($number){
+    public static function genereteCode($number):string
+    {
         return strtoupper(substr(bin2hex(random_bytes($number)), 1));
     }
 
@@ -506,7 +523,8 @@ class functions{
      * @param string $ip O endereço IP a ser formatado
      * @return string|bool O endereço IP formatado ou false se inválido
      */
-    public static function formatarIP($ip) {
+    public static function formatarIP($ip):string
+    {
 
         $ip = preg_replace('/\D/', '', $ip);
 
@@ -528,9 +546,10 @@ class functions{
      * Valida um número de cep para o formato XXXXX ou XXXXX-XXX
      *
      * @param string $cep O número de cep a ser validadp
-     * @return string|bool O número de cep valido ou false se inválido
+     * @return bool O número de cep valido ou false se inválido
     */
-    public static function validaCep($cep) {
+    public static function validaCep($cep):bool 
+    {
         if(preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $cep)) {
             return true;
         }
@@ -543,7 +562,8 @@ class functions{
      * @param string $telefone O número de telefone a ser validadp
      * @return bool O número de telefone valido ou false se inválido
      */
-    public static function validaTelefone($telefone):bool {
+    public static function validaTelefone($telefone):bool 
+    {
         // Remover quaisquer caracteres que não sejam dígitos
         $telefone = preg_replace('/\D/', '', $telefone);
             
@@ -561,7 +581,8 @@ class functions{
      * @param string $telefone O número de telefone a ser formatado
      * @return string|bool O número de telefone formatado ou false se inválido
      */
-    public static function formatPhone($telefone) {
+    public static function formatPhone($telefone):string|bool
+    {
 
         if(!$telefone)
             return false;

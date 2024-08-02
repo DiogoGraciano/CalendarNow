@@ -5,6 +5,7 @@ use app\db\tables\grupoFuncionario;
 use app\db\tables\funcionario;
 use app\helpers\mensagem;
 use app\db\tables\funcionarioGrupoFuncionario;
+use app\models\abstract\model;
 
 /**
  * Classe grupoFuncionarioModel
@@ -14,7 +15,8 @@ use app\db\tables\funcionarioGrupoFuncionario;
  * 
  * @package app\models\main
  */
-class grupoFuncionarioModel{
+final class grupoFuncionarioModel extends model
+{
 
     /**
      * Obtém um grupo de funcionário pelo ID.
@@ -31,15 +33,27 @@ class grupoFuncionarioModel{
      * 
      * @param int $id_empresa O ID da empresa dos grupos de funcionários a serem buscados.
      * @param string $nome para filtrar por nome.
+     * @param int $limit limit querry (opcional).
+     * @param int $offset offset querry (opcional).
      * @return array Retorna um array com os grupos de funcionários da empresa especificada.
      */
-    public static function getByEmpresa(int $id_empresa,string $nome = null):array{
+    public static function getByEmpresa(int $id_empresa,string $nome = null,?int $limit = null,?int $offset = null):array{
         $db = new grupoFuncionario;
 
         $db->addFilter("id_empresa", "=", $id_empresa);
 
         if($nome){
             $db->addFilter("nome", "like", "%".$nome."%");
+        }
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
         }
 
         $values = $db->selectColumns("id","nome");

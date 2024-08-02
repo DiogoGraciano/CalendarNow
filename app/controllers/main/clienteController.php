@@ -15,7 +15,7 @@ use app\models\main\usuarioModel;
 use app\models\main\funcionarioModel;
 use core\session;
 
-class cliente extends controller{
+class clienteController extends controller{
 
     public function index()
     {
@@ -53,10 +53,18 @@ class cliente extends controller{
 
         $cliente->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
+        $dados = $user->tipo_usuario == 2?clienteModel::getByUsuario($user->id,$this->getLimit(),$this->getOffset()):clienteModel::getByEmpresa($user->id_empresa,$this->getLimit(),$this->getOffset());
+        $count = $user->tipo_usuario == 2?clienteModel::getLastCount("getByUsuario"):clienteModel::getLastCount("getByEmpresa");
+
         $cliente->addColumns("1","Id","id")
             ->addColumns("70","Nome","nome")
             ->addColumns("11","Ações","acoes")
-            ->show($this->url."cliente/manutencao",$this->url."cliente/action/",$user->tipo_usuario == 2?clienteModel::getByUsuario($user->id):clienteModel::getByEmpresa($user->id_empresa));
+            ->show($this->url."cliente/manutencao",$this->url."cliente/action/",
+            $dados,
+            "id",
+            $this->getLimit(),
+            $count
+            );
       
         $footer = new footer;
         $footer->show();

@@ -7,6 +7,7 @@ use app\db\tables\servicoFuncionario;
 use app\db\tables\servicoGrupoServico;
 use app\helpers\mensagem;
 use app\db\tables\funcionario;
+use app\models\abstract\model;
 
 /**
  * Classe servicoModel
@@ -16,7 +17,7 @@ use app\db\tables\funcionario;
  * 
  * @package app\models\main
 */
-class servicoModel{
+final class servicoModel extends model{
 
     /**
      * Obtém um serviço pelo ID.
@@ -36,9 +37,11 @@ class servicoModel{
      * @param string|null $nome O nome do serviço (opcional).
      * @param int|null $id_funcionario O ID do funcionário (opcional).
      * @param int|null $id_grupo_servico O ID do grupo de serviço (opcional).
+     * @param int $limit limit da query (opcional).
+     * @param int $offset offset da query(opcional).
      * @return array Retorna um array com os serviços filtrados.
     */
-    public static function getListByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null):array
+    public static function getListByEmpresa(int $id_empresa,string $nome = null,int $id_funcionario = null,int $id_grupo_servico = null,?int $limit = null,?int $offset = null):array
     {
         $db = new servico;
 
@@ -59,6 +62,16 @@ class servicoModel{
         }
 
         $db->addGroup("servico.id");
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+        }
         
         $values = $db->selectColumns("servico.id","servico.nome","servico.tempo","servico.valor");
 

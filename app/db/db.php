@@ -252,7 +252,9 @@ class db
                 
             $sql->execute();
 
-            return $sql->rowCount();
+            $count = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
+
+            return isset($count[0])?$count[0]:0;
         } catch (\Exception $e) {
             throw new Exception('Tabela: '.$this->table.' Erro ao execultar o count');
         }
@@ -535,6 +537,21 @@ class db
             $this->propertys[] = " LIMIT {$limitIni},{$limitFim}";
         }else
             $this->propertys[] = " LIMIT {$limitIni}";
+
+        return $this;
+    }
+
+
+    /**
+     * Adiciona um limite à consulta SQL.
+     * 
+     * @param int $limitIni Índice inicial do limite.
+     * @param int $limitFim Índice final do limite (opcional).
+     * @return $this Retorna a instância atual da classe.
+     */
+    public function addOffset(int $offset):DB
+    {
+        $this->propertys[] = " OFFSET {$offset}";
 
         return $this;
     }

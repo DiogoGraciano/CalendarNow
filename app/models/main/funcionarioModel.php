@@ -7,6 +7,7 @@ use app\db\tables\funcionario;
 use app\db\tables\agenda;
 use app\db\tables\funcionarioGrupoFuncionario;
 use app\db\tables\agendaFuncionario;
+use app\models\abstract\model;
 
 /**
  * Classe funcionarioModel
@@ -17,7 +18,7 @@ use app\db\tables\agendaFuncionario;
  * 
  * @package app\models\main
 */
-class funcionarioModel{
+final class funcionarioModel extends model{
 
     /**
      * Obtém um funcionário pelo ID.
@@ -37,9 +38,11 @@ class funcionarioModel{
      * @param string $nome O nome do funcionário (opcional).
      * @param int $id_agenda O ID da agenda (opcional).
      * @param int $id_grupo_funcionarios O ID do grupo de funcionários (opcional).
+     * @param int $id_agenda O ID da agenda (opcional).
+     * @param int $id_grupo_funcionarios O ID do grupo de funcionários (opcional).
      * @return array Retorna um array com os funcionários filtrados.
      */
-    public static function getListFuncionariosByEmpresa(int $id_empresa,string $nome = null,int $id_agenda = null,int $id_grupo_funcionarios = null):array
+    public static function getListFuncionariosByEmpresa(int $id_empresa,string $nome = null,int $id_agenda = null,int $id_grupo_funcionarios = null,?int $limit = null,?int $offset = null):array
     {
 
         $db = new funcionario;
@@ -57,6 +60,16 @@ class funcionarioModel{
 
         if($nome)
             $db->addFilter("funcionario.nome","LIKE","%".$nome."%");
+
+        self::setLastCount($db);
+
+        if($limit && $offset){
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            $db->addLimit($limit);
+        }
                     
         $funcionarios = $db->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
         

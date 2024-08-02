@@ -3,6 +3,7 @@ namespace app\models\main;
 use app\db\tables\usuario;
 use app\helpers\functions;
 use app\helpers\mensagem;
+use app\models\abstract\model;
 use app\models\main\loginModel;
 use core\session;
 
@@ -14,7 +15,7 @@ use core\session;
  * 
  * @package app\models\main
 */
-class usuarioModel{
+final class usuarioModel extends model{
 
     /**
      * Obtém um usuário pelo ID.
@@ -93,16 +94,41 @@ class usuarioModel{
      /**
      * Obtém um usuário pelo id da empresa.
      * 
-     * @param string $id_empresa O id da empresa.
+     * @param int $id_empresa O id da empresa.
+     * @param int $tipo_usuario O id da empresa.
+     * @param int $limit limit da query (opcional).
+     * @param int $offset offset da query(opcional).
      * @return array Retorna um array com os dados do usuário ou um array vazio se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa):array
+    public static function getByEmpresa(int $id_empresa,?string $nome = null,?int $id_funcionario = null,?int $tipo_usuario = null,?int $limit = null,?int $offset = null):array
     {
         $db = new usuario;
 
-        $usuario = $db->addFilter("id_empresa", "=", $id_empresa)->selectAll();
+        $db->addFilter("id_empresa", "=", $id_empresa);
 
-        return $usuario;
+        if($nome){
+            $db->addFilter("nome","LIKE","%".$nome."%");
+        }
+
+        if($id_funcionario){
+            $db->addJoin("cliente","cliente.id_funcionario",$id_funcionario);
+        }
+
+        if($tipo_usuario !== null){
+            $db->addFilter("tipo_usuario", "=", $tipo_usuario);
+        }
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+        }
+
+        return $db->selectColumns('usuario.id','usuario.nome','usuario.cpf_cnpj','usuario.telefone','usuario.senha','usuario.email','usuario.tipo_usuario','usuario.id_empresa');
     }
 
     /**
