@@ -57,7 +57,7 @@ class functions{
     }
 
     public static function getUrlCompleta(){
-        return self::getUrlBase().$_SERVER['REQUEST_URI'];
+        return rtrim(self::getUrlBase(),"/").$_SERVER['REQUEST_URI'];
     }
     
     /**

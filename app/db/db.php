@@ -230,6 +230,39 @@ class db
      * 
      * @return array Retorna um array contendo todos os registros da tabela.
      */
+    public function count():int
+    {
+        try {
+            $sql = 'SELECT count(*) FROM ' . $this->table;
+            $sql .= implode('', $this->joins);
+            if ($this->filters) {
+                $sql .= " WHERE " . implode(' ', array_map(function($filter, $i) {
+                    return $i === 0 ? substr($filter, 4) : $filter;
+                }, $this->filters, array_keys($this->filters)));
+            }
+            $sql .= implode('', $this->propertys);
+
+            $sql = $this->pdo->prepare($sql);
+
+            if($this->valuesBind){
+                foreach ($this->valuesBind as $key => $data) {
+                    $sql->bindParam($key,$data[0],$data[1]);
+                }
+            }
+                
+            $sql->execute();
+
+            return $sql->rowCount();
+        } catch (\Exception $e) {
+            throw new Exception('Tabela: '.$this->table.' Erro ao execultar o count');
+        }
+    }
+
+    /**
+     * Seleciona todos os registros da tabela.
+     * 
+     * @return array Retorna um array contendo todos os registros da tabela.
+     */
     public function selectAll():array
     {
         $sql = "SELECT * FROM " . $this->table;
@@ -242,7 +275,7 @@ class db
         $sql .= implode('', $this->propertys);
 
         $object = $this->selectInstruction($sql);
-        $this->clean();
+
         return $object;
     }
 
@@ -265,7 +298,6 @@ class db
         }
         $sql .= implode('', $this->propertys);
         $object = $this->selectInstruction($sql);
-        $this->clean();
         return $object;
     }
 

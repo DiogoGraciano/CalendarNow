@@ -14,7 +14,12 @@ abstract class controller
     /**
      * @var string $url URL base do site.
      */
-    public $url;
+    protected readonly string $url;
+
+    /**
+     * @var string $url URL base do site.
+     */
+    protected readonly int $page;
 
     /**
      * Construtor da classe.
@@ -23,6 +28,16 @@ abstract class controller
     public function __construct()
     {
         $this->url = functions::getUrlBase();
+        $this->page = intval(functions::getUriQueryArray()["page"])?:1;
+    }
+
+    public function getOffset(int $limit = 30)
+    {
+        return ($this->page-1)*$limit;
+    }
+
+    public function getLimit(int $limit = 30){
+        return $this->page*$limit;
     }
 
     /**

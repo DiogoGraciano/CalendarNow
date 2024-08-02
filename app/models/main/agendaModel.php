@@ -16,7 +16,7 @@ use app\helpers\functions;
  * 
  * @package app\models\main
  */
-class agendaModel{
+final class agendaModel{
 
     /**
      * Obtém um registro da agenda com base em um valor e coluna especificados.
@@ -59,7 +59,7 @@ class agendaModel{
      * @param string $codigo O Codigo para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa,string $nome = null,string $codigo = null):array|bool
+    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null):array|bool
     {
         $db = new agenda;
         
@@ -71,6 +71,13 @@ class agendaModel{
 
         if($codigo){
             $db->addFilter("codigo","LIKE","%".$codigo."%");
+        }
+
+        if($limit && $offset){
+            $db->addLimit($limit,$offset);
+        }
+        elseif($limit){
+            $db->addLimit($limit);
         }
 
         $result = $db->selectColumns("id","agenda.nome","agenda.codigo");

@@ -41,7 +41,8 @@ class consulta extends pagina
         // Adiciona colunas à tabela
         if ($this->massaction) 
             $this->table->addColumns("1", $this->isMobile() ? "Selecionar" : "","massaction");
-        
+
+        $this->getTemplate("consulta.html");
     }
 
     /**
@@ -51,13 +52,11 @@ class consulta extends pagina
      * @param string $pagina_action URL da página de ação.
      * @param bool|array $dados Array de dados a serem exibidos na tabela.
      * @param string $coluna_action Nome da coluna que contém a ação (Editar/Excluir).
+     * @param int $limit limit de rows para a paginação.
      * @param bool $checkbox Indica se a coluna de checkbox deve ser exibida.
      */
-    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id")
-    {
-        // Carrega o template de consulta
-        $this->tpl = $this->getTemplate("consulta_template.html");
-        
+    public function show(string $pagina_manutencao,string $pagina_action,null|bool|array $dados,string $coluna_action = "id",int $limit = 30)
+    {        
         // Instancia a classe mensagem para exibir mensagens
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
@@ -96,10 +95,14 @@ class consulta extends pagina
 
             $this->tpl->qtd_list = $i;
             $this->tpl->table = $this->table->parse();
+
+            $pagination = new pagination($i,$limit);
+
+            $this->tpl->pagination = $pagination->parse();
+    
         } else {
             $this->tpl->block('BLOCK_SEMDADOS');
         }
-
         // Exibe o template
         $this->tpl->show();
     }
@@ -112,7 +115,7 @@ class consulta extends pagina
      * @param string $coluna Nome da coluna associada aos dados.
      * @return $this
      */
-    public function addColumns(string|int $width,string $nome,string $coluna)
+    public function addColumns(string|int $width,string $nome,string $coluna):consulta
     {
         $this->table->addColumns($width,$nome,$coluna);
         return $this;
@@ -124,7 +127,7 @@ class consulta extends pagina
      * @param string $button Botão a ser adicionado.
      * @return $this
      */
-    public function addButtons(string $button)
+    public function addButtons(string $button):consulta
     {
         $this->buttons[] = $button;
         return $this;
