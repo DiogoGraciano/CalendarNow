@@ -5,6 +5,7 @@ use app\layout\form;
 use app\layout\agenda;
 use app\layout\consulta;
 use app\controllers\abstract\controller;
+use app\db\transactionManeger;
 use app\layout\elements;
 use app\layout\filter;
 use app\layout\footer;
@@ -78,19 +79,60 @@ class agendamentoController extends controller{
         $footer->show();
     }
 
-    public function massAgendamento($parameters){
+    public function listagem($parameters){
 
         $head = new head();
         $head -> show("Agendamentos","consulta");
 
-        $tipo_usuario = "";
-
         $elements = new elements;
 
-        $cadastro = new consulta();
+        $cadastro = new consulta(true);
+
+        $user = usuarioModel::getLogged();
+
+        $id_agenda = intval($this->getValue("agenda"));
+        $id_funcionario = intval($this->getValue("funcionario"));
+        $dt_ini = $this->getValue("dt_ini");
+        $dt_fim = $this->getValue("dt_fim");
+
+        if ($user->tipo_usuario != 3){
+            $funcionarios = funcionarioModel::getByUsuario($user->id);
+            $agendas = agendaModel::getByUsuario($user->id);
+        }else{
+            $funcionarios = funcionarioModel::getByEmpresa($user->id);
+            $agendas = agendaModel::getByEmpresa($user->id_empresa);
+        }
+
+        $filter = new filter($this->url."agendamento/listagem");
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+
+        if ($agendas) {
+            $elements->addOption("", "Selecione/Todos");
+            foreach ($agendas as $agenda) {
+                $elements->addOption($agenda->id, $agenda->nome);
+            }
+            $agenda = $elements->select("Agenda:", "agenda", $id_agenda);
+
+            $filter->addFilter(3, $agenda);
+        }
+
+        if ($funcionarios) {
+            $elements->addOption("", "Selecione/Todos");
+            foreach ($funcionarios as $funcionario){
+                $elements->addOption($funcionario->id,$funcionario->nome);
+            }
+
+            $filter->addFilter(3,$elements->select("Funcionario","funcionario",$id_funcionario));
+        }
+
+        $filter->addFilter(3, $elements->input("dt_ini","Data Inicial:",$dt_ini,false,false,"","datetime-local","form-control form-control-date"));
+        $filter->addFilter(3, $elements->input("dt_fim","Data Final:",$dt_fim,false,false,"","datetime-local","form-control form-control-date"));
+
+        $filter->show();
 
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
-
+        $cadastro->addButtons($elements->button("Cancelar Agendamento","agendamentocancel","button","btn btn-primary","location.href='".$this->url."agendamento/massCancel'"));
+        
         $cadastro->addColumns("1","Id","id")
                 ->addColumns("10","CPF/CNPJ","cpf_cnpj")
                 ->addColumns("15","Nome","nome")
@@ -98,21 +140,58 @@ class agendamentoController extends controller{
                 ->addColumns("10","Telefone","telefone")
                 ->addColumns("10","Agenda","agenda")
                 ->addColumns("10","Funcionario","agenda")
-                ->addColumns("15","Data Inicial","dt_ini")
-                ->addColumns("15","Data Final","dt_fim")
+                ->addColumns("12","Data Inicial","dt_ini")
+                ->addColumns("12","Data Final","dt_fim")
+                ->addColumns("10","Status","status")
                 ->addColumns("14","Ações","acoes");
 
-        $user = usuarioModel::getLogged();
+        if ($user->tipo_usuario != 3){
+            $dados = agendamentoModel::prepareList(agendamentoModel::getAgendamentosByEmpresa($user->id_empresa,$dt_ini,$dt_fim,false,$id_agenda,$id_funcionario,$this->getLimit(),$this->getOffset()));
+            $count = agendamentoModel::getLastCount("getAgendamentosByEmpresa");
+        }else{
+            $dados =  agendamentoModel::prepareList(agendamentoModel::getAgendamentosByUsuario($user->id,$dt_ini,$dt_fim,false,$id_agenda,$id_funcionario,$this->getLimit(),$this->getOffset()));
+            $count = agendamentoModel::getLastCount("getAgendamentosByUsuario");
+        }
 
-        if ($user->tipo_usuario != 3)
-            $dados = agendamentoModel::getAgendamentosByEmpresa($user->id_empresa);
-        else 
-            $dados = agendamentoModel::getAgendamentosByUsuario($user->id);
-
-        $cadastro->show($this->url."agendamento/manutencao",$this->url."agendamento/action",$dados,"id",$this->getLimit(),$this->get);
+        $cadastro->show($this->url."agendamento/manutencao",$this->url."agendamento/action",$dados,"id",$this->getLimit(),$count);
       
         $footer = new footer;
         $footer->show();
+    }
+
+    public function massCancel($parameters = []){
+        try{
+
+            transactionManeger::init();
+
+            transactionManeger::beginTransaction();
+
+            $qtd_list = $this->getValue("qtd_list");
+
+            $mensagem = "Agendamentos cancelados com sucesso: ";
+            $mensagem_erro = "Agendamentos não cancelados: ";
+
+            if ($qtd_list){
+                for ($i = 1; $i <= $qtd_list; $i++) {
+                    if($id_agendamento = $this->getValue("id_check_".$i)){
+                        if(agendamentoModel::cancel($id_agendamento))
+                            $mensagem .= $id_agendamento." - ";
+                        else
+                            $mensagem_erro .= $id_agendamento." - ";
+                    }
+                }
+            }
+            else{
+                mensagem::setErro("Não foi possivel encontrar o numero total de usuarios");
+            }
+
+        }catch(\Exception $e){
+            mensagem::setSucesso(false);
+            mensagem::setErro("Erro inesperado ocorreu, tente novamente");
+            transactionManeger::rollback();
+        }
+
+        $this->go("agendamento/listagem");
     }
     
     public function manutencao($parameters){
@@ -181,7 +260,7 @@ class agendamentoController extends controller{
             if ($user->tipo_usuario < 2)
                 $agendas = agendaModel::getByEmpresa($user->id_empresa);
             else 
-                $agendas = agendaModel::getByUser($user->id);
+                $agendas = agendaModel::getByUsuario($user->id);
 
             foreach ($agendas as $agenda){
                 $elements->addOption($agenda->id,$agenda->nome);
@@ -278,8 +357,9 @@ class agendamentoController extends controller{
     public function action($parameters){
 
         if ($parameters){
+            agendamentoItemModel::deleteByIdAgendamento($parameters[0]);
             agendamentoModel::delete($parameters[0]);
-            $this->go("home");
+            $this->go("agendamento");
             return;
         }
 

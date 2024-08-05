@@ -135,4 +135,14 @@ class agendamentoItemModel{
         return (new agendamentoItem)->delete($id);
     }
 
+    /**
+     * Exclui um item de agendamento pelo ID.
+     * 
+     * @param int $id_agendamento O ID do agendamento para o filtro do item a ser excluído.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function deleteByIdAgendamento(int $id_agendamento){
+        return (new agendamentoItem)->addFilter("id_agendamento","=",$id_agendamento)->deleteByFilter();
+    }
+
 }

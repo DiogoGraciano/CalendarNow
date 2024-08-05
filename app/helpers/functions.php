@@ -105,6 +105,21 @@ class functions{
     }
 
     /**
+     * Converte uma string para o formato de data e hora BR
+     *
+     * @param string $string A string contendo a data e hora
+     * @return string|bool A string formatada ou false se falhar
+     */
+    public static function dateTimeBr(string $string):string|bool
+    {
+        $datetime = new \DateTimeImmutable($string);
+        if ($datetime !== false)
+            return $datetime->format('d/m/Y H:i:s');
+
+        return false;
+    }
+
+    /**
      * Validada se uma cor é valida
      *
      * @param string $string A string contendo a data
@@ -137,6 +152,21 @@ class functions{
         $datetime = new \DateTimeImmutable($string);
         if ($datetime !== false)
             return $datetime->format('Y-m-d');
+
+        return false;
+    }
+
+     /**
+     * Converte uma string para o formato de data BR
+     *
+     * @param string $string A string contendo a data
+     * @return string|bool A string formatada ou false se falhar
+     */
+    public static function dateBr(string $string):string|bool
+    {
+        $datetime = new \DateTimeImmutable($string);
+        if ($datetime !== false)
+            return $datetime->format('d/m/Y');
 
         return false;
     }

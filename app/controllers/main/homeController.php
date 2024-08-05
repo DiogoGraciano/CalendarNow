@@ -21,7 +21,7 @@ class homeController extends controller{
 
         $user = usuarioModel::getLogged();
 
-        $agendas = agendaModel::getByUser($user->id);
+        $agendas = agendaModel::getByUsuario($user->id);
 
         $lista = new lista();
 

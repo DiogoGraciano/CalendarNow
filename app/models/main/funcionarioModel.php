@@ -61,13 +61,13 @@ final class funcionarioModel extends model{
         if($nome)
             $db->addFilter("funcionario.nome","LIKE","%".$nome."%");
 
-        self::setLastCount($db);
-
         if($limit && $offset){
+            self::setLastCount($db);
             $db->addLimit($limit);
             $db->addOffset($offset);
         }
         elseif($limit){
+            self::setLastCount($db);
             $db->addLimit($limit);
         }
                     
@@ -125,6 +125,22 @@ final class funcionarioModel extends model{
                 ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
 
         return $values;
+    }
+
+    /**
+     * Obtém os funcionários por empresa.
+     * 
+     * @param int $id_empresa O ID da empresa.
+     * @return array Retorna um array com os funcionários associados à empresa.
+    */
+    public static function getByUsuario(int $id_usuario):array
+    {
+        $db = new funcionario;
+
+        return $db
+                ->addJoin("agendamento","agendamento.id_funcionario","funcionario.id")
+                ->addGroup("funcionario.id")
+                ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
     }
 
     /**

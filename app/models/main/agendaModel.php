@@ -119,7 +119,7 @@ final class agendaModel extends model{
      * @param int|null $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUser(int $id_usuario):array|bool 
+    public static function getByUsuario(int $id_usuario):array|bool 
     {
         $db = new agendaUsuario;
         
@@ -162,7 +162,7 @@ final class agendaModel extends model{
      * @param int $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUserServico(int $id_servico,int $id_usuario):array|bool 
+    public static function getByUsuarioServico(int $id_servico,int $id_usuario):array|bool 
     {
         $db = new agendaUsuario;
         
