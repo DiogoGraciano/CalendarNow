@@ -60,7 +60,6 @@ class consulta extends pagina
         // Instancia a classe mensagem para exibir mensagens
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
-        $this->tpl->pagina_manutencao = $pagina_manutencao;
 
         // Adiciona botões ao template
         foreach ($this->buttons as $button) {

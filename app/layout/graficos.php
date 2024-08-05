@@ -24,7 +24,7 @@ class grafico extends pagina{
      */
     function __construct(array $datax,array $datay,string $chartName,string $type = "line",string $class = "",bool $fill,bool $legends,bool $title,string $backColor = 'random',string $borderColor = 'rgb(0,0,0)')
     {
-        $this->getTemplate("../templates/graficos_template.html", true);
+        $this->getTemplate("graficos.html", true);
 
         if ($type == "line" 
             || $type == "bar" 

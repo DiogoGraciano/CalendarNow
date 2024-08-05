@@ -51,6 +51,7 @@ class clienteController extends controller{
 
         $cliente = new consulta();
 
+        $cliente->addButtons($elements->button("Adicionar","manutencao","button","btn btn-primary","location.href='".$this->url."cliente/manutencao'"));
         $cliente->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $dados = $user->tipo_usuario == 2?clienteModel::getByUsuario($user->id,$this->getLimit(),$this->getOffset()):clienteModel::getByEmpresa($user->id_empresa,$this->getLimit(),$this->getOffset());
@@ -59,7 +60,7 @@ class clienteController extends controller{
         $cliente->addColumns("1","Id","id")
             ->addColumns("70","Nome","nome")
             ->addColumns("11","Ações","acoes")
-            ->show($this->url."cliente/manutencao",$this->url."cliente/action/",
+            ->show($this->url."cliente/manutencao",$this->url."cliente/action",
             $dados,
             "id",
             $this->getLimit(),

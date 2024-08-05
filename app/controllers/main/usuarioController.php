@@ -57,8 +57,11 @@ class usuarioController extends controller {
         $filter->show();
 
         $cadastro = new consulta(true);
-        $cadastro->addButtons($elements->button("Bloquear Usuario","usuarioblock","submit","btn btn-primary","location.href='".$this->url."usuario/bloquear'")); 
-
+        
+        $cadastro->addButtons($elements->button("Bloquear Usuario","usuarioblock","submit","btn btn-primary","location.href='".$this->url."usuario/bloquear'"));
+        $cadastro->addButtons($elements->button("Desbloquear Usuario","usuariounblock","submit","btn btn-primary","location.href='".$this->url."usuario/desbloquear'"));
+        $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
+        
         $cadastro->addColumns("1", "Id", "id")
                  ->addColumns("10", "CPF", "cpf")
                  ->addColumns("15", "Nome", "nome")
@@ -67,7 +70,7 @@ class usuarioController extends controller {
 
         $dados = usuarioModel::getByEmpresa($user->id_empresa,$nome,$id_funcionario,3,$this->getLimit(),$this->getOffset());
 
-        $cadastro->show($this->url."usuario/manutencao/opcoes/", $this->url."usuario/action/opcoes/", $dados,"id",$this->getLimit(),usuarioModel::getLastCount("getByEmpresa"));
+        $cadastro->show($this->url."usuario/manutencao", $this->url."usuario/action", $dados,"id",$this->getLimit(),usuarioModel::getLastCount("getByEmpresa"));
 
         $footer = new footer();
         $footer->show();
@@ -91,6 +94,43 @@ class usuarioController extends controller {
                 for ($i = 1; $i <= $qtd_list; $i++) {
                     if($id_usuario = $this->getValue("id_check_".$i)){
                         if(usuarioModel::setBloqueio($id_usuario,$user->id_empresa))
+                            $mensagem .= $id_usuario." - ";
+                        else
+                            $mensagem_erro .= $id_usuario." - ";
+                    }
+                }
+            }
+            else{
+                mensagem::setErro("Não foi possivel encontrar o numero total de usuarios");
+            }
+
+        }catch(\Exception $e){
+            mensagem::setSucesso(false);
+            mensagem::setErro("Erro inesperado ocorreu, tente novamente");
+            transactionManeger::rollback();
+        }
+
+        $this->go("usuario");
+    }
+
+    public function desbloquear($parameters = []){
+        try{
+
+            transactionManeger::init();
+
+            transactionManeger::beginTransaction();
+
+            $qtd_list = $this->getValue("qtd_list");
+
+            $user = usuarioModel::getLogged();
+
+            $mensagem = "Usuarios bloqueados com sucesso: ";
+            $mensagem_erro = "Usuarios não bloqueados: ";
+
+            if ($qtd_list){
+                for ($i = 1; $i <= $qtd_list; $i++) {
+                    if($id_usuario = $this->getValue("id_check_".$i)){
+                        if(usuarioModel::deleteBloqueio($id_usuario,$user->id_empresa))
                             $mensagem .= $id_usuario." - ";
                         else
                             $mensagem_erro .= $id_usuario." - ";

@@ -55,6 +55,7 @@ final class gruposController extends controller{
 
         $cadastro = new consulta();
 
+        $cadastro->addButtons($elements->button("Adicionar","manutencao","button","btn btn-primary","location.href='".$this->url."grupos/manutencao/'".functions::encrypt($tipo_grupo)));
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
 
         $cadastro->addColumns("1","Id","id")

@@ -20,7 +20,7 @@ class mensagem extends pagina{
     public function show(bool $show=true,string $localizacao=""):string|null
     {
         // Obtém o template das mensagens
-        $this->getTemplate("../templates/mensagem_template.html");
+        $this->getTemplate("mensagem.html");
 
         // Array para armazenar mensagens
         $mensagens = [];

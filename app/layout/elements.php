@@ -27,7 +27,7 @@ class elements extends pagina{
      */
     public function button(string $button_nome,string $nm_input,string $type_input="submit",string $class_input="btn btn-primary w-100 pt-2 btn-block",string $button_action="",string $extra_input=""){
 
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         $tpl->type_input = $type_input;
         $tpl->nm_input = $nm_input;
@@ -50,7 +50,7 @@ class elements extends pagina{
      * @return string HTML da label.
      */
     public function label(string $titulo){
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         $tpl->titulo = $titulo;
     
@@ -75,7 +75,7 @@ class elements extends pagina{
      */
     public function checkbox(string $nm_input,string $nm_label="",bool $required=false,bool $checked=false,bool $readonly=false,$value="on",string $type_input="checkbox",string $class_input="form-check-input",string $extra_input=""){
 
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         $tpl->type_input = $type_input;
         $tpl->nm_input = $nm_input;
@@ -117,7 +117,7 @@ class elements extends pagina{
      */
     public function input(string $nm_input,string $nm_label,$vl_input="",bool $required=false,bool $readonly=false,string $placeholder="",string $type_input="text",string $class_input="form-control",string $extra_input=""){
 
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         $tpl->type_input = $type_input;
         $tpl->placeholder = $placeholder;
@@ -163,7 +163,7 @@ class elements extends pagina{
      */
     public function textarea(string $nm_input,string $nm_label,$vl_input,bool $required=false,bool $readonly=false,string $placeholder="",$rows_input="",$cols_input="",string $class_input="form-control",string $extra_input=""){
 
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         if ($nm_label){
             $tpl->nm_label = $nm_label;
@@ -202,7 +202,7 @@ class elements extends pagina{
      */
     public function select(string $nm_label,string $nm_input,$vl_option="",bool $required=false,string $class_input="form-select",string $extra_input=""){
 
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         if ($nm_label){
             $tpl->nm_label = $nm_label;
@@ -246,7 +246,7 @@ class elements extends pagina{
      */
     public function datalist(string $nm_label,string $nm_input,$vl_option="",bool $required=false,string $class_input="form-control",string $extra_input=""){
 
-        $tpl= $this->getTemplate("elements_template.html");
+        $tpl= $this->getTemplate("elements.html");
 
         if ($nm_label){
             $tpl->nm_label = $nm_label;

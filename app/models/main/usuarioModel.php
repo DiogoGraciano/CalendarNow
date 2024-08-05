@@ -1,6 +1,7 @@
 <?php 
 namespace app\models\main;
 use app\db\tables\usuario;
+use app\db\tables\usuarioBloqueio;
 use app\helpers\functions;
 use app\helpers\mensagem;
 use app\models\abstract\model;
@@ -150,6 +151,56 @@ final class usuarioModel extends model{
                         
         return $usuarios;
     }
+
+    /**
+     * Bloqueia um usuario em uma agenda.
+     * 
+     * @param int $id_usuario O id do usuario.
+     * @param int $id_agenda O id da agenda.
+     * @return bool true caso sucesso.
+    */
+    public static function setBloqueio(int $id_usuario,int $id_agenda):bool
+    {
+        $db = new usuarioBloqueio;
+
+        if(!($db->id_usuario = self::get($id_usuario)->id)){
+            $mensagens[] = "Usuario não existe";
+        }
+        if(!($db->id_agenda = agendaModel::get($id_agenda)->id)){
+            $mensagens[] = "Agenda não existe";
+        }
+
+        if($db->store()){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Bloqueia um usuario em uma agenda.
+     * 
+     * @param int $id_usuario O id do usuario.
+     * @param int $id_agenda O id da agenda.
+     * @return bool true caso sucesso.
+    */
+    public static function deleteBloqueio(int $id_usuario,int $id_agenda):bool
+    {
+        $db = new usuarioBloqueio;
+
+        $db->addFilter($id_usuario,"=",$id_usuario);
+
+        $db->addFilter($id_agenda,"=",$id_agenda);
+
+        $usuarioBloqueio = $db->selectAll();
+
+        if(isset($usuarioBloqueio[0]->id) && $usuarioBloqueio[0]->id){
+            return $db->delete($usuarioBloqueio[0]->id);
+        }
+
+        return false;
+    }
+
 
     /**
      * Insere ou atualiza um usuário.

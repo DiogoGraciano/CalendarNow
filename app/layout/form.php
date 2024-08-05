@@ -26,7 +26,7 @@ class form extends pagina
      */
     public function __construct(string $action)
     {
-        $this->tplform = $this->getTemplate("form_template.html");
+        $this->tplform = $this->getTemplate("form.html");
         $mensagem = new mensagem;
         $this->tplform->mensagem = $mensagem->show(false);
         $this->tplform->action = $action;
@@ -41,7 +41,7 @@ class form extends pagina
      */
     public function setinputs(string $input,string $nome = "")
     {
-        $tpl = $this->getTemplate("inputs_template.html");
+        $tpl = $this->getTemplate("inputs.html");
         $tpl->block_um_input = $input;
         $tpl->nome = $nome;
         $tpl->block("BLOCK_INPUT");
@@ -54,7 +54,7 @@ class form extends pagina
      */
     public function setCustomInputs():form
     {
-        $tpl = $this->getTemplate("inputs_template.html");
+        $tpl = $this->getTemplate("inputs.html");
         foreach ($this->inputs_custom as $custom) { 
             $tpl->tamanho = $custom->tamanho;
             $tpl->nome = $custom->nome;
@@ -96,7 +96,7 @@ class form extends pagina
      */
     public function setDoisInputs(string $input,string $input2, array $nomes = ["", ""])
     {
-        $tpl = $this->getTemplate("inputs_template.html");
+        $tpl = $this->getTemplate("inputs.html");
         $tpl->block_dois_input = $input;
         $tpl->nome_um = $nomes[0];
         $tpl->block_dois_input_dois = $input2;
@@ -129,7 +129,7 @@ class form extends pagina
      */
     public function setTresInputs(string $input,string $input2,string $input3, array $nomes = ["", "", ""])
     {
-        $tpl = $this->getTemplate("inputs_template.html");
+        $tpl = $this->getTemplate("inputs.html");
         $tpl->block_tres_input = $input;
         $tpl->nome_um = $nomes[0];
         $tpl->block_tres_input_dois = $input2;

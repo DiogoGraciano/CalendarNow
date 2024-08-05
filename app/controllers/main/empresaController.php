@@ -31,6 +31,7 @@ class empresaController extends controller {
         $elements = new elements();
 
         $cadastro = new consulta();
+        $cadastro->addButtons($elements->button("Adicionar","manutencao","button","btn btn-primary","location.href='".$this->url."empresa/manutencao'"));
         $cadastro->addButtons($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='".$this->url."opcoes'"));
 
         $cadastro->addColumns("1", "Id", "id")

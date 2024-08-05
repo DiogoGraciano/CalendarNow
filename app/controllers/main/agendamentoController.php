@@ -3,6 +3,7 @@ namespace app\controllers\main;
 use app\layout\head;
 use app\layout\form;
 use app\layout\agenda;
+use app\layout\consulta;
 use app\controllers\abstract\controller;
 use app\layout\elements;
 use app\layout\filter;
@@ -72,6 +73,43 @@ class agendamentoController extends controller{
             $Dadofuncionario->hora_almoco_ini?:"12:00",
             $Dadofuncionario->hora_almoco_fim?:"13:30"
         );
+      
+        $footer = new footer;
+        $footer->show();
+    }
+
+    public function massAgendamento($parameters){
+
+        $head = new head();
+        $head -> show("Agendamentos","consulta");
+
+        $tipo_usuario = "";
+
+        $elements = new elements;
+
+        $cadastro = new consulta();
+
+        $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
+
+        $cadastro->addColumns("1","Id","id")
+                ->addColumns("10","CPF/CNPJ","cpf_cnpj")
+                ->addColumns("15","Nome","nome")
+                ->addColumns("15","Email","email")
+                ->addColumns("10","Telefone","telefone")
+                ->addColumns("10","Agenda","agenda")
+                ->addColumns("10","Funcionario","agenda")
+                ->addColumns("15","Data Inicial","dt_ini")
+                ->addColumns("15","Data Final","dt_fim")
+                ->addColumns("14","Ações","acoes");
+
+        $user = usuarioModel::getLogged();
+
+        if ($user->tipo_usuario != 3)
+            $dados = agendamentoModel::getAgendamentosByEmpresa($user->id_empresa);
+        else 
+            $dados = agendamentoModel::getAgendamentosByUsuario($user->id);
+
+        $cadastro->show($this->url."agendamento/manutencao",$this->url."agendamento/action",$dados,"id",$this->getLimit(),$this->get);
       
         $footer = new footer;
         $footer->show();

@@ -25,7 +25,7 @@ class agenda extends pagina{
     */
     public function show($action,$eventos,$days_off=",seg,ter,qua,qui,sex,",$initial_time = "08:00",$final_time = "19:00",$dinner_start="12:00",$dinner_end="13:00",$slot_duration = 30)
     {
-        $this->tpl = $this->getTemplate("agenda_template.html");
+        $this->tpl = $this->getTemplate("agenda.html");
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
         $this->tpl->action = $action;

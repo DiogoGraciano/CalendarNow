@@ -35,8 +35,9 @@ final class funcionarioController extends controller
 
         $elements = new elements();
         $cadastro = new consulta(true);
-        $cadastro->addButtons($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='" . $this->url . "opcoes'"));
-
+        
+        $cadastro->addButtons($elements->button("Adicionar","manutencao","button","btn btn-primary","location.href='".$this->url."funcionario/manutencao'"));
+    
         $cadastro->addColumns("1", "Id", "id")
             ->addColumns("10", "CPF/CNPJ", "cpf_cnpj")
             ->addColumns("15", "Nome", "nome")
@@ -100,6 +101,8 @@ final class funcionarioController extends controller
         $filter->show();
         $dados = funcionarioModel::getListFuncionariosByEmpresa($user->id_empresa,$nome,intval($id_agenda),intval($id_grupo_funcionarios),$this->getLimit(),$this->getOffset());
 
+        $cadastro->addButtons($elements->button("Voltar", "voltar", "button", "btn btn-primary", "location.href='" . $this->url . "opcoes'"));
+        
         $cadastro->addColumns("14", "Ações", "acoes");
         $cadastro->show($this->url . "funcionario/manutencao", 
                         $this->url . "funcionario/action", 

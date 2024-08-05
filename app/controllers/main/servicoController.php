@@ -88,9 +88,10 @@ class servicoController extends controller{
 
         $servico = new consulta(true);
 
-        $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
+        $servico->addButtons($elements->button("Adicionar","manutencao","button","btn btn-primary","location.href='".$this->url."servico/manutencao'"));
         $servico->addButtons($elements->button("Adicionar Serviço ao Funcionario","openModelFuncionario","button","btn btn-primary","openModal('massActionFuncionario')")); 
         $servico->addButtons($elements->button("Adicionar Serviço ao Grupo","openModelGrupoServico","button","btn btn-primary","openModal('massActionGrupoServico')")); 
+        $servico->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
         
         $data = [];
 

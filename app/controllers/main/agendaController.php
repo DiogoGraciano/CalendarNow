@@ -43,6 +43,7 @@ final class agendaController extends controller{
 
         $agenda = new consulta();
 
+        $agenda->addButtons($elements->button("Adicionar","manutencao","button","btn btn-primary","location.href='".$this->url."agenda/manutencao'"));
         $agenda->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
 
         $agenda->addColumns("1","Id","id")

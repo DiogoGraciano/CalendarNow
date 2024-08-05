@@ -19,7 +19,7 @@ class filter extends pagina
      */
     public function __construct($action)
     {
-        $this->tplform = $this->getTemplate("filter_template.html");
+        $this->tplform = $this->getTemplate("filter.html");
         $this->tplform->action = $action;
     }
 

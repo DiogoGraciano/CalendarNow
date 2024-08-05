@@ -41,7 +41,7 @@ class modal extends pagina{
     public function __construct(string $action,$nome = "modal",bool $submit_this_form = false)
     {
         $this->submit_this_form = $submit_this_form;
-        $this->tplform = $this->getTemplate("modal_template.html");
+        $this->tplform = $this->getTemplate("modal.html");
         $this->tplform->nome_modal = $nome;
         if ($this->submit_this_form){
             $this->tplform->action = $action;
@@ -60,7 +60,7 @@ class modal extends pagina{
      * @param string $nome  Nome do input.
      */
     public function setinputs(string $input,string $nome=""){
-        $tpl= $this->getTemplate("inputs_template.html");
+        $tpl= $this->getTemplate("inputs.html");
         $tpl->block_um_input = $input;
         $tpl->nome = $nome;
         $tpl->block("BLOCK_INPUT");
@@ -72,7 +72,7 @@ class modal extends pagina{
      * Define inputs personalizados no modal.
      */
     public function setCustomInputs(){
-        $tpl= $this->getTemplate("inputs_template.html");
+        $tpl= $this->getTemplate("inputs.html");
         foreach ($this->inputs_custom as $custom){ 
             $tpl->tamanho = $custom->tamanho;
             $tpl->nome = $custom->nome;
@@ -105,7 +105,7 @@ class modal extends pagina{
     }
 
     public function setDoisInputs(string $input,string $input2,array $nomes = ["",""]){
-        $tpl=$this->getTemplate("inputs_template.html");
+        $tpl=$this->getTemplate("inputs.html");
         $tpl->block_dois_input = $input;
         $tpl->nome_um = $nomes[0];
         $tpl->block_dois_input_dois = $input2;
@@ -130,7 +130,7 @@ class modal extends pagina{
      * @param array $nomes Nomes para os inputs.
      */
     public function setTresInputs(string $input,string $input2,string $input3,array $nomes = array("","","")){
-        $tpl= $this->getTemplate("inputs_template.html");
+        $tpl= $this->getTemplate("inputs.html");
         $tpl->block_tres_input = $input;
         $tpl->nome_um = $nomes[0];
         $tpl->block_tres_input_dois = $input2;
