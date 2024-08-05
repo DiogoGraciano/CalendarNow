@@ -304,12 +304,17 @@ final class agendamentoModel extends model{
      */
     public static function cancel(int $id):int|bool
     {
-        $values = new agendamento;
+        $values = self::get($id);
 
         $mensagens = [];
 
-        if(!($values->id = self::get($id)->id)){
+        if(!$values->id){
             $mensagens[] = "Agendamento não encontrada";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
         }
 
         $values->id_status = 4;
@@ -318,8 +323,8 @@ final class agendamentoModel extends model{
             mensagem::setSucesso("Agendamento salvo com sucesso");
             return $values->id;
         }
-        else 
-            return False;
+         
+        return False;
     }
 
      /**

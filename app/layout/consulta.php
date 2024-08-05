@@ -61,6 +61,17 @@ class consulta extends pagina
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
 
+        $url = functions::getUrlBase();
+        $path = explode("/",functions::getUriPath());
+        if(!isset($path[1])){
+            $url = $url."index/massaction";
+        }
+        elseif(isset($path[1])){
+            $url = $url.$path[1]."/massaction";
+        }
+
+        $this->tpl->action = $url;
+
         // Adiciona botões ao template
         foreach ($this->buttons as $button) {
             $this->tpl->button = $button;

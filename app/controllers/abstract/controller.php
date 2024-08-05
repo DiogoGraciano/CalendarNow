@@ -37,14 +37,31 @@ abstract class controller
         $this->page = isset($this->urlQuery["page"])?intval($this->urlQuery["page"]):1;
     }
 
-    public function getOffset(int $limit = 20):int
+    protected function getOffset(int $limit = 20):int
     {
         return ($this->page-1)*$limit;
     }
 
-    public function getLimit(int $limit = 20):int
+    protected function getLimit(int $limit = 20):int
     {
         return $limit?:20;
+    }
+
+    public function massaction($parameters = []){
+
+        $class = get_called_class();
+        $method = "";
+
+        $massaction = request::getValue("massaction");
+
+        if($massaction)
+            $method = array_keys($massaction)[0];
+     
+        if($method && method_exists($class,$method)){
+            (new $class)->$method();
+        }
+        
+        (new $class)->index();
     }
 
     /**
@@ -53,7 +70,7 @@ abstract class controller
      * @param string $var Nome da variável.
      * @return mixed Valor da variável ou uma null se não existir.
      */
-    public function getValue(string $var):mixed
+    protected function getValue(string $var):mixed
     {
         return request::getValue($var);
     }
@@ -63,7 +80,7 @@ abstract class controller
      *
      * @param string $caminho Caminho para redirecionamento.
      */
-    public function go(string $caminho):void
+    protected function go(string $caminho):void
     {
         echo '<meta http-equiv="refresh" content="0;url=' . $this->url . $caminho . '">';
         exit;
@@ -74,7 +91,7 @@ abstract class controller
      *
      * @return bool Retorna true se o dispositivo for móvel, caso contrário retorna false.
      */
-    public function isMobile():bool
+    protected function isMobile():bool
     {
         $useragent = $_SERVER['HTTP_USER_AGENT'];
         // Expressões regulares para detectar dispositivos móveis

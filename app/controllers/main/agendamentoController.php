@@ -131,8 +131,8 @@ class agendamentoController extends controller{
         $filter->show();
 
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'")); 
-        $cadastro->addButtons($elements->button("Cancelar Agendamento","agendamentocancel","button","btn btn-primary","location.href='".$this->url."agendamento/massCancel'"));
-        
+        $cadastro->addButtons($elements->buttonMassation("Cancelar Agendamento","agendamentocancel","massCancel","btn btn-primary"));
+
         $cadastro->addColumns("1","Id","id")
                 ->addColumns("10","CPF/CNPJ","cpf_cnpj")
                 ->addColumns("15","Nome","nome")
@@ -142,8 +142,7 @@ class agendamentoController extends controller{
                 ->addColumns("10","Funcionario","agenda")
                 ->addColumns("12","Data Inicial","dt_ini")
                 ->addColumns("12","Data Final","dt_fim")
-                ->addColumns("10","Status","status")
-                ->addColumns("14","Ações","acoes");
+                ->addColumns("10","Status","status");
 
         if ($user->tipo_usuario != 3){
             $dados = agendamentoModel::prepareList(agendamentoModel::getAgendamentosByEmpresa($user->id_empresa,$dt_ini,$dt_fim,false,$id_agenda,$id_funcionario,$this->getLimit(),$this->getOffset()));
@@ -166,10 +165,10 @@ class agendamentoController extends controller{
 
             transactionManeger::beginTransaction();
 
-            $qtd_list = $this->getValue("qtd_list");
+            $qtd_list = intval($this->getValue("qtd_list"));
 
             $mensagem = "Agendamentos cancelados com sucesso: ";
-            $mensagem_erro = "Agendamentos não cancelados: ";
+            $mensagem_erro = " Agendamentos não cancelados: ";
 
             if ($qtd_list){
                 for ($i = 1; $i <= $qtd_list; $i++) {
@@ -180,6 +179,8 @@ class agendamentoController extends controller{
                             $mensagem_erro .= $id_agendamento." - ";
                     }
                 }
+                $mensagem_erro = rtrim($mensagem_erro," - ");
+                $mensagem = rtrim($mensagem," - ");
             }
             else{
                 mensagem::setErro("Não foi possivel encontrar o numero total de usuarios");
@@ -190,6 +191,9 @@ class agendamentoController extends controller{
             mensagem::setErro("Erro inesperado ocorreu, tente novamente");
             transactionManeger::rollback();
         }
+
+        mensagem::setSucesso($mensagem.$mensagem_erro);
+        transactionManeger::commit();
 
         $this->go("agendamento/listagem");
     }
