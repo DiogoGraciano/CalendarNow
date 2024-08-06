@@ -76,3 +76,15 @@
 2024-08-02T11:40:48+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
 2024-08-02T11:40:52+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
 2024-08-02T11:43:58+00:00 [ERROR] : SQLSTATE[HY000] [2002] No such file or directory
+2024-08-05T21:30:08+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 
+2024-08-05T21:30:10+00:00 [ERROR] : SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: No such host is known. 
+2024-08-05T21:45:14+00:00 [ERROR] : could not find driver
+2024-08-05T21:49:03+00:00 [ERROR] : could not find driver
+2024-08-05T21:49:53+00:00 [ERROR] : could not find driver
+2024-08-05T21:52:19+00:00 [ERROR] : could not find driver
+2024-08-05T21:53:07+00:00 [ERROR] : could not find driver
+2024-08-05T21:56:35+00:00 [ERROR] : could not find driver
+2024-08-05T21:58:12+00:00 [ERROR] : could not find driver
+2024-08-05T21:58:29+00:00 [ERROR] : could not find driver
+2024-08-05T22:06:39+00:00 [ERROR] : could not find driver
+2024-08-05T22:11:01+00:00 [ERROR] : could not find driver

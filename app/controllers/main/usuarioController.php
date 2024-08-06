@@ -58,8 +58,8 @@ class usuarioController extends controller {
 
         $cadastro = new consulta(true);
         
-        $cadastro->addButtons($elements->button("Bloquear Usuario","usuarioblock","submit","btn btn-primary","location.href='".$this->url."usuario/bloquear'"));
-        $cadastro->addButtons($elements->button("Desbloquear Usuario","usuariounblock","submit","btn btn-primary","location.href='".$this->url."usuario/desbloquear'"));
+        $cadastro->addButtons($elements->buttonMassation("Bloquear Usuario","usuarioblock","bloquear"));
+        $cadastro->addButtons($elements->buttonMassation("Desbloquear Usuario","usuariounblock","desbloquear"));
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
         
         $cadastro->addColumns("1", "Id", "id")
