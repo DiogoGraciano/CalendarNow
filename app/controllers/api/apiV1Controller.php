@@ -6,8 +6,6 @@ use app\helpers\functions;
 use app\models\main\loginApiModel;
 use core\request;
 
-header('Content-Type: application/json; charset=utf-8');
-
 class apiV1Controller extends controller{
 
     /**
@@ -23,6 +21,13 @@ class apiV1Controller extends controller{
      * @var mixed
      */
     private $data;
+
+    /**
+     * query da requisição.
+     *
+     * @var mixed
+    */
+    private $query;
 
     /**
      * Construtor da classe.
@@ -49,8 +54,9 @@ class apiV1Controller extends controller{
         $this->requestType = $_SERVER['REQUEST_METHOD'];
         if ($this->requestType === "PUT" || $this->requestType === "POST")
             $this->data = json_decode(file_get_contents('php://input'), true);
-        elseif($query = functions::getUriQuery() && $this->requestType === "GET" || $this->requestType === "DELETE"){
-            parse_str($query,$this->data);
+        
+        if($query = functions::getUriQuery()){
+            parse_str($query,$this->query);
         }
             
     }
@@ -61,7 +67,7 @@ class apiV1Controller extends controller{
      * @param array $parameters Parâmetros da requisição.
      */
     public function cliente($parameters){
-        $this->callControllerMethod(new clienteController($this->requestType, $this->data), $parameters);
+        $this->callControllerMethod(new clienteController($this->requestType, $this->data, $this->query), $parameters);
     }
 
     /**
@@ -70,7 +76,7 @@ class apiV1Controller extends controller{
      * @param array $parameters Parâmetros da requisição.
      */
     public function funcionario($parameters){
-        $this->callControllerMethod(new funcionarioController($this->requestType, $this->data), $parameters);
+        $this->callControllerMethod(new funcionarioController($this->requestType, $this->data, $this->query), $parameters);
     }
 
     /**
@@ -79,7 +85,7 @@ class apiV1Controller extends controller{
      * @param array $parameters Parâmetros da requisição.
      */
     public function usuario($parameters){
-        $this->callControllerMethod(new usuarioController($this->requestType, $this->data), $parameters);
+        $this->callControllerMethod(new usuarioController($this->requestType, $this->data, $this->query), $parameters);
     }
 
     /**
@@ -88,7 +94,7 @@ class apiV1Controller extends controller{
      * @param array $parameters Parâmetros da requisição.
      */
     public function agenda($parameters){
-        $this->callControllerMethod(new agendaController($this->requestType, $this->data), $parameters);
+        $this->callControllerMethod(new agendaController($this->requestType, $this->data, $this->query), $parameters);
     }
 
     /**

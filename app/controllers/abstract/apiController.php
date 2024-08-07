@@ -10,13 +10,34 @@ use core\request;
 abstract class apiController
 {
     /**
+     * Tipo de requisição HTTP (GET, POST, PUT, DELETE).
+     * 
+     * @var string
+     */
+    protected $requestType;
+
+    /**
+     * Dados enviados na requisição.
+     * 
+     * @var mixed
+     */
+    protected $data;
+
+    /**
+     * query da requisição.
+     *
+     * @var mixed
+    */
+    protected $query;
+
+    /**
      * Define os parâmetros com base nas colunas fornecidas e nos dados retornados pela API.
      *
      * @param array $columns Colunas a serem retornadas.
      * @param array $values Dados retornados pela API.
      * @return array Array contendo os valores das colunas especificadas.
      */
-    public function setParameters(array $columns, array $values)
+    protected function setParameters(array $columns, array $values)
     {
         $return = [];
         foreach ($columns as $column) {
@@ -34,7 +55,7 @@ abstract class apiController
      * @param string $methodName Nome do Metodo.
      * @return array Array contendo os valores das colunas especificadas.
      */
-    public function getMethodsArgNames($className, $methodName) {
+    protected function getMethodsArgNames($className, $methodName) {
         $r = new \ReflectionMethod($className, $methodName);
         $parameters = $r->getParameters();
 
@@ -44,5 +65,25 @@ abstract class apiController
         }
 
         return $return;
+    }
+
+    protected function validRequest(array $validResquest = ["GET","POST","DELETE","PUT"]){
+        foreach ($validResquest as $request)
+        {
+            if($request == $this->requestType){
+                return true;
+            }
+        } 
+
+        $this->sendResponse(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false],400);
+    }
+
+    protected function sendResponse(array $response,int $httpCode = 200)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        
+        echo json_encode($response);
+        http_response_code($httpCode);
+        die;
     }
 }

@@ -12,28 +12,15 @@ use core\session;
 class agendaController extends apiController{
 
     /**
-     * Tipo de requisição HTTP (GET, POST, PUT, DELETE).
-     * 
-     * @var string
-     */
-    private $requestType;
-
-    /**
-     * Dados enviados na requisição.
-     * 
-     * @var mixed
-     */
-    private $data;
-
-    /**
      * Construtor da classe.
      *
      * @param string $requestType Tipo de requisição HTTP.
      * @param mixed $data Dados enviados na requisição.
      */
-    public function __construct($requestType, $data){
+    public function __construct($requestType, $data, $query){
         $this->requestType = $requestType;
         $this->data = $data;
+        $this->query = $query;
     }
 
       /**
@@ -43,8 +30,9 @@ class agendaController extends apiController{
      */
     public function getByIds($parameters):void{
         try {
-             
-            if($this->requestType !== 'GET' || !empty($_GET) || $this->requestType !== 'DELETE'){
+            $this->validRequest(['GET',"DELETE"]);
+
+            if($this->requestType !== 'GET' || $this->requestType !== 'DELETE'){
                 echo json_encode(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false]); 
                 http_response_code(400);
                 return;
@@ -78,8 +66,7 @@ class agendaController extends apiController{
             echo json_encode(["result" => $agendas, "errors" => $errors, "id_errors" => $agendasNaoEncontradas]);
             
         } catch(\Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
-            http_response_code(400);
+            $this->sendResponse(['error' => $e->getMessage(),"result" => false],400);
         }
     }
 
@@ -91,43 +78,80 @@ class agendaController extends apiController{
             $errors = [];
             $result = []; 
             $idsalvos = [];
-            if($this->requestType === 'POST' && $this->data){
-                $columns = $this->getMethodsArgNames("app\models\main\agendaModel","set");
-                foreach ($this->data as $registro){
-                    if (isset($registro["nome"],$registro["id_empresa"],$registro["codigo"])){
-                        $registro = $this->setParameters($columns,$registro);
-                        if ($agenda = agendaModel::set(...$registro)){
-                            $result[] = "agenda com Id ({$agenda}) salva com sucesso";
-                            $idsalvos[] = $agenda;
-                        }
-                        else{
-                            $errors[] = mensagem::getErro();
-                        }
-                    }
-                    else
-                        $errors[] = "agenda não informado corretamente";
-                }
-                echo json_encode(["result" => $result,"id_salvos"=> $idsalvos,"errors" => $errors]);
-            }else{
-                echo json_encode(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false]); 
-                http_response_code(400);
+
+            $this->validRequest(['POST']);
+
+            if(!$this->data){
+                $this->sendResponse(['error' => "Body da requisão não informado","result" => false],400);
             }
+
+            $columns = $this->getMethodsArgNames("app\models\main\agendaModel","set");
+            foreach ($this->data as $registro){
+                if (isset($registro["nome"],$registro["id_empresa"],$registro["codigo"])){
+                    $registro = $this->setParameters($columns,$registro);
+                    if ($agenda = agendaModel::set(...$registro)){
+                        $result[] = "agenda com Id ({$agenda}) salva com sucesso";
+                        $idsalvos[] = $agenda;
+                    }
+                    else{
+                        $errors[] = mensagem::getErro();
+                    }
+                }
+                else
+                    $errors[] = "agenda não informado corretamente";
+            }
+
+            $this->sendResponse(["result" => $result,"id_salvos"=> $idsalvos,"errors" => $errors]);
+
         } catch(\Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            $this->sendResponse(['error' => $e->getMessage(),"result" => false],400);
+        }
+    }
+
+    public function getByEmpresa($parameters = []){
+        try {
+
+            $this->validRequest(['GET']);
+
+            $id_empresa = isset($this->query["id_empresa"]) ? $this->query["id_empresa"] : 0;
+
+            if(!$id_empresa){
+                $this->sendResponse(['error' => "Empresa é obrigatorio","result" => false],400);
+            }
+
+            $nome = isset($this->query["nome"]) ? $this->query["nome"] : null;
+            $codigo = isset($this->query["codigo"]) ? $this->query["codigo"] : null;
+            $limit = isset($this->query["limit"]) ? $this->query["limit"] : 100;
+            $offset = isset($this->query["offset"]) ? $this->query["offset"] : null;
+
+            $result = AgendaModel::getByEmpresa($id_empresa,$nome,$codigo,$limit,$offset);
+
+            if($result){
+                $this->sendResponse(["result" => $result]);
+            }
+
+            $this->sendResponse(['error' => mensagem::getErro(),"result" => false]);
+
+        } catch (\Exception $e) {
+            $this->sendResponse(['error' => $e->getMessage(),"result" => false],400);
         }
     }
 
     public function detachAgendaFuncionario($parameters = []){
+        try {
+            $this->validRequest(['DELETE']);
 
-        $id_agenda = functions::decrypt($parameters[0] ?? '');
-        $id_funcionario = functions::decrypt($parameters[1] ?? '');
+            $id_agenda = isset($this->query["id_agenda"]) ? $this->query["id_agenda"] : 0;
+            $id_funcionario = isset($this->query["id_funcionario"]) ? $this->query["id_funcionario"] : 0;
 
-        if($id_agenda && $id_funcionario){
-            FuncionarioModel::detachAgendaFuncionario($id_agenda,$id_funcionario);
-            $this->go("funcionario/manutencao/".$parameters[1]);
+            if($id_agenda && $id_funcionario && FuncionarioModel::detachAgendaFuncionario($id_agenda,$id_funcionario)){
+                $this->sendResponse(["result" => true]);
+            }
+
+            $this->sendResponse(['error' => "Erro ao desvincular funcionario da agenda","result" => false],400);
+
+        } catch(\Exception $e) {
+            $this->sendResponse(['error' => $e->getMessage(),"result" => false],400);
         }
-
-        mensagem::setErro("Agenda ou Funcionario não informados");
-        $this->go("funcionario");
     }
 }
