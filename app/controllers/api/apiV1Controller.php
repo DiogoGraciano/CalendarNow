@@ -57,8 +57,13 @@ class apiV1Controller extends controller{
         
         if($query = functions::getUriQuery()){
             parse_str($query,$this->query);
+        }   
+        
+        $user = usuarioApiModel::getLogged();
+
+        if($this->user->tipo_usuario == 2){
+            $this->query["id_empresa"] = $user->id_empresa;
         }
-            
     }
 
     /**

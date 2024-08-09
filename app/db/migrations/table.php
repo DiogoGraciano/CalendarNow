@@ -224,8 +224,10 @@ class table
                 !$inDb?$operation = "ADD":$operation = "MODIFY";
                
                 $changed = false;
+                $removed_fk = false;
                 if(!$inDb || strtolower($column->type) != $columnInformation["COLUMN_TYPE"] || 
                     ($columnInformation["IS_NULLABLE"] == "YES" && $column->null) || 
+                    ($columnInformation["IS_NULLABLE"] == "NO" && !$column->null) || 
                     $columnInformation["COLUMN_DEFAULT"] != $column->defautValue || 
                     $columnInformation["COLUMN_COMMENT"] != $column->commentValue){
                     $changed = true;
@@ -233,9 +235,11 @@ class table
                 }
                 if($inDb && ($column->foreingKey && $columnInformation["COLUMN_KEY"] == "MUL") && $changed){
                     $ForeingkeyName = $this->getForeingKeyName($column->name);
-                    if(isset($ForeingkeyName[0]))
+                    if(isset($ForeingkeyName[0])){
+                        $sql = "ALTER TABLE {$this->table} DROP INDEX {$column->name};".$sql;
                         $sql = "ALTER TABLE {$this->table} DROP FOREIGN KEY {$ForeingkeyName[0]};".$sql;
-                    else 
+                        $removed_fk = true;
+                    }else 
                         throw new Exception($this->table.": Não foi possivel remover FOREIGN KEY para atualizar a coluna ".$column->name);
                 }
                 if(!$inDb || ($column->unique && $columnInformation["COLUMN_KEY"] != "UNI")){
@@ -244,9 +248,10 @@ class table
                 if(!$column->unique && $columnInformation["COLUMN_KEY"] == "UNI"){
                     $sql .= "ALTER TABLE {$this->table} DROP INDEX {$column->name};";
                 }
-                if(!$inDb || ($column->foreingKey && $columnInformation["COLUMN_KEY"] != "MUL")){
+                
+                if(!$inDb || ($column->foreingKey && $columnInformation["COLUMN_KEY"] != "MUL") || ($column->foreingKey && $removed_fk)){
                     $ForeingkeyName = $this->getForeingKeyName($column->name);
-                    if(!isset($ForeingkeyName[0]))
+                    if(!isset($ForeingkeyName[0]) || $removed_fk)
                         $sql .= "ALTER TABLE {$this->table} ADD FOREIGN KEY ({$column->name}) REFERENCES {$column->foreingTable}({$column->foreingColumn});";
                 }
                 if(!$column->foreingKey && $columnInformation["COLUMN_KEY"] == "MUL"){

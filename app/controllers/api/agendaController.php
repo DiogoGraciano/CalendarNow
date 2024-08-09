@@ -30,13 +30,8 @@ class agendaController extends apiController{
      */
     public function getByIds($parameters):void{
         try {
-            $this->validRequest(['GET',"DELETE"]);
 
-            if($this->requestType !== 'GET' || $this->requestType !== 'DELETE'){
-                echo json_encode(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false]); 
-                http_response_code(400);
-                return;
-            }
+            $this->validRequest(['GET',"DELETE"]);
 
             $agendas = [];
             $errors = []; 
@@ -45,14 +40,14 @@ class agendaController extends apiController{
 
             $agenda = agendaModel::getbyIds($parameters);
             foreach ($agendas as $agenda){
-                if ($this->requestType === 'GET' && $agenda->cd_agenda)
+                if ($this->requestType === 'GET' && $agenda["cd_agenda"])
                     $agendas[] = $agenda;
-                if ($this->requestType === 'DELETE' && $agenda->cd_agenda && agendaModel::delete($agenda->cd_agenda))
-                    $agendas[] = "Agenda com Id ({$agenda->cd_agenda}) deletado com sucesso";
+                if ($this->requestType === 'DELETE' && $agenda["cd_agenda"] && agendaModel::delete($agenda["cd_agenda"]))
+                    $agendas[] = "Agenda com Id ({$agenda['cd_agenda']}) deletado com sucesso";
                 else
-                    $errors[] = "Erro ao deletar agenda com Id ({$agenda->cd_agenda})";
+                    $errors[] = "Erro ao deletar agenda com Id ({$agenda['cd_agenda']})";
 
-                $agendasEncontradas[] = $agenda->cd_agenda;
+                $agendasEncontradas[] = $agenda["cd_agenda"];
             }
 
             foreach ($agendasEncontradas as $id){
@@ -87,6 +82,11 @@ class agendaController extends apiController{
 
             $columns = $this->getMethodsArgNames("app\models\main\agendaModel","set");
             foreach ($this->data as $registro){
+                
+                if($this->user->tipo_usuario == 2){
+                    $registro["id_empresa"] = $this->user->id_empresa;
+                }
+
                 if (isset($registro["nome"],$registro["id_empresa"],$registro["codigo"])){
                     $registro = $this->setParameters($columns,$registro);
                     if ($agenda = agendaModel::set(...$registro)){
@@ -108,7 +108,7 @@ class agendaController extends apiController{
         }
     }
 
-    public function getByEmpresa($parameters = []){
+    public function getAll($parameters = []){
         try {
 
             $this->validRequest(['GET']);

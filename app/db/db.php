@@ -13,70 +13,70 @@ class db
      *
      * @var string
      */
-    private $table;
+    private string $table;
 
     /**
      * Classe da tabela.
      *
      * @var string
      */
-    private $class;
+    private string $class;
 
     /**
      * Objeto da tabela.
      *
      * @var array
     */
-    private $object = [];
+    private array $object = [];
 
     /**
      * array de colunas da tabela.
      *
      * @var array
     */
-    private $columns;
+    private array $columns;
 
     /**
      * array com os joins informados.
      *
      * @var array
     */
-    private $joins =[];
+    private array $joins =[];
 
     /**
      * debug está ativo?.
      *
      * @var array
     */
-    private $debug = false;
+    private bool $debug = false;
 
     /**
      * array com os propriedades informadas.
      *
      * @var array
     */
-    private $propertys =[];
+    private array $propertys =[];
 
     /**
      * array com os filtros informadas.
      *
      * @var array
     */
-    private $filters =[];
+    private array $filters =[];
 
     /**
      * valores do bindparam.
      *
-     * @var mixed
+     * @var array
     */
-    private $valuesBind = [];
+    private array $valuesBind = [];
 
     /**
      * contador de parametros do bindparam.
      *
-     * @var mixed
+     * @var int
     */
-    private $counterBind = 1;
+    private int $counterBind = 1;
 
     /**
      * Constante do operado AND.
@@ -97,7 +97,15 @@ class db
      *
      * @var PDO
     */
-    private $pdo;
+    private PDO $pdo;
+
+
+    /**
+     * todos retornos são como array?.
+     *
+     * @var bool
+    */
+    private bool $asArray = false;
 
     /**
      * Construtor da classe.
@@ -106,9 +114,7 @@ class db
      */
     function __construct(string $table,string|null $class = null)
     {
-        // Inicia a Conexão
-        if (!$this->pdo)
-            $this->pdo = connection::getConnection();
+        $this->pdo = connection::getConnection();
 
         // Seta Tabela
         $this->table = $table;
@@ -155,6 +161,18 @@ class db
     public function setDebug():DB
     {
         $this->debug = true;
+
+        return $this;
+    }
+
+    /**
+     * Set Debug.
+     * 
+     * @return void Retorna o último ID inserido na tabela ou null se nenhum ID foi inserido.
+     */
+    public function asArray():DB
+    {
+        $this->asArray = true;
 
         return $this;
     }
@@ -213,7 +231,7 @@ class db
             $rows = [];
 
             if ($sql->rowCount() > 0) {
-                $rows = $sql->fetchAll(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE,get_class($this),[$this->table]);
+                $this->asArray == false ? $rows = $sql->fetchAll(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE,get_class($this),[$this->table]) : $rows = $sql->fetchAll();
             }    
 
             return $rows;

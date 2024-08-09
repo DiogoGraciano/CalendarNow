@@ -14,21 +14,38 @@ abstract class apiController
      * 
      * @var string
      */
-    protected $requestType;
+    protected readonly string $requestType;
 
     /**
      * Dados enviados na requisição.
      * 
      * @var mixed
      */
-    protected $data;
+    protected readonly mixed $data;
 
     /**
      * query da requisição.
      *
-     * @var mixed
+     * @var array
     */
-    protected $query;
+    protected readonly array $query;
+
+    /**
+     * query da requisição.
+     *
+     * @var array
+    */
+    protected readonly array $user;
+
+    public function __construct(){
+        $user = usuarioApiModel::getLogged();
+
+        if(!$user->id){
+            throw new exception("Usuario da Api não está logado");
+        }
+
+        $this->user = $user;
+    }
 
     /**
      * Define os parâmetros com base nas colunas fornecidas e nos dados retornados pela API.
