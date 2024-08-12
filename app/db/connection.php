@@ -55,13 +55,22 @@ class connection
     {
         if (self::$pdo === null) {
             try {
-                $dsn = sprintf(
-                    'mysql:host=%s;port=%s;dbname=%s;charset=%s',
-                    DBHOST,
-                    DBPORT,
-                    DBNAME,
-                    DBCHARSET
-                );
+                if(DRIVER == "mysql"){
+                    $dsn = sprintf(
+                        DRIVER.':host=%s;port=%s;dbname=%s;charset=%s',
+                        DBHOST,
+                        DBPORT,
+                        DBNAME,
+                        DBCHARSET
+                    );
+                }else{
+                    $dsn = sprintf(
+                        DRIVER.':host=%s;port=%s;dbname=%s',
+                        DBHOST,
+                        DBPORT,
+                        DBNAME
+                    );
+                }
                 self::$pdo = new PDO($dsn, DBUSER, DBPASSWORD);
                 self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {

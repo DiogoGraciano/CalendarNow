@@ -1,8 +1,9 @@
 <?php
-    define("DBHOST","mysql");
-    define("DBPORT","3306");
-    define("DBNAME","basenox_bd");
+    define("DRIVER","pgsql");
+    define("DBHOST","localhost");
+    define("DBPORT","5432");
+    define("DBNAME","agenda");
     define("DBCHARSET","utf8mb4");
-    define("DBUSER","root");
-    define("DBPASSWORD","rootpass");
+    define("DBUSER","postgres");
+    define("DBPASSWORD","154326");
 ?>

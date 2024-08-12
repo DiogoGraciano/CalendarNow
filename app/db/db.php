@@ -106,9 +106,7 @@ class db
      */
     function __construct(string $table,string|null $class = null)
     {
-        // Inicia a Conexão
-        if (!$this->pdo)
-            $this->pdo = connection::getConnection();
+        $this->pdo = connection::getConnection();
 
         // Seta Tabela
         $this->table = $table;

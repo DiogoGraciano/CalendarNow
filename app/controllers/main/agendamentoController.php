@@ -83,8 +83,6 @@ class agendamentoController extends controller{
         $head = new head();
         $head -> show("Agendamentos","consulta");
 
-        $tipo_usuario = "";
-
         $elements = new elements;
 
         $cadastro = new consulta();

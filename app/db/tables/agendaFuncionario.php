@@ -14,7 +14,7 @@ class agendaFuncionario extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de vinculo entre agendamentos e funcionarios"))
-                ->addColumn((new column("id_agenda","INT"))->isPrimary()->isForeingKey(agenda::table())->setComment("ID agenda"))
-                ->addColumn((new column("id_funcionario","INT"))->isPrimary()->isForeingKey(funcionario::table())->setComment("ID Funcionario"));
+                ->addColumn((new column("id_agenda","INTEGER"))->isPrimary()->isForeingKey(agenda::table())->setComment("ID agenda"))
+                ->addColumn((new column("id_funcionario","INTEGER"))->isPrimary()->isForeingKey(funcionario::table())->setComment("ID Funcionario"));
     }
 }

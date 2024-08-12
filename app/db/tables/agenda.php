@@ -14,8 +14,8 @@ class agenda extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de agendas"))
-                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID agenda"))
-                ->addColumn((new column("id_empresa","INT"))->isNotNull()->isForeingKey(empresa::table())->setComment("ID da tabela empresa"))
+                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID agenda"))
+                ->addColumn((new column("id_empresa","INTEGER"))->isNotNull()->isForeingKey(empresa::table())->setComment("ID da tabela empresa"))
                 ->addColumn((new column("nome","VARCHAR",250))->isNotNull()->setComment("Nome da agenda"))
                 ->addColumn((new column("codigo","VARCHAR",7))->isNotNull()->setComment("Codigo da agenda"));
     }

@@ -11,7 +11,6 @@ class migrate{
       try{
 
          transactionManeger::init();
-         transactionManeger::beginTransaction();
          
          $tableFiles = scandir(dirname(__DIR__).DIRECTORY_SEPARATOR."tables");
          
@@ -20,23 +19,32 @@ class migrate{
          
          foreach ($tableFiles as $tableFile) {
             $className = 'app\\db\\tables\\' . str_replace(".php", "", $tableFile);
-         
+
             if (class_exists($className) && method_exists($className, "table")) {
+
+               
+
+               transactionManeger::beginTransaction();
+
                $tableInstance = $className::table();
                $allTableInstances[] = $className;
                if ($tableInstance->hasForeignKey()) {
                   if (!$tableInstance->exists()) {
                      $tablesWithForeignKeys[] = $tableInstance;
                   } else {
+                     echo "Migrando ".$className.PHP_EOL;
                      $tableInstance->execute($recreate);
                      if(method_exists($className, "seed"))
                         $className::seed();
                   }
                } else {
+                  echo "Migrando ".$className.PHP_EOL;
                   $tableInstance->execute($recreate);
                   if(method_exists($className, "seed"))
                      $className::seed();
                }
+
+               transactionManeger::commit();
             }
          }
          
@@ -53,9 +61,6 @@ class migrate{
                }
             }
          }
-         
-         transactionManeger::commit();
-         
       }
       catch(\Exception $e){
          transactionManeger::rollBack();
@@ -72,22 +77,30 @@ class migrate{
    
          $unresolvedDependencies = [];
          foreach ($dependentClasses as $dependentClass) {
+            transactionManeger::beginTransaction();
             if (!$dependentClass->exists()) {
                $unresolvedDependencies[] = $dependentClass;
             } else {
+               echo "Migrando ".$dependentClass.PHP_EOL;
                $dependentClass->execute($recreate);
                $className = self::getClassbyTableName($dependentClass->getTable());
                if(method_exists($className, "seed"))
                   $className::seed();
             }
+            transactionManeger::commit();
          }
    
          if (empty($unresolvedDependencies) && !$table->exists()) {
+            transactionManeger::beginTransaction();
+
+            echo "Migrando ".$className.PHP_EOL;
             $table->execute($recreate);
             $className = self::getClassbyTableName($table->getTable());
             if(method_exists($className, "seed"))
                $className::seed();
             $resolvedTables[] = $table;
+
+            transactionManeger::commit();
          } else {
             $resolvedTables = array_merge($resolvedTables, $unresolvedDependencies);
          }
