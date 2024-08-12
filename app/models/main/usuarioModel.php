@@ -251,8 +251,13 @@ final class usuarioModel extends model{
             $mensagens[] = "Empresa não existe";
         }
 
-        if(($values->id = $id) && !self::get($values->id)->id){
-            $mensagens[] = "Usuario não existe";
+        $usuario = self::get($values->id);
+        if(($values->id = $id) && !$usuario->id){
+            $mensagens[] = "Usuario da Api não existe";
+        }
+
+        if(!$values->id && !$senha){
+            $mensagens[] = "Senha obrigatoria para usuario não cadastrados";
         }
 
         if($mensagens){
@@ -260,7 +265,7 @@ final class usuarioModel extends model{
             return false;
         }
 
-        $values->senha = password_hash(trim($senha),PASSWORD_DEFAULT);
+        $values->senha = $senha ? password_hash(trim($senha),PASSWORD_DEFAULT) : $usuario->senha;
 
         $retorno = $values->store();
         

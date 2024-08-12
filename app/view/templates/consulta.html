@@ -1,12 +1,14 @@
 <div class="col-md-12 px-2 h-100">
-    <form method="POST" enctype="multipart/form-data" id="formConsulta">
+    <form method="POST" enctype="multipart/form-data" id="formConsulta" action="{action}">
         <div class="mt-2 mb-2">
             <!-- BEGIN BLOCK_BUTTONS -->
                 {button}
             <!-- END BLOCK_BUTTONS -->
         </div>
         <input type="hidden" name="qtd_list" id="qtd_list" value="{qtd_list}">
-        {table}
+        <div id="table_consulta">
+            {table}
+        </div>
     </form>
     <!-- BEGIN BLOCK_SEMDADOS -->
         <div class="col-md-12">

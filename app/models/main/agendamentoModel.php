@@ -4,6 +4,7 @@ namespace app\models\main;
 use app\helpers\functions;
 use app\db\tables\agendamento;
 use app\helpers\mensagem;
+use app\models\abstract\model;
 
 /**
  * Classe agendamentoModel
@@ -13,7 +14,7 @@ use app\helpers\mensagem;
  * 
  * @package app\models\main
 */
-class agendamentoModel{
+final class agendamentoModel extends model{
 
     /**
      * Obtém um agendamento pelo ID.
@@ -123,18 +124,44 @@ class agendamentoModel{
      * @param string $id_empresa O ID da empresa.
      * @return array Retorna um array com os agendamentos associados à empresa.
     */
-    public static function getAgendamentosByEmpresa($id_empresa):array
+    public static function getAgendamentosByEmpresa($id_empresa,?string $dt_ini = "",?string $dt_fim = "",$onlyActive = false,?int $id_agenda = null,?int $id_funcionario = null,?int $limit = null,?int $offset = null):array
     {
         $db = new agendamento;
 
-        $result = $db->addJoin("usuario","usuario.id","agendamento.id_usuario","LEFT")
-                    ->addJoin("agenda","agenda.id","agendamento.id_agenda")
-                    ->addJoin("cliente","cliente.id","agendamento.id_cliente","LEFT")
-                    ->addJoin("funcionario","funcionario.id","agendamento.id_funcionario")
-                    ->addFilter("agenda.id_empresa","=",$id_empresa)
-                    ->selectColumns("agendamento.id","usuario.cpf_cnpj","cliente.nome as cli_nome","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
+        $db->addJoin("usuario","usuario.id","agendamento.id_usuario","LEFT")
+            ->addJoin("agenda","agenda.id","agendamento.id_agenda")
+            ->addJoin("cliente","cliente.id","agendamento.id_cliente","LEFT")
+            ->addJoin("funcionario","funcionario.id","agendamento.id_funcionario")
+            ->addFilter("agenda.id_empresa","=",$id_empresa);
+                  
+        if($dt_ini && $dt_fim){
+            $db->addFilter("agendamento.dt_fim",">=",functions::dateTimeBd($dt_ini));
+            $db->addFilter("agendamento.dt_fim","<=",functions::dateTimeBd($dt_fim));
+        }
 
-        return $result;
+        if($onlyActive){
+            $db->addFilter("agendamento.id_status","IN",[1,2]);
+        }
+
+        if($id_funcionario){
+            $db->addFilter("agendamento.id_funcionario","=",$id_funcionario);
+        }
+
+        if($id_agenda){
+            $db->addFilter("agendamento.id_agenda","=",$id_agenda);
+        }
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+        }
+
+        return $db->selectColumns("agendamento.id","usuario.cpf_cnpj","cliente.nome as cli_nome","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","agendamento.id_status","dt_ini","dt_fim");
     }
 
     /**
@@ -146,7 +173,7 @@ class agendamentoModel{
      * @param bool $onlyActive buscara somente os pedidos que o status forem diferentes de cancelado e não atendido.
      * @return array Retorna um array com os agendamentos associados ao usuário.
     */
-    public static function getAgendamentosByUsuario(int $id_usuario,string $dt_ini = "",string $dt_fim = "",$onlyActive = false):array
+    public static function getAgendamentosByUsuario(int $id_usuario,string $dt_ini = "",string $dt_fim = "",$onlyActive = false,?int $id_agenda = null,?int $id_funcionario = null,?int $limit = null,?int $offset = null):array
     {
         $db = new agendamento;
 
@@ -157,17 +184,72 @@ class agendamentoModel{
                     ->addFilter("usuario.id","=",$id_usuario);
 
         if($dt_ini && $dt_fim){
-            $db->addFilter("agendamento.dt_fim",">=",functions::dateBd($dt_ini));
-            $db->addFilter("agendamento.dt_fim","<=",functions::dateBd($dt_fim));
+            $db->addFilter("agendamento.dt_fim",">=",functions::dateTimeBd($dt_ini));
+            $db->addFilter("agendamento.dt_fim","<=",functions::dateTimeBd($dt_fim));
         }
 
         if($onlyActive){
             $db->addFilter("agendamento.id_status","IN",[1,2]);
         }
+
+        if($id_funcionario){
+            $db->addFilter("agendamento.id_funcionario","=",$id_funcionario);
+        }
+
+        if($id_agenda){
+            $db->addFilter("agendamento.id_agenda","=",$id_agenda);
+        }
+
+        if($limit && $offset){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+            $db->addOffset($offset);
+        }
+        elseif($limit){
+            self::setLastCount($db);
+            $db->addLimit($limit);
+        }
         
-        $result =  $db->selectColumns("agendamento.id","usuario.cpf_cnpj","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","dt_ini","dt_fim");
-                    
-        return $result;
+        return $db->selectColumns("agendamento.id","usuario.cpf_cnpj","cliente.nome as cli_nome","usuario.nome as usu_nome","usuario.email","usuario.telefone","agenda.nome as age_nome","funcionario.nome as fun_nome","agendamento.id_status","dt_ini","dt_fim");;
+    }
+
+    public static function prepareList(array $agendamentos)
+    {
+        $statuses = statusModel::getAll();
+
+        $statusHashMap = [];
+        foreach ($statuses as $status)
+        {
+            $statusHashMap[$status->id] = $status->nome;
+        }
+
+        $agendamentosFinal = [];
+        foreach ($agendamentos as $agendamento){
+            if ($agendamento->cpf_cnpj){
+                $agendamento->cpf_cnpj = functions::formatCnpjCpf($agendamento->cpf_cnpj);
+            }
+            if ($agendamento->telefone){
+                $agendamento->telefone = functions::formatPhone($agendamento->telefone);
+            }
+            if (!$agendamento->usu_nome){
+                $agendamento->nome = $agendamento->cli_nome;
+            }
+            if (!$agendamento->cli_nome){
+                $agendamento->nome = $agendamento->usu_nome;
+            }
+            if ($agendamento->dt_ini){
+                $agendamento->dt_ini = functions::dateTimeBr($agendamento->dt_ini);
+            }
+            if ($agendamento->dt_fim){
+                $agendamento->dt_fim = functions::dateTimeBr($agendamento->dt_fim);
+            }
+            if ($agendamento->id_status){
+                $agendamento->status = $statusHashMap[$agendamento->id_status];
+            }
+            $agendamentosFinal[] = $agendamento;
+        }
+
+        return $agendamentosFinal;
     }
 
     /**
@@ -212,6 +294,37 @@ class agendamentoModel{
         }
         else 
             return False;
+    }
+
+    /**
+     * cancela um agendamento.
+     * 
+     * @param int $id O ID do agendamento.
+     * @return int|bool Retorna o ID do agendamento se a operação for bem-sucedida, caso contrário retorna false.
+     */
+    public static function cancel(int $id):int|bool
+    {
+        $values = self::get($id);
+
+        $mensagens = [];
+
+        if(!$values->id){
+            $mensagens[] = "Agendamento não encontrada";
+        }
+
+        if($mensagens){
+            mensagem::setErro(...$mensagens);
+            return false;
+        }
+
+        $values->id_status = 4;
+
+        if ($values->store()){
+            mensagem::setSucesso("Agendamento salvo com sucesso");
+            return $values->id;
+        }
+         
+        return False;
     }
 
      /**

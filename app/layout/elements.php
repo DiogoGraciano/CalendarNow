@@ -40,7 +40,33 @@ class elements extends pagina{
         $tpl->block("BLOCK_BUTTON");   
 
         return $tpl->parse();
+    }
 
+    /**
+     * Gera um botão HTML.
+     *
+     * @param string $button_nome Nome do botão.
+     * @param string $nm_input Nome do input.
+     * @param string $type_input Tipo do input (default é "submit").
+     * @param string $class_input Classes CSS do input.
+     * @param string $button_action Ação do botão.
+     * @param string $extra_input Atributos extras do input.
+     * @return string HTML do botão.
+     */
+    public function buttonMassation(string $button_nome,string $nm_input,string $massaction,string $class_input="btn btn-primary",string $extra_input=""){
+
+        $tpl= $this->getTemplate("elements.html");
+
+        $tpl->nm_input = $nm_input;
+        $tpl->class_input = $class_input;
+        $tpl->massaction = $massaction;
+        $tpl->extra_input = $extra_input;
+        $tpl->nm_input = $nm_input;
+        $tpl->button_nome = $button_nome;
+
+        $tpl->block("BLOCK_BUTTON_MASSATION");   
+
+        return $tpl->parse();
     }
 
     /**

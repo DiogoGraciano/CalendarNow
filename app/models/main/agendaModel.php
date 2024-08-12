@@ -41,12 +41,16 @@ final class agendaModel extends model{
      * @param int $limit O número máximo de registros a serem retornados.
      * @return object|array Retorna os dados da agenda ou null se não encontrado.
     */
-    public static function getbyIds(array $ids):array
+    public static function getbyIds(array $ids,$asArray = true):array
     {
         $agenda = (new agenda); 
         
         foreach ($ids as $id){
             $agenda->addFilter("id","=",$id);
+        }
+
+        if($asArray){
+            $db->asArray();
         }
 
         return $agenda->selectColumns("id","agenda.nome","agenda.codigo");
@@ -62,7 +66,7 @@ final class agendaModel extends model{
      * @param int $offset offset da query(opcional).
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null):array|bool
+    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null,$asArray = true):array|bool
     {
         $db = new agenda;
         
@@ -84,6 +88,10 @@ final class agendaModel extends model{
         elseif($limit){
             self::setLastCount($db);
             $db->addLimit($limit);
+        }
+
+        if($asArray){
+            $db->asArray();
         }
 
         $result = $db->selectColumns("id","agenda.nome","agenda.codigo");
@@ -119,7 +127,7 @@ final class agendaModel extends model{
      * @param int|null $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUser(int $id_usuario):array|bool 
+    public static function getByUsuario(int $id_usuario):array|bool 
     {
         $db = new agendaUsuario;
         
@@ -162,7 +170,7 @@ final class agendaModel extends model{
      * @param int $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUserServico(int $id_servico,int $id_usuario):array|bool 
+    public static function getByUsuarioServico(int $id_servico,int $id_usuario):array|bool 
     {
         $db = new agendaUsuario;
         

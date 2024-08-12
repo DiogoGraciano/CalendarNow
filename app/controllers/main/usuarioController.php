@@ -58,8 +58,8 @@ class usuarioController extends controller {
 
         $cadastro = new consulta(true);
         
-        $cadastro->addButtons($elements->button("Bloquear Usuario","usuarioblock","submit","btn btn-primary","location.href='".$this->url."usuario/bloquear'"));
-        $cadastro->addButtons($elements->button("Desbloquear Usuario","usuariounblock","submit","btn btn-primary","location.href='".$this->url."usuario/desbloquear'"));
+        $cadastro->addButtons($elements->buttonMassation("Bloquear Usuario","usuarioblock","bloquear"));
+        $cadastro->addButtons($elements->buttonMassation("Desbloquear Usuario","usuariounblock","desbloquear"));
         $cadastro->addButtons($elements->button("Voltar","voltar","button","btn btn-primary","location.href='".$this->url."opcoes'"));
         
         $cadastro->addColumns("1", "Id", "id")
@@ -99,6 +99,8 @@ class usuarioController extends controller {
                             $mensagem_erro .= $id_usuario." - ";
                     }
                 }
+                $mensagem_erro = rtrim($mensagem_erro," - ");
+                $mensagem = rtrim($mensagem," - ");
             }
             else{
                 mensagem::setErro("Não foi possivel encontrar o numero total de usuarios");
@@ -109,6 +111,8 @@ class usuarioController extends controller {
             mensagem::setErro("Erro inesperado ocorreu, tente novamente");
             transactionManeger::rollback();
         }
+
+        transactionManeger::commit();
 
         $this->go("usuario");
     }
@@ -125,7 +129,7 @@ class usuarioController extends controller {
             $user = usuarioModel::getLogged();
 
             $mensagem = "Usuarios bloqueados com sucesso: ";
-            $mensagem_erro = "Usuarios não bloqueados: ";
+            $mensagem_erro = " Usuarios não bloqueados: ";
 
             if ($qtd_list){
                 for ($i = 1; $i <= $qtd_list; $i++) {
@@ -136,6 +140,8 @@ class usuarioController extends controller {
                             $mensagem_erro .= $id_usuario." - ";
                     }
                 }
+                $mensagem_erro = rtrim($mensagem_erro," - ");
+                $mensagem = rtrim($mensagem," - ");
             }
             else{
                 mensagem::setErro("Não foi possivel encontrar o numero total de usuarios");
@@ -146,6 +152,8 @@ class usuarioController extends controller {
             mensagem::setErro("Erro inesperado ocorreu, tente novamente");
             transactionManeger::rollback();
         }
+
+        transactionManeger::commit();
 
         $this->go("usuario");
     }
