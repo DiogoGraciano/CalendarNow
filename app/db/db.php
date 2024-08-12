@@ -617,25 +617,22 @@ class db
     */
     private function getColumnTable():void
     {
-        if(!$this->columns){
+        if(!$this->class || !class_exists($this->class)){
+            $this->class = $this->getClassbyTableName($this->table);
+        }
 
-            if(!$this->class || !class_exists($this->class)){
-                $this->class = $this->getClassbyTableName($this->table);
-            }
+        if($this->class && class_exists($this->class) && method_exists($this->class,"table")){
+            $this->columns = $this->class::table()->getColumnsName();
+        }
+        else{
+            $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "' . $this->table . '" ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
+        
+            $sql->execute();
 
-            if($this->class && class_exists($this->class) && method_exists($this->class,"table")){
-                $this->columns = $this->class::table()->getColumnsName();
-            }
-            else{
-                $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "' . $this->table . '" ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
-            
-                $sql->execute();
-
-                if ($sql->rowCount() > 0) {
-                    $this->columns = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
-                }else{
-                    throw new Exception('Tabela: '.$this->table.' tabela não encontrada');
-                }
+            if ($sql->rowCount() > 0) {
+                $this->columns = $sql->fetchAll(\PDO::FETCH_COLUMN, 0);
+            }else{
+                throw new Exception('Tabela: '.$this->table.' tabela não encontrada');
             }
         }
     }

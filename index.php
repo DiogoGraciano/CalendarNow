@@ -1,12 +1,6 @@
 <?php
     require 'bootstrap.php';
 
-    use app\db\migrations\migrate;
-
-    migrate::execute(!empty($recrete));
-
-    die;
-
     use core\controller;    
     use core\method;
     use core\parameter;

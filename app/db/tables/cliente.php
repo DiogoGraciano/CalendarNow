@@ -14,8 +14,8 @@ class cliente extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de clientes"))
-                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID do cliente"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID do cliente"))
                 ->addColumn((new column("nome","VARCHAR",300))->isNotNull()->setComment("Nome do cliente"))
-                ->addColumn((new column("id_funcionario","INTEGER"))->isForeingKey(funcionario::table())->setComment("id funcionario"));
+                ->addColumn((new column("id_funcionario","INT"))->isForeingKey(funcionario::table())->setComment("id funcionario"));
     }
 }

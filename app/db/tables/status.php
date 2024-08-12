@@ -15,7 +15,7 @@ class status extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de status"))
-                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID agenda"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID agenda"))
                 ->addColumn((new column("nome","VARCHAR",250))->isNotNull()->setComment("Status do agendamento"));
     }
 
