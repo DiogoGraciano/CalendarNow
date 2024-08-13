@@ -14,7 +14,7 @@ class pais extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de paises"))
-                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID da pais"))
+                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID da pais"))
                 ->addColumn((new column("nome","VARCHAR",250))->isNotNull()->setComment("Nome do pais"))
                 ->addColumn((new column("nome_internacial","VARCHAR",250))->isNotNull()->setComment("nome internacial do pais"));
     }

@@ -89,6 +89,13 @@ class tableMysql implements table
     */
     private $comment = "";
 
+    /**
+     * Nome da tabela.
+     *
+     * @var string
+     */
+    private string $dbname = "";
+
     function __construct(string $table,string $engine="InnoDB",string $collate="utf8mb4_general_ci",string $comment = "")
     {
         // Inicia a Conexão
@@ -99,6 +106,8 @@ class tableMysql implements table
         $this->collate = $collate;
 
         $this->comment = $comment;
+
+        $this->dbname = DBNAME;
         
         if(!$this->validateName($this->table = strtolower(trim($table)))){
             throw new Exception("Nome é invalido");
@@ -385,8 +394,10 @@ class tableMysql implements table
     
     public function exists()
     {
-        $sql = $this->pdo->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '".$this->table."' LIMIT 1");
+        $sql = $this->pdo->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table LIMIT 1");
         
+        $sql->bindParam(':db', $this->dbname);
+        $sql->bindParam(':table', $this->table);
         $sql->execute();
 
         return $sql->rowCount() > 0;   
@@ -394,8 +405,10 @@ class tableMysql implements table
 
     private function getColumnsTable()
     {
-        $sql = $this->pdo->prepare("SELECT TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,COLUMN_KEY,IS_NULLABLE,COLUMN_DEFAULT,COLUMN_COMMENT FROM information_schema.columns WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '".$this->table."'");
+        $sql = $this->pdo->prepare("SELECT TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,COLUMN_KEY,IS_NULLABLE,COLUMN_DEFAULT,COLUMN_COMMENT FROM information_schema.columns WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table");
        
+        $sql->bindParam(':db', $this->dbname);
+        $sql->bindParam(':table', $this->table);
         $sql->execute();
 
         $rows = [];
@@ -409,8 +422,10 @@ class tableMysql implements table
 
     private function getTableInformation()
     {
-        $sql = $this->pdo->prepare("SELECT ENGINE,TABLE_COLLATION,AUTO_INCREMENT,TABLE_COMMENT FROM information_schema.tables WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '".$this->table."' LIMIT 1");
+        $sql = $this->pdo->prepare("SELECT ENGINE,TABLE_COLLATION,AUTO_INCREMENT,TABLE_COMMENT FROM information_schema.tables WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table LIMIT 1");
        
+        $sql->bindParam(':db', $this->dbname);
+        $sql->bindParam(':table', $this->table);
         $sql->execute();
 
         $rows = [];
@@ -424,8 +439,10 @@ class tableMysql implements table
 
     private function getIndexInformation()
     {
-        $sql = $this->pdo->prepare("SELECT INDEX_NAME FROM information_schema.statistics  WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '".$this->table."' GROUP BY INDEX_NAME HAVING COUNT(INDEX_NAME) > 1");
+        $sql = $this->pdo->prepare("SELECT INDEX_NAME FROM information_schema.statistics  WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table GROUP BY INDEX_NAME HAVING COUNT(INDEX_NAME) > 1");
        
+        $sql->bindParam(':db', $this->dbname);
+        $sql->bindParam(':table', $this->table);
         $sql->execute();
 
         $rows = [];
@@ -439,8 +456,11 @@ class tableMysql implements table
 
     private function getIndexColumns($indexName)
     {
-        $sql = $this->pdo->prepare("SELECT COLUMN_NAME FROM information_schema.statistics  WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '".$this->table."' AND INDEX_NAME = '".$indexName."';");
+        $sql = $this->pdo->prepare("SELECT COLUMN_NAME FROM information_schema.statistics  WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table AND INDEX_NAME = :indexName;");
        
+        $sql->bindParam(':db', $this->dbname);
+        $sql->bindParam(':table', $this->table);
+        $sql->bindParam(':indexName', $indexName);
         $sql->execute();
 
         $rows = [];
@@ -453,8 +473,11 @@ class tableMysql implements table
     }
 
     private function getForeingKeyName($column){
-        $sql = $this->pdo->prepare("SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '".$this->table."' AND COLUMN_NAME = '".$column."' AND REFERENCED_TABLE_NAME IS NOT NULL LIMIT 1");
+        $sql = $this->pdo->prepare("SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table AND COLUMN_NAME = :column AND REFERENCED_TABLE_NAME IS NOT NULL LIMIT 1");
        
+        $sql->bindParam(':db', $this->dbname);
+        $sql->bindParam(':table', $this->table);
+        $sql->bindParam(':column', $column);
         $sql->execute();
 
         $rows = [];
