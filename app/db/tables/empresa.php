@@ -14,7 +14,7 @@ class empresa extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de empresas"))
-                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID do cliente"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID do cliente"))
                 ->addColumn((new column("nome","VARCHAR",300))->isNotNull()->isUnique()->setComment("Nome da empresa"))
                 ->addColumn((new column("email","VARCHAR",300))->isNotNull()->setComment("Email da empresa"))
                 ->addColumn((new column("telefone","VARCHAR",13))->isNotNull()->setComment("Telefone da empresa"))

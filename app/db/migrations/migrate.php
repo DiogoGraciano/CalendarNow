@@ -22,8 +22,6 @@ class migrate{
 
             if (class_exists($className) && method_exists($className, "table")) {
 
-               
-
                transactionManeger::beginTransaction();
 
                $tableInstance = $className::table();
@@ -32,13 +30,13 @@ class migrate{
                   if (!$tableInstance->exists()) {
                      $tablesWithForeignKeys[] = $tableInstance;
                   } else {
-                     echo "Migrando ".$className.PHP_EOL;
+                     echo "Migrando ".$tableInstance->getTable().PHP_EOL.PHP_EOL;
                      $tableInstance->execute($recreate);
                      if(method_exists($className, "seed"))
                         $className::seed();
                   }
                } else {
-                  echo "Migrando ".$className.PHP_EOL;
+                  echo "Migrando ".$tableInstance->getTable().PHP_EOL.PHP_EOL;
                   $tableInstance->execute($recreate);
                   if(method_exists($className, "seed"))
                      $className::seed();
@@ -74,14 +72,13 @@ class migrate{
       foreach ($tablesWithForeignKeys as $table) {
          
          $dependentClasses = $table->getForeignKeyTablesClasses();
-   
+         
          $unresolvedDependencies = [];
          foreach ($dependentClasses as $dependentClass) {
             transactionManeger::beginTransaction();
             if (!$dependentClass->exists()) {
                $unresolvedDependencies[] = $dependentClass;
             } else {
-               echo "Migrando ".$dependentClass.PHP_EOL;
                $dependentClass->execute($recreate);
                $className = self::getClassbyTableName($dependentClass->getTable());
                if(method_exists($className, "seed"))
@@ -92,8 +89,7 @@ class migrate{
    
          if (empty($unresolvedDependencies) && !$table->exists()) {
             transactionManeger::beginTransaction();
-
-            echo "Migrando ".$className.PHP_EOL;
+            echo "Migrando ".$table->getTable().PHP_EOL.PHP_EOL;
             $table->execute($recreate);
             $className = self::getClassbyTableName($table->getTable());
             if(method_exists($className, "seed"))

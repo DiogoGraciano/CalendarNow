@@ -27,6 +27,7 @@ class columnPgsql implements column
     private const TYPES = [
         'SMALLINT',
         'INTEGER',
+        'INT',
         'BIGINT',
         'DECIMAL',
         'NUMERIC',

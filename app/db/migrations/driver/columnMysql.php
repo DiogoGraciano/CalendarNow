@@ -26,6 +26,7 @@ class columnMysql implements column
      */
     private const TYPES = [
         'INT',
+        'INTEGER',
         'TINYINT',
         'SMALLINT',
         'MEDIUMINT',

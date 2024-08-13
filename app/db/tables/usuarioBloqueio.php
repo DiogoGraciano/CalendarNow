@@ -14,8 +14,8 @@ class usuarioBloqueio extends model {
 
     public static function table(){
         return (new table(self::table, comment: "Tabela de usuários bloqueados"))
-                ->addColumn((new column("id", "INTEGER"))->isPrimary()->setComment("ID do bloqueio"))
-                ->addColumn((new column("id_usuario", "INTEGER"))->isForeingKey(usuario::table())->isNotNull()->setComment("ID do usuário"))
-                ->addColumn((new column("id_empresa", "INTEGER"))->isForeingKey(empresa::table())->isNotNull()->setComment("ID da empresa"));
+                ->addColumn((new column("id", "INT"))->isPrimary()->setComment("ID do bloqueio"))
+                ->addColumn((new column("id_usuario", "INT"))->isForeingKey(usuario::table())->isNotNull()->setComment("ID do usuário"))
+                ->addColumn((new column("id_empresa", "INT"))->isForeingKey(empresa::table())->isNotNull()->setComment("ID da empresa"));
     }
 }

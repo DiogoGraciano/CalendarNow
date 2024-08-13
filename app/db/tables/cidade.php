@@ -14,9 +14,9 @@ class cidade extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de cidades"))
-                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID da cidade"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID da cidade"))
                 ->addColumn((new column("nome","VARCHAR",120))->isNotNull()->setComment("Nome da cidade"))
-                ->addColumn((new column("uf","INTEGER"))->isNotNull()->isForeingKey(estado::table())->setComment("id da Uf da cidade"))
-                ->addColumn((new column("ibge","INTEGER"))->setComment("id do IBJE da cidade"));
+                ->addColumn((new column("uf","INT"))->isNotNull()->isForeingKey(estado::table())->setComment("id da Uf da cidade"))
+                ->addColumn((new column("ibge","INT"))->setComment("id do IBJE da cidade"));
     }
 }

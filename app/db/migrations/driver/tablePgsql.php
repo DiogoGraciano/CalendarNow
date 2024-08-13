@@ -147,15 +147,16 @@ class tablePgsql implements table
 
         $sql = trim($sql);
 
-        if($this->primary)
+        if($this->primary){
             $sql .= "PRIMARY KEY (".implode(",",$this->primary).")";
+        }
 
         $sql .= ");";
 
-        if($this->isAutoIncrement){
-            $sql .= "ALTER TABLE {$this->table} AUTO_INCREMENT = 1;";
+        if($this->primary && $this->isAutoIncrement){
+            $sql .= "ALTER TABLE {$this->table} ALTER ".implode(",",$this->primary)." ADD GENERATED ALWAYS AS IDENTITY;";
         }
-        
+
         foreach ($this->indexs as $index) {
             $sql .= $index["sql"];
         }
@@ -210,13 +211,37 @@ class tablePgsql implements table
                 $columnInformation = $columnInformation[array_key_first($columnInformation)];
                 
                 !$inDb?$operation = "ADD":$operation = "MODIFY";
-               
+
+                if($columnInformation["data_type"] == "character varying"){
+                    $columnInformation["data_type"] = "varchar";
+                }
+
+                if($columnInformation["data_type"] == "integer" && $column->type == "INT"){
+                    $columnInformation["data_type"] = "int";
+                }
+
+                if($columnInformation["data_type"] == "numeric" && explode("(",$column->type)[0] == "DECIMAL"){
+                    $columnInformation["data_type"] = "decimal";
+                }
+
+                if($columnInformation["data_type"] == "time without time zone" && $column->type == "TIME"){
+                    $columnInformation["data_type"] = "time";
+                }
+
+                if($columnInformation["data_type"] == "timestamp without time zone"  && $column->type == "TIMESTAMP"){
+                    $columnInformation["data_type"] = "timestamp";
+                }
+
+                if($columnInformation["data_type"] == "timestamp with time zone"  && $column->type == "TIMESTAMP"){
+                    $columnInformation["data_type"] = "timestamp";
+                }
+
                 $removed = false;
                 $changed = false;
-                if(!$inDb || strtolower($column->type) != $columnInformation["data_type"] || 
+                if(!$inDb || strtolower(explode("(",$column->type)[0]) != $columnInformation["data_type"] || 
                     ($columnInformation["is_nullable"] == "YES" && $column->null) || 
-                    ($columnInformation["is_nullable"] == "NO" && !$column->null) || 
-                    $columnInformation["column_default"] != $column->defautValue)
+                    ($columnInformation["is_nullable"] == "NO" && !$column->null && !$column->primary) || 
+                    (str_replace("'","",explode("::",$columnInformation["column_default"]??"")[0]) != $column->defautValue))
                 {
                     $changed = true;
                     $sql .= "ALTER TABLE {$this->table} {$operation} COLUMN {$column->name} {$column->type} {$column->null} {$column->defaut};";
@@ -314,18 +339,13 @@ class tablePgsql implements table
             }
         }
 
-        echo $sql."<br>";
-    
-
-        // if($sql){
-        //     $sql = $this->pdo->prepare($sql);
-        //     if (!$sql) {
-        //         throw new \Exception("Erro ao preparar a sql: " . implode(", ", $this->pdo->errorInfo()));
-        //     }
-        //     if (!$sql->execute()){
-        //         throw new \Exception("Erro ao executar o sql: " . implode(", ", $sql->errorInfo()));
-        //     }
-        // }
+        if($sql){
+            $instructios = explode(";",$sql);
+            foreach ($instructios as $query){
+                if($query)
+                    $this->pdo->query($query);
+            }
+        }
     }
 
     public function hasForeignKey()

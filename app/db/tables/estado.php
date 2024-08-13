@@ -15,11 +15,11 @@ class estado extends model {
 
     public static function table(){
         return (new table(self::table,comment:"Tabela de estados"))
-                ->addColumn((new column("id","INTEGER"))->isPrimary()->setComment("ID da cidade"))
+                ->addColumn((new column("id","INT"))->isPrimary()->setComment("ID da cidade"))
                 ->addColumn((new column("nome","VARCHAR",120))->isNotNull()->setComment("Nome do estado"))
                 ->addColumn((new column("uf","VARCHAR",2))->isNotNull()->setComment("nome da Uf"))
-                ->addColumn((new column("pais","INTEGER"))->isNotNull()->isForeingKey(pais::table())->setComment("id da pais do estado"))
-                ->addColumn((new column("ibge","INTEGER"))->isUnique()->setComment("id do IBJE do estado"))
+                ->addColumn((new column("pais","INT"))->isNotNull()->isForeingKey(pais::table())->setComment("id da pais do estado"))
+                ->addColumn((new column("ibge","INT"))->isUnique()->setComment("id do IBJE do estado"))
                 ->addColumn((new column("ddd","VARCHAR",50))->setComment("DDDs separado por , da Uf"));
     }
 

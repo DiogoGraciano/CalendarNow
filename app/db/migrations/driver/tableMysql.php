@@ -241,7 +241,7 @@ class tableMysql implements table
                
                 $changed = false;
                 $removed = false;
-                if(!$inDb || strtolower($column->type) != $columnInformation["COLUMN_TYPE"] || 
+                if(!$inDb || strtolower(explode("(",$column->type)[0]) != $columnInformation["COLUMN_TYPE"] || 
                     ($columnInformation["IS_NULLABLE"] == "YES" && $column->null) || 
                     ($columnInformation["IS_NULLABLE"] == "NO" && !$column->null) || 
                     $columnInformation["COLUMN_DEFAULT"] != $column->defautValue || 
