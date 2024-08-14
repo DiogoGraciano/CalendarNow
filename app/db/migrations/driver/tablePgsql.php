@@ -92,9 +92,6 @@ class tablePgsql implements table
     {
         $column = $column->getColumn();
 
-        if($column->primary)
-            $this->primary[] = $column->name;
-
         if($column->foreingKey){
             $this->hasForeingKey = true;
             $this->foreningTablesClass[] = $column->foreingTableClass;
@@ -103,6 +100,11 @@ class tablePgsql implements table
         $column->columnSql = ["{$column->name} {$column->type} {$column->null} {$column->defaut}",$column->unique,$column->foreingKey," "];
 
         $this->columns[$column->name] = $column;
+
+        if($column->primary){
+            $this->primary[] = $column->name;
+            $this->columns = array_reverse($this->columns,true);
+        }
 
         return $this;
     }

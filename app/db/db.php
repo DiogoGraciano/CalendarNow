@@ -625,8 +625,31 @@ class db
             $this->columns = $this->class::table()->getColumnsName();
         }
         else{
-            $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "' . $this->table . '" ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
-        
+            if(DRIVER == "mysql"){
+                $sql = $this->pdo->prepare('SELECT COLUMN_NAME FROM 
+                                                INFORMATION_SCHEMA.COLUMNS
+                                            WHERE TABLE_SCHEMA = "'.DBNAME.'" AND TABLE_NAME = "' . $this->table . '" 
+                                            ORDER BY CASE WHEN COLUMN_KEY = "PRI" THEN 1 ELSE 2 END,COLUMN_NAME;');
+            }elseif(DRIVER == "pgsql"){
+                $sql = $this->pdo->prepare('SELECT c.COLUMN_NAME FROM 
+                                                INFORMATION_SCHEMA.COLUMNS c
+                                            LEFT JOIN 
+                                                INFORMATION_SCHEMA.KEY_COLUMN_USAGE k 
+                                            ON 
+                                                c.TABLE_NAME = k.TABLE_NAME 
+                                                AND c.COLUMN_NAME = k.COLUMN_NAME
+                                                AND c.TABLE_SCHEMA = k.TABLE_SCHEMA
+                                            WHERE 
+                                                c.TABLE_CATALOG = "'.DBNAME.'" 
+                                                AND c.TABLE_NAME = "' . $this->table . '"
+                                            ORDER BY 
+                                                CASE 
+                                                    WHEN k.COLUMN_NAME IS NOT NULL THEN 0 
+                                                    ELSE 1 
+                                                END,
+                                                c.ORDINAL_POSITION;');
+            }
+
             $sql->execute();
 
             if ($sql->rowCount() > 0) {
