@@ -143,16 +143,7 @@ final class agendaController extends controller{
 
         if ($parameters){
             $id = functions::decrypt($parameters[0]);
-            try{
-                transactionManeger::init();
-                transactionManeger::beginTransaction();
-
-                agendaModel::delete($id);
-                transactionManeger::commit();
-            }catch (\exception $e){
-                transactionManeger::rollBack();
-            }
-            mensagem::setSucesso("Agenda deletada com sucesso");
+            agendaModel::delete($id);
             $this->go("agenda");
         }
 
