@@ -292,21 +292,24 @@ final class agendaModel extends model{
     public static function delete(int $id):bool
     {
         try {
+
+            transactionManeger::init();
+            transactionManeger::beginTransaction();
+
             self::deleteAgendaUsuario($id);
             self::deleteAgendaFuncionario($id);
 
-            
             if((new agenda)->delete($id)){
                 mensagem::setSucesso("agenda deletada com sucesso");
+                transactionManeger::commit();
                 return true;
             }
 
             mensagem::setErro("Erro ao deletar agenda");
+            transactionManeger::rollBack();
             return false;
-
-        }catch(Exception $e){
-            mensagem::setErro("Erro ao deletar agenda");
-            return false;
+        }catch (\exception $e){
+            transactionManeger::rollBack();
         }
     }
 
