@@ -25,9 +25,9 @@ final class usuarioModel extends model{
      * @param int|null|string $column A Coluna do usuário a ser buscado.
      * @return object Retorna os dados do usuário ou objeto se não encontrado.
     */
-    public static function get(int|null|string $value = null,string $column = "id"):object
+    public static function get(int|null|string $value = null,string $column = "id",int $limit = 1):object
     {
-        return (new usuario)->get($value,$column);
+        return (new usuario)->get($value,$column,$limit);
     }
 
     /**

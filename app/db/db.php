@@ -71,6 +71,14 @@ class db
     */
     private array $valuesBind = [];
 
+
+    /**
+     * valores do bindparam das Propertys.
+     *
+     * @var array
+    */
+    private array $valuesBindProperty = [];
+
     /**
      * contador de parametros do bindparam.
      *
@@ -262,9 +270,15 @@ class db
 
             $sql = $this->pdo->prepare($sql);
 
+            $lastcount = 1;
             if($this->valuesBind){
                 foreach ($this->valuesBind as $key => $data) {
+                    $lastcount = $key;
                     $sql->bindParam($key,$data[0],$data[1]);
+                }
+                foreach ($this->valuesBindProperty as $data) {
+                    $sql->bindParam($lastcount,$data[0],$data[1]);
+                    $lastcount++;
                 }
             }
                 
@@ -537,7 +551,10 @@ class db
      */
     public function addOrder(string $column,string $order="DESC"):DB
     {
-        $this->propertys[] = " ORDER by ".$column." ".$order;
+        $this->propertys[] = " ORDER by ? ?";
+
+        $this->setBind($column,true);
+        $this->setBind($order,true);
 
         return $this;
     }
@@ -551,10 +568,14 @@ class db
      */
     public function addLimit(int $limitIni,int $limitFim=0):DB
     {
+        $this->setBind($limitIni,true);
+
         if ($limitFim){
-            $this->propertys[] = " LIMIT {$limitIni},{$limitFim}";
-        }else
-            $this->propertys[] = " LIMIT {$limitIni}";
+            $this->propertys[] = " LIMIT ?,?";
+            $this->setBind($limitFim,true);
+        }else{
+            $this->propertys[] = " LIMIT ?";
+        }
 
         return $this;
     }
@@ -569,7 +590,9 @@ class db
      */
     public function addOffset(int $offset):DB
     {
-        $this->propertys[] = " OFFSET {$offset}";
+        $this->propertys[] = " OFFSET ?";
+
+        $this->setBind($offset,true);
 
         return $this;
     }
@@ -582,7 +605,9 @@ class db
      */
     public function addGroup(string $columns):DB
     {
-        $this->propertys[] = " GROUP by ".$columns;
+        $this->propertys[] = " GROUP by ?";
+
+        $this->setBind($columns,true);
 
         return $this;
     }
@@ -730,9 +755,15 @@ class db
         if ($this->debug)
             $sql->debugDumpParams();
 
+        $lastcount = 1;
         if($this->valuesBind){
             foreach ($this->valuesBind as $key => $data) {
+                $lastcount = $key;
                 $sql->bindParam($key,$data[0],$data[1]);
+            }
+            foreach ($this->valuesBindProperty as $data) {
+                $lastcount++;
+                $sql->bindParam($lastcount,$data[0],$data[1]);
             }
         }
         
@@ -755,13 +786,14 @@ class db
         $this->propertys = [];
         $this->filters = [];
         $this->valuesBind = [];
+        $this->valuesBindProperty = [];
         $this->counterBind = 1;
     }
 
     /**
      * retorna o parametro para fazer o bindValue no PDO.
     */
-    private function setBind($value):void
+    private function setBind($value,$property = false):void
     {
         if(is_int($value))
             $param = \PDO::PARAM_INT;
@@ -772,11 +804,19 @@ class db
         else
             $param = \PDO::PARAM_STR;
 
-        $this->valuesBind[$this->counterBind] = [
-            $value,
-            $param
-        ];
-        $this->counterBind++;
+        if($property){
+            $this->valuesBindProperty[] = [
+                $value,
+                $param
+            ];
+        }
+        else{
+            $this->valuesBind[$this->counterBind] = [
+                $value,
+                $param
+            ];
+            $this->counterBind++;
+        }
     }
 
 }
