@@ -1,5 +1,5 @@
 <?php
-namespace app\models\main;
+namespace app\models\api;
 
 use app\helpers\mensagem;
 use app\helpers\functions;

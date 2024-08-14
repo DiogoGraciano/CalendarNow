@@ -1,5 +1,5 @@
 <?php 
-namespace app\models\main;
+namespace app\models\api;
 use app\db\tables\agenda;
 use app\db\tables\funcionario;
 use app\db\tables\agendaUsuario;
@@ -27,21 +27,7 @@ final class agendaModel extends model{
      * @param int $limit O número máximo de registros a serem retornados.
      * @return object|array Retorna os dados da agenda ou null se não encontrado.
     */
-    public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
-    {
-        return (new agenda)->get($value,$column,$limit);
-    }
-
-
-    /**
-     * Obtém um registro da agenda com base em um valor e coluna especificados.
-     * 
-     * @param string $value O valor para buscar.
-     * @param string $column A coluna onde buscar o valor.
-     * @param int $limit O número máximo de registros a serem retornados.
-     * @return object|array Retorna os dados da agenda ou null se não encontrado.
-    */
-    public static function getbyIds(array $ids,$asArray = true):array
+    public static function getbyIds(array $ids):array
     {
         $agenda = (new agenda); 
         
@@ -49,9 +35,7 @@ final class agendaModel extends model{
             $agenda->addFilter("id","=",$id);
         }
 
-        if($asArray){
-            $db->asArray();
-        }
+        $db->asArray();
 
         return $agenda->selectColumns("id","agenda.nome","agenda.codigo");
     }
@@ -66,7 +50,7 @@ final class agendaModel extends model{
      * @param int $offset offset da query(opcional).
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null,$asArray = true):array|bool
+    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null):array
     {
         $db = new agenda;
         
@@ -90,57 +74,27 @@ final class agendaModel extends model{
             $db->addLimit($limit);
         }
 
-        if($asArray){
-            $db->asArray();
-        }
+        $db->asArray();
 
-        $result = $db->selectColumns("id","agenda.nome","agenda.codigo");
-        
-        if($result)
-            return $result;
-        
-        return false;
-    }
-
-    /**
-     * Obtém agendas por código.
-     * 
-     * @param string $codigo O código da agenda para buscar.
-     * @return array|bool Retorna um array de agendas ou false se não encontrado.
-    */
-    public static function getByCodigo(string $codigo = ""):array|bool
-    {
-        $db = new agenda;
-        
-        $result = $db->addFilter("agenda.codigo","=",$codigo)
-                ->selectColumns("id","agenda.nome","agenda.codigo");
-        
-         if($result)
-            return $result;
-        
-        return false;
+        return $db->selectColumns("id","agenda.nome","agenda.codigo");
     }
 
     /**
      * Obtém agendas por usuário.
      * 
      * @param int|null $id_usuario O ID do usuário para buscar agendas.
-     * @return array|bool Retorna um array de agendas ou false se não encontrado.
+     * @return array Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUsuario(int $id_usuario):array|bool 
+    public static function getByUsuario(int $id_usuario):array
     {
         $db = new agendaUsuario;
         
-        $result = $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
+        return $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
                     ->addJoin("empresa","agenda.id_empresa","empresa.id")
                     ->addJoin("agenda_funcionario","agenda_funcionario.id_agenda","agenda.id")
                     ->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
+                    ->asArray()
                     ->selectColumns("agenda.id","agenda.nome","empresa.nome as emp_nome");
-
-        if($result)
-            return $result;
-        
-        return false;
     }
 
     /**
@@ -149,18 +103,14 @@ final class agendaModel extends model{
      * @param int $id_funcionario O ID do funcionário.
      * @return array Retorna array com os registros encontrados.
     */
-    public static function getFuncionarioByAgenda(int|null $id_agenda = null):array
+    public static function getFuncionarioByAgenda(int $id_agenda):array
     {
-        if(!$id_agenda){
-            return [];
-        }
-        
         $db = new agendaFuncionario;
 
         $db->addJoin(funcionario::table,"id","id_funcionario")
            ->addFilter("id_agenda","=",$id_agenda);
 
-        return $db->selectColumns(funcionario::table.".id",funcionario::table.".nome");
+        return $db->asArray()->selectColumns(funcionario::table.".id",funcionario::table.".nome");
     }
 
     /**
@@ -170,21 +120,17 @@ final class agendaModel extends model{
      * @param int $id_usuario O ID do usuário para buscar agendas.
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByUsuarioServico(int $id_servico,int $id_usuario):array|bool 
+    public static function getByUsuarioServico(int $id_servico,int $id_usuario):array
     {
         $db = new agendaUsuario;
         
-        $result = $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
+       return $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
                     ->addJoin("empresa","agenda.id_empresa","empresa.id")
                     ->addJoin("agenda_servico","agenda_servico.id_agenda","agenda.id")
                     ->addFilter("agenda_servico.id_servico","=",$id_servico)
                     ->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
+                    ->asArray()
                     ->selectColumns("id","agenda.nome","empresa.nome as emp_nome");
-
-        if($result)
-            return $result;
-        
-        return false;
     }
 
     /**
@@ -200,6 +146,7 @@ final class agendaModel extends model{
 
         $result = $db->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
                     ->addFilter("agenda_usuario.id_agenda","=",$id_agenda)
+                    ->asArray()
                     ->selectAll();
 
         if (!$result){
@@ -207,9 +154,16 @@ final class agendaModel extends model{
             $db->id_usuario = $id_usuario;
             $db->id_agenda = $id_agenda;
 
-            return $db->storeMutiPrimary();
+            if($db->storeMutiPrimary()){
+                mensagem::setSucesso("Agenda já vinculada ao Usuario");
+                return true;
+            }else{
+                mensagem::setErro("Erro ao vincular agenda ao usuario");
+                return false;
+            }
         }
 
+        mensagem::setSucesso("Agenda já vinculada ao Usuario");
         return true;
     }
 
@@ -226,15 +180,23 @@ final class agendaModel extends model{
 
         $result = $db->addFilter("agenda_funcionario.id_funcionario","=",$id_funcionario)
                 ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
+                ->asArray()
                 ->selectAll();
 
         if (!$result){
             $db->id_funcionario = $id_funcionario;
             $db->id_agenda = $id_agenda;
 
-            return $db->storeMutiPrimary();
+            if($db->storeMutiPrimary()){
+                mensagem::setSucesso("Agenda já vinculada ao funcionario");
+                return true;
+            }else{
+                mensagem::setErro("Erro ao vincular agenda ao funcionario");
+                return false;
+            }
         }
-  
+
+        mensagem::setSucesso("Agenda já vinculada ao funcionario");
         return true;
     }
 
@@ -283,7 +245,47 @@ final class agendaModel extends model{
         return False;
     }
 
-   /**
+    /**
+     * Desvincula um funcionario de um grupo de funcionarios
+     * 
+     * @param int $id_agenda O ID da agenda.
+     * @param int $id_funcionario O ID do funcionário.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachAgendaUsuario(int $id_agenda,int $id_usuario):bool
+    {
+        $db = new agendaUsuario;
+
+        if($db->addFilter("id_agenda","=",$id_agenda)->addFilter("id_usuario","=",$id_usuario)->deleteByFilter()){
+            mensagem::setSucesso("Usuario Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Usuario");
+        return false;
+    }
+
+    /**
+     * Desvincula um funcionario de um grupo de funcionarios
+     * 
+     * @param int $id_agenda O ID da agenda.
+     * @param int $id_funcionario O ID do funcionário.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachAgendaFuncionario(int $id_agenda,int $id_funcionario):bool
+    {
+        $db = new agendaFuncionario;
+
+        if($db->addFilter("id_agenda","=",$id_agenda)->addFilter("id_funcionario","=",$id_funcionario)->deleteByFilter()){
+            mensagem::setSucesso("Funcionario Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Funcionario");
+        return false;
+    }
+
+    /**
      * Exclui um registro da agenda.
      * 
      * @param int $id O ID da agenda a ser excluída.

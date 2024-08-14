@@ -146,8 +146,7 @@ final class agendaController extends controller{
             try{
                 transactionManeger::init();
                 transactionManeger::beginTransaction();
-                agendaModel::deleteAgendaUsuario($id);
-                agendaModel::deleteAgendaFuncionario($id);
+
                 agendaModel::delete($id);
                 transactionManeger::commit();
             }catch (\exception $e){
