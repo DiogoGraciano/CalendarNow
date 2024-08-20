@@ -17,15 +17,24 @@ use stdClass;
 class empresaModel{
 
     /**
-     * Obtém uma empresa pelo ID ou coluna específica.
+     * Obtém um registro de usuarios com base em um valor e coluna especificados.
      * 
-     * @param int $id O ID da empresa a ser buscada.
-     * @param string $coluna A coluna pela qual buscar a empresa (opcional, padrão é "id").
-     * @return object Retorna os dados da empresa ou null se não encontrado.
-     */
-    public static function get(string|null|int $value = null,string $coluna = "id"):object
+     * @param string $value O valor para buscar.
+     * @param string $column A coluna onde buscar o valor.
+     * @param int $limit O número máximo de registros a serem retornados.
+     * @return object|array Retorna os dados da agenda ou null se não encontrado.
+    */
+    public static function getbyIds(array $ids):array
     {
-        return (new empresa)->get($value, $coluna);
+        $db = (new empresa); 
+        
+        foreach ($ids as $id){
+            $db->addFilter("id","=",$id);
+        }
+
+        $db->asArray();
+
+        return $db->selectAll();
     }
 
     /**

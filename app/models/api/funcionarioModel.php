@@ -21,14 +21,24 @@ use app\models\abstract\model;
 final class funcionarioModel extends model{
 
     /**
-     * Obtém um funcionário pelo ID.
+     * Obtém um registro de usuarios com base em um valor e coluna especificados.
      * 
-     * @param string $id O ID do funcionário.
-     * @return object Retorna o objeto do funcionário ou null se não encontrado.
+     * @param string $value O valor para buscar.
+     * @param string $column A coluna onde buscar o valor.
+     * @param int $limit O número máximo de registros a serem retornados.
+     * @return object|array Retorna os dados da agenda ou null se não encontrado.
     */
-    public static function get(string|int|null $value = null,string $column = "id"):object
+    public static function getbyIds(array $ids):array
     {
-        return (new funcionario)->get($value,$column);
+        $db = (new funcionario); 
+        
+        foreach ($ids as $id){
+            $db->addFilter("id","=",$id);
+        }
+
+        $db->asArray();
+
+        return $db->selectAll();
     }
 
     /**
@@ -321,8 +331,7 @@ final class funcionarioModel extends model{
                     ->selectAll();
 
         if (!$result){
-            
-
+             
             $values->id_grupo_funcionario = $id_grupo_funcionario;
             $values->id_funcionario = $id_funcionario;
 
@@ -332,9 +341,9 @@ final class funcionarioModel extends model{
             if ($retorno == true){
                 return true;
             }
-            else {
-                return False;
-            }
+            
+            return False;
+            
         }
         return True;
     }

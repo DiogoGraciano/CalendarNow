@@ -66,7 +66,7 @@ final class agendaModel extends model{
      * @param int $offset offset da query(opcional).
      * @return array|bool Retorna um array de agendas ou false se não encontrado.
     */
-    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null,$asArray = true):array|bool
+    public static function getByEmpresa(int $id_empresa,?string $nome = null,?string $codigo = null,?int $limit = null,?int $offset = null,$asArray = false):array|bool
     {
         $db = new agenda;
         

@@ -29,15 +29,15 @@ final class agendaModel extends model{
     */
     public static function getbyIds(array $ids):array
     {
-        $agenda = (new agenda); 
+        $db = (new agenda); 
         
         foreach ($ids as $id){
-            $agenda->addFilter("id","=",$id);
+            $db->addFilter("id","=",$id);
         }
 
         $db->asArray();
 
-        return $agenda->selectColumns("id","agenda.nome","agenda.codigo");
+        return $db->selectAll();
     }
 
     /**
@@ -294,20 +294,25 @@ final class agendaModel extends model{
     public static function delete(int $id):bool
     {
         try {
+            transactionManeger::init();
+            transactionManeger::beginTransaction();
+
             self::deleteAgendaUsuario($id);
             self::deleteAgendaFuncionario($id);
-
             
             if((new agenda)->delete($id)){
                 mensagem::setSucesso("agenda deletada com sucesso");
+                transactionManeger::commit();
                 return true;
             }
 
             mensagem::setErro("Erro ao deletar agenda");
+            transactionManeger::rollBack();
             return false;
 
         }catch(Exception $e){
             mensagem::setErro("Erro ao deletar agenda");
+            transactionManeger::rollBack();
             return false;
         }
     }

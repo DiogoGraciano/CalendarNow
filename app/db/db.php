@@ -755,8 +755,8 @@ class db
         if ($this->debug)
             $sql->debugDumpParams();
 
-        $lastcount = 1;
-        if($this->valuesBind){
+        $lastcount = 0;
+        if($this->valuesBind || $this->valuesBindProperty){
             foreach ($this->valuesBind as $key => $data) {
                 $lastcount = $key;
                 $sql->bindParam($key,$data[0],$data[1]);

@@ -172,7 +172,10 @@ final class funcionarioController extends controller
 
         $select_agenda = $elements->select("Agenda", "id_agenda");
 
-        $form->setInputs($select_agenda);
+        $form->setDoisInputs(
+            $select_agenda,
+            $elements->input("espaco_slot","Subdivisão de horario em minutos",$dado->espacamento_agenda??30,type_input:"number",extra_input:'min="10" max="999"')
+        );
 
         if ($dadoFuncionario->id && $grupos_funcionarios = grupoFuncionarioModel::getByFuncionario($dadoFuncionario->id)) {
 

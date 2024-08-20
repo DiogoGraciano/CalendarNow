@@ -40,18 +40,18 @@ class agendaController extends apiController{
 
             $agenda = agendaModel::getbyIds($parameters);
             foreach ($agendas as $agenda){
-                if ($this->requestType === 'GET' && $agenda["cd_agenda"])
+                if ($this->requestType === 'GET' && $agenda["id"])
                     $agendas[] = $agenda;
-                if ($this->requestType === 'DELETE' && $agenda["cd_agenda"] && agendaModel::delete($agenda["cd_agenda"]))
-                    $agendas[] = "Agenda com Id ({$agenda['cd_agenda']}) deletado com sucesso";
+                if ($this->requestType === 'DELETE' && $agenda["id"] && agendaModel::delete($agenda["id"]))
+                    $agendas[] = "Agenda com Id ({$agenda['id']}) deletado com sucesso";
                 else
-                    $errors[] = "Erro ao deletar agenda com Id ({$agenda['cd_agenda']})";
+                    $errors[] = "Erro ao deletar agenda com Id ({$agenda['id']})";
 
-                $agendasEncontradas[] = $agenda["cd_agenda"];
+                $agendasEncontradas[] = $agenda["id"];
             }
 
-            foreach ($agendasEncontradas as $id){
-                if(!in_array($id,$parameters)){
+            foreach ($parameters as $id){
+                if(!in_array($id,$agendasEncontradas)){
                     $agendasNaoEncontradas[] = $id;
                 }
             }

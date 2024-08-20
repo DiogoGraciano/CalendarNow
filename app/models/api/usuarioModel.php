@@ -19,17 +19,26 @@ use core\session;
 final class usuarioModel extends model{
 
     /**
-     * Obtém um usuário pelo ID.
+     * Obtém um registro de usuarios com base em um valor e coluna especificados.
      * 
-     * @param int|null|string $value O Valor do usuário a ser buscado.
-     * @param int|null|string $column A Coluna do usuário a ser buscado.
-     * @return object Retorna os dados do usuário ou objeto se não encontrado.
+     * @param string $value O valor para buscar.
+     * @param string $column A coluna onde buscar o valor.
+     * @param int $limit O número máximo de registros a serem retornados.
+     * @return object|array Retorna os dados da agenda ou null se não encontrado.
     */
-    public static function get(int|null|string $value = null,string $column = "id",int $limit = 1):object
+    public static function getbyIds(array $ids):array
     {
-        return (new usuario)->get($value,$column,$limit);
-    }
+        $db = (new usuario); 
+        
+        foreach ($ids as $id){
+            $db->addFilter("id","=",$id);
+        }
 
+        $db->asArray();
+
+        return $db->selectAll();
+    }
+    
     /**
      * Obtém o usuário logado.
      * 
@@ -57,6 +66,8 @@ final class usuarioModel extends model{
 
         $usuario = $db->addFilter("cpf_cnpj", "=", functions::onlynumber($cpf_cnpj))->addFilter("email", "=", $email)->addLimit(1)->selectAll();
 
+        $db->asArray();
+
         return $usuario[0] ?? false;
     }
 
@@ -73,6 +84,8 @@ final class usuarioModel extends model{
 
         $usuario = $db->addFilter("cpf_cnpj", "=", $cpf_cnpj)->selectAll();
 
+        $db->asArray();
+
         return $usuario;
     }
 
@@ -88,6 +101,8 @@ final class usuarioModel extends model{
         $db = new usuario;
 
         $usuario = $db->addFilter("email", "=", $email)->selectAll();
+
+        $db->asArray();
 
         return $usuario;
     }
@@ -129,6 +144,8 @@ final class usuarioModel extends model{
             $db->addLimit($limit);
         }
 
+        $db->asArray();
+
         return $db->selectColumns('usuario.id','usuario.nome','usuario.cpf_cnpj','usuario.telefone','usuario.senha','usuario.email','usuario.tipo_usuario','usuario.id_empresa');
     }
 
@@ -147,6 +164,7 @@ final class usuarioModel extends model{
                         ->addFilter("agendamento.id_agenda","=",$id_agenda)
                         ->addFilter("usuario.tipo_usuario","=",$tipo_usuario)
                         ->addGroup("usuario.id")
+                        ->asArray()
                         ->selectColumns('usuario.id','usuario.nome','usuario.cpf_cnpj','usuario.telefone','usuario.senha','usuario.email','usuario.tipo_usuario','usuario.id_empresa');
                         
         return $usuarios;
