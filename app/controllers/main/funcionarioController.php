@@ -174,7 +174,7 @@ final class funcionarioController extends controller
 
         $form->setDoisInputs(
             $select_agenda,
-            $elements->input("espaco_slot","Subdivisão de horario em minutos",$dado->espacamento_agenda??30,type_input:"number",extra_input:'min="10" max="999"')
+            $elements->input("espacamento_agenda","Subdivisão de horario em minutos",$dadoFuncionario->espacamento_agenda??30,type_input:"number",extra_input:'min="10" max="999"')
         );
 
         if ($dadoFuncionario->id && $grupos_funcionarios = grupoFuncionarioModel::getByFuncionario($dadoFuncionario->id)) {
@@ -275,6 +275,7 @@ final class funcionarioController extends controller
         $senha = $this->getValue('senha');
         $email = $this->getValue('email');
         $telefone = $this->getValue('telefone');
+        $espacamento_agenda = $this->getValue('espacamento_agenda');
 
         $dias = implode(",", [$this->getValue("dom"), $this->getValue("seg"), $this->getValue("ter"), $this->getValue("qua"), $this->getValue("qui"), $this->getValue("sex"), $this->getValue("sab")]);
 
@@ -297,6 +298,7 @@ final class funcionarioController extends controller
         $usuario->funcionario->hora_almoco_ini      = $hora_almoco_ini;
         $usuario->funcionario->hora_almoco_fim      = $hora_almoco_fim;
         $usuario->funcionario->dias                 = $dias;
+        $usuario->funcionario->espacamento_agenda   = $espacamento_agenda;
 
         session::set("funcionarioController",$usuario);
 
@@ -308,7 +310,7 @@ final class funcionarioController extends controller
             if ($id_empresa = $this->getValue("id_empresa")) {
                 $id_usuario = usuarioModel::set($nome, $cpf_cnpj, $email, $telefone, $senha, $id, 2, $id_empresa);
                 if ($id_usuario) {
-                    $id_funcionario = funcionarioModel::set($id_usuario, $nome, $cpf_cnpj, $email, $telefone, $hora_ini, $hora_fim, $hora_almoco_ini, $hora_almoco_fim, $dias, $id_funcionario);
+                    $id_funcionario = funcionarioModel::set($id_usuario, $nome, $cpf_cnpj, $email, $telefone, $hora_ini, $hora_fim, $hora_almoco_ini, $hora_almoco_fim, $dias, $espacamento_agenda, $id_funcionario);
                     if ($id_funcionario) {
 
                         if ($id_grupo_funcionario)

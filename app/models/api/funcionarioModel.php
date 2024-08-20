@@ -124,11 +124,12 @@ final class funcionarioModel extends model{
      * @param string $hora_fim O horário de término de trabalho.
      * @param string $hora_almoco_ini O horário de início do almoço.
      * @param string $hora_almoco_fim O horário de término do almoço.
+     * @param int    $espacamento_agenda espaçamento em minutos do agendamento
      * @param string $dias Os dias de trabalho do funcionário.
      * @param string $id O ID do funcionário (opcional).
      * @return int|bool Retorna o ID do funcionário se a operação for bem-sucedida, caso contrário retorna false.
      */
-    public static function set(int $id_usuario,string $nome,string $cpf_cnpj,string $email,string $telefone,string $hora_ini,string $hora_fim,string $hora_almoco_ini,string $hora_almoco_fim,string $dias,int $id = null):int|bool
+    public static function set(int $id_usuario,string $nome,string $cpf_cnpj,string $email,string $telefone,string $hora_ini,string $hora_fim,string $hora_almoco_ini,string $hora_almoco_fim,int $espacamento_agenda, string $dias,int $id = null):int|bool
     {
         $values = new funcionario;
 
@@ -202,7 +203,11 @@ final class funcionarioModel extends model{
             $mensagens[] = "Horario final de almoço invalido";
         }
 
-        if(!$values->dias = $dias){
+        if(!($values->espacamento_agenda = $espacamento_agenda)){
+            $mensagens[] = "Espaçamento entre os slots da agenda deve ser informado";
+        }
+
+        if(!($values->dias = $dias)){
             $mensagens[] = "Os dias devem ser informados";
         }
 
