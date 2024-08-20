@@ -29,6 +29,25 @@ final class clienteModel extends model{
     }
 
     /**
+     * Obtém varios ou um registro com base nos ids informados.
+     * 
+     * @param array $ids ids dos registros.
+     * @return array Retorna os dados da agenda ou null se não encontrado.
+    */
+    public static function getbyIds(array $ids):array
+    {
+        $db = (new cliente); 
+        
+        foreach ($ids as $id){
+            $db->addFilter("id","=",$id);
+        }
+
+        $db->asArray();
+
+        return $db->selectAll();
+    }
+
+    /**
      * Obtém clientes pelo ID do funcionário associado.
      * 
      * @param int $id_funcionario O ID do funcionário associado aos clientes.

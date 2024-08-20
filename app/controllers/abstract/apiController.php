@@ -1,7 +1,8 @@
 <?php
 namespace app\controllers\abstract;
 
-use core\request;
+use app\models\api\usuarioApiModel;
+
 /**
  * Classe abstrata controller é uma classe base para controladores.
  *
@@ -14,34 +15,35 @@ abstract class apiController
      * 
      * @var string
      */
-    protected readonly string $requestType;
+    protected string $requestType;
 
     /**
      * Dados enviados na requisição.
      * 
      * @var mixed
      */
-    protected readonly mixed $data;
+    protected mixed $data;
 
     /**
      * query da requisição.
      *
      * @var array
     */
-    protected readonly array $query;
+    protected array $query;
 
     /**
-     * query da requisição.
+     * usuario da requisição.
      *
-     * @var array
+     * @var object
     */
-    protected readonly array $user;
+    protected object $user;
 
     public function __construct(){
+
         $user = usuarioApiModel::getLogged();
 
         if(!$user->id){
-            throw new exception("Usuario da Api não está logado");
+            throw new \exception("Usuario da Api não está logado");
         }
 
         $this->user = $user;
@@ -60,6 +62,9 @@ abstract class apiController
         foreach ($columns as $column) {
             if (isset($values[$column])) {
                 $return[] = $values[$column];
+            }
+            else{
+                $return[] = null;
             }
         }
         return $return;

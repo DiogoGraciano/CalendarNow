@@ -4,7 +4,6 @@ namespace app\models\api;
 use app\helpers\functions;
 use app\db\tables\empresa;
 use app\helpers\mensagem;
-use stdClass;
 
 /**
  * Classe empresaModel
@@ -17,13 +16,19 @@ use stdClass;
 class empresaModel{
 
     /**
-     * Obtém um registro de usuarios com base em um valor e coluna especificados.
+     * Obtém um registro da empresa com base em um valor e coluna especificados.
      * 
      * @param string $value O valor para buscar.
      * @param string $column A coluna onde buscar o valor.
      * @param int $limit O número máximo de registros a serem retornados.
-     * @return object|array Retorna os dados da agenda ou null se não encontrado.
+     * @return object|array Retorna os dados da empresa caso limit seja 1 ira retornar um objeto caso não um array.
     */
+    public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
+    {
+        return (new empresa)->get($value,$column,$limit);
+    }
+
+
     public static function getbyIds(array $ids):array
     {
         $db = (new empresa); 

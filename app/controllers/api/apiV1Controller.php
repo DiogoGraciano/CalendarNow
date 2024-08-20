@@ -4,7 +4,6 @@ namespace app\controllers\api;
 use app\controllers\abstract\controller;
 use app\helpers\functions;
 use app\models\api\loginApiModel;
-use core\request;
 
 class apiV1Controller extends controller{
 

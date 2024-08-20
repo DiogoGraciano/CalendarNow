@@ -4,7 +4,6 @@ namespace app\models\api;
 use app\helpers\functions;
 use app\helpers\mensagem;
 use app\db\tables\funcionario;
-use app\db\tables\agenda;
 use app\db\tables\funcionarioGrupoFuncionario;
 use app\db\tables\agendaFuncionario;
 use app\models\abstract\model;
@@ -19,6 +18,19 @@ use app\models\abstract\model;
  * @package app\models\main
 */
 final class funcionarioModel extends model{
+
+    /**
+     * Obtém um funcionário pelo ID.
+     * 
+     * @param mixed $value valor usado na busca.
+     * @param string $column coluna usado na busca.
+     * @param string $limit limite usado na busca.
+     * @return object Retorna o objeto do funcionário ou null se não encontrado.
+    */
+    public static function get(mixed $value = null,string $column = "id",?int $limit = 1):object
+    {
+        return (new funcionario)->get($value,$column,$limit);
+    }
 
     /**
      * Obtém um registro de usuarios com base em um valor e coluna especificados.
@@ -52,7 +64,7 @@ final class funcionarioModel extends model{
      * @param int $id_grupo_funcionarios O ID do grupo de funcionários (opcional).
      * @return array Retorna um array com os funcionários filtrados.
      */
-    public static function getListFuncionariosByEmpresa(int $id_empresa,string $nome = null,int $id_agenda = null,int $id_grupo_funcionarios = null,?int $limit = null,?int $offset = null):array
+    public static function getByEmpresa(int $id_empresa,string $nome = null,int $id_agenda = null,int $id_grupo_funcionarios = null,?int $limit = null,?int $offset = null):array
     {
 
         $db = new funcionario;
@@ -72,101 +84,32 @@ final class funcionarioModel extends model{
             $db->addFilter("funcionario.nome","LIKE","%".$nome."%");
 
         if($limit && $offset){
-            self::setLastCount($db);
             $db->addLimit($limit);
             $db->addOffset($offset);
         }
         elseif($limit){
-            self::setLastCount($db);
             $db->addLimit($limit);
         }
                     
-        $funcionarios = $db->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
+        $funcionarios = $db->asArray()->selectColumns("funcionario.id,funcionario.cpf_cnpj,funcionario.nome,funcionario.email,funcionario.telefone,hora_ini,hora_fim,hora_almoco_ini,hora_almoco_fim,dias");
         
         $funcionarioFinal = [];
         if ($funcionarios){
             foreach ($funcionarios as $funcionario){
-                if ($funcionario->cpf_cnpj){
-                    $funcionario->cpf_cnpj = functions::formatCnpjCpf($funcionario->cpf_cnpj);
+                if ($funcionario["cpf_cnpj"]){
+                    $funcionario["cpf_cnpj"] = functions::formatCnpjCpf($funcionario["cpf_cnpj"]);
                 }
-                if ($funcionario->telefone){
-                    $funcionario->telefone = functions::formatPhone($funcionario->telefone);
+                if ($funcionario["telefone"]){
+                    $funcionario["telefone"] = functions::formatPhone($funcionario["telefone"]);
                 }
-                if ($funcionario->dias){
-                    $funcionario->dias = functions::formatDias($funcionario->dias);
+                if ($funcionario["dias"]){
+                    $funcionario["dias"] = explode(",",$funcionario["dias"]);
                 }
                 $funcionarioFinal[] = $funcionario;
             }
         }
         
         return $funcionarioFinal;
-    }
-
-    /**
-     * Obtém os funcionários por agenda.
-     * 
-     * @param int $id_agenda O ID da agenda.
-     * @return array Retorna um array com os funcionários associados à agenda.
-    */
-    public static function getByAgenda(int $id_agenda):array
-    {
-        $db = new agendaFuncionario;
-
-        $values = $db->addJoin("agenda","agenda.id","agenda_funcionario.id_agenda")
-                ->addJoin("funcionario","funcionario.id","agenda_funcionario.id_funcionario")
-                ->addFilter("agenda_funcionario.id_agenda","=",$id_agenda)
-                ->selectColumns("funcionario.id","funcionario.nome","agenda.nome as age_nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
-                
-        return $values;
-    }
-
-    /**
-     * Obtém os funcionários por empresa.
-     * 
-     * @param int $id_empresa O ID da empresa.
-     * @return array Retorna um array com os funcionários associados à empresa.
-    */
-    public static function getByEmpresa(int $id_empresa):array
-    {
-        $db = new funcionario;
-
-        $values = $db->addJoin("usuario","usuario.id","funcionario.id_usuario")
-                ->addFilter("usuario.id_empresa","=",$id_empresa)
-                ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
-
-        return $values;
-    }
-
-    /**
-     * Obtém os funcionários por empresa.
-     * 
-     * @param int $id_empresa O ID da empresa.
-     * @return array Retorna um array com os funcionários associados à empresa.
-    */
-    public static function getByUsuario(int $id_usuario):array
-    {
-        $db = new funcionario;
-
-        return $db
-                ->addJoin("agendamento","agendamento.id_funcionario","funcionario.id")
-                ->addGroup("funcionario.id")
-                ->selectColumns("funcionario.id","funcionario.nome","funcionario.cpf_cnpj","funcionario.email","funcionario.telefone","hora_ini","hora_fim","dias");
-    }
-
-    /**
-     * Busca todos os grupos vinculados a um funcionario
-     * 
-     * @param int $id_funcionario O ID do funcionário.
-     * @return array Retorna array com os registros encontrados.
-    */
-    public static function getAgendaByFuncionario(int $id_funcionario):array
-    {
-        $db = new agendaFuncionario;
-
-        $db->addJoin(agenda::table,"id","id_agenda")
-           ->addFilter("id_funcionario","=",$id_funcionario);
-
-        return $db->selectColumns(agenda::table.".id",agenda::table.".nome");
     }
 
     /**

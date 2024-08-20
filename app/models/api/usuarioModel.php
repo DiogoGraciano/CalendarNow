@@ -19,6 +19,18 @@ use core\session;
 final class usuarioModel extends model{
 
     /**
+     * 
+     * @param mixed $value valor usado na busca.
+     * @param string $column coluna usado na busca.
+     * @param string $limit limite usado na busca.
+     * @return object Retorna o objeto do funcionário ou null se não encontrado.
+    */
+    public static function get(mixed $value = null,string $column = "id",?int $limit = 1):object
+    {
+        return (new usuario)->get($value,$column,$limit);
+    }
+
+    /**
      * Obtém um registro de usuarios com base em um valor e coluna especificados.
      * 
      * @param string $value O valor para buscar.

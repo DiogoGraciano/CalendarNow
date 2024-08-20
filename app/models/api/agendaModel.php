@@ -20,12 +20,22 @@ use app\models\abstract\model;
 final class agendaModel extends model{
 
     /**
-     * Obtém um registro da agenda com base em um valor e coluna especificados.
      * 
-     * @param string $value O valor para buscar.
-     * @param string $column A coluna onde buscar o valor.
-     * @param int $limit O número máximo de registros a serem retornados.
-     * @return object|array Retorna os dados da agenda ou null se não encontrado.
+     * @param mixed $value valor usado na busca.
+     * @param string $column coluna usado na busca.
+     * @param string $limit limite usado na busca.
+     * @return object Retorna o objeto do funcionário ou null se não encontrado.
+    */
+    public static function get(mixed $value = null,string $column = "id",?int $limit = 1):object
+    {
+        return (new agenda)->get($value,$column,$limit);
+    }
+
+    /**
+     * Obtém varios ou um registro com base nos ids informados.
+     * 
+     * @param array $ids ids dos registros.
+     * @return array Retorna os dados da agenda ou null se não encontrado.
     */
     public static function getbyIds(array $ids):array
     {

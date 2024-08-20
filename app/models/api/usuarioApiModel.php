@@ -1,7 +1,6 @@
 <?php 
 namespace app\models\api;
 use app\db\tables\usuarioApi;
-use app\helpers\functions;
 use app\helpers\mensagem;
 use app\models\abstract\model;
 use app\models\main\loginModel;

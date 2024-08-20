@@ -1,13 +1,8 @@
 <?php 
 namespace app\controllers\api;
 use app\controllers\abstract\apiController;
-use app\helpers\functions;
 use app\helpers\mensagem;
-use app\db\transactionManeger;
 use app\models\api\agendaModel;
-use app\models\api\usuarioModel;
-use app\models\api\funcionarioModel;
-use core\session;
 
 class agendaController extends apiController{
 
@@ -86,19 +81,14 @@ class agendaController extends apiController{
                 if($this->user->tipo_usuario == 2){
                     $registro["id_empresa"] = $this->user->id_empresa;
                 }
-
-                if (isset($registro["nome"],$registro["id_empresa"],$registro["codigo"])){
-                    $registro = $this->setParameters($columns,$registro);
-                    if ($agenda = agendaModel::set(...$registro)){
-                        $result[] = "agenda com Id ({$agenda}) salva com sucesso";
-                        $idsalvos[] = $agenda;
-                    }
-                    else{
-                        $errors[] = mensagem::getErro();
-                    }
+                $registro = $this->setParameters($columns,$registro);
+                if ($agenda = agendaModel::set(...$registro)){
+                    $result[] = "agenda com Id ({$agenda}) salva com sucesso";
+                    $idsalvos[] = $agenda;
                 }
-                else
-                    $errors[] = "agenda não informado corretamente";
+                else{
+                    $errors[] = mensagem::getErro();
+                }
             }
 
             $this->sendResponse(["result" => $result,"id_salvos"=> $idsalvos,"errors" => $errors]);

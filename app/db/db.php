@@ -176,7 +176,7 @@ class db
     /**
      * Set Debug.
      * 
-     * @return void Retorna o último ID inserido na tabela ou null se nenhum ID foi inserido.
+     * @return DB Retorna o último ID inserido na tabela ou null se nenhum ID foi inserido.
      */
     public function asArray():DB
     {

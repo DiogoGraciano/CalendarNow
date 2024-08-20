@@ -3,9 +3,7 @@ namespace app\models\api;
 
 use app\db\tables\endereco;
 use app\helpers\mensagem;
-use app\layout\modelAbstract;
 use app\helpers\functions;
-use app\models\main\cidadeModel;
 
 /**
  * Classe enderecoModel

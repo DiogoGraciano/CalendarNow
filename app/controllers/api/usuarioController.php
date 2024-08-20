@@ -2,7 +2,6 @@
 namespace app\controllers\api;
 
 use app\controllers\abstract\apiController;
-use app\helpers\functions;
 use app\helpers\mensagem;
 use app\models\api\usuarioModel;
 
