@@ -4,6 +4,7 @@ use app\db\tables\agenda;
 use app\db\tables\funcionario;
 use app\db\tables\agendaUsuario;
 use app\db\tables\agendaFuncionario;
+use app\db\transactionManeger;
 use app\models\main\empresaModel;
 use app\helpers\mensagem;
 use app\helpers\functions;
@@ -30,30 +31,6 @@ final class agendaModel extends model{
     public static function get(mixed $value = "",string $column = "id",int $limit = 1):array|object
     {
         return (new agenda)->get($value,$column,$limit);
-    }
-
-
-    /**
-     * Obtém um registro da agenda com base em um valor e coluna especificados.
-     * 
-     * @param string $value O valor para buscar.
-     * @param string $column A coluna onde buscar o valor.
-     * @param int $limit O número máximo de registros a serem retornados.
-     * @return object|array Retorna os dados da agenda ou null se não encontrado.
-    */
-    public static function getbyIds(array $ids,$asArray = true):array
-    {
-        $agenda = (new agenda); 
-        
-        foreach ($ids as $id){
-            $agenda->addFilter("id","=",$id);
-        }
-
-        if($asArray){
-            $db->asArray();
-        }
-
-        return $agenda->selectColumns("id","agenda.nome","agenda.codigo");
     }
 
     /**
@@ -133,7 +110,6 @@ final class agendaModel extends model{
         
         $result = $db->addJoin("agenda","agenda_usuario.id_agenda","agenda.id")
                     ->addJoin("empresa","agenda.id_empresa","empresa.id")
-                    ->addJoin("agenda_funcionario","agenda_funcionario.id_agenda","agenda.id")
                     ->addFilter("agenda_usuario.id_usuario","=",$id_usuario)
                     ->selectColumns("agenda.id","agenda.nome","empresa.nome as emp_nome");
 
@@ -309,7 +285,9 @@ final class agendaModel extends model{
             transactionManeger::rollBack();
             return false;
         }catch (\exception $e){
+            mensagem::setErro("Erro ao deletar agenda");
             transactionManeger::rollBack();
+            return false;
         }
     }
 

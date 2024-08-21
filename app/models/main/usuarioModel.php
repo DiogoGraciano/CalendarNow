@@ -239,7 +239,7 @@ final class usuarioModel extends model{
             $mensagens[] = "Telefone Invalido";
         }
 
-        if(!($values->tipo_usuario = $tipo_usuario) || $values->tipo_usuario  < 0 || $values->tipo_usuario  > 3){
+        if(!($values->tipo_usuario = $tipo_usuario) || $values->tipo_usuario < 0 || $values->tipo_usuario  > 3){
             $mensagens[] = "Tipo de Usuario Invalido";
         }
 
@@ -251,9 +251,9 @@ final class usuarioModel extends model{
             $mensagens[] = "Empresa não existe";
         }
 
-        $usuario = self::get($values->id);
-        if(($values->id = $id) && !$usuario->id){
-            $mensagens[] = "Usuario da Api não existe";
+        $usuario = self::get($id);
+        if(!($values->id = $usuario->id)){
+            $mensagens[] = "Usuario não existe";
         }
 
         if(!$values->id && !$senha){

@@ -82,6 +82,25 @@ final class grupoServicoModel extends model{
     }
 
     /**
+     * Desvincula todos os grupos vinculados a um serviço
+     * 
+     * @param int $id_servico O ID do serviço.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachAllServico(int $id_servico):bool
+    {
+        $db = new servicoGrupoServico;
+
+        if($db->addFilter("id_servico","=",$id_servico)->deleteByFilter()){
+            mensagem::setSucesso("Serviço Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Serviço");
+        return false;
+    }
+
+    /**
      * Insere ou atualiza um grupo de serviço.
      * 
      * @param string $nome O nome do grupo de serviço.

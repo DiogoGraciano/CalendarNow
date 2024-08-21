@@ -22,7 +22,7 @@ function confirmaExcluir(){
 }
 
 function validaVazio(seletor){
-  var valor = $(seletor).val();
+  var valor = seletor.value;
 
   if(valor == '') { 
     $(seletor).removeClass('is-valid').addClass('is-invalid');
@@ -32,19 +32,8 @@ function validaVazio(seletor){
   $(seletor).removeClass('is-invalid')//.addClass('is-valid');
 }
 
-function validaTime(seletor){
-  var valor = $(seletor).val();
-
-  if( valor == ':00:00' ) { 
-    $(seletor).removeClass('is-valid').addClass('is-invalid');
-    return false; 
-  }
-
-  $(seletor).removeClass('is-invalid')//.addClass('is-valid');
-}
-
 function validaValor(seletor){
-  var valor = parseFloat($(seletor).val());
+  var valor = seletor.value;
 
   if(valor < 0) { 
     $("#valor").removeClass('is-valid').addClass('is-invalid');
@@ -546,22 +535,9 @@ $(document).ready(function(){
     $("#email").removeClass('is-invalid')//.addClass('is-valid');
   }
 
-  $("#nome").on("blur",function(){validaVazio("#nome")});
-  $("#nome_empresa").on("blur",function(){validaVazio("#nome_empresa")});
-  $("#nome_agenda").on("blur",function(){validaVazio("#nome_agenda")});
-  $("#fantasia").on("blur",function(){validaVazio("#fantasia")});
-  $("#razao").on("blur",function(){validaVazio("#razao")});
-  $("#senha").on("blur",function(){validaVazio("#senha")});
-  $("#bairro").on("blur",function(){validaVazio("#bairro")});
-  $("#rua").on("blur",function(){validaVazio("#rua")});
-  $("#numero").on("blur",function(){validaVazio("#numero")});
+  $("input[required]").on("blur",function(){validaVazio(this)});
 
-  $("#hora_ini").on("blur",function(){validaTime("#hora_ini")});
-  $("#hora_fim").on("blur",function(){validaTime("#hora_fim")});
-  $("#hora_almoco_ini").on("blur",function(){validaTime("#hora_almoco_ini")});
-  $("#hora_almoco_fim").on("blur",function(){validaTime("#hora_almoco_fim")});
-
-  $("#valor").on("blur",function(){validaValor("#valor")});
+  $("#valor").on("blur",function(){validaValor(this)});
 
   $("#novoCliente").on("click",function(){
     if ($(".col-md-9.col-sm-12.cliente.mb-2.novoCliente").length){

@@ -164,7 +164,7 @@ class db
     /**
      * Set Debug.
      * 
-     * @return void Retorna o último ID inserido na tabela ou null se nenhum ID foi inserido.
+     * @return DB Retorna o último ID inserido na tabela ou null se nenhum ID foi inserido.
      */
     public function setDebug():DB
     {
@@ -603,11 +603,9 @@ class db
      * @param string $columns Colunas para agrupamento.
      * @return $this Retorna a instância atual da classe.
      */
-    public function addGroup(string $columns):DB
+    public function addGroup(...$columns):DB
     {
-        $this->propertys[] = " GROUP by ?";
-
-        $this->setBind($columns,true);
+        $this->propertys[] = " GROUP by ".implode(",",$columns);
 
         return $this;
     }

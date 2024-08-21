@@ -7,6 +7,7 @@ use app\db\tables\servicoFuncionario;
 use app\db\tables\servicoGrupoServico;
 use app\helpers\mensagem;
 use app\db\tables\funcionario;
+use app\db\transactionManeger;
 use app\models\abstract\model;
 
 /**
@@ -282,7 +283,27 @@ final class servicoModel extends model{
      * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
     */
     public static function delete(int $id):bool{
-        return (new servico)->delete($id);
+        try {
+            transactionManeger::init();
+            transactionManeger::beginTransaction();
+
+            self::deleteAllServicoFuncionario($id);
+            grupoServicoModel::detachAllServico($id);
+
+            if((new servico)->delete($id)){
+                mensagem::setSucesso("agenda deletada com sucesso");
+                transactionManeger::commit();
+                return true;
+            }
+
+            mensagem::setErro("Erro ao deletar agenda");
+            transactionManeger::rollBack();
+            return false;
+        }catch (\exception $e){
+            mensagem::setErro("Erro ao deletar agenda");
+            transactionManeger::rollBack();
+            return false;
+        }
     }
 
     /**

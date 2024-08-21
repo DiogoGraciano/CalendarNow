@@ -153,7 +153,7 @@ class servicoController extends controller{
 
         $form->setDoisInputs(
             $elements->input("tempo","Tempo de Trabalho:",$dado->tempo==""?"00:30":functions::removeSecondsTime($dado->tempo),true,true,"","time2",""),
-            $elements->input("valor","Valor:",$dado->valor,true,false,""),
+            $elements->input("valor","Valor:",$dado->valor?:0.00,true,false,type_input:"number",extra_input:'step="0.01" min="0"'),
             array("tempo","valor")
         );
 
@@ -205,9 +205,7 @@ class servicoController extends controller{
         $user = usuarioModel::getLogged();
 
         if ($parameters){
-            $id = functions::decrypt($parameters[0]);
-            servicoModel::deleteAllServicoFuncionario($id);
-            servicoModel::delete($id);
+            servicoModel::delete(functions::decrypt($parameters[0]));
             $this->go("servico");
         }
 
@@ -303,6 +301,7 @@ class servicoController extends controller{
             transactionManeger::rollback();
         }
 
+        transactionManeger::commit();
         $this->go("servico");
     }
 
@@ -339,6 +338,7 @@ class servicoController extends controller{
             transactionManeger::rollback();
         }
 
+        transactionManeger::commit();
         $this->go("servico");
     }
 }

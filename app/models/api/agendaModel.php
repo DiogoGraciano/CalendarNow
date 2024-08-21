@@ -4,6 +4,7 @@ use app\db\tables\agenda;
 use app\db\tables\funcionario;
 use app\db\tables\agendaUsuario;
 use app\db\tables\agendaFuncionario;
+use app\db\transactionManeger;
 use app\models\main\empresaModel;
 use app\helpers\mensagem;
 use app\helpers\functions;
@@ -320,7 +321,7 @@ final class agendaModel extends model{
             transactionManeger::rollBack();
             return false;
 
-        }catch(Exception $e){
+        }catch(\Exception $e){
             mensagem::setErro("Erro ao deletar agenda");
             transactionManeger::rollBack();
             return false;

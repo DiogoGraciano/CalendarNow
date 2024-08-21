@@ -191,7 +191,7 @@ class usuarioController extends controller {
 
         $form->setTresInputs(
             $elements->input("email", "Email", $dado->email, true, false, "", "email"),
-            $elements->input("senha", "Senha", "", true, false, "", "password"),
+            $elements->input("senha", "Senha", "", $dado->senha?false:true, false, "", "password"),
             $elements->input("telefone", "Telefone", functions::formatPhone($dado->telefone), true),
             array("email", "senha", "telefone")
         );

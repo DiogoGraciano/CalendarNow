@@ -178,6 +178,7 @@ final class agendaController extends controller{
             mensagem::setSucesso(false);
             transactionManeger::rollBack();
             mensagem::setErro("Erro ao cadastrar agenda, tente novamente");
+            $this->go("agenda");
         }
 
         mensagem::setSucesso(false);

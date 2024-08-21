@@ -283,7 +283,7 @@ final class usuarioModel extends model{
 
         $usuario = self::get($values->id);
         if(($values->id = $id) && !$usuario->id){
-            $mensagens[] = "Usuario da Api não existe";
+            $mensagens[] = "Usuario não existe";
         }
 
         if(!$values->id && !$senha){

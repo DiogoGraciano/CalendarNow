@@ -270,8 +270,9 @@ final class funcionarioModel extends model{
             $mensagens[] = "Horario final de almoço invalido";
         }
 
-        if(!($values->espacamento_agenda = $espacamento_agenda)){
-            $mensagens[] = "Espaçamento entre os slots da agenda deve ser informado";
+        $values->espacamento_agenda = $espacamento_agenda;
+        if($values->espacamento_agenda < 0 || $values->espacamento_agenda > 480){
+            $mensagens[] = "Espaçamento entre os slots da agenda deve ser entre 0 e 480 minutos";
         }
 
         if(!($values->dias = $dias)){
@@ -293,9 +294,8 @@ final class funcionarioModel extends model{
             mensagem::setSucesso("Funcionario salvo com sucesso");
             return $values->id;
         }
-        else {
-            return False;
-        }
+        
+        return False;
     }
 
     /**

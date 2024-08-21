@@ -70,9 +70,9 @@ final class usuarioApiModel extends model{
             $mensagens[] = "Empresa não existe";
         }
 
-        $usuario = self::get($values->id);
-        if(($values->id = $id) && !$usuario->id){
-            $mensagens[] = "Usuario da Api não existe";
+        $usuario = self::get($id);
+        if(!($values->id = $usuario->id)){
+            $mensagens[] = "Usuario não existe";
         }
 
         if(!$values->id && !$senha){
