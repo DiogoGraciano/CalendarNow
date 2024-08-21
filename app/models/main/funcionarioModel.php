@@ -180,6 +180,25 @@ final class funcionarioModel extends model{
     }
 
     /**
+     * Desvincula um funcionario de todos as agendas 
+     *      
+     * @param int $id_funcionario O ID do funcionário.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function detachAllAgendaFuncionario(int $id_funcionario):bool
+    {
+        $db = new agendaFuncionario;
+
+        if($db->addFilter("id_funcionario","=",$id_funcionario)->deleteByFilter()){
+            mensagem::setSucesso("Funcionario Desvinculado Com Sucesso");
+            return true;
+        }
+
+        mensagem::setErro("Erro ao Desvincular Funcionario");
+        return false;
+    }
+
+    /**
      * Insere ou atualiza um funcionário.
      * 
      * @param int $id_usuario O ID do usuário associado ao funcionário.
@@ -363,6 +382,19 @@ final class funcionarioModel extends model{
         }
         return True;
     }
+
+    /**
+     * Exclui todas as associações de um serviço com uma funcionarios.
+     * 
+     * @param int $id_funcionario O ID do funcionario.
+     * @return bool Retorna true se a operação for bem-sucedida, caso contrário retorna false.
+    */
+    public static function deleteAllServicoFuncionario(int $id_funcionario):bool
+    {
+        $db = new servicoFuncionario;
+
+        return $db->addFilter("servico_funcionario.id_funcionario","=",$id_funcionario)->deleteByFilter();
+    }
     
     /**
      * Exclui um funcionário pelo ID.
@@ -372,7 +404,27 @@ final class funcionarioModel extends model{
      */
     public static function delete(int $id):bool
     {
-        return (new funcionario)->delete($id);
-    }
+        try {
+            transactionManeger::init();
+            transactionManeger::beginTransaction();
 
+            self::deleteAllServicoFuncionario($id);
+            self::detachAllAgendaFuncionario($id);
+            grupoFuncionarioModel::detachAllFuncionario($id);
+
+            if((new funcionario)->delete($id)){
+                mensagem::setSucesso("funcionario deletado com sucesso");
+                transactionManeger::commit();
+                return true;
+            }
+
+            mensagem::setErro("Erro ao deletar funcionario");
+            transactionManeger::rollBack();
+            return false;
+        }catch (\exception $e){
+            mensagem::setErro("Erro ao deletar funcionario");
+            transactionManeger::rollBack();
+            return false;
+        }
+    }
 }
