@@ -1,9 +1,9 @@
 <?php 
 namespace app\controllers\main;
-use app\layout\head;
-use app\layout\lista;
-use app\layout\elements;
-use app\layout\footer;
+use app\view\layout\head;
+use app\view\layout\lista;
+use app\view\layout\elements;
+use app\view\layout\footer;
 use app\controllers\abstract\controller;
 use app\helpers\functions;
 use app\models\main\loginModel;

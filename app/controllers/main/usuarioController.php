@@ -2,15 +2,15 @@
 
 namespace app\controllers\main;
 
-use app\layout\head;
-use app\layout\form;
-use app\layout\elements;
+use app\view\layout\head;
+use app\view\layout\form;
+use app\view\layout\elements;
 use app\helpers\functions;
 use app\controllers\abstract\controller;
-use app\layout\footer;
-use app\layout\consulta;
+use app\view\layout\footer;
+use app\view\layout\consulta;
 use app\helpers\mensagem;
-use app\layout\filter;
+use app\view\layout\filter;
 use app\db\transactionManeger;
 use app\db\tables\estado;
 use app\models\main\usuarioModel;

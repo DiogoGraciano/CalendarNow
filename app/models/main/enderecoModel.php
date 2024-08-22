@@ -3,7 +3,7 @@ namespace app\models\main;
 
 use app\db\tables\endereco;
 use app\helpers\mensagem;
-use app\layout\modelAbstract;
+use app\view\layout\modelAbstract;
 use app\helpers\functions;
 use app\models\main\cidadeModel;
 

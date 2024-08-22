@@ -1,16 +1,16 @@
 <?php 
 namespace app\controllers\main;
-use app\layout\head;
-use app\layout\form;
-use app\layout\agenda;
-use app\layout\consulta;
+use app\view\layout\head;
+use app\view\layout\form;
+use app\view\layout\agenda;
+use app\view\layout\consulta;
 use app\controllers\abstract\controller;
 use app\db\transactionManeger;
-use app\layout\elements;
-use app\layout\filter;
-use app\layout\footer;
-use app\layout\tabela;
-use app\layout\tabelaMobile;
+use app\view\layout\elements;
+use app\view\layout\filter;
+use app\view\layout\footer;
+use app\view\layout\tabela;
+use app\view\layout\tabelaMobile;
 use app\helpers\functions;
 use app\helpers\mensagem;
 use app\models\main\agendamentoItemModel;

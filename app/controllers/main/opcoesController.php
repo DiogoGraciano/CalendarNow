@@ -1,10 +1,10 @@
 <?php 
 namespace app\controllers\main;
-use app\layout\head;
-use app\layout\menu;
-use app\layout\elements;
+use app\view\layout\head;
+use app\view\layout\menu;
+use app\view\layout\elements;
 use app\helpers\functions;
-use app\layout\footer;
+use app\view\layout\footer;
 use app\controllers\abstract\controller;
 use app\models\main\loginModel;
 use app\models\main\usuarioModel;

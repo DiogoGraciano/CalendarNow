@@ -1,9 +1,9 @@
 <?php
 
-namespace app\layout;
+namespace app\view\layout;
 
 use app\helpers\functions;
-use app\layout\abstract\pagina;
+use app\view\layout\abstract\pagina;
 use core\request;
 
 class pagination extends pagina{

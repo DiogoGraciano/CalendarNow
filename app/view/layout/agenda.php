@@ -1,7 +1,7 @@
 <?php
 
-namespace app\layout;
-use app\layout\abstract\pagina;
+namespace app\view\layout;
+use app\view\layout\abstract\pagina;
 use app\helpers\mensagem;
 
 /**

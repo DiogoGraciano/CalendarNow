@@ -1,6 +1,6 @@
 <?php
-namespace app\layout;
-use app\layout\abstract\pagina;
+namespace app\view\layout;
+use app\view\layout\abstract\pagina;
 
 /**
  * Classe responsável por gerar gráficos dinâmicos utilizando um template HTML.

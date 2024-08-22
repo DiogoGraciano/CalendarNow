@@ -1,5 +1,5 @@
 <?php
-	namespace app\layout;
+	namespace app\view\layout;
 
 	class template {
 

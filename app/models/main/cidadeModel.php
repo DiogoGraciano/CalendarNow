@@ -2,8 +2,8 @@
 namespace app\models\main;
 
 use app\db\tables\cidade;
-use app\layout\modelAbstract;
-use app\layout\elements;
+use app\view\layout\modelAbstract;
+use app\view\layout\elements;
 
 /**
  * Classe cidadeModel

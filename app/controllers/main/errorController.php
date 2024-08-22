@@ -3,9 +3,9 @@
 namespace app\controllers\main;
 
 use app\controllers\abstract\controller;
-use app\layout\error;
-use app\layout\footer;
-use app\layout\head;
+use app\view\layout\error;
+use app\view\layout\footer;
+use app\view\layout\head;
 
 final class errorController extends controller
 {

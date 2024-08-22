@@ -1,7 +1,7 @@
 <?php
 
 namespace app\helpers;
-use app\layout\abstract\pagina;
+use app\view\layout\abstract\pagina;
 use core\session;
 
 /**

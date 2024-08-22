@@ -1,9 +1,9 @@
 <?php 
 namespace app\controllers\main;
-use app\layout\head;
-use app\layout\form;
-use app\layout\elements;
-use app\layout\footer;
+use app\view\layout\head;
+use app\view\layout\form;
+use app\view\layout\elements;
+use app\view\layout\footer;
 use app\helpers\mensagem;
 use app\controllers\abstract\controller;
 use app\models\main\agendaModel;

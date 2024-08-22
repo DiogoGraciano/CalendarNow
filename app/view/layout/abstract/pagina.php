@@ -1,7 +1,7 @@
 <?php
 
-namespace app\layout\abstract;
-use app\layout\template;
+namespace app\view\layout\abstract;
+use app\view\layout\template;
 use app\helpers\functions;
 
 /**
