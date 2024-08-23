@@ -29,7 +29,7 @@ class tabelaMobile extends pagina{
      */
     public function parse(){
 
-        $this->tpl = $this->getTemplate("table_mobile.html");
+        $this->tpl = $this->getTemplate("tabelaMobile.html");
 
         if($this->rows){
             foreach ($this->rows as $row){

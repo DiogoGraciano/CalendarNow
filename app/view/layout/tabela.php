@@ -29,7 +29,7 @@ class tabela extends pagina{
      */
     public function parse(){
 
-        $this->tpl = $this->getTemplate("table.html");
+        $this->tpl = $this->getTemplate("tabela.html");
         
         if($this->rows){
             $i = 1;
