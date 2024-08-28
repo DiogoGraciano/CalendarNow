@@ -113,23 +113,23 @@ function showLoader(){
 }
 
 function removeLoader(){
-document.getElementById("loader").style.display = "none";
-document.querySelector("body").style.display = "block";
+  document.getElementById("loader").style.display = "none";
+  document.querySelector("body").style.display = "block";
 }
 
 function getInvalid(mensagem,id){
-return '<div id="#'+id+'" class="invalid-feedback">'+mensagem+'</div>';
+    return '<div id="'+id+'" class="invalid-feedback">'+mensagem+'</div>';
 }
 
 function getValid(mensagem,id){
-return '<div id="#'+id+'" class="valid-feedback">'+mensagem+'</div>';
+    return '<div id="'+id+'" class="valid-feedback">'+mensagem+'</div>';
 }
 
 function verificarEDesabilitarBotao() {
-var botao = $('#submit');
-var algumElementoComClasse = $('.is-invalid').length > 0;
+  var botao = $('#submit');
+  var algumElementoComClasse = $('.is-invalid').length > 0;
 
-botao.prop('disabled', algumElementoComClasse);
+  botao.prop('disabled', algumElementoComClasse);
 }
 
 function getOptionCidade(option){
