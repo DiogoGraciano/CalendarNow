@@ -4,7 +4,6 @@ namespace app\db\tables;
 use app\db\abstract\model;
 use app\db\migrations\table;
 use app\db\migrations\column;
-use app\db\db;
 
 class estado extends model {
     public const table = "estado";

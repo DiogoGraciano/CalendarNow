@@ -281,7 +281,7 @@ final class usuarioModel extends model{
             $mensagens[] = "Empresa não existe";
         }
 
-        $usuario = self::get($values->id);
+        $usuario = self::get($id);
         if(($values->id = $id) && !$usuario->id){
             $mensagens[] = "Usuario não existe";
         }

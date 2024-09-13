@@ -252,7 +252,7 @@ final class usuarioModel extends model{
         }
 
         $usuario = self::get($id);
-        if(!($values->id = $usuario->id)){
+        if(($values->id = $id) && !$usuario->id){
             $mensagens[] = "Usuario não existe";
         }
 

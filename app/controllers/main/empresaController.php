@@ -225,7 +225,7 @@ class empresaController extends controller {
 
         mensagem::setSucesso(false);
         transactionManeger::rollback();
-        $this->go("empresa/manutencao/".$location);
+        $this->go("empresa/manutencao");
     }
 }
 
