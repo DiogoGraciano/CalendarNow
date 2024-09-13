@@ -5607,8 +5607,7 @@ INSERT INTO `cidade` (`id`, `nome`, `uf`, `ibge`) VALUES
 (5606, 'Paraíso das Águas', 12, 5006275),
 (5607, 'Pinto Bandeira', 23, 4314548),
 (5608, 'Balneário Rincão', 24, 4220000),
-(5609, 'Pescaria Brava', 24, 4212650),
-(5610, 'Exterior', 99, 9999999);
+(5609, 'Pescaria Brava', 24, 4212650);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
