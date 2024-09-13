@@ -136,9 +136,6 @@ class agendaController extends apiController{
         }
     }
 
-     /**
-     * Define ou atualiza agendas.
-     */
     public function setAgendaFuncionario(){
         try {
             $errors = [];
@@ -212,7 +209,7 @@ class agendaController extends apiController{
                 $this->sendResponse(["error" => "Id do usuario não informado"]);
             }
 
-            $result = AgendaModel::getByUsuario($id_usuario);
+            $result = AgendaModel::getByUsuario($this->query["id_usuario"]);
 
             if($result){
                 $this->sendResponse(["result" => $result]);
@@ -234,7 +231,7 @@ class agendaController extends apiController{
                 $this->sendResponse(["error" => "Id do usuario não informado"]);
             }
 
-            $result = AgendaModel::getByUsuario($id_usuario);
+            $result = AgendaModel::getFuncionarioByAgenda($this->query["id_funcionario"]);
 
             if($result){
                 $this->sendResponse(["result" => $result]);
@@ -272,7 +269,7 @@ class agendaController extends apiController{
             $id_agenda = isset($this->query["id_agenda"]) ? $this->query["id_agenda"] : 0;
             $id_usuario = isset($this->query["id_usuario"]) ? $this->query["id_usuario"] : 0;
 
-            if($id_agenda && $id_funcionario && agendaModel::detachAgendaUsuario($id_agenda,$id_usuario)){
+            if($id_agenda && $id_usuario && agendaModel::detachAgendaUsuario($id_agenda,$id_usuario)){
                 $this->sendResponse(["result" => true]);
             }
 
